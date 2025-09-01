@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Uki</title>
+</head>
+
+<body>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <input type="text" name="name" placeholder="Nombre" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const data = {
+                name: e.target.name.value,
+                email: e.target.email.value
+            };
+
+            const res = await fetch("/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                const json = await res.json();
+                alert("Usuario registrado con ID: " + json.ID);
+                window.location.href = "/"; // volver al index
+            } else {
+                alert("Error al registrar usuario");
+            }
+        });
+    </script>
+</body>
+
+</html>
