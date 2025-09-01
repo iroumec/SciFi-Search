@@ -25,7 +25,7 @@ type Rating struct {
 }
 
 func setupDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("../database/app.db"), &gorm.Config{})
 	if err != nil {
 		panic("error al conectar a la base de datos")
 	}

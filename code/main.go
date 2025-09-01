@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	port    = ":8080"  // Puerto que se escucha.
-	fileDir = "static" // Directorio relativo con los archivos estáticos. Relativo adonde se ejecuta go run.
+	port    = ":8080"     // Puerto que se escucha.
+	fileDir = "../static" // Directorio relativo con los archivos estáticos. Relativo adonde se ejecuta go run.
 )
 
 // gzipMiddleware comprime la respuesta si el cliente acepta gzip y el archivo existe.
