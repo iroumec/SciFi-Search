@@ -5,8 +5,20 @@ import (
 	"net/http"
 )
 
+const (
+	fileDir = "../static" // Directorio relativo con los archivos estáticos. Relativo adonde se ejecuta go run.
+)
+
 // registerHandlers registra todos los endpoints
 func registerHandlers() {
+
+	// Se crea un manejador (handler) de servidor de archivos.
+	fileServer := http.FileServer(http.Dir(fileDir))
+
+	// Se envuelve en un gzip middleware.
+	http.Handle("/", gzipMiddleware(fileServer))
+
+	// Se define un handler que maneje la creación de usuarios.
 	http.HandleFunc("/users", usersHandler)
 }
 
