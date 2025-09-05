@@ -3,14 +3,77 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Uki</title>
+    <title>UKI</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="icon" type="image/png" href="img/icono.png">
 </head>
 
 <body>
-    <h1>¡Bienvenido a Uki!</h1>
-    <p>Uki es una aplicación de puntuación de contenido.</p>
+    <header>
+        <img src="img/logo.png" alt="Logo UKI" id="logo">
 
-    <button onclick="window.location.href='login.html'">Login</button>
+        <nav>
+            <a href="#peliculas">Películas</a>
+            <a href="#musica">Música</a>
+            <a href="#libros">Libros</a>
+            <a href="#series">Series</a>
+            <a href="#juegos">Juegos</a>
+        </nav>
+
+        <button class="btn-registro" onclick="window.location.href='signin.html'">Sign-in</button>
+        <button class="btn-registro" onclick="window.location.href='login.html'">Log-in</button>
+        
+    </header>
+
+    <section class="fondo">
+        <div class="fondo-contenido">
+            <p>Un lugar para compartir lo que ves, lees, escuchás y jugás.</p>
+        </div>
+    </section>
+
+    <main>
+        <section id="trending">
+            <h2>Trending</h2>
+            <p> Aca va todo el contenido que está teniendo relevancia esta semana con imagenes y links</p>
+        </section>
+        
+        <section id="peliculas">
+            <h2>Películas</h2>
+            <p> Aca van las ultimas películas registradas por usuarios con imagenes y todo lindo.</p>
+        </section>
+
+        <section id="musica">
+            <h2>Música</h2>
+            <p> Aca van las ultimas canciones/albumes registrados por usuarios con imagenes y todo lindo.</p>
+        </section>
+
+        <section id="libros">
+            <h2>Libros</h2>
+            <p> Aca van los ultimos libros registrados por usuarios con imagenes y todo lindo.</p>
+        </section>
+
+        <section id="series">
+            <h2>Series</h2>
+            <p> Aca van las ultimas series registradas por usuarios con imagenes y todo lindo.</p>
+        </section>
+
+        <section id="juegos">
+            <h2>Juegos</h2>
+            <p> Aca van los ultimos juegos registrados por usuarios con imagenes y todo lindo.</p>
+        </section>
+
+        <section id="noticias">
+            <h2>Noticias</h2>
+            <p> Aca van los ultimas noticias del mundo del entretenimiento.</p>
+        </section>
+    
+    </main>
+
+    
+
+    <footer>
+        <p>&copy; 2025 UKI</p>
+    </footer>
 </body>
 
 </html>

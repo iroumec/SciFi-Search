@@ -1,0 +1,110 @@
+:root {
+    --color-uki: #963CBA;
+    --color-fondo: #111111;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #000000;
+  color: white;
+}
+
+/* Cabecera */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-fondo);
+    color: var(--color-uki);
+    padding: 0.5rem 1rem;
+}
+
+#logo {
+    height: 65px;
+}
+
+header nav {
+    flex-grow: 1;
+    text-align: center;
+}
+
+header nav a {
+    margin: 0 1rem;
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: none;
+    color: var(--color-uki);
+}
+
+.btn-registro {
+    margin-right: 10px;
+    margin-left: 5px;
+    background-color: var(--color-uki);   /* color del boton */
+    color: var(--color-fondo);             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.5rem 1rem;       /* espacio interno */
+    border-radius: 5px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold;
+}
+
+.btn-registro:hover {
+  background-color: #ffffff;   /* cambia de color al pasar el mouse */
+  color: black;                /* texto en blanco al hover */
+}
+
+/**/
+
+/* Contenedor debajo del header */
+.fondo {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Imagen de fondo con opacidad */
+.fondo::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url('../img/fondo.jpg'); /* ruta relativa desde css */
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+    z-index: 0;
+}
+
+/* Texto centrado */
+.fondo-contenido {
+    position: relative;
+    z-index: 1;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+/*Main*/
+
+main {
+    padding: 2rem;
+    background: #111111;
+}
+
+/*Footer*/
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #111111;
+    color:#ffffff;
+}
