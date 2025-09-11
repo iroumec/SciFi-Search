@@ -1,8 +1,13 @@
 ﻿package main
 
 import (
-	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+
+	sqlc "uki/code/database/sqlc"
+
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -29,18 +34,23 @@ func usersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+
+	if name == "" || email == "" {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
 
-	result := db.Create(&user)
-	if result.Error != nil {
-		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-		return
+	createdUser, err := queries.CreateUser(ctx,
+		sqlc.CreateUserParams{
+			Name:  name,
+			Email: email,
+		})
+
+	if err != nil {
+		log.Fatal("error creating user:", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	fmt.Printf("User created: %+v\n", createdUser)
 }

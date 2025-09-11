@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS ContentTypes (
     name VARCHAR(50) UNIQUE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS ConsumedWorks (
+    user_id INT, 
+    work_id INT,
+    CONSTRAINT pk_consumed_works PRIMARY KEY (user_id,work_id)
+)
+
 --CREATE TABLE AssociatedWorks (
 --    id SERIAL PRIMARY KEY,
 --    work_id INT REFERENCES Works(id)
@@ -28,10 +34,12 @@ CREATE TABLE IF NOT EXISTS ContentTypes (
 
 CREATE TABLE IF NOT EXISTS Review (
     id SERIAL PRIMARY KEY,
-    user_id INT,
-    work_id INT,
-    score INT CHECK (score >= 1 AND score <= 10),
-    review TEXT
+    user_id INT NOT NULL,
+    work_id INT NOT NULL,
+    score INT CHECK (score >= 1 AND score <= 10) NOT NULL,
+    review TEXT,
+    when_watched TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    liked BOOLEAN DEFAULT FALSE
 );
 
 
@@ -65,6 +73,20 @@ ALTER TABLE Review ADD CONSTRAINT Review_Work
     INITIALLY IMMEDIATE
 ;
 
+ALTER TABLE ConsumedWorks ADD CONSTRAINT ConsumedWorks_Users
+    FOREIGN KEY (user_id)
+    REFERENCES Users(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
+ALTER TABLE ConsumedWorks ADD CONSTRAINT ConsumedWorks_Works
+    FOREIGN KEY (work_id)
+    REFERENCES Works(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
 -- Funciones + Triggers
 
 CREATE OR REPLACE FUNCTION FN_TRIU_USERNAME()
@@ -84,3 +106,17 @@ CREATE OR REPLACE TRIGGER TRIU_USERNAME
     BEFORE INSERT OR UPDATE ON Users
     FOR EACH ROW
         EXECUTE FUNCTION FN_TRIU_USERNAME();
+
+
+CREATE OR REPLACE FUNCTION FN_TRI_REVIEW()
+RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO ConsumedWorks VALUES (NEW.user_id,NEW.work_id);
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER TRI_REVIEW
+    BEFORE INSERT ON Review 
+    FOR EACH ROW 
+        EXECUTE FUNCTION FN_TRI_REVIEW();
