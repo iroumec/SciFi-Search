@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	sqlc "uki/code/database/sqlc"
+	sqlc "uki/app/database/sqlc"
 
 	_ "github.com/lib/pq"
 )
@@ -23,14 +23,15 @@ var ctx context.Context
 func main() {
 
 	connStr := "user=postgres password=postgres dbname=postgres sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
+	var err error
+	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 	defer db.Close()
 
-	queries := sqlc.New(db)
-	ctx := context.Background()
+	queries = sqlc.New(db)
+	ctx = context.Background()
 
 	registerHandlers()
 
