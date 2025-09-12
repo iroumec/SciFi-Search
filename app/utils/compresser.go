@@ -1,4 +1,4 @@
-﻿package code
+﻿package utils
 
 import (
 	"compress/gzip"
@@ -9,7 +9,7 @@ import (
 )
 
 // gzipMiddleware comprime la respuesta si el cliente acepta gzip y el archivo existe.
-func gzipMiddleware(next http.Handler) http.Handler {
+func GzipMiddleware(fileDir string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// Se verifica si el cliente acepta gzip.

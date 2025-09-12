@@ -1,4 +1,4 @@
-﻿package code
+﻿package handlers
 
 import (
 	"encoding/json"
@@ -6,23 +6,29 @@ import (
 	"log"
 	"net/http"
 
+	"uki/app/utils"
+
 	sqlc "uki/app/database/sqlc"
 
 	_ "github.com/lib/pq"
 )
 
 const (
-	fileDir = "../static" // Directorio relativo con los archivos estáticos. Relativo adonde se ejecuta go run.
+	fileDir = "./static"
 )
 
+var queries *sqlc.Queries
+
 // registerHandlers registra todos los endpoints
-func registerHandlers() {
+func RegisterHandlers(queryObject *sqlc.Queries) {
+
+	queries = queryObject
 
 	// Se crea un manejador (handler) de servidor de archivos.
 	fileServer := http.FileServer(http.Dir(fileDir))
 
 	// Se envuelve en un gzip middleware.
-	http.Handle("/", gzipMiddleware(fileServer))
+	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
 
 	// Se define un handler que maneje la creación de usuarios.
 	http.HandleFunc("/users", usersHandler)

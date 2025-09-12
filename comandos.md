@@ -67,3 +67,7 @@ O exportando...
 sudo docker exec -i UKIDB pg_dump -U postgres -d postgres > T2/E2/datos.sql
 
 Comando `tree` para mostrar la estructura de directorio.
+
+## Recordar
+
+En las funciones, minúscula inicial si es privado del paquete y mayúscula inicial si es público.

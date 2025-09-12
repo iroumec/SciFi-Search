@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS ConsumedWorks (
     user_id INT, 
     work_id INT,
     CONSTRAINT pk_consumed_works PRIMARY KEY (user_id,work_id)
-)
+);
 
 --CREATE TABLE AssociatedWorks (
 --    id SERIAL PRIMARY KEY,

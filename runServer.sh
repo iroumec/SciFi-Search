@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd code
+cd app
 
 exec go run .
