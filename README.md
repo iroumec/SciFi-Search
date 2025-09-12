@@ -9,7 +9,7 @@ Uki es una aplicación web que permite a los usuarios puntuar contenido multimed
 Antes de ejecutar la aplicación, crea tu archivo de variables de entorno basado en el ejemplo:
 
 ```bash
-cp .env.example .env
+cp resources/.env.example .env
 ```
 
 Luego edita `.env` y completa tus credenciales de la base de datos y otros parámetros necesarios.
@@ -20,14 +20,14 @@ Los siguientes comandos solo deben ejecutarse una vez:
 
 ```bash
 # Borrado de contenedores y volúmenes.
-docker compose down -v
+sudo docker compose down -v
 
 # Construcción del contenedor.
-docker compose up --build
+sudo docker compose build
 ```
 
 Para correr la aplicación:
 
 ```bash
-docker compose up
+sudo docker compose up
 ```
