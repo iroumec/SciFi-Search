@@ -252,4 +252,24 @@ CREATE OR REPLACE TRIGGER TRD_CONSUMEDWORKS
     FOR EACH ROW 
         EXECUTE FUNCTION FN_TRD_CONSUMEDWORKS();
 
---s
+--Verifica que la obra a marcar es unitaria.
+--Verifica que el usuario haya marcado unicamente un favorito por tipo de contenido
+CREATE OR REPLACE FUNCTION FN_TRI_USERFAVORITES()
+RETURNS TRIGGER AS $$
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM Works WHERE id = NEW.work_id AND unit) THEN 
+                RAISE EXCEPTION 'Para marcar una obra como favorita, esta debe ser unitaria.';
+            END IF;
+            IF ((SELECT content_type_id FROM Works w WHERE NEW.work_id = id) --obtengo el tipo de contenido del nuevo
+                            IN 
+                (SELECT content_type_id FROM Works m WHERE m.id IN --obtengo lista de los tipos de contenido de los favoritos del usuario
+                    (SELECT work_id FROM UserFavorites u WHERE u.user_id = NEW.user_id))) THEN 
+                RAISE EXCEPTION 'Solo se puede marcar como favorita una obra por tipo de contenido.'
+            END IF;
+        END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER TRI_USERFAVORITES 
+    BEFORE INSERT ON UserFavorites
+    FOR EACH ROW 
+        EXECUTE FUNCTION FN_TRI_USERFAVORITES();
