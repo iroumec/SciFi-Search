@@ -8,17 +8,43 @@ import (
 	"database/sql"
 )
 
-type Contenttype struct {
+type ConsumedWork struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
+type ContentType struct {
 	ID   int32  `json:"id"`
 	Name string `json:"name"`
 }
 
+type LikedWork struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
 type Review struct {
-	ID     int32          `json:"id"`
-	UserID sql.NullInt32  `json:"user_id"`
-	WorkID sql.NullInt32  `json:"work_id"`
-	Score  sql.NullInt32  `json:"score"`
-	Review sql.NullString `json:"review"`
+	ID        int32          `json:"id"`
+	UserID    int32          `json:"user_id"`
+	WorkID    int32          `json:"work_id"`
+	Score     int32          `json:"score"`
+	Review    sql.NullString `json:"review"`
+	WatchedAt sql.NullTime   `json:"watched_at"`
+	Liked     sql.NullBool   `json:"liked"`
+}
+
+type ReviewComment struct {
+	ID          int32          `json:"id"`
+	ReviewID    sql.NullInt32  `json:"review_id"`
+	UserID      sql.NullInt32  `json:"user_id"`
+	Comment     sql.NullString `json:"comment"`
+	CommentedAt sql.NullTime   `json:"commented_at"`
+}
+
+type ReviewLike struct {
+	ReviewID int32        `json:"review_id"`
+	UserID   int32        `json:"user_id"`
+	LikedAt  sql.NullTime `json:"liked_at"`
 }
 
 type User struct {
@@ -27,6 +53,17 @@ type User struct {
 	Name      string       `json:"name"`
 	Email     string       `json:"email"`
 	CreatedAt sql.NullTime `json:"created_at"`
+}
+
+type UserFavourite struct {
+	UserID int32         `json:"user_id"`
+	WorkID sql.NullInt32 `json:"work_id"`
+}
+
+type UserFollow struct {
+	FollowerID int32        `json:"follower_id"`
+	FollowedID int32        `json:"followed_id"`
+	FollowedAt sql.NullTime `json:"followed_at"`
 }
 
 type Work struct {

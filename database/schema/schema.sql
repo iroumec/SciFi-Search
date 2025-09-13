@@ -40,13 +40,13 @@ CREATE TABLE IF NOT EXISTS consumed_works (
     user_id INT, 
     work_id INT,
     CONSTRAINT pk_consumed_works PRIMARY KEY (user_id, work_id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS liked_works (
     user_id INT, 
     work_id INT,
     CONSTRAINT pk_liked_works PRIMARY KEY (user_id,work_id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS review (
     id SERIAL PRIMARY KEY, --puede haber más de una review de la misma obra por el mismo usuario
@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS review_comment (
     commented_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
---falta queries.sql a partir de aca
 CREATE TABLE IF NOT EXISTS user_follows (
     follower_id INT, 
     followed_id INT,
@@ -82,9 +81,9 @@ CREATE TABLE IF NOT EXISTS user_follows (
 );
 
 CREATE TABLE IF NOT EXISTS user_favourites (
-    id_user INT,
-    id_work INT,
-    CONSTRAINT pk_user_favourites PRIMARY KEY (id_user, id_work)
+    user_id INT,
+    work_id INT,
+    CONSTRAINT pk_user_favourites PRIMARY KEY (user_id, workd_id)
 );
 
 --------------------- Asignacion de foreign keys ---------------------
@@ -174,27 +173,29 @@ ALTER TABLE user_follows ADD CONSTRAINT fk_user_follows_follower_user
 ;
 
 ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_users
-    FOREIGN KEY (id_user)
+    FOREIGN KEY (user_id)
     REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_works
-    FOREIGN KEY (id_work)
+    FOREIGN KEY (work_id)
     REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 --------------------- Funciones + Triggers ---------------------
+-- Creo que podrían estar en otro archivo, porque el sqlc no los usa y solo los usa docker.
+-- Tampoco creo que usa los alter table.
 
 --Control para mantener los usernames unicos (tal vez al pedo?) Sí, creo que está al pedo
 CREATE OR REPLACE FUNCTION FN_TRIU_USERNAME()
 RETURNS TRIGGER AS $$
     BEGIN
 
-        IF EXISTS (SELECT 1 FROM Users WHERE username = NEW.username) THEN
+        IF EXISTS (SELECT 1 FROM users WHERE username = NEW.username) THEN
             RAISE EXCEPTION 'Ya existe otro usuario con ese username.';
         END IF;
 
@@ -204,7 +205,7 @@ RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER TRIU_USERNAME
-    BEFORE INSERT OR UPDATE ON Users
+    BEFORE INSERT OR UPDATE ON users
     FOR EACH ROW
         EXECUTE FUNCTION FN_TRIU_USERNAME();
 
@@ -214,14 +215,14 @@ CREATE OR REPLACE TRIGGER TRIU_USERNAME
 CREATE OR REPLACE FUNCTION FN_TRIU_REVIEW()
 RETURNS TRIGGER AS $$
     BEGIN
-        IF EXISTS (SELECT 1 FROM Works w WHERE w.id = NEW.work_id AND w.unit) THEN --aca solo entra en inserts, porque no se puede actualizar workid
+        IF EXISTS (SELECT 1 FROM works w WHERE w.id = NEW.work_id AND w.unit) THEN --aca solo entra en inserts, porque no se puede actualizar workid
             RAISE EXCEPTION 'Solo se puede hacer review de las obras unitarias.';
         ELSE 
-            IF NEW.liked AND NOT EXISTS (SELECT 1 FROM LikedWorks l WHERE l.user_id = NEW.user_id AND l.work_id = NEW.work_id) THEN 
-                INSERT INTO LikedWorks VALUES (NEW.user_id,NEW.work_id);
+            IF NEW.liked AND NOT EXISTS (SELECT 1 FROM liked_works l WHERE l.user_id = NEW.user_id AND l.work_id = NEW.work_id) THEN 
+                INSERT INTO liked_works VALUES (NEW.user_id,NEW.work_id);
             END IF;
-            IF NOT EXISTS (SELECT 1 FROM Review r WHERE r.user_id = NEW.user_id AND r.work_id = NEW.work_id) THEN
-                INSERT INTO ConsumedWorks VALUES (NEW.user_id,NEW.work_id);
+            IF NOT EXISTS (SELECT 1 FROM review r WHERE r.user_id = NEW.user_id AND r.work_id = NEW.work_id) THEN
+                INSERT INTO consumed_works VALUES (NEW.user_id,NEW.work_id);
             END IF;
         END IF;
         RETURN NEW;
@@ -229,7 +230,7 @@ RETURNS TRIGGER AS $$
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER TRIU_REVIEW
-    BEFORE INSERT OR UPDATE ON Review 
+    BEFORE INSERT OR UPDATE ON review 
     FOR EACH ROW 
         EXECUTE FUNCTION FN_TRI_REVIEW();
 
@@ -239,15 +240,15 @@ CREATE OR REPLACE TRIGGER TRIU_REVIEW
 CREATE OR REPLACE FUNCTION FN_TRD_CONSUMEDWORKS()
 RETURNS TRIGGER AS $$
     BEGIN
-        DELETE FROM ReviewLike lr WHERE OLD.work_id = lr.work_id;
-        DELETE FROM ReviewComment rc WHERE OLD.work_id = lr.work_id;
-        DELETE FROM Review r WHERE r.work_id = OLD.work_id;
-        DELETE FROM LikedWorks lw WHERE lw.work_id = OLD.work_id;
+        DELETE FROM review_like lr WHERE OLD.work_id = lr.work_id;
+        DELETE FROM review_comment rc WHERE OLD.work_id = lr.work_id;
+        DELETE FROM review r WHERE r.work_id = OLD.work_id;
+        DELETE FROM liked_works lw WHERE lw.work_id = OLD.work_id;
     END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER TRD_CONSUMEDWORKS
-    BEFORE DELETE ON ConsumedWorks
+    BEFORE DELETE ON consumed_works
     FOR EACH ROW 
         EXECUTE FUNCTION FN_TRD_CONSUMEDWORKS();
 

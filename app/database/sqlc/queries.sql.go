@@ -10,8 +10,74 @@ import (
 	"database/sql"
 )
 
+const addWorkToFavourites = `-- name: AddWorkToFavourites :one
+INSERT INTO user_favourites (user_id, work_id) VALUES ($1,$2) RETURNING user_id, work_id
+`
+
+type AddWorkToFavouritesParams struct {
+	UserID int32         `json:"user_id"`
+	WorkID sql.NullInt32 `json:"work_id"`
+}
+
+func (q *Queries) AddWorkToFavourites(ctx context.Context, arg AddWorkToFavouritesParams) (UserFavourite, error) {
+	row := q.db.QueryRowContext(ctx, addWorkToFavourites, arg.UserID, arg.WorkID)
+	var i UserFavourite
+	err := row.Scan(&i.UserID, &i.WorkID)
+	return i, err
+}
+
+const commentReview = `-- name: CommentReview :one
+INSERT INTO review_comment (review_id, user_id,comment) VALUES ($1,$2,$3) RETURNING id, review_id, user_id, comment, commented_at
+`
+
+type CommentReviewParams struct {
+	ReviewID sql.NullInt32  `json:"review_id"`
+	UserID   sql.NullInt32  `json:"user_id"`
+	Comment  sql.NullString `json:"comment"`
+}
+
+func (q *Queries) CommentReview(ctx context.Context, arg CommentReviewParams) (ReviewComment, error) {
+	row := q.db.QueryRowContext(ctx, commentReview, arg.ReviewID, arg.UserID, arg.Comment)
+	var i ReviewComment
+	err := row.Scan(
+		&i.ID,
+		&i.ReviewID,
+		&i.UserID,
+		&i.Comment,
+		&i.CommentedAt,
+	)
+	return i, err
+}
+
+const consumeWork = `-- name: ConsumeWork :one
+INSERT INTO consumed_works (user_id,work_id) VALUES ($1,$2) RETURNING user_id, work_id
+`
+
+type ConsumeWorkParams struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
+func (q *Queries) ConsumeWork(ctx context.Context, arg ConsumeWorkParams) (ConsumedWork, error) {
+	row := q.db.QueryRowContext(ctx, consumeWork, arg.UserID, arg.WorkID)
+	var i ConsumedWork
+	err := row.Scan(&i.UserID, &i.WorkID)
+	return i, err
+}
+
+const createContentType = `-- name: CreateContentType :one
+INSERT INTO content_types (name) VALUES ($1) RETURNING id, name
+`
+
+func (q *Queries) CreateContentType(ctx context.Context, name string) (ContentType, error) {
+	row := q.db.QueryRowContext(ctx, createContentType, name)
+	var i ContentType
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
-INSERT INTO Users (username, name, email, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, name, email, created_at
+INSERT INTO users (username, name, email, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, name, email, created_at
 `
 
 type CreateUserParams struct {
@@ -33,8 +99,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const createWork = `-- name: CreateWork :exec
-INSERT INTO Works (title,content_type_id,unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING id, title, content_type_id, unit, saga_id
+const createWork = `-- name: CreateWork :one
+INSERT INTO works (title, content_type_id, unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING id, title, content_type_id, unit, saga_id
 `
 
 type CreateWorkParams struct {
@@ -44,18 +110,44 @@ type CreateWorkParams struct {
 	SagaID        sql.NullInt32 `json:"saga_id"`
 }
 
-func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) error {
-	_, err := q.db.ExecContext(ctx, createWork,
+func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) (Work, error) {
+	row := q.db.QueryRowContext(ctx, createWork,
 		arg.Title,
 		arg.ContentTypeID,
 		arg.Unit,
 		arg.SagaID,
 	)
+	var i Work
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.ContentTypeID,
+		&i.Unit,
+		&i.SagaID,
+	)
+	return i, err
+}
+
+const deleteReview = `-- name: DeleteReview :exec
+DELETE FROM review WHERE id = $1
+`
+
+func (q *Queries) DeleteReview(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteReview, id)
+	return err
+}
+
+const deleteReviewComment = `-- name: DeleteReviewComment :exec
+DELETE FROM review_comment WHERE id = $1
+`
+
+func (q *Queries) DeleteReviewComment(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteReviewComment, id)
 	return err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM Users WHERE id = $1
+DELETE FROM users WHERE id = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
@@ -63,8 +155,125 @@ func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
 	return err
 }
 
+const followUser = `-- name: FollowUser :one
+INSERT INTO user_follows (follower_id, followed_id) VALUES ($1,$2) RETURNING follower_id, followed_id, followed_at
+`
+
+type FollowUserParams struct {
+	FollowerID int32 `json:"follower_id"`
+	FollowedID int32 `json:"followed_id"`
+}
+
+func (q *Queries) FollowUser(ctx context.Context, arg FollowUserParams) (UserFollow, error) {
+	row := q.db.QueryRowContext(ctx, followUser, arg.FollowerID, arg.FollowedID)
+	var i UserFollow
+	err := row.Scan(&i.FollowerID, &i.FollowedID, &i.FollowedAt)
+	return i, err
+}
+
+const getConsumedWorksByUser = `-- name: GetConsumedWorksByUser :many
+SELECT id, title, content_type_id, unit, saga_id FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE user_id = $1) ORDER BY (content_type_id,name)
+`
+
+func (q *Queries) GetConsumedWorksByUser(ctx context.Context, userID int32) ([]Work, error) {
+	rows, err := q.db.QueryContext(ctx, getConsumedWorksByUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Work
+	for rows.Next() {
+		var i Work
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.ContentTypeID,
+			&i.Unit,
+			&i.SagaID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLastReview = `-- name: GetLastReview :one
+SELECT id, user_id, work_id, score, review, watched_at, liked FROM review WHERE user_id = $1 AND work_id = $2
+`
+
+type GetLastReviewParams struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
+func (q *Queries) GetLastReview(ctx context.Context, arg GetLastReviewParams) (Review, error) {
+	row := q.db.QueryRowContext(ctx, getLastReview, arg.UserID, arg.WorkID)
+	var i Review
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.WorkID,
+		&i.Score,
+		&i.Review,
+		&i.WatchedAt,
+		&i.Liked,
+	)
+	return i, err
+}
+
+const getNumberOfFavouritesFromUser = `-- name: GetNumberOfFavouritesFromUser :one
+SELECT COUNT(*) FROM user_favourites WHERE user_id = $1
+`
+
+func (q *Queries) GetNumberOfFavouritesFromUser(ctx context.Context, userID int32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNumberOfFavouritesFromUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const getNumberOfFavouritesFromWork = `-- name: GetNumberOfFavouritesFromWork :one
+SELECT COUNT(*) FROM user_favourites WHERE work_id = $1
+`
+
+func (q *Queries) GetNumberOfFavouritesFromWork(ctx context.Context, workID sql.NullInt32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNumberOfFavouritesFromWork, workID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const getNumberOfFollowers = `-- name: GetNumberOfFollowers :one
+SELECT COUNT(*) FROM user_follows WHERE followed_id = $1
+`
+
+func (q *Queries) GetNumberOfFollowers(ctx context.Context, followedID int32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNumberOfFollowers, followedID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const getNumberOfFollowings = `-- name: GetNumberOfFollowings :one
+SELECT COUNT(*) FROM user_follows WHERE follower_id = $1
+`
+
+func (q *Queries) GetNumberOfFollowings(ctx context.Context, followerID int32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNumberOfFollowings, followerID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getUser = `-- name: GetUser :one
-SELECT id, username, name, email, created_at FROM Users WHERE id = $1
+SELECT id, username, name, email, created_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
@@ -80,8 +289,57 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, username, name, email, created_at FROM users WHERE username = $1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Name,
+		&i.Email,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const likeReview = `-- name: LikeReview :one
+INSERT INTO review_like (review_id,user_id) VALUES ($1,$2) RETURNING review_id, user_id, liked_at
+`
+
+type LikeReviewParams struct {
+	ReviewID int32 `json:"review_id"`
+	UserID   int32 `json:"user_id"`
+}
+
+func (q *Queries) LikeReview(ctx context.Context, arg LikeReviewParams) (ReviewLike, error) {
+	row := q.db.QueryRowContext(ctx, likeReview, arg.ReviewID, arg.UserID)
+	var i ReviewLike
+	err := row.Scan(&i.ReviewID, &i.UserID, &i.LikedAt)
+	return i, err
+}
+
+const likeWork = `-- name: LikeWork :one
+INSERT INTO liked_works (user_id,work_id) VALUES ($1,$2) RETURNING user_id, work_id
+`
+
+type LikeWorkParams struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
+func (q *Queries) LikeWork(ctx context.Context, arg LikeWorkParams) (LikedWork, error) {
+	row := q.db.QueryRowContext(ctx, likeWork, arg.UserID, arg.WorkID)
+	var i LikedWork
+	err := row.Scan(&i.UserID, &i.WorkID)
+	return i, err
+}
+
 const listUsers = `-- name: ListUsers :many
-SELECT id, username, name, email, created_at FROM Users ORDER BY username
+SELECT id, username, name, email, created_at FROM users ORDER BY username
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -113,8 +371,122 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const removeWorkFromFavourites = `-- name: RemoveWorkFromFavourites :exec
+DELETE FROM user_favourites WHERE user_id = $1 AND work_id = $2
+`
+
+type RemoveWorkFromFavouritesParams struct {
+	UserID int32         `json:"user_id"`
+	WorkID sql.NullInt32 `json:"work_id"`
+}
+
+func (q *Queries) RemoveWorkFromFavourites(ctx context.Context, arg RemoveWorkFromFavouritesParams) error {
+	_, err := q.db.ExecContext(ctx, removeWorkFromFavourites, arg.UserID, arg.WorkID)
+	return err
+}
+
+const reviewWork = `-- name: ReviewWork :one
+INSERT INTO review (user_id, work_id, score, review, watched_at, liked) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, user_id, work_id, score, review, watched_at, liked
+`
+
+type ReviewWorkParams struct {
+	UserID    int32          `json:"user_id"`
+	WorkID    int32          `json:"work_id"`
+	Score     int32          `json:"score"`
+	Review    sql.NullString `json:"review"`
+	WatchedAt sql.NullTime   `json:"watched_at"`
+	Liked     sql.NullBool   `json:"liked"`
+}
+
+func (q *Queries) ReviewWork(ctx context.Context, arg ReviewWorkParams) (Review, error) {
+	row := q.db.QueryRowContext(ctx, reviewWork,
+		arg.UserID,
+		arg.WorkID,
+		arg.Score,
+		arg.Review,
+		arg.WatchedAt,
+		arg.Liked,
+	)
+	var i Review
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.WorkID,
+		&i.Score,
+		&i.Review,
+		&i.WatchedAt,
+		&i.Liked,
+	)
+	return i, err
+}
+
+const unconsumeWork = `-- name: UnconsumeWork :exec
+DELETE FROM consumed_works WHERE user_id = $1 AND work_id = $2
+`
+
+type UnconsumeWorkParams struct {
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
+}
+
+func (q *Queries) UnconsumeWork(ctx context.Context, arg UnconsumeWorkParams) error {
+	_, err := q.db.ExecContext(ctx, unconsumeWork, arg.UserID, arg.WorkID)
+	return err
+}
+
+const unfollowUser = `-- name: UnfollowUser :exec
+DELETE FROM user_follows WHERE follower_id = $1 AND followed_id = $2
+`
+
+type UnfollowUserParams struct {
+	FollowerID int32 `json:"follower_id"`
+	FollowedID int32 `json:"followed_id"`
+}
+
+func (q *Queries) UnfollowUser(ctx context.Context, arg UnfollowUserParams) error {
+	_, err := q.db.ExecContext(ctx, unfollowUser, arg.FollowerID, arg.FollowedID)
+	return err
+}
+
+const unlikeReview = `-- name: UnlikeReview :exec
+DELETE FROM review_like WHERE review_id = $1 AND user_id = $2
+`
+
+type UnlikeReviewParams struct {
+	ReviewID int32 `json:"review_id"`
+	UserID   int32 `json:"user_id"`
+}
+
+func (q *Queries) UnlikeReview(ctx context.Context, arg UnlikeReviewParams) error {
+	_, err := q.db.ExecContext(ctx, unlikeReview, arg.ReviewID, arg.UserID)
+	return err
+}
+
+const updateReview = `-- name: UpdateReview :exec
+UPDATE review SET score = $2, review = $3, watched_at = $4, liked = $5 WHERE id = $1
+`
+
+type UpdateReviewParams struct {
+	ID        int32          `json:"id"`
+	Score     int32          `json:"score"`
+	Review    sql.NullString `json:"review"`
+	WatchedAt sql.NullTime   `json:"watched_at"`
+	Liked     sql.NullBool   `json:"liked"`
+}
+
+func (q *Queries) UpdateReview(ctx context.Context, arg UpdateReviewParams) error {
+	_, err := q.db.ExecContext(ctx, updateReview,
+		arg.ID,
+		arg.Score,
+		arg.Review,
+		arg.WatchedAt,
+		arg.Liked,
+	)
+	return err
+}
+
 const updateUser = `-- name: UpdateUser :exec
-UPDATE Users SET username = $2, email = $3 WHERE id = $1
+UPDATE users SET username = $2, email = $3 WHERE id = $1
 `
 
 type UpdateUserParams struct {

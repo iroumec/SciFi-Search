@@ -29,7 +29,7 @@ INSERT INTO review (user_id, work_id, score, review, watched_at, liked) VALUES (
 SELECT * FROM review WHERE user_id = $1 AND work_id = $2;
 
 -- name: UpdateReview :exec
-UPDATE review SET score = $2, review = $3, when_watched = $4, liked = $5 WHERE id = $1;
+UPDATE review SET score = $2, review = $3, watched_at = $4, liked = $5 WHERE id = $1;
 
 -- name: DeleteReview :exec
 DELETE FROM review WHERE id = $1;
@@ -56,7 +56,7 @@ INSERT INTO review_comment (review_id, user_id,comment) VALUES ($1,$2,$3) RETURN
 DELETE FROM review_comment WHERE id = $1;
 
 -- name: GetConsumedWorksByUser :many
-SELECT * FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE id_user = $1) ORDER BY (content_type_id,name);
+SELECT * FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE user_id = $1) ORDER BY (content_type_id,name);
 
 -- name: FollowUser :one
 INSERT INTO user_follows (follower_id, followed_id) VALUES ($1,$2) RETURNING *;
@@ -69,3 +69,15 @@ SELECT COUNT(*) FROM user_follows WHERE followed_id = $1;
 
 -- name: GetNumberOfFollowings :one
 SELECT COUNT(*) FROM user_follows WHERE follower_id = $1;
+
+-- name: AddWorkToFavourites :one
+INSERT INTO user_favourites (user_id, work_id) VALUES ($1,$2) RETURNING *;
+
+-- name: RemoveWorkFromFavourites :exec
+DELETE FROM user_favourites WHERE user_id = $1 AND work_id = $2;
+
+-- name: GetNumberOfFavouritesFromUser :one
+SELECT COUNT(*) FROM user_favourites WHERE user_id = $1;
+
+-- name: GetNumberOfFavouritesFromWork :one
+SELECT COUNT(*) FROM user_favourites WHERE work_id = $1;
