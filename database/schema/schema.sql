@@ -1,15 +1,15 @@
 --------------------- Creacion de tablas ---------------------
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(20) UNIQUE NOT NULL,
+    username VARCHAR(20) UNIQUE NOT NULL, -- Alternative key.
     name VARCHAR(20) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     --password?
 );
 
-CREATE TABLE IF NOT EXISTS Works (
+CREATE TABLE IF NOT EXISTS works (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     content_type_id INT NOT NULL,
@@ -17,167 +17,179 @@ CREATE TABLE IF NOT EXISTS Works (
     saga_id INT
 );
 
-CREATE TABLE IF NOT EXISTS ContentTypes (
+CREATE TABLE IF NOT EXISTS content_types (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL
 );
---ContentTypes: Book, Movie, TV Show, Song, Game
---              Book saga, Movie saga, Related tv shows, Album, Game saga
 
-CREATE TABLE IF NOT EXISTS ConsumedWorks (
+-- Contenidos de la tabla estáticos.
+INSERT INTO content_types (id, name) VALUES
+    ('Book'),
+    ('Movie'),
+    ('TV Show'),
+    ('Song'),
+    ('Game'),
+    ('Book saga'),
+    ('Movie saga'),
+    ('Related tv shows'),
+    ('Album'),
+    ('Game saga');
+
+
+CREATE TABLE IF NOT EXISTS consumed_works (
     user_id INT, 
     work_id INT,
-    CONSTRAINT pk_consumedworks PRIMARY KEY (user_id,work_id)
+    CONSTRAINT pk_consumed_works PRIMARY KEY (user_id, work_id)
 )
 
-CREATE TABLE IF NOT EXISTS LikedWorks (
+CREATE TABLE IF NOT EXISTS liked_works (
     user_id INT, 
     work_id INT,
-    CONSTRAINT pk_likedworks PRIMARY KEY (user_id,work_id)
+    CONSTRAINT pk_liked_works PRIMARY KEY (user_id,work_id)
 )
 
-CREATE TABLE IF NOT EXISTS Review (
+CREATE TABLE IF NOT EXISTS review (
     id SERIAL PRIMARY KEY, --puede haber más de una review de la misma obra por el mismo usuario
     user_id INT NOT NULL,
     work_id INT NOT NULL,
     score INT CHECK (score >= 1 AND score <= 10) NOT NULL,
     review TEXT,
-    when_watched TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    watched_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     liked BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE IF NOT EXISTS ReviewLike (
+CREATE TABLE IF NOT EXISTS review_like (
     review_id INT, 
     user_id INT,
-    when_liked TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_reviewlike PRIMARY KEY (review_id,user_id)
+    liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_review_like PRIMARY KEY (review_id,user_id)
 );
 
-CREATE TABLE IF NOT EXISTS ReviewComment (
+CREATE TABLE IF NOT EXISTS review_comment (
     id SERIAL PRIMARY KEY,
     review_id INT,
     user_id INT,
     comment VARCHAR(255),
-    when_commented TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    commented_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 --falta queries.sql a partir de aca
-CREATE TABLE IF NOT EXISTS UserFollows (
-    id_follower INT, 
-    id_followed INT,
-    when_followed TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_userfollows PRIMARY KEY (id_follower,id_followed)
+CREATE TABLE IF NOT EXISTS user_follows (
+    follower_id INT, 
+    followed_id INT,
+    followed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_user_follows PRIMARY KEY (follower_id, followed_id)
 );
 
-CREATE TABLE IF NOT EXISTS UserFavorites (
+CREATE TABLE IF NOT EXISTS user_favourites (
     id_user INT,
     id_work INT,
-    CONSTRAINT pk_userfavorites PRIMARY KEY (id_user,id_work)
+    CONSTRAINT pk_user_favourites PRIMARY KEY (id_user, id_work)
 );
 
 --------------------- Asignacion de foreign keys ---------------------
 
-ALTER TABLE Works ADD CONSTRAINT Works_ContentType
+ALTER TABLE works ADD CONSTRAINT fk_works_content_type
     FOREIGN KEY (content_type_id)
-    REFERENCES ContentTypes(id)
+    REFERENCES content_types(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE Works ADD CONSTRAINT Works_Works --saga
+ALTER TABLE works ADD CONSTRAINT fk_works_works --saga
     FOREIGN KEY (saga_id)
-    REFERENCES Works(id)
+    REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE Review ADD CONSTRAINT Review_Users
+ALTER TABLE review ADD CONSTRAINT fk_review_users
     FOREIGN KEY (user_id)
-    REFERENCES Users(id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE Review ADD CONSTRAINT Review_Work
+ALTER TABLE review ADD CONSTRAINT fk_review_works
     FOREIGN KEY (work_id)
-    REFERENCES Works(id)
+    REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE ConsumedWorks ADD CONSTRAINT ConsumedWorks_Users
+ALTER TABLE consumed_works ADD CONSTRAINT fk_consumed_works_users
     FOREIGN KEY (user_id)
-    REFERENCES Users(id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE ConsumedWorks ADD CONSTRAINT ConsumedWorks_Works
+ALTER TABLE consumed_works ADD CONSTRAINT fk_consumed_works_works
     FOREIGN KEY (work_id)
-    REFERENCES Works(id)
+    REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE LikedWorks ADD CONSTRAINT LikedWorks_Users
+ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_users
     FOREIGN KEY (user_id)
-    REFERENCES Users(id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE LikedWorks ADD CONSTRAINT LikedWorks_Users
+ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_users
     FOREIGN KEY (work_id)
-    REFERENCES Works(id)
+    REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE ReviewLike ADD CONSTRAINT ReviewLike_Review
+ALTER TABLE review_like ADD CONSTRAINT fk_review_like_review
     FOREIGN KEY (review_id)
-    REFERENCES Review(id)
+    REFERENCES review(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE ReviewLike ADD CONSTRAINT ReviewLike_User
+ALTER TABLE review_like ADD CONSTRAINT fk_review_like_users
     FOREIGN KEY (user_id)
-    REFERENCES Users(id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE UserFollows ADD CONSTRAINT UserFollows_UsersA
-    FOREIGN KEY (id_followed)
-    REFERENCES Users(id)
+ALTER TABLE user_follows ADD CONSTRAINT fk_user_follows_followed_user
+    FOREIGN KEY (followed_id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE UserFollows ADD CONSTRAINT UserFollows_UsersB
-    FOREIGN KEY (id_follower)--no se si esto va separado
-    REFERENCES Users(id)
+ALTER TABLE user_follows ADD CONSTRAINT fk_user_follows_follower_user
+    FOREIGN KEY (follower_id) -- Separate foreign key constraint for follower_id, as both followed_id and follower_id reference Users(id) independently
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE UserFavorites ADD CONSTRAINT UserFavorites_Users
+ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_users
     FOREIGN KEY (id_user)
-    REFERENCES Users(id)
+    REFERENCES users(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE UserFavorites ADD CONSTRAINT UserFavorites_Works
+ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_works
     FOREIGN KEY (id_work)
-    REFERENCES Works(id)
+    REFERENCES works(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 --------------------- Funciones + Triggers ---------------------
 
---Control para mantener los usernames unicos (tal vez al pedo?)
+--Control para mantener los usernames unicos (tal vez al pedo?) Sí, creo que está al pedo
 CREATE OR REPLACE FUNCTION FN_TRIU_USERNAME()
 RETURNS TRIGGER AS $$
     BEGIN
