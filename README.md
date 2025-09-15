@@ -31,3 +31,12 @@ Para correr la aplicación:
 ```bash
 sudo docker compose up
 ```
+
+## Limpieza
+
+De hacer cambios en la base de datos, es necesario registrar el siguiente comando para limpiar el volumen y la imagen:
+
+```sh
+docker-compose down -v
+docker rmi uki
+```

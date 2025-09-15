@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS content_types (
 );
 
 -- Contenidos de la tabla estáticos.
-INSERT INTO content_types (id, name) VALUES
+INSERT INTO content_types (name) VALUES
     ('Book'),
     ('Movie'),
     ('TV Show'),

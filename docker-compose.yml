@@ -12,6 +12,7 @@ services:
 
   app:
     build: .
+    image: uki:latest
     ports:
       - "${APP_PORT}:8080"
     depends_on:
