@@ -1,9 +1,7 @@
 ﻿package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"uki/app/utils"
@@ -22,6 +20,8 @@ var queries *sqlc.Queries
 // registerHandlers registra todos los endpoints
 func RegisterHandlers(queryObject *sqlc.Queries) {
 
+	fmt.Println("Comenzando a registrar handlers...")
+
 	queries = queryObject
 
 	// Se crea un manejador (handler) de servidor de archivos.
@@ -30,49 +30,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se envuelve en un gzip middleware.
 	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
 
-	// Se define un handler que maneje la creación de usuarios.
-	http.HandleFunc("/users", usersHandler)
-}
+	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
+	registerUserHandlers()
 
-// usersHandler maneja creación de usuarios
-func usersHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
-	defer r.Body.Close()
-
-	var req struct {
-		Username string `json:"username"`
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "request body inválido: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if req.Username == "" || req.Name == "" || req.Email == "" {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return
-	}
-
-	createdUser, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-		Username: req.Username,
-		Name:     req.Name,
-		Email:    req.Email,
-	})
-	if err != nil {
-		log.Printf("error creating user: %v", err)
-		http.Error(w, "error interno", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{"ID": createdUser.ID})
-
-	fmt.Printf("User created: %+v\n", createdUser)
+	fmt.Println("Handlers registrados con éxito.")
 }

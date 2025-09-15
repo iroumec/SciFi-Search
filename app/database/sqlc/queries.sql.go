@@ -77,23 +77,30 @@ func (q *Queries) CreateContentType(ctx context.Context, name string) (ContentTy
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (username, name, email, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, username, name, email, created_at
+INSERT INTO users (username, name, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING id, username, name, email, password, created_at
 `
 
 type CreateUserParams struct {
 	Username string `json:"username"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Name, arg.Email)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Username,
+		arg.Name,
+		arg.Email,
+		arg.Password,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Name,
 		&i.Email,
+		&i.Password,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -273,7 +280,7 @@ func (q *Queries) GetNumberOfFollowings(ctx context.Context, followerID int32) (
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, username, name, email, created_at FROM users WHERE id = $1
+SELECT id, username, name, email, password, created_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
@@ -284,13 +291,14 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 		&i.Username,
 		&i.Name,
 		&i.Email,
+		&i.Password,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, username, name, email, created_at FROM users WHERE username = $1
+SELECT id, username, name, email, password, created_at FROM users WHERE username = $1
 `
 
 func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
@@ -301,6 +309,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.Username,
 		&i.Name,
 		&i.Email,
+		&i.Password,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -339,7 +348,7 @@ func (q *Queries) LikeWork(ctx context.Context, arg LikeWorkParams) (LikedWork, 
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, username, name, email, created_at FROM users ORDER BY username
+SELECT id, username, name, email, password, created_at FROM users ORDER BY username
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -356,6 +365,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Username,
 			&i.Name,
 			&i.Email,
+			&i.Password,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err

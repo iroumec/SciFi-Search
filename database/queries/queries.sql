@@ -8,7 +8,7 @@ SELECT * FROM users WHERE username = $1;
 SELECT * FROM users ORDER BY username;
 
 -- name: CreateUser :one
-INSERT INTO users (username, name, email, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *;
+INSERT INTO users (username, name, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *;
 
 -- name: UpdateUser :exec
 UPDATE users SET username = $2, email = $3 WHERE id = $1;

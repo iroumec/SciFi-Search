@@ -1,0 +1,140 @@
+package handlers
+
+import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"slices"
+
+	"golang.org/x/crypto/bcrypt"
+
+	sqlc "uki/app/database/sqlc"
+
+	_ "github.com/lib/pq"
+)
+
+// registerHandlers registra todos los endpoints
+func registerUserHandlers() {
+
+	fmt.Println("Registrando handlers de usuarios...")
+
+	// Handler que maneja el registro de usuarios.
+	http.HandleFunc("/signIn", signInHandler)
+
+	// Handler que maneja el login de usuarios.
+	http.HandleFunc("/logIn", logInHandler)
+
+	fmt.Println("Handlers de usuarios registrados...")
+}
+
+func signInHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Print("Manejando registro de usuario...")
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	defer r.Body.Close()
+
+	var req struct {
+		Username string `json:"username"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "request body inválido: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if hayCampoIncompleto(req.Username, req.Name, req.Email, req.Password) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("error hashing password: %v", err)
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+
+	createdUser, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
+		Username: req.Username,
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: string(hashedPassword),
+	})
+	if err != nil {
+		log.Printf("error creating user: %v", err)
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]interface{}{"ID": createdUser.ID})
+
+	fmt.Printf("User created: %+v\n", createdUser)
+}
+
+func logInHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("Manejando log in de usuario...")
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	defer r.Body.Close()
+
+	var req struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "request body inválido: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if hayCampoIncompleto(req.Username, req.Password) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return
+	}
+
+	user, err := queries.GetUserByUsername(r.Context(), req.Username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			http.Error(w, "El usuario proporcionado no existe.", http.StatusNotFound)
+			return
+		}
+		log.Printf("error getting user: %v", err)
+		http.Error(w, "error interno", http.StatusInternalServerError)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "Contraseña incorrecta.", http.StatusUnauthorized)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID})
+
+	fmt.Printf("User logged in: %+v\n", user)
+
+}
+
+func hayCampoIncompleto(campos ...string) bool {
+
+	return slices.Contains(campos, "")
+}

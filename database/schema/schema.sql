@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(20) UNIQUE NOT NULL, -- Alternative key.
     name VARCHAR(20) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(20) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    --password?
 );
 
 CREATE TABLE IF NOT EXISTS works (
