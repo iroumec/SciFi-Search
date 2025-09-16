@@ -15,56 +15,22 @@
     </header>
     <main>
         <h1>Sign In</h1>
-        <form id="signInForm">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" autocomplete="username" required>
-
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" autocomplete="email" required>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" autocomplete="new-password" required>
-
-            <button type="submit">Registrarse</button>
-        </form>
-        <div id="mensaje" aria-live="polite"></div>
+            <form action="/signIn" method="POST">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" autocomplete="username" required>
+                
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="new-password" required>
+                
+                <button type="submit">Registrarse</button>
+            </form>
     </main>
-
-    <script>
-        document.getElementById("signInForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const data = {
-                username: e.target.username.value,
-                name: e.target.name.value,
-                email: e.target.email.value,
-                password: e.target.password.value
-            };
-
-            try {
-                const res = await fetch("/signIn", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    const json = await res.json();
-                    document.getElementById("mensaje").textContent = "Usuario registrado con ID: " + json.ID;
-                    setTimeout(() => window.location.href = "/", 2000);
-                } else {
-                    document.getElementById("mensaje").textContent = "Error al registrar usuario.";
-                }
-            } catch (err) {
-                document.getElementById("mensaje").textContent = "Error de conexión";
-            }
-        });
-    </script>
-
-
-
 
     <footer>
         <p>&copy; 2025 UKI</p>

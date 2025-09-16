@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,27 +41,24 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer r.Body.Close()
-
-	var req struct {
-		Username string `json:"username"`
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "request body inválido: "+err.Error(), http.StatusBadRequest)
+	// Se parsean los datos del formulario enviados vía POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
 
-	if hayCampoIncompleto(req.Username, req.Name, req.Email, req.Password) {
+	username := r.FormValue("username")
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	if hayCampoIncompleto(username, name, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
 
 	// Se encripta la contraseña para no manejar credenciales en bruto.
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("error hashing password: %v", err)
 		http.Error(w, "error interno", http.StatusInternalServerError)
@@ -70,9 +66,9 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	createdUser, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-		Username: req.Username,
-		Name:     req.Name,
-		Email:    req.Email,
+		Username: username,
+		Name:     name,
+		Email:    email,
 		Password: string(hashedPassword),
 	})
 	if err != nil {
@@ -81,11 +77,11 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]interface{}{"ID": createdUser.ID})
+	// Quizás pueda usarse después...
+	_ = createdUser
 
-	fmt.Printf("User created: %+v\n", createdUser)
+	// Se redirige al usuario al menú princiapl.
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // ------------------------------------------------------------------------------------------------

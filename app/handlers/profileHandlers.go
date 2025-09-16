@@ -33,6 +33,10 @@ func registerProfileHandlers() {
 	fmt.Println("Handlers de perfil registrados...")
 }
 
+// ------------------------------------------------------------------------------------------------
+// Profile Handler
+// ------------------------------------------------------------------------------------------------
+
 func profileHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("\nManejando renderizado del perfil...")
