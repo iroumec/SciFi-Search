@@ -24,5 +24,3 @@ En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A dif
 - Si preferís un límite “de seguridad”, poné `VARCHAR(255)` (más que suficiente para bcrypt/argon2/scrypt).
 
 ---
-
-¿Querés que te prepare un `ALTER TABLE` directo a `TEXT` y además te muestre cómo recrear el `sqlc` con ese cambio?
