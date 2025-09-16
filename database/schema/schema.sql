@@ -1,11 +1,14 @@
 --------------------- Creacion de tablas ---------------------
 
 CREATE TABLE IF NOT EXISTS users (
+    -- SERIAL es para int32 (2.1 mil millones de usuarios).
+    -- Si la aplicación planea tener más usuarios, se debe usar BIGSERIAL (int64).
     id SERIAL PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL, -- Alternative key.
     name VARCHAR(20) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(20) NOT NULL,
+    -- TEXT debido a la encriptación.
+    password TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -83,7 +86,7 @@ CREATE TABLE IF NOT EXISTS user_follows (
 CREATE TABLE IF NOT EXISTS user_favourites (
     user_id INT,
     work_id INT,
-    CONSTRAINT pk_user_favourites PRIMARY KEY (user_id, workd_id)
+    CONSTRAINT pk_user_favourites PRIMARY KEY (user_id, work_id)
 );
 
 --------------------- Asignacion de foreign keys ---------------------
@@ -137,7 +140,7 @@ ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_users
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_users
+ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_works
     FOREIGN KEY (work_id)
     REFERENCES works(id)
     NOT DEFERRABLE
@@ -232,7 +235,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER TRIU_REVIEW
     BEFORE INSERT OR UPDATE ON review 
     FOR EACH ROW 
-        EXECUTE FUNCTION FN_TRI_REVIEW();
+        EXECUTE FUNCTION FN_TRIU_REVIEW();
 
 --Eliminar de ConsumedWork debe eliminar de Liked y las review, junto con los comentarios y likes de review
 --PREGUNTAR: tal vez poner un booleano "active" y desactivarlo a modo de eliminar
@@ -256,17 +259,19 @@ CREATE OR REPLACE TRIGGER TRD_CONSUMEDWORKS
 --Verifica que el usuario haya marcado unicamente un favorito por tipo de contenido
 CREATE OR REPLACE FUNCTION FN_TRI_USER_FAVOURITES()
 RETURNS TRIGGER AS $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM works WHERE id = NEW.work_id AND unit) THEN 
-                RAISE EXCEPTION 'Para marcar una obra como favorita, esta debe ser unitaria.';
-            END IF;
-            IF ((SELECT content_type_id FROM works w WHERE NEW.work_id = id) --obtengo el tipo de contenido del nuevo
-                            IN 
-                (SELECT content_type_id FROM works m WHERE m.id IN --obtengo lista de los tipos de contenido de los favoritos del usuario
-                    (SELECT work_id FROM user_favourites u WHERE u.user_id = NEW.user_id))) THEN 
-                RAISE EXCEPTION 'Solo se puede marcar como favorita una obra por tipo de contenido.'
-            END IF;
-        END;
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM works WHERE id = NEW.work_id AND unit) THEN 
+            RAISE EXCEPTION 'Para marcar una obra como favorita, esta debe ser unitaria.';
+        END IF;
+        
+        IF ((SELECT content_type_id FROM works w WHERE NEW.work_id = id) --obtengo el tipo de contenido del nuevo
+            IN 
+            (SELECT content_type_id FROM works m WHERE m.id
+            IN --obtengo lista de los tipos de contenido de los favoritos del usuario
+            (SELECT work_id FROM user_favourites u WHERE u.user_id = NEW.user_id))) THEN 
+                RAISE EXCEPTION 'Solo se puede marcar como favorita una obra por tipo de contenido.';
+        END IF;
+    END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE TRIGGER TRI_USER_FAVOURITES 

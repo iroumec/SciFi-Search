@@ -29,6 +29,10 @@ func registerUserHandlers() {
 	fmt.Println("Handlers de usuarios registrados...")
 }
 
+// ------------------------------------------------------------------------------------------------
+// SignIn Handler
+// ------------------------------------------------------------------------------------------------
+
 func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Print("Manejando registro de usuario...")
@@ -57,6 +61,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Se encripta la contraseña para no manejar credenciales en bruto.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("error hashing password: %v", err)
@@ -82,6 +87,10 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Printf("User created: %+v\n", createdUser)
 }
+
+// ------------------------------------------------------------------------------------------------
+// LogIn Handler
+// ------------------------------------------------------------------------------------------------
 
 func logInHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -126,13 +135,12 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{"ID": user.ID})
-
-	fmt.Printf("User logged in: %+v\n", user)
-
+	handleProfileAccess(user, w, r)
 }
+
+// ------------------------------------------------------------------------------------------------
+// Verificación de campos
+// ------------------------------------------------------------------------------------------------
 
 func hayCampoIncompleto(campos ...string) bool {
 

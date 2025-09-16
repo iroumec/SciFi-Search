@@ -33,5 +33,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registerUserHandlers()
 
+	// Se registran los handlers correspondientes al perfil de usuario.
+	registerProfileHandlers()
+
 	fmt.Println("Handlers registrados con éxito.")
 }

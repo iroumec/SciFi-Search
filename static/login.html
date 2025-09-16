@@ -32,7 +32,6 @@
                 if (res.ok) {
                     const json = await res.json();
                     document.getElementById("mensaje").textContent = "Usuario logueado con ID: " + json.ID;
-                    setTimeout(() => window.location.href = "/", 2000); // Se vuelve al índice luego de un tiempo.
                 } else {
                     document.getElementById("mensaje").textContent = "Error al loguear usuario";
                 }
