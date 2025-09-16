@@ -7,7 +7,7 @@ import (
 	sqlc "uki/app/database/sqlc"
 )
 
-func RegisterSearchHandlers() {
+func registerSearchHandlers() {
 
 	// Handler que maneja la búsqueda.
 	http.HandleFunc("/search", searchHandler)
