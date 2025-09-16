@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"slices"
@@ -20,10 +21,10 @@ func registerUserHandlers() {
 	fmt.Println("Registrando handlers de usuarios...")
 
 	// Handler que maneja el registro de usuarios.
-	http.HandleFunc("/signIn", signInHandler)
+	http.HandleFunc("/signin", signInHandler)
 
 	// Handler que maneja el login de usuarios.
-	http.HandleFunc("/logIn", logInHandler)
+	http.HandleFunc("/login", logInHandler)
 
 	fmt.Println("Handlers de usuarios registrados...")
 }
@@ -34,12 +35,27 @@ func registerUserHandlers() {
 
 func signInHandler(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Print("Manejando registro de usuario...")
-
-	if r.Method != http.MethodPost {
+	switch r.Method {
+	case http.MethodGet:
+		signInHandleGET(w)
+	case http.MethodPost:
+		signInHandlePOST(w, r)
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func signInHandleGET(w http.ResponseWriter) {
+
+	tmpl := template.Must(template.ParseFiles("template/signin.html"))
+	tmpl.Execute(w, nil)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
@@ -90,12 +106,26 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 func logInHandler(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("Manejando log in de usuario...")
-
-	if r.Method != http.MethodPost {
+	switch r.Method {
+	case http.MethodGet:
+		logInHandleGET(w)
+	case http.MethodPost:
+		logInHandlePOST(w, r)
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func logInHandleGET(w http.ResponseWriter) {
+	tmpl := template.Must(template.ParseFiles("template/login.html"))
+	tmpl.Execute(w, nil)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
@@ -128,8 +158,6 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Login extisoso, generando sesión...")
-
 	handleProfileAccess(user, w, r)
 }
 
@@ -138,6 +166,15 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func hayCampoIncompleto(campos ...string) bool {
+
+	return slices.Contains(campos, "")
+}
+
+// ------------------------------------------------------------------------------------------------
+// Parseo de datos
+// ------------------------------------------------------------------------------------------------
+
+func parseData(campos ...string) bool {
 
 	return slices.Contains(campos, "")
 }
