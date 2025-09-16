@@ -57,8 +57,8 @@ type User struct {
 }
 
 type UserFavourite struct {
-	UserID int32         `json:"user_id"`
-	WorkID sql.NullInt32 `json:"work_id"`
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
 }
 
 type UserFollow struct {
@@ -68,9 +68,12 @@ type UserFollow struct {
 }
 
 type Work struct {
-	ID            int32         `json:"id"`
-	Title         string        `json:"title"`
-	ContentTypeID int32         `json:"content_type_id"`
-	Unit          sql.NullBool  `json:"unit"`
-	SagaID        sql.NullInt32 `json:"saga_id"`
+	ID            int32          `json:"id"`
+	Source        string         `json:"source"`
+	Title         string         `json:"title"`
+	ContentTypeID int32          `json:"content_type_id"`
+	ImageUrl      sql.NullString `json:"image_url"`
+	Unit          sql.NullBool   `json:"unit"`
+	Description   sql.NullString `json:"description"`
+	SagaID        sql.NullInt32  `json:"saga_id"`
 }

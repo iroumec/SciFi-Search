@@ -12,11 +12,15 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creo que "contents" sería un mejor nombre.
 CREATE TABLE IF NOT EXISTS works (
     id SERIAL PRIMARY KEY,
+    source VARCHAR NOT NULL, -- tmdb, igdb, etc.
     title VARCHAR(100) NOT NULL,
     content_type_id INT NOT NULL,
+    image_url TEXT,
     unit BOOLEAN DEFAULT FALSE,
+    description TEXT,
     saga_id INT
 );
 

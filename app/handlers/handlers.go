@@ -38,3 +38,32 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	fmt.Println("Handlers registrados con éxito.")
 }
+
+/*
+
+func main() {
+	r := chi.NewRouter()
+
+	// Middlewares básicos (logs, CORS, etc)
+	r.Use(handlers.LoggingMiddleware)
+
+	// Rutas de usuario
+	r.Get("/login", handlers.LoginPageHandler) // GET -> muestra formulario
+	r.Post("/login", handlers.LogInHandler)    // POST -> procesa login
+	r.Get("/register", handlers.RegisterPageHandler)
+	r.Post("/signIn", handlers.SignInHandler)
+
+	// Perfil de usuario
+	r.Get("/profile", handlers.ProfileHandler)
+
+	// Ejemplo de rutas dinámicas tipo Letterboxd
+	r.Get("/film/{slug}", handlers.FilmHandler)
+	r.Get("/film/{slug}/crew", handlers.CrewHandler)
+
+	// Servir archivos estáticos (CSS, JS, imágenes)
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	http.ListenAndServe(":8080", r)
+}
+
+*/

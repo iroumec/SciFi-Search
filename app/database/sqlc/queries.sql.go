@@ -15,8 +15,8 @@ INSERT INTO user_favourites (user_id, work_id) VALUES ($1,$2) RETURNING user_id,
 `
 
 type AddWorkToFavouritesParams struct {
-	UserID int32         `json:"user_id"`
-	WorkID sql.NullInt32 `json:"work_id"`
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
 }
 
 func (q *Queries) AddWorkToFavourites(ctx context.Context, arg AddWorkToFavouritesParams) (UserFavourite, error) {
@@ -107,7 +107,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const createWork = `-- name: CreateWork :one
-INSERT INTO works (title, content_type_id, unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING id, title, content_type_id, unit, saga_id
+INSERT INTO works (title, content_type_id, unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING id, source, title, content_type_id, image_url, unit, description, saga_id
 `
 
 type CreateWorkParams struct {
@@ -127,9 +127,12 @@ func (q *Queries) CreateWork(ctx context.Context, arg CreateWorkParams) (Work, e
 	var i Work
 	err := row.Scan(
 		&i.ID,
+		&i.Source,
 		&i.Title,
 		&i.ContentTypeID,
+		&i.ImageUrl,
 		&i.Unit,
+		&i.Description,
 		&i.SagaID,
 	)
 	return i, err
@@ -179,7 +182,7 @@ func (q *Queries) FollowUser(ctx context.Context, arg FollowUserParams) (UserFol
 }
 
 const getConsumedWorksByUser = `-- name: GetConsumedWorksByUser :many
-SELECT id, title, content_type_id, unit, saga_id FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE user_id = $1) ORDER BY (content_type_id,name)
+SELECT id, source, title, content_type_id, image_url, unit, description, saga_id FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE user_id = $1) ORDER BY (content_type_id,name)
 `
 
 func (q *Queries) GetConsumedWorksByUser(ctx context.Context, userID int32) ([]Work, error) {
@@ -193,9 +196,12 @@ func (q *Queries) GetConsumedWorksByUser(ctx context.Context, userID int32) ([]W
 		var i Work
 		if err := rows.Scan(
 			&i.ID,
+			&i.Source,
 			&i.Title,
 			&i.ContentTypeID,
+			&i.ImageUrl,
 			&i.Unit,
+			&i.Description,
 			&i.SagaID,
 		); err != nil {
 			return nil, err
@@ -250,7 +256,7 @@ const getNumberOfFavouritesFromWork = `-- name: GetNumberOfFavouritesFromWork :o
 SELECT COUNT(*) FROM user_favourites WHERE work_id = $1
 `
 
-func (q *Queries) GetNumberOfFavouritesFromWork(ctx context.Context, workID sql.NullInt32) (int64, error) {
+func (q *Queries) GetNumberOfFavouritesFromWork(ctx context.Context, workID int32) (int64, error) {
 	row := q.db.QueryRowContext(ctx, getNumberOfFavouritesFromWork, workID)
 	var count int64
 	err := row.Scan(&count)
@@ -386,8 +392,8 @@ DELETE FROM user_favourites WHERE user_id = $1 AND work_id = $2
 `
 
 type RemoveWorkFromFavouritesParams struct {
-	UserID int32         `json:"user_id"`
-	WorkID sql.NullInt32 `json:"work_id"`
+	UserID int32 `json:"user_id"`
+	WorkID int32 `json:"work_id"`
 }
 
 func (q *Queries) RemoveWorkFromFavourites(ctx context.Context, arg RemoveWorkFromFavouritesParams) error {
