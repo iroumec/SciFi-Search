@@ -8,38 +8,20 @@
 
 <body>
     <h1>Login</h1>
-    <form id="logInForm">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
+    <form action="/logIn" method="POST">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Username" required><br>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password" required><br>
+
         <button type="submit">Enviar</button>
     </form>
 
-    <script>
-        document.getElementById("logInForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
-            const data = {
-                username: e.target.username.value,
-                password: e.target.password.value
-            };
-
-            try {
-                const res = await fetch("/logIn", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    const json = await res.json();
-                    document.getElementById("mensaje").textContent = "Usuario logueado con ID: " + json.ID;
-                } else {
-                    document.getElementById("mensaje").textContent = "Error al loguear usuario";
-                }
-            } catch (err) {
-                document.getElementById("mensaje").textContent = "Error de conexión";
-            }
-        });
-    </script>
+    <!-- Mensaje de error opcional
+    <div id="mensaje" style="color:red;">
+        {{.ErrorMessage}} Se puede renderizar esto desde Go si se quiere mostrar errores
+    </div> -->
 </body>
 
 </html>

@@ -34,9 +34,8 @@ sudo docker compose up
 
 ## Limpieza
 
-De hacer cambios en la base de datos, es necesario registrar el siguiente comando para limpiar el volumen y la imagen:
+Ante cambios en la base de datos, es necesario eliminar el volumen y reconstruirlo. Para ello, ejecute el siguiente comando:
 
 ```sh
 docker-compose down -v
-docker rmi uki
 ```

@@ -101,24 +101,21 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer r.Body.Close()
-
-	var req struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "request body inválido: "+err.Error(), http.StatusBadRequest)
+	// Se parsean los datos del formulario enviados vía POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
 
-	if hayCampoIncompleto(req.Username, req.Password) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	if hayCampoIncompleto(username, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
 
-	user, err := queries.GetUserByUsername(r.Context(), req.Username)
+	user, err := queries.GetUserByUsername(r.Context(), username)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "El usuario proporcionado no existe.", http.StatusNotFound)
@@ -129,11 +126,13 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		http.Error(w, "Contraseña incorrecta.", http.StatusUnauthorized)
 		return
 	}
+
+	fmt.Println("Login extisoso, generando sesión...")
 
 	handleProfileAccess(user, w, r)
 }

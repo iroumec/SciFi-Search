@@ -1,6 +1,8 @@
+# Learning
+
 En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A diferencia de MySQL, Postgres no limita internamente `VARCHAR(n)` a `n` bytes: solo lo valida al insertar/actualizar.
 
-### Diferencias prácticas:
+## Diferencias prácticas
 
 - `VARCHAR(255)`
 
@@ -16,7 +18,7 @@ En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A dif
 
 ---
 
-### Recomendación
+## Recomendación
 
 - Para contraseñas **TEXT** es la opción más robusta y flexible.
 - Si preferís un límite “de seguridad”, poné `VARCHAR(255)` (más que suficiente para bcrypt/argon2/scrypt).

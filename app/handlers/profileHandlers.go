@@ -34,6 +34,9 @@ func registerProfileHandlers() {
 }
 
 func profileHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("\nManejando renderizado del perfil...")
+
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		http.Error(w, "no autenticado", http.StatusUnauthorized)
@@ -52,11 +55,15 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("Renderizando plantilla de acuerdo a los datos del usuario...")
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err = tmpl.Execute(w, user)
 	if err != nil {
 		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
 	}
+
+	fmt.Println("Plantilla renderizada.")
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -73,16 +80,19 @@ func handleProfileAccess(user sqlc.User, w http.ResponseWriter, r *http.Request)
 
 	sessions[token] = user.ID
 
+	fmt.Println("Se agregó un nuevo token de sesión.")
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true, // true si usás HTTPS
+		Secure:   false, // true si se usa HTTPS
 		SameSite: http.SameSiteStrictMode,
 	})
 
 	// Se redirige al usuario a la página del perfil.
+	// F12 -> Network. Debería verse un 303 si esto funciona bien.
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
