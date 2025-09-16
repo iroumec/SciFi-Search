@@ -36,12 +36,14 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se registran los handlers correspondientes al perfil de usuario.
 	registerProfileHandlers()
 
+	RegisterSearchHandlers()
+
 	fmt.Println("Handlers registrados con éxito.")
 }
 
 /*
 
-func main() {
+func RegisterHandlers(queryObject *sqlc.Queries) {
 	r := chi.NewRouter()
 
 	// Middlewares básicos (logs, CORS, etc)

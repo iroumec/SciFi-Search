@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>UKI - Búsqueda</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+    <link rel="icon" type="image/png" href="/static/img/icono.png">
+</head>
+
+<body>
+    <h1>Búsqueda de Contenido</h1>
+
+    <form action="/search" method="GET">
+        <label for="query">Buscar:</label>
+        <input type="text" id="query" name="query" placeholder="Título, película, libro, música..." required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Área de resultados -->
+    {{if .Results}}
+    <h2>Resultados:</h2>
+    <ul>
+        {{range .Results}}
+        <li>
+            <strong>{{.Title}}</strong> ({{.Type}})<br>
+            {{if .Description}}{{.Description}}{{end}}<br>
+            {{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Title}}" style="max-width:150px;"><br>{{end}}
+        </li>
+        {{end}}
+    </ul>
+    {{else if .Query}}
+    <p>No se encontraron resultados para "{{.Query}}".</p>
+    {{end}}
+</body>
+
+</html>
