@@ -9,17 +9,17 @@ import (
 
 func RegisterSearchHandlers() {
 	// Handler que maneja el acceso al perfil.
-	http.HandleFunc("/search", reviewHandler)
+	http.HandleFunc("/search", searchHandler)
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("uki/templates/search.html"))
+	tmpl := template.Must(template.ParseFiles("templates/search.html"))
 
 	query := r.URL.Query().Get("query")
 	var results []sqlc.Work
 
 	if query != "" {
-		// Aquí llamás a tu proveedor o DB
+		// Aquí se llama al proveedor de la DB, o la BD en sí.
 		//results = provider.Search(query)
 	}
 

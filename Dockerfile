@@ -17,6 +17,7 @@ RUN addgroup -S uki && adduser -S uki -G uki
 COPY --from=builder /app/main .
 
 COPY static ./static
+COPY app/templates/ ./templates
 
 # Se brinda al usuario no root permisos para ejecutar la app.
 RUN chown -R uki:uki /app
@@ -27,3 +28,7 @@ EXPOSE 8080
 USER uki
 
 CMD ["./main"]
+
+# Puede verse el contenido en el directorio /app mediante los siguientes comandos:
+# docker run -it --rm uki sh
+# ls -R
