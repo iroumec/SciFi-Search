@@ -94,8 +94,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	// Quizás pueda usarse después...
 	_ = createdUser
 
-	// Se redirige al usuario al menú princiapl.
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	renderizeTemplate(w, "template/userRegistered.html", nil)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -1,0 +1,25 @@
+{{ define "title" }}UKI - Films{{ end }}
+
+{{ define "content" }}
+<h1>{{ .Title }}</h1>
+
+<div class="movie-detail">
+    {{ if .ImageURL }}
+    <img src="{{ .ImageURL }}" alt="{{ .Title }}" style="max-width:300px;">
+    {{ end }}
+
+    <p><strong>Descripción:</strong> {{ if .Description }}{{ .Description }}{{ else }}No disponible{{ end }}</p>
+
+    {{ if .Rating }}
+    <p><strong>Rating:</strong> {{ .Rating }}/10</p>
+    {{ end }}
+
+    {{ if .Type }}
+    <p><strong>Tipo:</strong> {{ .Type }}</p>
+    {{ end }}
+
+    {{ if .ReleaseDate }}
+    <p><strong>Fecha de lanzamiento:</strong> {{ .ReleaseDate }}</p>
+    {{ end }}
+</div>
+{{ end }}

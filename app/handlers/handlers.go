@@ -69,9 +69,9 @@ func applyLayout(htmlPath string) *template.Template {
 	// `template.ParseFiles` abre el archivo y lo convierte en un objeto `*template.Template`.
 	// `template.Must` hace que si hay un error al leer la plantilla, el programa panic automáticamente.
 	return template.Must(template.ParseFiles(
-		"template/layout.html",
-		"template/header.html",
-		"template/footer.html",
+		"template/layout/layout.html",
+		"template/layout/header.html",
+		"template/layout/footer.html",
 		htmlPath,
 	))
 }
