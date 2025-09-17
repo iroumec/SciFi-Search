@@ -2,10 +2,14 @@ package handlers
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"slices"
+
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -36,7 +40,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		signInHandleGET(w)
+		signInHandleGET(w, "")
 	case http.MethodPost:
 		signInHandlePOST(w, r)
 	default:
@@ -46,9 +50,13 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func signInHandleGET(w http.ResponseWriter) {
+func signInHandleGET(w http.ResponseWriter, errorMessage string) {
 
-	renderizeTemplate(w, "template/signin.html", nil)
+	data := map[string]any{
+		"ErrorMessage": errorMessage,
+	}
+
+	renderizeTemplate(w, "template/signin.html", data)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -67,7 +75,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	if hayCampoIncompleto(username, name, email, password) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		signInHandleGET(w, "Faltan campos obligatorios.")
 		return
 	}
 
@@ -86,7 +94,13 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		Password: string(hashedPassword),
 	})
 	if err != nil {
-		log.Printf("error creating user: %v", err)
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
+			http.Error(w, "El usuario o email ya existen.", http.StatusConflict)
+			return
+		}
+
+		log.Printf("error creando usuario: %v", err)
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
 	}
@@ -143,6 +157,7 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Hacer funcionar esto...
 	user, err := queries.GetUserByUsername(r.Context(), username)
 	if err != nil {
 		if err == sql.ErrNoRows {

@@ -4,9 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     -- SERIAL es para int32 (2.1 mil millones de usuarios).
     -- Si la aplicación planea tener más usuarios, se debe usar BIGSERIAL (int64).
     id SERIAL PRIMARY KEY,
-    username VARCHAR(20) UNIQUE NOT NULL, -- Alternative key.
+    username VARCHAR(20) UNIQUE CONSTRAINT uq_username NOT NULL, -- Alternative key.
     name VARCHAR(20) NOT NULL,
-    email VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Se nombran para poder usarlas en el manejo de errores.
     -- TEXT debido a la encriptación.
     password TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -196,26 +196,6 @@ ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_works
 --------------------- Funciones + Triggers ---------------------
 -- Creo que podrían estar en otro archivo, porque el sqlc no los usa y solo los usa docker.
 -- Tampoco creo que usa los alter table.
-
---Control para mantener los usernames unicos (tal vez al pedo?) Sí, creo que está al pedo
-CREATE OR REPLACE FUNCTION FN_TRIU_USERNAME()
-RETURNS TRIGGER AS $$
-    BEGIN
-
-        IF EXISTS (SELECT 1 FROM users WHERE username = NEW.username) THEN
-            RAISE EXCEPTION 'Ya existe otro usuario con ese username.';
-        END IF;
-
-        RETURN NEW;
-
-    END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER TRIU_USERNAME
-    BEFORE INSERT OR UPDATE ON users
-    FOR EACH ROW
-        EXECUTE FUNCTION FN_TRIU_USERNAME();
-
 
 -- Carga de la tabla ConsumedWorks al momento de cargar una review
 -- Controla que la obra que se hace la review es unidad
