@@ -24,3 +24,5 @@ En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A dif
 - Si preferís un límite “de seguridad”, poné `VARCHAR(255)` (más que suficiente para bcrypt/argon2/scrypt).
 
 ---
+
+El navegador no peude acceder a ningún recurso que no esté en static (la ruta de archvios que se sirve). Por eso, se pone el css y laas imágenes ahí.

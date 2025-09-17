@@ -4,15 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <title>UKI - Sign In</title>
-    <link rel="stylesheet" href="/static/css/estilos.css">
-    <link rel="icon" type="image/png" href="/static/img/icono.png">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="icon" type="image/png" href="img/icono.png">
 </head>
 
 <body>
     <header>
         <img src="img/logo.png" alt="Logo UKI" id="logo">
-
+    
+        <nav>
+            <a href="#peliculas">Películas</a>
+            <a href="#musica">Música</a>
+            <a href="#libros">Libros</a>
+            <a href="#series">Series</a>
+            <a href="#juegos">Juegos</a>
+        </nav>
+    
+        <button class="btn-registro" onclick="window.location.href='/search'">Buscar</button>
+        <button class="btn-registro" onclick="window.location.href='/signin'">Sign-in</button>
+        <button class="btn-registro" onclick="window.location.href='/login'">Log-in</button>
+    
+    
     </header>
+
     <main>
         <h1>Sign In</h1>
             <form action="/signin" method="POST">
@@ -34,7 +48,13 @@
 
     <footer>
         <p>&copy; 2025 UKI</p>
+        <p>Powered by:</p>
+        <div class="powered-by">
+            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
+            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
+        </div>
     </footer>
+
 </body>
 
 </html>
