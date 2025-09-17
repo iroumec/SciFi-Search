@@ -50,7 +50,10 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 func signInHandleGET(w http.ResponseWriter) {
 
 	tmpl := template.Must(template.ParseFiles("template/signin.html"))
-	tmpl.Execute(w, nil)
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -108,7 +111,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		logInHandleGET(w)
+		logInHandleGET(w, "")
 	case http.MethodPost:
 		logInHandlePOST(w, r)
 	default:
@@ -118,17 +121,20 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func logInHandleGET(w http.ResponseWriter) {
+func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 
-	//tmpl := template.Must(template.ParseFiles("template/login.html"))
-	tmpl, err := template.ParseFiles("template/login.html")
-	if err != nil {
-		http.Error(w, fmt.Sprintf("error cargando template: %v", err), http.StatusInternalServerError)
-		return
+	tmpl := template.Must(template.ParseFiles(
+		"template/layout.html",
+		"template/header.html",
+		"template/footer.html",
+		"template/login.html",
+	))
+
+	data := map[string]interface{}{
+		"ErrorMessage": errorMessage,
 	}
-	tmpl.Execute(w, nil)
 
-	//tmpl.Execute(w, nil)
+	tmpl.ExecuteTemplate(w, "layout", data)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -137,7 +143,8 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		// Se renderiza la página con el error correspondiente.
+		logInHandleGET(w, "Error al procesar el formulario.")
 		return
 	}
 
@@ -145,24 +152,23 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	if hayCampoIncompleto(username, password) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		logInHandleGET(w, "Faltan campos obligatorios.")
 		return
 	}
 
 	user, err := queries.GetUserByUsername(r.Context(), username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "El usuario proporcionado no existe.", http.StatusNotFound)
+			logInHandleGET(w, "El usuario proporcionado no existe.")
 			return
 		}
 		log.Printf("error getting user: %v", err)
-		http.Error(w, "error interno", http.StatusInternalServerError)
+		logInHandleGET(w, "Error interno del servidor.")
 		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err != nil {
-		http.Error(w, "Contraseña incorrecta.", http.StatusUnauthorized)
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		logInHandleGET(w, "Contraseña incorrecta.")
 		return
 	}
 

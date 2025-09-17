@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>UKI - Sign In</title>
+    <title>Perfil de @{{.Name}}</title>
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="icon" type="image/png" href="img/icono.png">
 </head>
 
 <body>
+
     <header>
         <a href="/">
             <img src="img/logo.png" alt="Logo UKI" id="logo">
@@ -22,22 +23,13 @@
     </header>
 
     <main>
-        <h1>Sign In</h1>
-            <form action="/signin" method="POST">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" autocomplete="username" required>
-                
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" autocomplete="email" required>
-                
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" autocomplete="new-password" required>
-                
-                <button type="submit">Registrarse</button>
-            </form>
+
+        <h1>Bienvenido, {{.Name}}!</h1>
+        <p><strong>Usuario:</strong> {{.Username}}</p>
+        <p><strong>Email:</strong> {{.Email}}</p>
+
+        <a href="/">Cerrar sesión</a>
+
     </main>
 
     <footer>
@@ -48,7 +40,6 @@
             <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
         </div>
     </footer>
-
 </body>
 
 </html>

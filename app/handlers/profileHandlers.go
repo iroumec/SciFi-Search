@@ -15,9 +15,6 @@ import (
 // Mapea un token de inicio de sesión a un userID.
 var sessions = make(map[string]int32)
 
-// profile.html, con placeholders.
-var tmpl = template.Must(template.ParseFiles(fileDir + "/profile.html"))
-
 // ------------------------------------------------------------------------------------------------
 // Register Profile Handlers
 // ------------------------------------------------------------------------------------------------
@@ -40,6 +37,8 @@ func registerProfileHandlers() {
 func profileHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("\nManejando renderizado del perfil...")
+
+	tmpl := template.Must(template.ParseFiles("template/profile.html"))
 
 	c, err := r.Cookie("session_token")
 	if err != nil {

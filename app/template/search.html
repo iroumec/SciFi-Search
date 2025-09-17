@@ -11,16 +11,10 @@
 <body>
 
     <header>
-        <img src="img/logo.png" alt="Logo UKI" id="logo">
-    
-        <nav>
-            <a href="#peliculas">Películas</a>
-            <a href="#musica">Música</a>
-            <a href="#libros">Libros</a>
-            <a href="#series">Series</a>
-            <a href="#juegos">Juegos</a>
-        </nav>
-    
+        <a href="/">
+            <img src="img/logo.png" alt="Logo UKI" id="logo">
+        </a>
+
         <button class="btn-registro" onclick="window.location.href='/search'">Buscar</button>
         <button class="btn-registro" onclick="window.location.href='/signin'">Sign-in</button>
         <button class="btn-registro" onclick="window.location.href='/login'">Log-in</button>
@@ -28,30 +22,34 @@
     
     </header>
 
-    <h1>Búsqueda de Contenido</h1>
+    <main>
 
-    <form action="/search" method="GET">
-        <label for="query">Buscar:</label>
-        <input type="text" id="query" name="query" placeholder="Título, película, libro, música..." required>
-        <button type="submit">Buscar</button>
-    </form>
+        <h1>Búsqueda de Contenido</h1>
 
-    <!-- Área de resultados -->
-    <!-- Se verifica que la lista de resultados no esté vacía -->
-    {{if .Results}}
-    <h2>Resultados:</h2>
-    <ul>
-        {{range .Results}}
-        <li>
-            <strong>{{.Title}}</strong> ({{.Type}})<br>
-            {{if .Description}}{{.Description}}{{end}}<br>
-            {{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Title}}" style="max-width:150px;"><br>{{end}}
-        </li>
+        <form action="/search" method="GET">
+            <label for="query">Buscar:</label>
+            <input type="text" id="query" name="query" placeholder="Título, película, libro, música..." required>
+            <button type="submit">Buscar</button>
+        </form>
+
+        <!-- Área de resultados -->
+        <!-- Se verifica que la lista de resultados no esté vacía -->
+        {{if .Results}}
+        <h2>Resultados:</h2>
+        <ul>
+            {{range .Results}}
+            <li>
+                <strong>{{.Title}}</strong> ({{.Type}})<br>
+                {{if .Description}}{{.Description}}{{end}}<br>
+                {{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Title}}" style="max-width:150px;"><br>{{end}}
+            </li>
+            {{end}}
+        </ul>
+        {{else if .Query}}
+        <p>No se encontraron resultados para "{{.Query}}".</p>
         {{end}}
-    </ul>
-    {{else if .Query}}
-    <p>No se encontraron resultados para "{{.Query}}".</p>
-    {{end}}
+
+    </main>
 
     <footer>
         <p>&copy; 2025 UKI</p>

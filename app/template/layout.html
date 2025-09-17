@@ -1,0 +1,25 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ block "title" . }}UKI{{ end }}</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="icon" type="image/png" href="img/icono.png">
+</head>
+
+<body>
+
+    {{ template "header" . }}
+
+    <main>
+        {{ block "content" . }}{{ end }}
+    </main>
+
+    {{ template "footer" . }}
+
+</body>
+
+</html>
+{{ end }}

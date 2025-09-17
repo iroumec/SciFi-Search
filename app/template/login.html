@@ -1,39 +1,21 @@
-<!DOCTYPE html>
-<html>
+{{ define "title" }}UKI - Log In{{ end }}
 
-<head>
-    <meta charset="UTF-8">
-    <title>UKI - Log In</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" type="image/png" href="img/icono.png">
-</head>
+{{ define "content" }}
+<h1>Login</h1>
 
-<body>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Username" required><br>
+<form action="/login" method="POST">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" placeholder="Username" required><br>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Password" required><br>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="Password" required><br>
 
-        <button type="submit">Enviar</button>
-    </form>
+    <button type="submit">Enviar</button>
+</form>
 
-    <!-- Mensaje de error opcional
-    <div id="mensaje" style="color:red;">
-        {{.ErrorMessage}} Se puede renderizar esto desde Go si se quiere mostrar errores
-    </div> -->
-
-    <footer>
-        <p>&copy; 2025 UKI</p>
-        <p>Powered by:</p>
-        <div class="powered-by">
-            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
-            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
-        </div>
-    </footer>
-
-</body>
-
-</html>
+{{ if .ErrorMessage }}
+<div id="mensaje" style="color:red;">
+    {{ .ErrorMessage }}
+</div>
+{{ end }}
+{{ end }}

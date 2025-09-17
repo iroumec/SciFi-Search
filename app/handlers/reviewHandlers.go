@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -26,6 +27,8 @@ func registerReviewHandlers() {
 // ------------------------------------------------------------------------------------------------
 
 func reviewHandler(w http.ResponseWriter, r *http.Request) {
+
+	tmpl := template.Must(template.ParseFiles("template/profile.html"))
 
 	fmt.Println("\nManejando renderizado del perfil...")
 
