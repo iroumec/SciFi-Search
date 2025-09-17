@@ -1,37 +1,14 @@
-<!DOCTYPE html>
-<html>
+{{ define "title" }}UKI - Search{{ end }}
 
-<head>
-    <meta charset="UTF-8">
-    <title>UKI - Búsqueda</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" type="image/png" href="img/icono.png">
-</head>
-
-<body>
-
-    <header>
-        <a href="/">
-            <img src="img/logo.png" alt="Logo UKI" id="logo">
-        </a>
-
-        <button class="btn-registro" onclick="window.location.href='/search'">Buscar</button>
-        <button class="btn-registro" onclick="window.location.href='/signin'">Sign-in</button>
-        <button class="btn-registro" onclick="window.location.href='/login'">Log-in</button>
-    
-    
-    </header>
-
-    <main>
-
+{{ define "content" }}
         <h1>Búsqueda de Contenido</h1>
-
+        
         <form action="/search" method="GET">
             <label for="query">Buscar:</label>
             <input type="text" id="query" name="query" placeholder="Título, película, libro, música..." required>
             <button type="submit">Buscar</button>
         </form>
-
+        
         <!-- Área de resultados -->
         <!-- Se verifica que la lista de resultados no esté vacía -->
         {{if .Results}}
@@ -48,18 +25,4 @@
         {{else if .Query}}
         <p>No se encontraron resultados para "{{.Query}}".</p>
         {{end}}
-
-    </main>
-
-    <footer>
-        <p>&copy; 2025 UKI</p>
-        <p>Powered by:</p>
-        <div class="powered-by">
-            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
-            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
-        </div>
-    </footer>
-
-</body>
-
-</html>
+{{ end }}

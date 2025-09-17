@@ -2,6 +2,7 @@
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 
 	"uki/app/utils"
@@ -41,6 +42,35 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	registerReviewHandlers()
 
 	fmt.Println("Handlers registrados con éxito.")
+}
+
+// ------------------------------------------------------------------------------------------------
+// Render Template
+// ------------------------------------------------------------------------------------------------
+
+func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]interface{}) {
+
+	tmpl := applyLayout(htmlPath)
+
+	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
+		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// Aplicación de Layout
+// ------------------------------------------------------------------------------------------------
+
+func applyLayout(htmlPath string) *template.Template {
+
+	// `template.ParseFiles` abre el archivo y lo convierte en un objeto `*template.Template`.
+	// `template.Must` hace que si hay un error al leer la plantilla, el programa panic automáticamente.
+	return template.Must(template.ParseFiles(
+		"template/layout.html",
+		"template/header.html",
+		"template/footer.html",
+		htmlPath,
+	))
 }
 
 /*

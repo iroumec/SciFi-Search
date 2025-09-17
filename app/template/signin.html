@@ -1,54 +1,20 @@
-<!DOCTYPE html>
-<html>
+{{ define "title" }}UKI - Sign In{{ end }}
 
-<head>
-    <meta charset="UTF-8">
-    <title>UKI - Sign In</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" type="image/png" href="img/icono.png">
-</head>
+{{ define "content" }}
+    <h1>Sign In</h1>
+    <form action="/signin" method="POST">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
 
-<body>
-    <header>
-        <a href="/">
-            <img src="img/logo.png" alt="Logo UKI" id="logo">
-        </a>
-    
-        <button class="btn-registro" onclick="window.location.href='/search'">Buscar</button>
-        <button class="btn-registro" onclick="window.location.href='/signin'">Sign-in</button>
-        <button class="btn-registro" onclick="window.location.href='/login'">Log-in</button>
-    
-    
-    </header>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
 
-    <main>
-        <h1>Sign In</h1>
-            <form action="/signin" method="POST">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" autocomplete="username" required>
-                
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" autocomplete="email" required>
-                
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" autocomplete="new-password" required>
-                
-                <button type="submit">Registrarse</button>
-            </form>
-    </main>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
 
-    <footer>
-        <p>&copy; 2025 UKI</p>
-        <p>Powered by:</p>
-        <div class="powered-by">
-            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
-            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
-        </div>
-    </footer>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="new-password" required>
 
-</body>
-
-</html>
+        <button type="submit">Registrarse</button>
+    </form>
+{{ end }}

@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"slices"
@@ -49,11 +48,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 func signInHandleGET(w http.ResponseWriter) {
 
-	tmpl := template.Must(template.ParseFiles("template/signin.html"))
-
-	if err := tmpl.Execute(w, nil); err != nil {
-		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
-	}
+	renderizeTemplate(w, "template/signin.html", nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -123,18 +118,11 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 
-	tmpl := template.Must(template.ParseFiles(
-		"template/layout.html",
-		"template/header.html",
-		"template/footer.html",
-		"template/login.html",
-	))
-
 	data := map[string]interface{}{
 		"ErrorMessage": errorMessage,
 	}
 
-	tmpl.ExecuteTemplate(w, "layout", data)
+	renderizeTemplate(w, "template/login.html", data)
 }
 
 // ------------------------------------------------------------------------------------------------

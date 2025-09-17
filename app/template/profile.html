@@ -1,45 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
+{{ define "title" }}UKI - @{{.Username}}{{ end }}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Perfil de @{{.Name}}</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" type="image/png" href="img/icono.png">
-</head>
-
-<body>
-
-    <header>
-        <a href="/">
-            <img src="img/logo.png" alt="Logo UKI" id="logo">
-        </a>
+{{ define "content" }}
+    <h1>Bienvenido, {{.Name}}!</h1>
+    <p><strong>Usuario:</strong> {{.Username}}</p>
+    <p><strong>Email:</strong> {{.Email}}</p>
     
-        <button class="btn-registro" onclick="window.location.href='/search'">Buscar</button>
-        <button class="btn-registro" onclick="window.location.href='/signin'">Sign-in</button>
-        <button class="btn-registro" onclick="window.location.href='/login'">Log-in</button>
-    
-    
-    </header>
-
-    <main>
-
-        <h1>Bienvenido, {{.Name}}!</h1>
-        <p><strong>Usuario:</strong> {{.Username}}</p>
-        <p><strong>Email:</strong> {{.Email}}</p>
-
-        <a href="/">Cerrar sesión</a>
-
-    </main>
-
-    <footer>
-        <p>&copy; 2025 UKI</p>
-        <p>Powered by:</p>
-        <div class="powered-by">
-            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
-            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
-        </div>
-    </footer>
-</body>
-
-</html>
+    <a href="/">Cerrar sesión</a>
+{{ end }}
