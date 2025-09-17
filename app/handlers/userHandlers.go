@@ -119,8 +119,16 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func logInHandleGET(w http.ResponseWriter) {
-	tmpl := template.Must(template.ParseFiles("template/login.html"))
+
+	//tmpl := template.Must(template.ParseFiles("template/login.html"))
+	tmpl, err := template.ParseFiles("template/login.html")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error cargando template: %v", err), http.StatusInternalServerError)
+		return
+	}
 	tmpl.Execute(w, nil)
+
+	//tmpl.Execute(w, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
