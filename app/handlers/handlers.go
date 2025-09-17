@@ -48,9 +48,12 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 // Render Template
 // ------------------------------------------------------------------------------------------------
 
-func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]interface{}) {
+func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]any) {
 
 	tmpl := applyLayout(htmlPath)
+
+	// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
@@ -72,32 +75,3 @@ func applyLayout(htmlPath string) *template.Template {
 		htmlPath,
 	))
 }
-
-/*
-
-func RegisterHandlers(queryObject *sqlc.Queries) {
-	r := chi.NewRouter()
-
-	// Middlewares básicos (logs, CORS, etc)
-	r.Use(handlers.LoggingMiddleware)
-
-	// Rutas de usuario
-	r.Get("/login", handlers.LoginPageHandler) // GET -> muestra formulario
-	r.Post("/login", handlers.LogInHandler)    // POST -> procesa login
-	r.Get("/register", handlers.RegisterPageHandler)
-	r.Post("/signIn", handlers.SignInHandler)
-
-	// Perfil de usuario
-	r.Get("/profile", handlers.ProfileHandler)
-
-	// Ejemplo de rutas dinámicas tipo Letterboxd
-	r.Get("/film/{slug}", handlers.FilmHandler)
-	r.Get("/film/{slug}/crew", handlers.CrewHandler)
-
-	// Servir archivos estáticos (CSS, JS, imágenes)
-	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	http.ListenAndServe(":8080", r)
-}
-
-*/

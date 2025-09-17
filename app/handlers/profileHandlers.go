@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"html/template"
 	"net/http"
 
 	sqlc "uki/app/database/sqlc"
@@ -24,7 +23,6 @@ func registerProfileHandlers() {
 
 	fmt.Println("Registrando handlers de perfil...")
 
-	// Handler que maneja el acceso al perfil.
 	http.HandleFunc("/profile", profileHandler)
 
 	fmt.Println("Handlers de perfil registrados...")
@@ -37,8 +35,6 @@ func registerProfileHandlers() {
 func profileHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("\nManejando renderizado del perfil...")
-
-	tmpl := template.Must(template.ParseFiles("template/profile.html"))
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
@@ -58,13 +54,13 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("Renderizando plantilla de acuerdo a los datos del usuario...")
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = tmpl.Execute(w, user)
-	if err != nil {
-		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
+	data := map[string]any{
+		"Name":     user.Name,
+		"Username": user.Username,
+		"Email":    user.Email,
 	}
+
+	renderizeTemplate(w, "template/profile.html", data)
 
 	fmt.Println("Plantilla renderizada.")
 }

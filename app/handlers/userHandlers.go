@@ -118,7 +118,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"ErrorMessage": errorMessage,
 	}
 

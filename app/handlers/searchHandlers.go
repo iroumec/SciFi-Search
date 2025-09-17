@@ -29,7 +29,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	// La plantilla recibe dos variables:
 	// .Query (el término que se buscó); y
 	// .Results (la lista de contenidos encontrados).
-	data := map[string]interface{}{
+	data := map[string]any{
 		"Query":   query,
 		"Results": results,
 	}
