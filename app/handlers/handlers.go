@@ -44,8 +44,6 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	registerSearchHandlers()
 
-	registerReviewHandlers()
-
 	fmt.Println("Handlers registrados con éxito.")
 }
 

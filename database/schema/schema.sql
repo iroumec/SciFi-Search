@@ -2,14 +2,27 @@
 
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Alternative key, Se nombran para poder usarlas en el manejo de errores.
     contraseña TEXT NOT NULL, -- TEXT debido a la encriptación.
     creado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS perfiles (
-    id_usuario INT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    id_usuario INT PRIMARY KEY
+    --insignias, foto de perfil
+);
+
+ALTER TABLE perfiles ADD CONSTRAINT fk_perfiles_usuarios
+    FOREIGN KEY id_usuario
+    REFERENCES usuarios(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
+CREATE TABLE IF NOT EXISTS pertenece_facultad (
+    id_usuario INT,
+    id 
 );
 
 CREATE TABLE IF NOT EXISTS noticias (
@@ -25,7 +38,7 @@ CREATE TABLE IF NOT EXISTS likes_noticia (
     id_noticia INT,
     id_usuario INT,
     likeado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_news_likes PRIMARY KEY (id_noticia, id_usuario)
+    CONSTRAINT pk_noticias_likes PRIMARY KEY (id_noticia, id_usuario)
 );
 
 ALTER TABLE likes_noticia ADD CONSTRAINT fk_likes_noticia_usuarios
@@ -36,44 +49,42 @@ ALTER TABLE likes_noticia ADD CONSTRAINT fk_likes_noticia_usuarios
 ;
 
 CREATE TABLE IF NOT EXISTS comentarios_noticia (
-    new_id INT,
-    user_id INT,
+    id_noticia INT,
+    id_usuario INT,
     -- Con las tres siendo primary key, entonces un usuario puede realizar más de un comentario en una publicación.
     -- Si se queire evitar el spam, podría evitarse eliminando el atributo debajo.
-    comment_id SERIAL,
-    comment TEXT NOT NULL,
-    published_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    tiempo_estimado_lectura TIMESTAMP,
-    visualizaciones INT DEFAULT 0,
-    CONSTRAINT pk_news_comments PRIMARY KEY (new_id, user_id, comment_id)
+    id_comentario SERIAL,
+    comentario TEXT NOT NULL,
+    fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_comentarios_noticias PRIMARY KEY (id_noticia, id_usuario, id_comentario)
 );
 
-ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
+ALTER TABLE comentarios_noticia ADD CONSTRAINT fk_comentarios_noticia_usuarios
+    FOREIGN KEY (id_usuario)
+    REFERENCES usuarios(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_news
-    FOREIGN KEY (new_id)
-    REFERENCES news(id)
+ALTER TABLE comentarios_noticia ADD CONSTRAINT fk_noticias_comments_noticias
+    FOREIGN KEY (id_noticia)
+    REFERENCES noticias(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-CREATE TABLE IF NOT EXISTS comments_likes (
-    new_id INT,
-    user_id INT,
-    comment_id INT,
-    user_like_id INT,
+CREATE TABLE IF NOT EXISTS likes_comentarios (
+    id_noticia INT,
+    id_usuario INT,
+    id_comentario INT,
+    usuario_like_id INT,
     liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_comments_likes PRIMARY KEY (new_id, user_id, comment_id, user_like_id)
+    CONSTRAINT pk_likes_comentarios PRIMARY KEY (id_noticia, id_usuario, id_comentario, usuario_like_id)
 );
 
-ALTER TABLE comments_likes ADD CONSTRAINT fk_comments_likes_comments
-    FOREIGN KEY (new_id, user_id, comment_id)
-    REFERENCES news_comments(new_id, user_id, comment_id)
+ALTER TABLE comments_likes ADD CONSTRAINT fk_likes_comentarios_comentarios
+    FOREIGN KEY (id_noticia, id_usuario, id_comentario)
+    REFERENCES comentarios_notica(id_noticia, id_usuario, id_comentario)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
@@ -83,20 +94,22 @@ CREATE TABLE IF NOT EXISTS facultades (
     name VARCHAR(255)
 );
 
+CREATE TABLE IF NOT EXISTS perfil_facultad
+
 CREATE TABLE IF NOT EXISTS puntajes (
-    facultad1_id INT,
-    facultad2_id INT,
-    partido_id INT,
+    id_facultad1 INT,
+    id_facultad2 INT,
+    id_partido INT,
     puntos1 INT NOT NULL,
     puntos2 INT NOT NULL,
     puntosS1 INT DEFAULT NULL,
     puntosS2 INT DEFAULT NULL,
-    CONSTRAINT pk_puntaje PRIMARY KEY (facultad1_id,facultad2_id,partido_id) 
+    CONSTRAINT pk_puntajes PRIMARY KEY (id_facultad1,id_facultad2,id_partido) 
 );
 
 CREATE TABLE IF NOT EXISTS partidos (
     id SERIAL PRIMARY KEY,
-    deporte_id INT NOT NULL,
+    id_deporte INT NOT NULL,
     incio TIMESTAMP,
     fin TIMESTAMP DEFAULT NULL,
     lugar VARCHAR(255),
@@ -111,28 +124,28 @@ CREATE TABLE IF NOT EXISTS deportes (
 );
 
 ALTER TABLE partidos ADD CONSTRAINT fk_partidos_deportes
-    FOREIGN KEY deporte_id
+    FOREIGN KEY id_deporte
     REFERENCES deportes(id)
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad1
-    FOREIGN KEY facultad1_id
+    FOREIGN KEY id_facultad1
     REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad2
-    FOREIGN KEY facultad2_id
+    FOREIGN KEY id_facultad2
     REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_partido
-    FOREIGN KEY partido_id
+    FOREIGN KEY id_partido
     REFERENCES partidos(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
@@ -152,11 +165,11 @@ RETURNS TRIGGER AS $$
         IF EXISTS (SELECT 1 FROM works w WHERE w.id = NEW.work_id AND w.unit) THEN --aca solo entra en inserts, porque no se puede actualizar workid
             RAISE EXCEPTION 'Solo se puede hacer review de las obras unitarias.';
         ELSE 
-            IF NEW.liked AND NOT EXISTS (SELECT 1 FROM liked_works l WHERE l.user_id = NEW.user_id AND l.work_id = NEW.work_id) THEN 
-                INSERT INTO liked_works VALUES (NEW.user_id,NEW.work_id);
+            IF NEW.liked AND NOT EXISTS (SELECT 1 FROM liked_works l WHERE l.id_usuario = NEW.id_usuario AND l.work_id = NEW.work_id) THEN 
+                INSERT INTO liked_works VALUES (NEW.id_usuario,NEW.work_id);
             END IF;
-            IF NOT EXISTS (SELECT 1 FROM review r WHERE r.user_id = NEW.user_id AND r.work_id = NEW.work_id) THEN
-                INSERT INTO consumed_works VALUES (NEW.user_id,NEW.work_id);
+            IF NOT EXISTS (SELECT 1 FROM review r WHERE r.id_usuario = NEW.id_usuario AND r.work_id = NEW.work_id) THEN
+                INSERT INTO consumed_works VALUES (NEW.id_usuario,NEW.work_id);
             END IF;
         END IF;
         RETURN NEW;
@@ -199,7 +212,7 @@ RETURNS TRIGGER AS $$
             IN 
             (SELECT content_type_id FROM works m WHERE m.id
             IN --obtengo lista de los tipos de contenido de los favoritos del usuario
-            (SELECT work_id FROM user_favourites u WHERE u.user_id = NEW.user_id))) THEN 
+            (SELECT work_id FROM user_favourites u WHERE u.id_usuario = NEW.id_usuario))) THEN 
                 RAISE EXCEPTION 'Solo se puede marcar como favorita una obra por tipo de contenido.';
         END IF;
     END;

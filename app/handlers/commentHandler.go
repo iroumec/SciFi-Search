@@ -9,24 +9,10 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Register Review Handlers
-// ------------------------------------------------------------------------------------------------
-
-func registerReviewHandlers() {
-
-	fmt.Println("Registrando handlers de perfil...")
-
-	// Handler que maneja el acceso al perfil.
-	http.HandleFunc("/review", reviewHandler)
-
-	fmt.Println("Handlers de perfil registrados...")
-}
-
-// ------------------------------------------------------------------------------------------------
 // Review Handler
 // ------------------------------------------------------------------------------------------------
 
-func reviewHandler(w http.ResponseWriter, r *http.Request) {
+func handlerComentarios(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("template/profile.html"))
 
