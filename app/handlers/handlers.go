@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"slices"
 
 	"uki/app/utils"
 
@@ -31,6 +32,10 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se envuelve en un gzip middleware.
 	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
 
+	setStaticHandler("/carnet-deportivo", "template/card.html")
+
+	setStaticHandler("/consulta", "template/enquery.html")
+
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registerUserHandlers()
 
@@ -42,6 +47,26 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	registerReviewHandlers()
 
 	fmt.Println("Handlers registrados con éxito.")
+}
+
+// ------------------------------------------------------------------------------------------------
+// Set Static Handler
+// ------------------------------------------------------------------------------------------------
+
+func setStaticHandler(path string, htmlPath string) {
+
+	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+
+		tmpl := applyLayout(htmlPath)
+
+		// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+		if err := tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
+			http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
+		}
+	})
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -74,4 +99,29 @@ func applyLayout(htmlPath string) *template.Template {
 		"template/layout/footer.html",
 		htmlPath,
 	))
+}
+
+// ------------------------------------------------------------------------------------------------
+// Verificación de campos
+// ------------------------------------------------------------------------------------------------
+
+func hayCampoIncompleto(campos ...string) bool {
+
+	return slices.Contains(campos, "")
+}
+
+func isThereEmptyField(fields ...string) bool {
+
+	return slices.Contains(fields, "")
+}
+
+func atLeastOneFieldIsNotEmpty(fields ...string) bool {
+
+	for _, field := range fields {
+		if field != "" {
+			return true
+		}
+	}
+
+	return false
 }

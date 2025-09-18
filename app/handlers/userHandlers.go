@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"slices"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -175,22 +174,4 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handleProfileAccess(user, w, r)
-}
-
-// ------------------------------------------------------------------------------------------------
-// Verificación de campos
-// ------------------------------------------------------------------------------------------------
-
-func hayCampoIncompleto(campos ...string) bool {
-
-	return slices.Contains(campos, "")
-}
-
-// ------------------------------------------------------------------------------------------------
-// Parseo de datos
-// ------------------------------------------------------------------------------------------------
-
-func parseData(campos ...string) bool {
-
-	return slices.Contains(campos, "")
 }
