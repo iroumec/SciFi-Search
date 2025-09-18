@@ -1,97 +1,61 @@
 --------------------- Creacion de tablas ---------------------
 
 CREATE TABLE IF NOT EXISTS users (
-    -- SERIAL es para int32 (2.1 mil millones de usuarios).
-    -- Si la aplicación planea tener más usuarios, se debe usar BIGSERIAL (int64).
     id SERIAL PRIMARY KEY,
-    username VARCHAR(20) UNIQUE CONSTRAINT uq_username NOT NULL, -- Alternative key.
+    username VARCHAR(20) UNIQUE CONSTRAINT uq_usuario NOT NULL, -- Alternative key.
     name VARCHAR(20) NOT NULL,
+    password VARCHAR(20) NOT NULL,
     email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Se nombran para poder usarlas en el manejo de errores.
-    -- TEXT debido a la encriptación.
-    password TEXT NOT NULL,
+    password TEXT NOT NULL, -- TEXT debido a la encriptación.
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Creo que "contents" sería un mejor nombre.
-CREATE TABLE IF NOT EXISTS works (
+CREATE TABLE IF NOT EXISTS news (
     id SERIAL PRIMARY KEY,
-    source VARCHAR NOT NULL, -- tmdb, igdb, etc.
-    title VARCHAR(100) NOT NULL,
-    content_type_id INT NOT NULL,
-    image_url TEXT,
-    unit BOOLEAN DEFAULT FALSE,
-    description TEXT,
-    saga_id INT
+    title TEXT NOT NULL,
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    estimated_lecture_time TIMESTAMP,
+    views INT DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS content_types (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL
-);
-
--- Contenidos de la tabla estáticos.
-INSERT INTO content_types (name) VALUES
-    ('Book'),
-    ('Movie'),
-    ('TV Show'),
-    ('Song'),
-    ('Game'),
-    ('Book saga'),
-    ('Movie saga'),
-    ('Related tv shows'),
-    ('Album'),
-    ('Game saga');
-
-
-CREATE TABLE IF NOT EXISTS consumed_works (
-    user_id INT, 
-    work_id INT,
-    CONSTRAINT pk_consumed_works PRIMARY KEY (user_id, work_id)
-);
-
-CREATE TABLE IF NOT EXISTS liked_works (
-    user_id INT, 
-    work_id INT,
-    CONSTRAINT pk_liked_works PRIMARY KEY (user_id,work_id)
-);
-
-CREATE TABLE IF NOT EXISTS review (
-    id SERIAL PRIMARY KEY, --puede haber más de una review de la misma obra por el mismo usuario
-    user_id INT NOT NULL,
-    work_id INT NOT NULL,
-    score INT CHECK (score >= 1 AND score <= 10) NOT NULL,
-    review TEXT,
-    watched_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    liked BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS review_like (
-    review_id INT, 
+CREATE TABLE IF NOT EXISTS news_likes (
+    new_id INT,
     user_id INT,
     liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_review_like PRIMARY KEY (review_id,user_id)
+    CONSTRAINT pk_news_likes PRIMARY KEY (new_id, user_id)
 );
 
-CREATE TABLE IF NOT EXISTS review_comment (
+ALTER TABLE news_likes ADD CONSTRAINT fk_news_likes_users
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
+CREATE TABLE IF NOT EXISTS news_comments (
     id SERIAL PRIMARY KEY,
-    review_id INT,
-    user_id INT,
-    comment VARCHAR(255),
-    commented_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    comment TEXT NOT NULL,
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    tiempo_estimado_lectura TIMESTAMP,
+    visualizaciones INT DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS user_follows (
-    follower_id INT, 
-    followed_id INT,
-    followed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_user_follows PRIMARY KEY (follower_id, followed_id)
+ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_users
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
+
+
+CREATE TABLE IF NOT EXISTS comments_likes (
+    new_id INT,
+    user_id INT,
+    comment_id SERIAL INT,
+    liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_news_likes PRIMARY KEY (new_id, user_id, comment_id)
 );
 
-CREATE TABLE IF NOT EXISTS user_favourites (
-    user_id INT,
-    work_id INT,
-    CONSTRAINT pk_user_favourites PRIMARY KEY (user_id, work_id)
-);
 
 --------------------- Asignacion de foreign keys ---------------------
 
