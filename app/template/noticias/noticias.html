@@ -9,14 +9,14 @@
 <ul>
     {{range .Results}}
     <li>
-        <strong>{{.Title}}</strong> ({{.Type}})<br>
-        {{if .Description}}{{.Description}}{{end}}<br>
+        <strong>{{.Título}}</strong> ({{.Tipo}})<br>
+        {{if .Contenido}}{{.Contenido}}{{end}}<br>
         {{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Title}}" style="max-width:150px;"><br>{{end}}
     </li>
     {{end}}
 </ul>
-{{else if .Query}}
-<p>No se encontraron resultados para "{{.Query}}".</p>
+{{ else }}
+<p>No se encontraron noticias.</p>
 {{end}}
 
 {{ end }}

@@ -36,6 +36,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	http.HandleFunc("/perfil", manejarPerfil)
 
+	http.HandleFunc("/noticias", manejarNoticias)
+
 	setStaticHandler("/carnet-deportivo", "template/card.html")
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
