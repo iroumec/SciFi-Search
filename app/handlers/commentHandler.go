@@ -1,10 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-	"html/template"
-	"net/http"
-
 	_ "github.com/lib/pq"
 )
 
@@ -12,6 +8,7 @@ import (
 // Review Handler
 // ------------------------------------------------------------------------------------------------
 
+/*
 func handlerComentarios(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("template/profile.html"))
@@ -30,7 +27,7 @@ func handlerComentarios(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := queries.GetUserByID(r.Context(), userID)
+	user, err := queries.ObtenerUsuarioPorID(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "error cargando usuario", http.StatusInternalServerError)
 		return
@@ -46,3 +43,4 @@ func handlerComentarios(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Plantilla renderizada.")
 }
+*/

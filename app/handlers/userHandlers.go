@@ -68,12 +68,12 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := r.FormValue("username")
+	dni := r.FormValue("dni")
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	if hayCampoIncompleto(username, name, email, password) {
+	if hayCampoIncompleto(dni, name, email, password) {
 		signInHandleGET(w, "Faltan campos obligatorios.")
 		return
 	}
@@ -86,11 +86,11 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-		Username: username,
-		Name:     name,
-		Email:    email,
-		Password: string(hashedPassword),
+	createdUser, err := queries.CrearUsuario(r.Context(), sqlc.CrearUsuarioParams{
+		Dni:        dni,
+		Nombre:     name,
+		Email:      email,
+		Contraseña: string(hashedPassword),
 	})
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -148,16 +148,16 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := r.FormValue("username")
+	dni := r.FormValue("dni")
 	password := r.FormValue("password")
 
-	if hayCampoIncompleto(username, password) {
+	if hayCampoIncompleto(dni, password) {
 		logInHandleGET(w, "Faltan campos obligatorios.")
 		return
 	}
 
 	// Hacer funcionar esto...
-	user, err := queries.GetUserByUsername(r.Context(), username)
+	user, err := queries.ObtenerUsuarioPorDNI(r.Context(), dni)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			logInHandleGET(w, "El usuario proporcionado no existe.")
@@ -168,7 +168,7 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Contraseña), []byte(password)); err != nil {
 		logInHandleGET(w, "Contraseña incorrecta.")
 		return
 	}

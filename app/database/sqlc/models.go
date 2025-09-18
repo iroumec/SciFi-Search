@@ -8,72 +8,93 @@ import (
 	"database/sql"
 )
 
-type ConsumedWork struct {
-	UserID int32 `json:"user_id"`
-	WorkID int32 `json:"work_id"`
+type ComentariosNoticium struct {
+	IDNoticia    int32        `json:"id_noticia"`
+	IDUsuario    int32        `json:"id_usuario"`
+	IDComentario int32        `json:"id_comentario"`
+	Comentario   string       `json:"comentario"`
+	PublicadoEn  sql.NullTime `json:"publicado_en"`
 }
 
-type ContentType struct {
-	ID   int32  `json:"id"`
-	Name string `json:"name"`
+type Deporte struct {
+	ID     int32          `json:"id"`
+	Nombre sql.NullString `json:"nombre"`
 }
 
-type LikedWork struct {
-	UserID int32 `json:"user_id"`
-	WorkID int32 `json:"work_id"`
+type Facultade struct {
+	ID   int32          `json:"id"`
+	Name sql.NullString `json:"name"`
 }
 
-type Review struct {
+type LikesComentario struct {
+	IDNoticia     int32        `json:"id_noticia"`
+	IDUsuario     int32        `json:"id_usuario"`
+	IDComentario  int32        `json:"id_comentario"`
+	IDUsuarioLike int32        `json:"id_usuario_like"`
+	LikedAt       sql.NullTime `json:"liked_at"`
+}
+
+type LikesNoticium struct {
+	IDNoticia int32        `json:"id_noticia"`
+	IDUsuario int32        `json:"id_usuario"`
+	LikeadoEn sql.NullTime `json:"likeado_en"`
+}
+
+type Noticia struct {
+	ID                    int32         `json:"id"`
+	Titulo                string        `json:"titulo"`
+	Contenido             string        `json:"contenido"`
+	PublicadaEn           sql.NullTime  `json:"publicada_en"`
+	TiempoLecturaEstimado sql.NullTime  `json:"tiempo_lectura_estimado"`
+	Visualizaciones       sql.NullInt32 `json:"visualizaciones"`
+}
+
+type Participa struct {
+	IDParticipante int32         `json:"id_participante"`
+	IDPartido      int32         `json:"id_partido"`
+	IDFacultad     sql.NullInt32 `json:"id_facultad"`
+}
+
+type Partido struct {
 	ID        int32          `json:"id"`
-	UserID    int32          `json:"user_id"`
-	WorkID    int32          `json:"work_id"`
-	Score     int32          `json:"score"`
-	Review    sql.NullString `json:"review"`
-	WatchedAt sql.NullTime   `json:"watched_at"`
-	Liked     sql.NullBool   `json:"liked"`
+	IDDeporte int32          `json:"id_deporte"`
+	Incio     sql.NullTime   `json:"incio"`
+	Fin       sql.NullTime   `json:"fin"`
+	Lugar     sql.NullString `json:"lugar"`
+	Cancha    sql.NullString `json:"cancha"`
+	Zona      sql.NullString `json:"zona"`
+	Tipo      sql.NullString `json:"tipo"`
 }
 
-type ReviewComment struct {
-	ID          int32          `json:"id"`
-	ReviewID    sql.NullInt32  `json:"review_id"`
-	UserID      sql.NullInt32  `json:"user_id"`
-	Comment     sql.NullString `json:"comment"`
-	CommentedAt sql.NullTime   `json:"commented_at"`
+type Perfile struct {
+	IDUsuario int32          `json:"id_usuario"`
+	Image     sql.NullString `json:"image"`
 }
 
-type ReviewLike struct {
-	ReviewID int32        `json:"review_id"`
-	UserID   int32        `json:"user_id"`
-	LikedAt  sql.NullTime `json:"liked_at"`
+type PerfilesFacultad struct {
+	IDFacultad int32 `json:"id_facultad"`
 }
 
-type User struct {
-	ID        int32        `json:"id"`
-	Username  string       `json:"username"`
-	Name      string       `json:"name"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
-	CreatedAt sql.NullTime `json:"created_at"`
+type Pertenece struct {
+	IDUsuario  int32 `json:"id_usuario"`
+	IDFacultad int32 `json:"id_facultad"`
 }
 
-type UserFavourite struct {
-	UserID int32 `json:"user_id"`
-	WorkID int32 `json:"work_id"`
+type Puntaje struct {
+	IDFacultad1 int32         `json:"id_facultad1"`
+	IDFacultad2 int32         `json:"id_facultad2"`
+	IDPartido   int32         `json:"id_partido"`
+	Puntos1     int32         `json:"puntos1"`
+	Puntos2     int32         `json:"puntos2"`
+	Puntoss1    sql.NullInt32 `json:"puntoss1"`
+	Puntoss2    sql.NullInt32 `json:"puntoss2"`
 }
 
-type UserFollow struct {
-	FollowerID int32        `json:"follower_id"`
-	FollowedID int32        `json:"followed_id"`
-	FollowedAt sql.NullTime `json:"followed_at"`
-}
-
-type Work struct {
-	ID            int32          `json:"id"`
-	Source        string         `json:"source"`
-	Title         string         `json:"title"`
-	ContentTypeID int32          `json:"content_type_id"`
-	ImageUrl      sql.NullString `json:"image_url"`
-	Unit          sql.NullBool   `json:"unit"`
-	Description   sql.NullString `json:"description"`
-	SagaID        sql.NullInt32  `json:"saga_id"`
+type Usuario struct {
+	ID         int32        `json:"id"`
+	Dni        string       `json:"dni"`
+	Nombre     string       `json:"nombre"`
+	Email      string       `json:"email"`
+	Contraseña string       `json:"contraseña"`
+	CreadoEn   sql.NullTime `json:"creado_en"`
 }

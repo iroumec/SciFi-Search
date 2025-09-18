@@ -2,27 +2,30 @@
 
 CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Alternative key, Se nombran para poder usarlas en el manejo de errores.
+    DNI VARCHAR(9) UNIQUE CONSTRAINT uq_dni NOT NULL, -- Alternative key
+    nombre VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Se nombran para poder usarlas en el manejo de errores.
     contraseña TEXT NOT NULL, -- TEXT debido a la encriptación.
     creado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS perfiles (
-    id_usuario INT PRIMARY KEY
+    id_usuario INT PRIMARY KEY,
+    image TEXT -- url
     --insignias, foto de perfil
 );
 
 ALTER TABLE perfiles ADD CONSTRAINT fk_perfiles_usuarios
-    FOREIGN KEY id_usuario
+    FOREIGN KEY (id_usuario)
     REFERENCES usuarios(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-CREATE TABLE IF NOT EXISTS pertenece_facultad (
+CREATE TABLE IF NOT EXISTS pertenece (
     id_usuario INT,
-    id 
+    id_facultad INT,
+    CONSTRAINT pk_pertenece PRIMARY KEY (id_usuario, id_facultad)
 );
 
 CREATE TABLE IF NOT EXISTS noticias (
@@ -55,7 +58,7 @@ CREATE TABLE IF NOT EXISTS comentarios_noticia (
     -- Si se queire evitar el spam, podría evitarse eliminando el atributo debajo.
     id_comentario SERIAL,
     comentario TEXT NOT NULL,
-    fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    publicado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_comentarios_noticias PRIMARY KEY (id_noticia, id_usuario, id_comentario)
 );
 
@@ -73,18 +76,18 @@ ALTER TABLE comentarios_noticia ADD CONSTRAINT fk_noticias_comments_noticias
     INITIALLY IMMEDIATE
 ;
 
-CREATE TABLE IF NOT EXISTS likes_comentarios (
+CREATE TABLE IF NOT EXISTS likes_comentario (
     id_noticia INT,
     id_usuario INT,
     id_comentario INT,
-    usuario_like_id INT,
+    id_usuario_like INT,
     liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_likes_comentarios PRIMARY KEY (id_noticia, id_usuario, id_comentario, usuario_like_id)
+    CONSTRAINT pk_likes_comentarios PRIMARY KEY (id_noticia, id_usuario, id_comentario, id_usuario_like)
 );
 
-ALTER TABLE comments_likes ADD CONSTRAINT fk_likes_comentarios_comentarios
+ALTER TABLE likes_comentario ADD CONSTRAINT fk_likes_comentario_comentarios
     FOREIGN KEY (id_noticia, id_usuario, id_comentario)
-    REFERENCES comentarios_notica(id_noticia, id_usuario, id_comentario)
+    REFERENCES comentarios_noticia(id_noticia, id_usuario, id_comentario)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
@@ -94,7 +97,17 @@ CREATE TABLE IF NOT EXISTS facultades (
     name VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS perfil_facultad
+CREATE TABLE IF NOT EXISTS perfiles_facultad (
+    id_facultad INT PRIMARY KEY
+    --insignias y otras cosas
+);
+
+ALTER TABLE perfiles_facultad ADD CONSTRAINT fk_perfiles_facultad_facultades
+    FOREIGN KEY (id_facultad)
+    REFERENCES facultades(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
 
 CREATE TABLE IF NOT EXISTS puntajes (
     id_facultad1 INT,
@@ -104,7 +117,7 @@ CREATE TABLE IF NOT EXISTS puntajes (
     puntos2 INT NOT NULL,
     puntosS1 INT DEFAULT NULL,
     puntosS2 INT DEFAULT NULL,
-    CONSTRAINT pk_puntajes PRIMARY KEY (id_facultad1,id_facultad2,id_partido) 
+    CONSTRAINT pk_puntajes PRIMARY KEY (id_facultad1, id_facultad2, id_partido) 
 );
 
 CREATE TABLE IF NOT EXISTS partidos (
@@ -123,29 +136,36 @@ CREATE TABLE IF NOT EXISTS deportes (
     nombre VARCHAR(255)
 );
 
+CREATE TABLE IF NOT EXISTS participa (
+    id_participante INT,
+    id_partido INT,
+    id_facultad INT,
+    CONSTRAINT pk_participa PRIMARY KEY (id_participante,id_partido)
+);
+
 ALTER TABLE partidos ADD CONSTRAINT fk_partidos_deportes
-    FOREIGN KEY id_deporte
+    FOREIGN KEY (id_deporte)
     REFERENCES deportes(id)
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad1
-    FOREIGN KEY id_facultad1
+    FOREIGN KEY (id_facultad1)
     REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad2
-    FOREIGN KEY id_facultad2
+    FOREIGN KEY (id_facultad2)
     REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_partido
-    FOREIGN KEY id_partido
+    FOREIGN KEY (id_partido)
     REFERENCES partidos(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE

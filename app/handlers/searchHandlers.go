@@ -1,17 +1,6 @@
 package handlers
 
-import (
-	"net/http"
-
-	sqlc "uki/app/database/sqlc"
-)
-
-func registerSearchHandlers() {
-
-	// Handler que maneja la búsqueda.
-	http.HandleFunc("/search", searchHandler)
-}
-
+/*
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Al usarse el método GET, la url será algo como: /search?query=inception
@@ -37,3 +26,4 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	// Se rellena el html template con los valores de data y lo envía al navegador.
 	renderizeTemplate(w, "template/search.html", data)
 }
+*/

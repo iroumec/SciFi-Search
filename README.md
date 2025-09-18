@@ -39,3 +39,12 @@ Ante cambios en la base de datos, es necesario eliminar el volumen y reconstruir
 ```sh
 docker-compose down -v
 ```
+
+IDEAS:
+
+- Seguir deportes.
+- Predicciones.
+
+PRIMER SPRINT
+
+-

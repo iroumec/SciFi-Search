@@ -1,0 +1,36 @@
+{{ define "title" }}Cargar Noticia{{ end }}
+
+{{ define "content" }}
+
+<h1>Ingrese los datos de la noticia:</h1>
+
+<form action="/cargar-noticia" method="POST">
+
+    <label for="título">Título</label>
+    <input type="text" id="título" name="título" placeholder="" required><br>
+
+    <label for="tiempo estimado de lectura">Tiempo estimado de lectura</label>
+    <input type="text" id="tiempo_estimado_lectura" name="tiempo_estimado_lectura" placeholder="" required><br>
+
+    <label for="título">Contenido</label>
+    <input type="text" id="tiempo_estimado_lectura" name="tiempo_estimado_lectura" placeholder="" required><br>
+
+</form>
+
+<form action="/login" method="POST">
+    <label for="DNI">DNI</label>
+    <input type="text" id="dni" name="dni" placeholder="" required><br>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="" required><br>
+
+    <button type="submit">Enviar</button>
+</form>
+
+{{ if .ErrorMessage }}
+<div id="mensaje" style="color:red;">
+    {{ .ErrorMessage }}
+</div>
+{{ end }}
+
+{{ end }}

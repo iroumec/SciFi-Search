@@ -15,24 +15,10 @@ import (
 var sessions = make(map[string]int32)
 
 // ------------------------------------------------------------------------------------------------
-// Register Profile Handlers
-// ------------------------------------------------------------------------------------------------
-
-// Registra todos los endpoint relacionados al perfil de usuario.
-func registerProfileHandlers() {
-
-	fmt.Println("Registrando handlers de perfil...")
-
-	http.HandleFunc("/profile", profileHandler)
-
-	fmt.Println("Handlers de perfil registrados...")
-}
-
-// ------------------------------------------------------------------------------------------------
 // Profile Handler
 // ------------------------------------------------------------------------------------------------
 
-func profileHandler(w http.ResponseWriter, r *http.Request) {
+func manejarPerfil(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("\nManejando renderizado del perfil...")
 
@@ -48,15 +34,15 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := queries.GetUserByID(r.Context(), userID)
+	user, err := queries.ObtenerUsuarioPorID(r.Context(), userID)
 	if err != nil {
 		http.Error(w, "error cargando usuario", http.StatusInternalServerError)
 		return
 	}
 
 	data := map[string]any{
-		"Name":     user.Name,
-		"Username": user.Username,
+		"Name":     user.Dni,
+		"Username": user.Nombre,
 		"Email":    user.Email,
 	}
 
@@ -69,7 +55,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 // Handle Profile Access
 // ------------------------------------------------------------------------------------------------
 
-func handleProfileAccess(user sqlc.User, w http.ResponseWriter, r *http.Request) {
+func handleProfileAccess(user sqlc.Usuario, w http.ResponseWriter, r *http.Request) {
 
 	token, err := generateSessionToken()
 	if err != nil {

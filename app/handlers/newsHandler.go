@@ -1,5 +1,6 @@
 package handlers
 
+/*
 import (
 	"database/sql"
 	"log"
@@ -19,7 +20,7 @@ func noticiasHandler(w http.ResponseWriter, r *http.Request) {
 		// Aquí se llama al proveedor de la DB, o la BD en sí.
 		//results = provider.Search(query)
 	}
-	noticias, err := queries.ListNews(r.Context(), 0)
+	noticias, err := queries.ListarNoticias(r.Context(), 0)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			logInHandleGET(w, "No hay noticias.")
@@ -42,3 +43,4 @@ func noticiasHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderizeTemplate(w, "template/news.html", data)
 }
+*/

@@ -1,86 +1,59 @@
--- name: GetUserByUsername :one
-SELECT * FROM users WHERE username = $1;
+-- name: ObtenerUsuarioPorID :one
+SELECT * FROM usuarios WHERE id = $1;
 
--- name: ListUsers :many
-SELECT * FROM users ORDER BY username;
+-- name: ObtenerUsuarioPorDNI :one
+SELECT * FROM usuarios WHERE dni = $1;
 
--- name: CreateUser :one
-INSERT INTO users (username, name, email, password, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING *;
+-- name: ListarUsuarios :many
+SELECT * FROM usuarios ORDER BY id;
 
--- name: UpdateUser :exec
-UPDATE users SET username = $2, email = $3 WHERE id = $1;
+-- name: CrearUsuario :one
+INSERT INTO usuarios (dni, nombre, email, contraseña) VALUES ($1, $2, $3, $4) RETURNING *;
 
--- name: DeleteUser :exec
-DELETE FROM users WHERE id = $1;
+-- name: ActualizarUsuario :exec
+UPDATE usuarios SET nombre = $2, email = $3 WHERE id = $1;
 
--- name: CreateNew :one
+-- name: ActualizarDNI :exec
+UPDATE usuarios SET dni = $2 WHERE id = $1;
+
+-- name: CrearPerfil :one
+INSERT INTO perfiles (id_usuario, image) VALUES ($1, $2) RETURNING *;
+
+-- name: EliminarUsuario :exec
+DELETE FROM usuarios WHERE id = $1;
+
+-- name: CrearNoticia :one
 INSERT INTO noticias (titulo, contenido, publicada_en, tiempo_lectura_estimado) VALUES ($1, $2, $3, $4) RETURNING *;
 
--- name: ListNews: many
+-- name: ListarNoticias :many
 SELECT * FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1;
 
--- name: CreateWork :one
-INSERT INTO works (title, content_type_id, unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING *;
+-- name: LikearNoticia :one
+INSERT INTO likes_noticia (id_noticia, id_usuario) VALUES ($1, $2) RETURNING *;
 
--- name: CreateContentType :one
-INSERT INTO content_types (name) VALUES ($1) RETURNING *;
+-- name: DeslikearNoticia :exec
+DELETE FROM likes_noticia WHERE id_noticia = $1 AND id_usuario = $2;
 
--- name: ReviewWork :one
-INSERT INTO review (user_id, work_id, score, review, watched_at, liked) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+-- name: ObtenerLikesNoticia :one
+SELECT COUNT(*) FROM likes_noticia WHERE id_noticia = $1;
 
--- name: GetLastReview :one
-SELECT * FROM review WHERE user_id = $1 AND work_id = $2;
+-- name: AgregarComentario :one
+INSERT INTO comentarios_noticia (id_noticia, id_usuario, comentario) VALUES ($1, $2, $3) RETURNING *;
 
--- name: UpdateReview :exec
-UPDATE review SET score = $2, review = $3, watched_at = $4, liked = $5 WHERE id = $1;
+-- name: EliminarComentario :exec
+DELETE FROM comentarios_noticia WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3;
 
--- name: DeleteReview :exec
-DELETE FROM review WHERE id = $1;
+-- name: ObtenerComentariosNoticia :one
+SELECT COUNT(*) FROM comentarios_noticia WHERE id_noticia = $1;
 
--- name: ConsumeWork :one
-INSERT INTO consumed_works (user_id,work_id) VALUES ($1,$2) RETURNING *;
+-- name: LikearComentario :one
+INSERT INTO likes_comentario (id_noticia, id_usuario, id_comentario, id_usuario_like) VALUES ($1, $2, $3, $4) RETURNING *;
 
--- name: UnconsumeWork :exec
-DELETE FROM consumed_works WHERE user_id = $1 AND work_id = $2;
+-- name: DeslikearComentario :exec
+DELETE FROM likes_comentario WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3 AND id_usuario_like = $4;
 
--- name: LikeWork :one
-INSERT INTO liked_works (user_id,work_id) VALUES ($1,$2) RETURNING *;
+-- name: ObtenerLikesComentario :one
+SELECT COUNT(*) FROM likes_comentario WHERE id_noticia = $1 AND id_comentario = $2;
 
--- name: LikeReview :one
-INSERT INTO review_like (review_id,user_id) VALUES ($1,$2) RETURNING *;
-
--- name: UnlikeReview :exec
-DELETE FROM review_like WHERE review_id = $1 AND user_id = $2;
-
--- name: CommentReview :one
-INSERT INTO review_comment (review_id, user_id,comment) VALUES ($1,$2,$3) RETURNING *;
-
--- name: DeleteReviewComment :exec
-DELETE FROM review_comment WHERE id = $1;
-
--- name: GetConsumedWorksByUser :many
-SELECT * FROM works w WHERE w.id IN (SELECT id_work FROM consumed_works WHERE user_id = $1) ORDER BY (content_type_id,name);
-
--- name: FollowUser :one
-INSERT INTO user_follows (follower_id, followed_id) VALUES ($1,$2) RETURNING *;
-
--- name: UnfollowUser :exec
-DELETE FROM user_follows WHERE follower_id = $1 AND followed_id = $2;
-
--- name: GetNumberOfFollowers :one
-SELECT COUNT(*) FROM user_follows WHERE followed_id = $1;
-
--- name: GetNumberOfFollowings :one
-SELECT COUNT(*) FROM user_follows WHERE follower_id = $1;
-
--- name: AddWorkToFavourites :one
-INSERT INTO user_favourites (user_id, work_id) VALUES ($1,$2) RETURNING *;
-
--- name: RemoveWorkFromFavourites :exec
-DELETE FROM user_favourites WHERE user_id = $1 AND work_id = $2;
-
--- name: GetNumberOfFavouritesFromUser :one
-SELECT COUNT(*) FROM user_favourites WHERE user_id = $1;
-
--- name: GetNumberOfFavouritesFromWork :one
-SELECT COUNT(*) FROM user_favourites WHERE work_id = $1;
+-- name: ListarComentarios :many
+SELECT * FROM comentarios_noticia ORDER BY publicado_en LIMIT 10 OFFSET $1;
