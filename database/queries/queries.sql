@@ -1,6 +1,3 @@
--- name: GetUserByID :one
-SELECT * FROM users WHERE id = $1;
-
 -- name: GetUserByUsername :one
 SELECT * FROM users WHERE username = $1;
 
@@ -15,6 +12,12 @@ UPDATE users SET username = $2, email = $3 WHERE id = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1;
+
+-- name: CreateNew :one
+INSERT INTO noticias (titulo, contenido, publicada_en, tiempo_lectura_estimado) VALUES ($1, $2, $3, $4) RETURNING *;
+
+-- name: ListNews: many
+SELECT * FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1;
 
 -- name: CreateWork :one
 INSERT INTO works (title, content_type_id, unit,saga_id) VALUES ($1, $2, $3, $4) RETURNING *;

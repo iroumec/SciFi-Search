@@ -1,43 +1,51 @@
 --------------------- Creacion de tablas ---------------------
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS usuarios (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(20) UNIQUE CONSTRAINT uq_usuario NOT NULL, -- Alternative key.
-    name VARCHAR(20) NOT NULL,
-    password VARCHAR(20) NOT NULL,
-    email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Se nombran para poder usarlas en el manejo de errores.
-    password TEXT NOT NULL, -- TEXT debido a la encriptación.
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    email VARCHAR(50) UNIQUE CONSTRAINT uq_email NOT NULL, -- Alternative key, Se nombran para poder usarlas en el manejo de errores.
+    contraseña TEXT NOT NULL, -- TEXT debido a la encriptación.
+    creado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS news (
+CREATE TABLE IF NOT EXISTS perfiles (
+    id_usuario INT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS noticias (
     id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    published_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    estimated_lecture_time TIMESTAMP,
-    views INT DEFAULT 0
+    titulo TEXT NOT NULL,
+    contenido TEXT NOT NULL,
+    publicada_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    tiempo_lectura_estimado TIMESTAMP,
+    visualizaciones INT DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS news_likes (
-    new_id INT,
-    user_id INT,
-    liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_news_likes PRIMARY KEY (new_id, user_id)
+CREATE TABLE IF NOT EXISTS likes_noticia (
+    id_noticia INT,
+    id_usuario INT,
+    likeado_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_news_likes PRIMARY KEY (id_noticia, id_usuario)
 );
 
-ALTER TABLE news_likes ADD CONSTRAINT fk_news_likes_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
+ALTER TABLE likes_noticia ADD CONSTRAINT fk_likes_noticia_usuarios
+    FOREIGN KEY (id_usuario)
+    REFERENCES usuarios(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-CREATE TABLE IF NOT EXISTS news_comments (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS comentarios_noticia (
+    new_id INT,
+    user_id INT,
+    -- Con las tres siendo primary key, entonces un usuario puede realizar más de un comentario en una publicación.
+    -- Si se queire evitar el spam, podría evitarse eliminando el atributo debajo.
+    comment_id SERIAL,
     comment TEXT NOT NULL,
     published_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     tiempo_estimado_lectura TIMESTAMP,
-    visualizaciones INT DEFAULT 0
+    visualizaciones INT DEFAULT 0,
+    CONSTRAINT pk_news_comments PRIMARY KEY (new_id, user_id, comment_id)
 );
 
 ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_users
@@ -47,117 +55,92 @@ ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_users
     INITIALLY IMMEDIATE
 ;
 
+ALTER TABLE news_comments ADD CONSTRAINT fk_news_comments_news
+    FOREIGN KEY (new_id)
+    REFERENCES news(id)
+    NOT DEFERRABLE
+    INITIALLY IMMEDIATE
+;
 
 CREATE TABLE IF NOT EXISTS comments_likes (
     new_id INT,
     user_id INT,
-    comment_id SERIAL INT,
+    comment_id INT,
+    user_like_id INT,
     liked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT pk_news_likes PRIMARY KEY (new_id, user_id, comment_id)
+    CONSTRAINT pk_comments_likes PRIMARY KEY (new_id, user_id, comment_id, user_like_id)
 );
 
-
---------------------- Asignacion de foreign keys ---------------------
-
-ALTER TABLE works ADD CONSTRAINT fk_works_content_type
-    FOREIGN KEY (content_type_id)
-    REFERENCES content_types(id)
+ALTER TABLE comments_likes ADD CONSTRAINT fk_comments_likes_comments
+    FOREIGN KEY (new_id, user_id, comment_id)
+    REFERENCES news_comments(new_id, user_id, comment_id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE works ADD CONSTRAINT fk_works_works --saga
-    FOREIGN KEY (saga_id)
-    REFERENCES works(id)
+CREATE TABLE IF NOT EXISTS facultades (
+    id SERIAL PRIMARY KEY, 
+    name VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS puntajes (
+    facultad1_id INT,
+    facultad2_id INT,
+    partido_id INT,
+    puntos1 INT NOT NULL,
+    puntos2 INT NOT NULL,
+    puntosS1 INT DEFAULT NULL,
+    puntosS2 INT DEFAULT NULL,
+    CONSTRAINT pk_puntaje PRIMARY KEY (facultad1_id,facultad2_id,partido_id) 
+);
+
+CREATE TABLE IF NOT EXISTS partidos (
+    id SERIAL PRIMARY KEY,
+    deporte_id INT NOT NULL,
+    incio TIMESTAMP,
+    fin TIMESTAMP DEFAULT NULL,
+    lugar VARCHAR(255),
+    cancha TEXT DEFAULT NULL,
+    zona CHAR DEFAULT NULL,
+    tipo VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS deportes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255)
+);
+
+ALTER TABLE partidos ADD CONSTRAINT fk_partidos_deportes
+    FOREIGN KEY deporte_id
+    REFERENCES deportes(id)
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad1
+    FOREIGN KEY facultad1_id
+    REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE review ADD CONSTRAINT fk_review_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
+ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_facultad2
+    FOREIGN KEY facultad2_id
+    REFERENCES facultades(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
-ALTER TABLE review ADD CONSTRAINT fk_review_works
-    FOREIGN KEY (work_id)
-    REFERENCES works(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE consumed_works ADD CONSTRAINT fk_consumed_works_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE consumed_works ADD CONSTRAINT fk_consumed_works_works
-    FOREIGN KEY (work_id)
-    REFERENCES works(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE liked_works ADD CONSTRAINT fk_liked_works_works
-    FOREIGN KEY (work_id)
-    REFERENCES works(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE review_like ADD CONSTRAINT fk_review_like_review
-    FOREIGN KEY (review_id)
-    REFERENCES review(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE review_like ADD CONSTRAINT fk_review_like_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE user_follows ADD CONSTRAINT fk_user_follows_followed_user
-    FOREIGN KEY (followed_id)
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE user_follows ADD CONSTRAINT fk_user_follows_follower_user
-    FOREIGN KEY (follower_id) -- Separate foreign key constraint for follower_id, as both followed_id and follower_id reference Users(id) independently
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_users
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    NOT DEFERRABLE
-    INITIALLY IMMEDIATE
-;
-
-ALTER TABLE user_favourites ADD CONSTRAINT fk_user_favourites_works
-    FOREIGN KEY (work_id)
-    REFERENCES works(id)
+ALTER TABLE puntajes ADD CONSTRAINT fk_puntajes_partido
+    FOREIGN KEY partido_id
+    REFERENCES partidos(id)
     NOT DEFERRABLE
     INITIALLY IMMEDIATE
 ;
 
 --------------------- Funciones + Triggers ---------------------
+
+/*
 -- Creo que podrían estar en otro archivo, porque el sqlc no los usa y solo los usa docker.
 -- Tampoco creo que usa los alter table.
 
@@ -226,3 +209,5 @@ CREATE OR REPLACE TRIGGER TRI_USER_FAVOURITES
     BEFORE INSERT ON user_favourites
     FOR EACH ROW 
         EXECUTE FUNCTION FN_TRI_USER_FAVOURITES();
+
+        */

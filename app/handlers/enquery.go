@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	gomail "gopkg.in/mail.v2"
@@ -66,20 +67,39 @@ func enqueryHandlePOST(w http.ResponseWriter, r *http.Request) {
 	message.SetHeader("Subject", "Consulta - Olimpiadas")
 
 	// Set email body
-	emailBody := `
+	emailBodyFormat := `
 		Consulta automatizada de la página de la facultad.
+
+		Nombre: %s
+		Apellido: %s
+		Email: %s
+		Teléfono: %s
+		Dirección: %s
+
+		Consulta:
+		
+		%s
 	`
-	message.SetBody("text/plain", "This is the Test Body")
 
-	// Set up the SMTP dialer
-	dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")
+	emailBody := fmt.Sprintf(emailBodyFormat, name, surname, email, phone, address, enquery)
 
-	// Send the email
-	if err := dialer.DialAndSend(message); err != nil {
-		enqueryHandleGET(w, "Ha ocurrido un erro al enviar la consulta. Tranquilo. ¡La culpa no es tuya! Intenta envviar el email directamente.")
-		panic(err)
-		return
-	}
+	message.SetBody("text/plain", emailBody)
+
+	/*
+
+		Ver después
+
+		// Set up the SMTP dialer
+			dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")
+
+			// Send the email
+			if err := dialer.DialAndSend(message); err != nil {
+				enqueryHandleGET(w, "Ha ocurrido un erro al enviar la consulta. Tranquilo. ¡La culpa no es tuya! Intenta envviar el email directamente.")
+				panic(err)
+				return
+			}
+
+	*/
 
 	// El email fue enviado exitosamente.
 

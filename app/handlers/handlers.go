@@ -32,9 +32,9 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se envuelve en un gzip middleware.
 	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
 
-	setStaticHandler("/carnet-deportivo", "template/card.html")
+	http.HandleFunc("/consulta", enqueryHandler)
 
-	setStaticHandler("/consulta", "template/enquery.html")
+	setStaticHandler("/carnet-deportivo", "template/card.html")
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registerUserHandlers()
