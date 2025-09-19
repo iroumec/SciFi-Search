@@ -3,18 +3,29 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Olimpiadas Unicen</title>
+    <title>Olimpiadas UNICEN</title>
     <link rel="stylesheet" href="css/estilos.css">
     <link rel="icon" type="image/png" href="img/icono.png">
 </head>
 
 <body>
     <header>
-        <a href="/">
-            <img src="img/logo.png" alt="Logo UKI" id="logo">
-        </a>
+        <div class="header-logo">
+            <a href="/">
+            <img src="img/logo_cabecera.png" alt="Logo Olimpiadas" id="logo">
+            </a>
+        </div>
+        <div class="header-buttons">
+            <button class="btn-registro" onclick="window.location.href='/signin'">Registrarse</button>
+            <button class="btn-registro" onclick="window.location.href='/login'">Iniciar sesión</button>
+            <!--boton Mi perfil, pero cuando se haya iniciado sesión-->
+        </div>
+        
+
+        
 
 
+<!--
         <nav>
             <a href="#juegos">Juegos</a>
             <a href="#noticias">Juegos</a>
@@ -27,9 +38,9 @@
         <button class="btn-registro" onclick="window.location.href='/consulta'">Consultar</button>
         <button class="btn-registro" onclick="window.location.href='/noticias'">Noticias</button>
         <button class="btn-registro" onclick="window.location.href='/cargar-noticia'">Cargar Noticia</button>
-        
+        -->
     </header>
-
+<!--
         <div id="countdown">
             <div>
                 <span id="dias">00</span> días
@@ -44,6 +55,22 @@
                 <span id="segundos">00</span> segundos
             </div>
         </div>
+
+-->
+    <div class="navegacion-facultades">
+        <nav>
+            <button class="btn-agronomia" onclick="enlace">Agronomía</button>
+            <button class="btn-sociales" onclick="enlace">Sociales</button>
+            <button class="btn-humanas" onclick="enlace">Humanas</button>
+            <button class="btn-exactas" onclick="enlace">Exactas</button>
+            <button class="btn-ingenieria" onclick="enlace">Ingeniería</button>
+            <button class="btn-salud" onclick="enlace">Salud</button>
+            <button class="btn-economicas" onclick="enlace">Economicas</button>
+            <button class="btn-derecho" onclick="enlace">Derecho</button>
+            <button class="btn-veterinarias" onclick="enlace">Veterinarias</button>
+            <button class="btn-arte" onclick="enlace">Arte</button>
+        </nav>
+    </div>
 
     <section class="fondo">
         <div class="fondo-contenido">
@@ -70,12 +97,8 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 UKI</p>
-        <p>Powered by:</p>
-        <div class="powered-by">
-            <img src="img/providers/tmdb_logo.svg" alt="TMDB" height="40">
-            <img src="img/providers/igdb_logo.png" alt="IGDB" height="40">
-        </div>
+        <p>Trabajo integrador de Programación Web y Sistemas Operativos</p>
+        <p>Iñaki Roumec y Ulises Velis</p>
     </footer>
 
 </body>

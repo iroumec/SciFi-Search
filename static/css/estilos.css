@@ -1,6 +1,18 @@
+/* Constantes */
+
 :root {
-    --color-uki: #963CBA;
-    --color-fondo: #111111;
+    --color-fac-agronomia: #983C32;
+    --color-fac-sociales: #d07e32;
+    --color-fac-humanas: #FCB830;
+    --color-fac-exactas: #EDD540;
+    --color-fac-ingenieria: #96AF39;
+    --color-fac-salud: #005C25;
+    --color-fac-economicas: #175F89;
+    --color-fac-derecho: #1B5791;
+    --color-fac-veterinarias: #783578;
+    --color-fac-arte: #EE315A;
+    --color-unicen: #005785;
+    --color-fondo: #000314;
 }
 
 body {
@@ -14,16 +26,122 @@ body {
 
 header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     background-color: var(--color-fondo);
-    color: var(--color-uki);
     padding: 0.5rem 1rem;
+    position: relative;
+    height: 75px;
+}
+
+.header-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 1;
 }
 
 #logo {
-    height: 65px;
+    height: 75px;
 }
+
+.header-buttons {
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    z-index: 2;
+}
+
+.btn-registro {
+    margin-right: 10px;
+    margin-left: 5px;
+    background-color: white;   /* color del boton */
+    color: var(--color-fondo);             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.5rem 1rem;       /* espacio interno */
+    border-radius: 5px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold;
+}
+
+.btn-registro:hover {
+  background-color: var(--color-fondo);   /* cambia de color al pasar el mouse */
+  color: white;                /* texto en blanco al hover */
+}
+
+/* Barra de navegacion de facultades */
+.navegacion-facultades {
+    width: 100%;
+    background: #111111;
+    margin: 0;
+    padding: 0;
+}
+
+.navegacion-facultades nav {
+    display: flex;
+    width: 100%;
+    gap: 0;
+}
+
+.navegacion-facultades button {
+    flex: 1 1 0;
+    border: none;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.2s;
+    margin: 0;
+}
+
+.navegacion-facultades button:hover {
+    background: white;
+    color: black;
+}
+
+.btn-agronomia {
+    background: var(--color-fac-agronomia);
+    color: #fff;
+}
+.btn-sociales {
+    background: var(--color-fac-sociales);
+    color: #fff;
+}
+.btn-humanas {
+    background: var(--color-fac-humanas);
+    color: #fff;
+}
+.btn-exactas {
+    background: var(--color-fac-exactas);
+    color: white;
+}
+.btn-ingenieria {
+    background: var(--color-fac-ingenieria);
+    color: #fff;
+}
+.btn-salud {
+    background: var(--color-fac-salud);
+    color: #fff;
+}
+.btn-economicas {
+    background: var(--color-fac-economicas);
+    color: #fff;
+}
+.btn-derecho {
+    background: var(--color-fac-derecho);
+    color: #fff;
+}
+.btn-veterinarias {
+    background: var(--color-fac-veterinarias);
+    color: #fff;
+}
+.btn-arte {
+    background: var(--color-fac-arte);
+    color: #fff;
+}
+
+/**/
 
 header nav {
     flex-grow: 1;
@@ -41,24 +159,6 @@ nav a:hover {
     color: var(--color-uki);
 }
 
-.btn-registro {
-    margin-right: 10px;
-    margin-left: 5px;
-    background-color: var(--color-uki);   /* color del boton */
-    color: var(--color-fondo);             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.5rem 1rem;       /* espacio interno */
-    border-radius: 5px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold;
-}
-
-.btn-registro:hover {
-  background-color: #ffffff;   /* cambia de color al pasar el mouse */
-  color: black;                /* texto en blanco al hover */
-}
-
-/**/
 
 /* Contenedor debajo del header */
 .fondo {
