@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/microcosm-cc/bluemonday"
+
 	sqlc "uki/app/database/sqlc"
 )
 
@@ -42,9 +44,10 @@ func manejarGETNoticias(w http.ResponseWriter, r *http.Request) {
 		"Offset":  offset,
 	}
 
-	// Permite ir sumándole 5 all offset.
+	// Permite ir sumándole 5 all offset. Y usar safeHTML.
 	funcs := template.FuncMap{
-		"add": func(a, b int) int { return a + b },
+		"add":      func(a, b int) int { return a + b },
+		"safeHTML": func(s string) template.HTML { return template.HTML(s) },
 	}
 
 	renderizeTemplate(w, "template/noticias/noticias.html", data, funcs)
@@ -84,8 +87,12 @@ func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	}
 
 	titulo := r.FormValue("título")
-	contenido := r.FormValue("contenido")
+	contenidoRaw := r.FormValue("contenido")
 	tiempoStr := r.FormValue("tiempo_estimado_lectura")
+
+	// Sanitizar HTML (permitir solo etiquetas seguras para usuarios finales)
+	p := bluemonday.UGCPolicy()
+	contenido := p.Sanitize(contenidoRaw)
 
 	var tiempo sql.NullTime
 	if tiempoStr != "" {

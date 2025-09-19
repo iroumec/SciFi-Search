@@ -7,8 +7,10 @@
 <ul>
     {{range .Results}}
     <li>
-        <strong>{{.Titulo}}</strong> - {{.Contenido}}
+        <strong>{{.Titulo}}</strong><br>
+        {{.Contenido | safeHTML}}
     </li>
+
     {{end}}
 </ul>
 
