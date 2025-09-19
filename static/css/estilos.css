@@ -191,3 +191,15 @@ footer {
 }
 
 /* ----------------------------------------------- Perfil de facultad ----------------------------------------------- */
+
+.portada {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}

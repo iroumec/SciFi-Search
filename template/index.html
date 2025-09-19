@@ -1,26 +1,7 @@
-﻿<!DOCTYPE html>
-<html>
+﻿{{ define "title" }}Olimpiadas UNICEN{{ end }}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Olimpiadas UNICEN</title>
-    <link rel="stylesheet" href="static/css/estilos.css">
-    <link rel="icon" type="static/image/png" href="static/img/icono.png">
-</head>
+{{ define "content" }}
 
-<body>
-    <header>
-        <div class="header-logo">
-            <a href="/">
-            <img src="static/img/logo_cabecera.png" alt="Logo Olimpiadas" id="logo">
-            </a>
-        </div>
-        <div class="header-buttons">
-            <button class="btn-registro" onclick="window.location.href='/signin'">Registrarse</button>
-            <button class="btn-registro" onclick="window.location.href='/login'">Iniciar sesión</button>
-            <!--boton de Desplegar menu, solo cuando ya está iniciado sesion-->
-        </div>
-    </header>
 <!--
         <div id="countdown">
             <div>
@@ -37,21 +18,21 @@
             </div>
         </div>
 
+
+    
 -->
+
     {{ $facultades := .Facultades }}
     <section class="navegacion-facultades">
-        <nav aria-label="Navegación de facultades">
-            <ul>
-                {{ range $facultades }}
-                <li>
-                    <a class="btn-{{ . }}" href="/facultades?facultad={{ . }}">
-                        {{ . | title }}
-                    </a>
-                </li>
-                {{ end }}
-            </ul>
+        <nav>
+            {{ range $facultades }}
+            <button class="btn-{{ . }}" onclick="window.location.href='/facultades?facultad={{ . }}'">
+                {{ . | title }}
+            </button>
+            {{ end }}
         </nav>
     </section>
+
 
     <section class="fondo">
         <div class="fondo-contenido">
@@ -59,7 +40,6 @@
         </div>
     </section>
 
-    <main>
         <section id="puntos">
             <h2>Puntos</h2>
             <p> Aca van los resultados parciales, cada punto de todas las facultades</p>
@@ -74,14 +54,4 @@
             <h2>Ultimos partidos</h2>
             <p>Aca van los posteos de los ultimos partidos. Se publica las facultades, el resultado y fotos del post original. Aca se va a poder comentar comentarios y fotos.</p>
         </section>
-    
-    </main>
-
-    <footer>
-        <p>Trabajo integrador de Programación Web y Sistemas Operativos</p>
-        <p>Iñaki Roumec y Ulises Velis</p>
-    </footer>
-
-</body>
-
-</html>
+{{ end }}

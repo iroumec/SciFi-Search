@@ -134,7 +134,30 @@ CREATE TABLE IF NOT EXISTS partidos (
 CREATE TABLE IF NOT EXISTS deportes (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255)
+    foto TEXT
 );
+
+CREATE TABLE IF NOT EXISTS puntajes_simples ( -- para culturales, ajedrez y cross?
+    id_disciplina INT,
+    id_facultad INT,
+    puntos INT NOT NULL,
+    nombre VARCHAR(255),
+    CONSTRAINT pk_puntajes_simples PRIMARY KEY (id_disciplina,id_facultad)
+);
+
+ALTER TABLE puntajes_simples ADD CONSTRAINT fk_punajes_simples_deportes 
+    FOREIGN KEY id_disciplina
+    REFERENCES deportes(id)
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+ALTER TABLE puntajes_simples ADD CONSTRAINT fk_punajes_simples_facultad 
+    FOREIGN KEY id_facultad
+    REFERENCES facultades(id)
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
 
 CREATE TABLE IF NOT EXISTS participa (
     id_participante INT,
