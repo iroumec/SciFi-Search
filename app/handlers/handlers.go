@@ -29,8 +29,9 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se crea un manejador (handler) de servidor de archivos.
 	fileServer := http.FileServer(http.Dir(fileDir))
 
+	// Servir estáticos en /static/
 	// Se envuelve en un gzip middleware.
-	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
+	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
 
 	registrarIndexHTML()
 
@@ -134,7 +135,7 @@ func registrarIndexHTML() {
 			},
 		}
 
-		renderizeTemplate(w, "templates/index.gohtml", map[string]any{
+		renderizeTemplate(w, "template/index.html", map[string]any{
 			"Facultades": data.Facultades,
 		}, funcs)
 	})

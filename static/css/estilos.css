@@ -174,14 +174,14 @@ header {
     font-size: 1.5rem;
     font-weight: bold;
 }
-/*Main*/
+/* --------------- Main --------------- */
 
 main {
     padding: 2rem;
     background: var(--color-fondo);
 }
 
-/*Footer*/
+/* --------------- Footer --------------- */
 
 footer {
     text-align: center;
@@ -189,3 +189,5 @@ footer {
     background-color: black;
     color:#ffffff;
 }
+
+/* ----------------------------------------------- Perfil de facultad ----------------------------------------------- */

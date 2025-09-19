@@ -9,7 +9,7 @@ import (
 
 	"uki/app/handlers"
 
-	sqlc "uki/app/database/sqlc"
+	sqlc "uki/app/database"
 
 	_ "github.com/lib/pq"
 )

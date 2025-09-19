@@ -4,21 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Olimpiadas UNICEN</title>
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="icon" type="image/png" href="img/icono.png">
+    <link rel="stylesheet" href="static/css/estilos.css">
+    <link rel="icon" type="static/image/png" href="static/img/icono.png">
 </head>
 
 <body>
     <header>
         <div class="header-logo">
             <a href="/">
-            <img src="img/logo_cabecera.png" alt="Logo Olimpiadas" id="logo">
+            <img src="static/img/logo_cabecera.png" alt="Logo Olimpiadas" id="logo">
             </a>
         </div>
         <div class="header-buttons">
             <button class="btn-registro" onclick="window.location.href='/signin'">Registrarse</button>
             <button class="btn-registro" onclick="window.location.href='/login'">Iniciar sesión</button>
-            <!--boton de Desplegar menu, solo cuando ya está iniciado -->
+            <!--boton de Desplegar menu, solo cuando ya está iniciado sesion-->
         </div>
     </header>
 <!--
@@ -38,18 +38,18 @@
         </div>
 
 -->
+    {{ $facultades := .Facultades }}
     <section class="navegacion-facultades">
-        <nav>
-            <button class="btn-agronomia" onclick="enlace">Agronomía</button>
-            <button class="btn-sociales" onclick="enlace">Sociales</button>
-            <button class="btn-humanas" onclick="window.location.href='/facultades?facultad=humanas'">Humanas</button>
-            <button class="btn-exactas" onclick="window.location.href='/facultades?facultad=exactas'">Exactas</button>
-            <button class="btn-ingenieria" onclick="enlace">Ingeniería</button>
-            <button class="btn-salud" onclick="enlace">Salud</button>
-            <button class="btn-economicas" onclick="enlace">Economicas</button>
-            <button class="btn-derecho" onclick="enlace">Derecho</button>
-            <button class="btn-veterinarias" onclick="enlace">Veterinarias</button>
-            <button class="btn-arte" onclick="enlace">Arte</button>
+        <nav aria-label="Navegación de facultades">
+            <ul>
+                {{ range $facultades }}
+                <li>
+                    <a class="btn-{{ . }}" href="/facultades?facultad={{ . }}">
+                        {{ . | title }}
+                    </a>
+                </li>
+                {{ end }}
+            </ul>
         </nav>
     </section>
 
