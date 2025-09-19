@@ -10,5 +10,5 @@ sql:
     gen:
       go:
         package: "database"
-        out: "app/database/sqlc/"
+        out: "app/database/"
         emit_json_tags: true

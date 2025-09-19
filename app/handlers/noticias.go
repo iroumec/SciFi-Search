@@ -9,7 +9,7 @@ import (
 
 	"github.com/microcosm-cc/bluemonday"
 
-	sqlc "uki/app/database/sqlc"
+	sqlc "uki/app/database"
 )
 
 /*

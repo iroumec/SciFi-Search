@@ -12,7 +12,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	sqlc "uki/app/database/sqlc"
+	sqlc "uki/app/database"
 
 	_ "github.com/lib/pq"
 )

@@ -8,7 +8,7 @@ import (
 
 	"uki/app/utils"
 
-	sqlc "uki/app/database/sqlc"
+	sqlc "uki/app/database"
 
 	_ "github.com/lib/pq"
 )
@@ -32,6 +32,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se envuelve en un gzip middleware.
 	http.Handle("/", utils.GzipMiddleware(fileDir, fileServer))
 
+	registrarIndexHTML()
+
 	http.HandleFunc("/consulta", enqueryHandler)
 
 	http.HandleFunc("/perfil", manejarPerfil)
@@ -39,6 +41,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	http.HandleFunc("/noticias", manejarNoticias)
 
 	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
+
+	http.HandleFunc("/facultades", manejarFacultades)
 
 	setStaticHandler("/carnet-deportivo", "template/card.html")
 
@@ -107,6 +111,33 @@ func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 			htmlPath,
 		),
 	)
+}
+
+func registrarIndexHTML() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		data := struct {
+			Facultades []string
+		}{
+			Facultades: []string{
+				"agronomia", "sociales", "humanas", "exactas",
+				"ingenieria", "salud", "economicas", "derecho",
+				"veterinarias", "arte",
+			},
+		}
+
+		funcs := template.FuncMap{
+			"title": func(s string) string {
+				if len(s) == 0 {
+					return s
+				}
+				return string(s[0]-32) + s[1:] // Capitalización
+			},
+		}
+
+		renderizeTemplate(w, "templates/index.gohtml", map[string]any{
+			"Facultades": data.Facultades,
+		}, funcs)
+	})
 }
 
 // ------------------------------------------------------------------------------------------------

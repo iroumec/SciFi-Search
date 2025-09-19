@@ -17,7 +17,7 @@ RUN addgroup -S uki && adduser -S uki -G uki
 COPY --from=builder /app/main .
 
 COPY static ./static
-COPY app/template/ ./template
+COPY template ./template
 
 # Se brinda al usuario no root permisos para ejecutar la app.
 RUN chown -R uki:uki /app
