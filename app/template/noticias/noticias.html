@@ -2,20 +2,21 @@
 
 {{ define "content" }}
 
-<!-- Área de resultados -->
-<!-- Se verifica que la lista de resultados no esté vacía -->
+<!-- Se verifica que los resultados no estén vacíos -->
 {{if .Results}}
-<h2>Resultados:</h2>
 <ul>
     {{range .Results}}
     <li>
-        <strong>{{.Título}}</strong> ({{.Tipo}})<br>
-        {{if .Contenido}}{{.Contenido}}{{end}}<br>
-        {{if .ImageURL}}<img src="{{.ImageURL}}" alt="{{.Title}}" style="max-width:150px;"><br>{{end}}
+        <strong>{{.Titulo}}</strong> - {{.Contenido}}
     </li>
     {{end}}
 </ul>
-{{ else }}
+
+<form action="/noticias" method="get">
+    <input type="hidden" name="offset" value="{{add .Offset 5}}">
+    <button type="submit">Cargar más</button>
+</form>
+{{else}}
 <p>No se encontraron noticias.</p>
 {{end}}
 

@@ -46,7 +46,7 @@ func manejarPerfil(w http.ResponseWriter, r *http.Request) {
 		"Email":    user.Email,
 	}
 
-	renderizeTemplate(w, "template/profile.html", data)
+	renderizeTemplate(w, "template/profile.html", data, nil)
 
 	fmt.Println("Plantilla renderizada.")
 }

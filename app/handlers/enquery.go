@@ -33,7 +33,7 @@ func enqueryHandleGET(w http.ResponseWriter, errorMessage string) {
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/enquery/enquery.html", data)
+	renderizeTemplate(w, "template/enquery/enquery.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -103,5 +103,5 @@ func enqueryHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	// El email fue enviado exitosamente.
 
-	renderizeTemplate(w, "template/enquery/enquerySent.html", nil)
+	renderizeTemplate(w, "template/enquery/enquerySent.html", nil, nil)
 }

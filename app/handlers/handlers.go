@@ -38,6 +38,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	http.HandleFunc("/noticias", manejarNoticias)
 
+	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
+
 	setStaticHandler("/carnet-deportivo", "template/card.html")
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
@@ -54,7 +56,7 @@ func setStaticHandler(path string, htmlPath string) {
 
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 
-		tmpl := applyLayout(htmlPath)
+		tmpl := applyLayout(htmlPath, nil)
 
 		// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -70,9 +72,9 @@ func setStaticHandler(path string, htmlPath string) {
 // Render Template
 // ------------------------------------------------------------------------------------------------
 
-func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]any) {
+func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]any, funcs template.FuncMap) {
 
-	tmpl := applyLayout(htmlPath)
+	tmpl := applyLayout(htmlPath, funcs)
 
 	// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -86,16 +88,25 @@ func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]a
 // Aplicación de Layout
 // ------------------------------------------------------------------------------------------------
 
-func applyLayout(htmlPath string) *template.Template {
+func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
+
+	tmpl := template.New("layout")
+
+	// Si vienen funciones, se aplican
+	if funcs != nil {
+		tmpl = tmpl.Funcs(funcs)
+	}
 
 	// `template.ParseFiles` abre el archivo y lo convierte en un objeto `*template.Template`.
 	// `template.Must` hace que si hay un error al leer la plantilla, el programa panic automáticamente.
-	return template.Must(template.ParseFiles(
-		"template/layout/layout.html",
-		"template/layout/header.html",
-		"template/layout/footer.html",
-		htmlPath,
-	))
+	return template.Must(
+		tmpl.ParseFiles(
+			"template/layout/layout.html",
+			"template/layout/header.html",
+			"template/layout/footer.html",
+			htmlPath,
+		),
+	)
 }
 
 // ------------------------------------------------------------------------------------------------

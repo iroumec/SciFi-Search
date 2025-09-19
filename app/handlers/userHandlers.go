@@ -55,7 +55,7 @@ func signInHandleGET(w http.ResponseWriter, errorMessage string) {
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/signin.html", data)
+	renderizeTemplate(w, "template/signin.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	// Quizás pueda usarse después...
 	_ = createdUser
 
-	renderizeTemplate(w, "template/userRegistered.html", nil)
+	renderizeTemplate(w, "template/userRegistered.html", nil, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/login.html", data)
+	renderizeTemplate(w, "template/login.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
