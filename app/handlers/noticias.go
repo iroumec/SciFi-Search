@@ -10,19 +10,28 @@ import (
 	sqlc "tpe/web/app/database"
 )
 
-/*
-Quizás solo deba haber un POST a noticias.
-*/
+func registrarHandlersNoticias() {
+
+	http.HandleFunc("/noticia", manejarNoticias)
+
+	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Noticias
+// ------------------------------------------------------------------------------------------------
 
 func manejarNoticias(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-		manejarGETNoticias(w, r)
-	default:
+	if r.Method != http.MethodGet {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
 	}
+
+	manejarGETNoticias(w, r)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func manejarGETNoticias(w http.ResponseWriter, r *http.Request) {
 
@@ -51,6 +60,8 @@ func manejarGETNoticias(w http.ResponseWriter, r *http.Request) {
 	renderizeTemplate(w, "template/noticias/noticias.html", data, funcs)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func obtenerNoticias(r *http.Request, offset int) []sqlc.Noticia {
 
 	noticias, err := queries.ListarNoticias(r.Context(), int32(offset))
@@ -60,6 +71,10 @@ func obtenerNoticias(r *http.Request, offset int) []sqlc.Noticia {
 
 	return noticias
 }
+
+// ------------------------------------------------------------------------------------------------
+// Carga de Noticias
+// ------------------------------------------------------------------------------------------------
 
 func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 
@@ -73,6 +88,8 @@ func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func manejarGETCargaNoticias(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
@@ -81,6 +98,8 @@ func manejarGETCargaNoticias(w http.ResponseWriter, errorMessage string) {
 
 	renderizeTemplate(w, "template/noticias/cargar-noticia.html", data, nil)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {

@@ -9,17 +9,22 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func registrarHandlersConsultas() {
+
+	http.HandleFunc("/consulta", manejarConsultas)
+}
+
 // ------------------------------------------------------------------------------------------------
 // Enquery Handler
 // ------------------------------------------------------------------------------------------------
 
-func enqueryHandler(w http.ResponseWriter, r *http.Request) {
+func manejarConsultas(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		enqueryHandleGET(w, "")
+		manejarGETConsultas(w, "")
 	case http.MethodPost:
-		enqueryHandlePOST(w, r)
+		manejarPOSTConsultas(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -27,7 +32,7 @@ func enqueryHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func enqueryHandleGET(w http.ResponseWriter, errorMessage string) {
+func manejarGETConsultas(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
 		"ErrorMessage": errorMessage,
@@ -38,7 +43,7 @@ func enqueryHandleGET(w http.ResponseWriter, errorMessage string) {
 
 // ------------------------------------------------------------------------------------------------
 
-func enqueryHandlePOST(w http.ResponseWriter, r *http.Request) {
+func manejarPOSTConsultas(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
@@ -53,8 +58,8 @@ func enqueryHandlePOST(w http.ResponseWriter, r *http.Request) {
 	address := r.FormValue("address")
 	enquery := r.FormValue("enquery")
 
-	if isThereEmptyField(email, enquery) {
-		enqueryHandleGET(w, "Faltan campos obligatorios.")
+	if hayCampoIncompleto(email, enquery) {
+		manejarGETConsultas(w, "Faltan campos obligatorios.")
 		return
 	}
 
@@ -87,7 +92,7 @@ func enqueryHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	/*
 
-		Ver después
+		Ver después para enviar email directamente
 
 		// Set up the SMTP dialer
 			dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")

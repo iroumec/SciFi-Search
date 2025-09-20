@@ -18,27 +18,30 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// registerHandlers registra todos los endpoints
+/*
+Se registran todos los endpoints relacionados al
+registro e inicio de sesión de usuarios.
+*/
 func registerUserHandlers() {
 
 	// Handler que maneja el registro de usuarios.
-	http.HandleFunc("/registrarse", signInHandler)
+	http.HandleFunc("/registrarse", registrarUsuario)
 
 	// Handler que maneja el login de usuarios.
-	http.HandleFunc("/iniciar-sesion", logInHandler)
+	http.HandleFunc("/iniciar-sesion", iniciarSesion)
 }
 
 // ------------------------------------------------------------------------------------------------
 // SignIn Handler
 // ------------------------------------------------------------------------------------------------
 
-func signInHandler(w http.ResponseWriter, r *http.Request) {
+func registrarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		signInHandleGET(w, "")
+		mostrarFormularioRegistro(w, "")
 	case http.MethodPost:
-		signInHandlePOST(w, r)
+		procesarRegistro(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -46,7 +49,7 @@ func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func signInHandleGET(w http.ResponseWriter, errorMessage string) {
+func mostrarFormularioRegistro(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
 		"ErrorMessage": errorMessage,
@@ -57,7 +60,7 @@ func signInHandleGET(w http.ResponseWriter, errorMessage string) {
 
 // ------------------------------------------------------------------------------------------------
 
-func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
+func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseMultipartForm(10 << 20); err != nil { // <- Cambiado para multipart
@@ -65,7 +68,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado.
+	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado. TODO
 
 	dni := r.FormValue("dni")
 	name := r.FormValue("name")
@@ -73,14 +76,14 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	if hayCampoIncompleto(dni, name, email, password) {
-		signInHandleGET(w, "Faltan campos obligatorios.")
+		mostrarFormularioRegistro(w, "Faltan campos obligatorios.")
 		return
 	}
 
 	// Se obtiene el archivo del formulario
 	file, _, err := r.FormFile("certificado") // <- nombre del input en HTML
 	if err != nil {
-		signInHandleGET(w, "Debe adjuntar el certificado de alumno regular.")
+		mostrarFormularioRegistro(w, "Debe adjuntar el certificado de alumno regular.")
 		return
 	}
 	defer file.Close()
@@ -88,11 +91,11 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	// Validación del PDF con tu función existente
 	valido, err := utils.ValidarConstancia(file)
 	if err != nil {
-		signInHandleGET(w, err.Error())
+		mostrarFormularioRegistro(w, err.Error())
 		return
 	}
 	if !valido {
-		signInHandleGET(w, "El certificado no es válido.")
+		mostrarFormularioRegistro(w, "El certificado no es válido.")
 		return
 	}
 
@@ -110,7 +113,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 		Email:      email,
 		Contraseña: string(hashedPassword),
 	})
-	if err != nil {
+	if err != nil { // Esto anda MUY MAL. TODO: solucionar luego.
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
 			http.Error(w, "El usuario o email ya existen.", http.StatusConflict)
@@ -132,21 +135,21 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 // LogIn Handler
 // ------------------------------------------------------------------------------------------------
 
-func logInHandler(w http.ResponseWriter, r *http.Request) {
+func iniciarSesion(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		logInHandleGET(w, "")
+		mostrarFormularioLogin(w, "")
 	case http.MethodPost:
-		logInHandlePOST(w, r)
+		procesarLogin(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, "Método no permitido.", http.StatusMethodNotAllowed)
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func logInHandleGET(w http.ResponseWriter, errorMessage string) {
+func mostrarFormularioLogin(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
 		"ErrorMessage": errorMessage,
@@ -157,12 +160,12 @@ func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 
 // ------------------------------------------------------------------------------------------------
 
-func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
+func procesarLogin(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
 		// Se renderiza la página con el error correspondiente.
-		logInHandleGET(w, "Error al procesar el formulario.")
+		mostrarFormularioLogin(w, "Error al procesar el formulario.")
 		return
 	}
 
@@ -170,7 +173,7 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	if hayCampoIncompleto(dni, password) {
-		logInHandleGET(w, "Faltan campos obligatorios.")
+		mostrarFormularioLogin(w, "Faltan campos obligatorios.")
 		return
 	}
 
@@ -178,16 +181,16 @@ func logInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	user, err := queries.ObtenerUsuarioPorDNI(r.Context(), dni)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			logInHandleGET(w, "El usuario proporcionado no existe.")
+			mostrarFormularioLogin(w, "El usuario proporcionado no existe.")
 			return
 		}
 		log.Printf("error getting user: %v", err)
-		logInHandleGET(w, "Error interno del servidor.")
+		mostrarFormularioLogin(w, "Error interno del servidor.")
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Contraseña), []byte(password)); err != nil {
-		logInHandleGET(w, "Contraseña incorrecta.")
+		mostrarFormularioLogin(w, "Contraseña incorrecta.")
 		return
 	}
 

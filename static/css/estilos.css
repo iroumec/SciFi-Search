@@ -41,6 +41,14 @@ header {
     z-index: 1;
 }
 
+.bienestar-logo {
+    margin-right: auto;
+}
+
+#logobienestar {
+    height: 75px;
+}
+
 #logo {
     height: 75px;
 }
@@ -183,12 +191,37 @@ main {
 }
 
 /* --------------- Partidos --------------- */
-
 .partidos {
-    padding: 5rem;
-    background-color: black;
-    width: 100%;
-    height: 400px;
+    
+}
+.partidos-contenedor {
+    background: black;
+    border: 2px solid var(--color-unicen);
+    border-radius: 8px;
+    padding: 20px;
+    color: white;
+}
+
+.filtros {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.filtro button {
+    margin: 0 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-unicen);
+    border-radius: 6px;
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+
+.filtro button:hover {
+    background: var(--color-unicen);
+    color: black;
 }
 
 /* --------------- Footer --------------- */

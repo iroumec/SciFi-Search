@@ -14,6 +14,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Ruta a partir de la cual se servirán los archivos estáticos.
 const (
 	fileDir = "./static"
 )
@@ -23,24 +24,19 @@ var queries *sqlc.Queries
 // registerHandlers registra todos los endpoints
 func RegisterHandlers(queryObject *sqlc.Queries) {
 
+	// Guardamos el objeto de consultas como variable global
+	// para poder utilizarlo en todos los handlers que lo requieran.
 	queries = queryObject
 
-	// Se crea un manejador (handler) de servidor de archivos.
-	fileServer := http.FileServer(http.Dir(fileDir))
-
-	// Servir estáticos en /static/
-	// Se envuelve en un gzip middleware.
-	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
+	registrarHandlerStatic()
 
 	registrarIndexHTML()
 
-	http.HandleFunc("/consulta", enqueryHandler)
+	registrarHandlersConsultas()
 
 	http.HandleFunc("/perfil", manejarPerfil)
 
-	http.HandleFunc("/noticias", manejarNoticias)
-
-	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
+	registrarHandlersNoticias()
 
 	http.HandleFunc("/facultades", manejarFacultades)
 
@@ -50,6 +46,16 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	registerUserHandlers()
 
 	fmt.Println("Handlers registrados con éxito.")
+}
+
+func registrarHandlerStatic() {
+
+	// Se crea un manejador (handler) de servidor de archivos.
+	fileServer := http.FileServer(http.Dir(fileDir))
+
+	// Servir estáticos en /static/
+	// Se envuelve en un gzip middleware.
+	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -156,20 +162,4 @@ func obtenerFotos(path string) []string {
 func hayCampoIncompleto(campos ...string) bool {
 
 	return slices.Contains(campos, "")
-}
-
-func isThereEmptyField(fields ...string) bool {
-
-	return slices.Contains(fields, "")
-}
-
-func atLeastOneFieldIsNotEmpty(fields ...string) bool {
-
-	for _, field := range fields {
-		if field != "" {
-			return true
-		}
-	}
-
-	return false
 }

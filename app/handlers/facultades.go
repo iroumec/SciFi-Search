@@ -7,12 +7,12 @@ import (
 
 func manejarFacultades(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-		manejarGETFacultad(w, r)
-	default:
+	if r.Method != http.MethodGet {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
 	}
+
+	manejarGETFacultad(w, r)
 }
 
 func manejarGETFacultad(w http.ResponseWriter, r *http.Request) {
