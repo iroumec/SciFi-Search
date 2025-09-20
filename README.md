@@ -1,8 +1,13 @@
-# UKI
+# Olimpiadas UNICEN
 
-Trabajo Práctico de Cursada para la materia Programación Web.
+Aplicación web de las Olimpiadas Interfacultativas de la UNICEN.
 
-Uki es una aplicación web que permite a los usuarios puntuar contenido multimedia y compartir sus gustos con los demás usuarios de la plataforma.
+Trabajo Práctico Integrador para las materias Programación Web y Sistemas Operativos.
+
+Alumnos:
+- Roumec, Iñaki.
+- Velis, Ulises.
+- Zaffaroni, Gerónimo.
 
 ## Configuración del entorno
 
