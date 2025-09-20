@@ -86,9 +86,13 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// Validación del PDF con tu función existente
-	valido := utils.ValidarConstancia(file)
+	valido, err := utils.ValidarConstancia(file)
+	if err != nil {
+		signInHandleGET(w, err.Error())
+		return
+	}
 	if !valido {
-		signInHandleGET(w, "Certificado inválido: " /*+ mensaje*/)
+		signInHandleGET(w, "El certificado no es válido.")
 		return
 	}
 

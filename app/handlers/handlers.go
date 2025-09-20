@@ -133,8 +133,6 @@ func registrarIndexHTML() {
 
 func obtenerFotos(path string) []string {
 
-	fmt.Println("Entré")
-
 	files, err := os.ReadDir(path)
 	if err != nil {
 		fmt.Println("No encontré fotos")

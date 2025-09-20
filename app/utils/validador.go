@@ -15,50 +15,55 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func ValidarConstancia(pdf multipart.File) bool {
+func ValidarConstancia(pdf multipart.File) (bool, error) {
 
-	texto := leerPDF(pdf)
+	texto, err := leerPDF(pdf)
+	if err != nil {
+		return false, err
+	}
 
 	// Se normalizan espacios y mayúsculas para facilitar el matching.
 	textoNormalizado := strings.ReplaceAll(texto, "\n", " ")
 	textoNormalizado = strings.TrimSpace(textoNormalizado)
 
 	dni := hallarDNI(textoNormalizado)
-	fmt.Println(dni)
 	codigo := hallarCodigoValidacion(textoNormalizado)
-	fmt.Println(codigo)
 
 	fmt.Printf("DNI   : %s\n", dni)
 	fmt.Printf("Código: %s\n", codigo)
 
 	valido := realizarValidacion(dni, codigo)
 
-	fmt.Println("Mensaje:")
 	if valido {
 		fmt.Println("Certificado válido")
-		return true
 	} else {
 		fmt.Println("Certificado inválido")
-		return false
 	}
+
+	return valido, nil
 }
 
-func leerPDF(file multipart.File) string {
-
+func leerPDF(file multipart.File) (string, error) {
 	// Se lee todo el contenido del archivo
 	data, err := io.ReadAll(file)
 	if err != nil {
-		// Error al leer el archivo.
-		return ""
+		return "", fmt.Errorf("Error leyendo archivo: %w", err)
 	}
 
-	cmd := exec.Command("pdftotext", "-", "-") // stdin -> stdout
+	// Verificación de cabecera PDF
+	if !bytes.HasPrefix(data, []byte("%PDF-")) {
+		return "", fmt.Errorf("El archivo no es un PDF válido.")
+	}
+
+	// Convertir a texto usando pdftotext.
+	cmd := exec.Command("pdftotext", "-", "-")
 	cmd.Stdin = bytes.NewReader(data)
 	out, err := cmd.Output()
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("error ejecutando pdftotext: %w", err)
 	}
-	return string(out)
+
+	return string(out), nil
 }
 
 func hallarDNI(text string) string {
@@ -90,11 +95,22 @@ func hallarCodigoValidacion(text string) string {
 
 func realizarValidacion(dni, codigo string) bool {
 
-	// Se crea un contexto de Chrome.
-	ctx, cancel := chromedp.NewContext(context.Background())
+	// Configuración del ExecAllocator con flags para Docker
+	opts := append(chromedp.DefaultExecAllocatorOptions[:],
+		chromedp.ExecPath("/usr/bin/chromium-browser"), // o "chromium" según tu apk
+		chromedp.Flag("no-sandbox", true),
+		chromedp.Flag("disable-gpu", true),
+	)
+
+	// Primer contexto: allocator con opciones
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
 
-	// Timeout general.
+	// Segundo contexto: Chrome real (usando allocCtx, no uno nuevo)
+	ctx, cancel := chromedp.NewContext(allocCtx)
+	defer cancel()
+
+	// Timeout general
 	ctx, cancel = context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
 
@@ -119,12 +135,5 @@ func realizarValidacion(dni, codigo string) bool {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Resultado:", resultado)
-	if resultado == "Certificado Válido" || resultado == "Certificado Valido" {
-		fmt.Println("Certificado válido")
-		return true
-	} else {
-		fmt.Println("Certificado inválido")
-		return false
-	}
+	return resultado == "Certificado Válido" || resultado == "Certificado Valido"
 }
