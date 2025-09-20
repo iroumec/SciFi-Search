@@ -16,10 +16,10 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background-color: #000000;
-  color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #000000;
+    color: white;
 }
 
 /* --------------- Cabecera --------------- */
@@ -101,7 +101,7 @@ header {
     color: black;
 }
 
-.btn-agronomia {
+.btn-agronomía {
     background: var(--color-fac-agronomia);
     color: #fff;
 }
@@ -117,7 +117,7 @@ header {
     background: var(--color-fac-exactas);
     color: white;
 }
-.btn-ingenieria {
+.btn-ingeniería {
     background: var(--color-fac-ingenieria);
     color: #fff;
 }
@@ -125,7 +125,7 @@ header {
     background: var(--color-fac-salud);
     color: #fff;
 }
-.btn-economicas {
+.btn-económicas {
     background: var(--color-fac-economicas);
     color: #fff;
 }
@@ -249,37 +249,37 @@ footer {
 .formulario input[type="text"],
 .formulario input[type="email"],
 .formulario input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  margin: 15px 0;
-  border: 2px solid var(--color-unicen);
-  border-radius: 5px;
-  background: black;
-  color: white;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin: 15px 0;
+    border: 2px solid var(--color-unicen);
+    border-radius: 5px;
+    background: black;
+    color: white;
 }
 
 .fila {
-  display: flex;
-  gap: 10px;
+    display: flex;
+    gap: 10px;
 }
 
 .fila input {
-  flex: 1;
+    flex: 1;
 }
 
 .archivo {
-  margin: 15px 0;
-  border: 2px solid var(--color-unicen);
-  border-radius: 5px;
-  padding: 10px;
-  background: black;
-  cursor: pointer;
+    margin: 15px 0;
+    border: 2px solid var(--color-unicen);
+    border-radius: 5px;
+    padding: 10px;
+    background: black;
+    cursor: pointer;
 }
 
 .archivo span {
-  font-size: 14px;
-  color: white;
+    font-size: 14px;
+    color: white;
 }
 
 /* ----------------------------------------------- Perfil de facultad ----------------------------------------------- */
@@ -364,4 +364,41 @@ footer {
 
 .flecha.derecha {
     right: 15px;
+}
+
+/* ----------------------------------------------- Noticias ----------------------------------------------- */
+
+.noticia {
+    background-color: #fff;
+    /* fondo blanco */
+    padding: 1rem;
+    /* espacio interno */
+    margin-bottom: 1.5rem;
+    /* separación entre noticias */
+    border: 1px solid #ddd;
+    /* borde sutil */
+    border-radius: 6px;
+    /* esquinas redondeadas */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* sombra ligera */
+    color: #333;
+    /* texto oscuro */
+}
+
+.noticia-titulo {
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+.noticia-contenido {
+    margin-top: 0.5rem;
+    line-height: 1.6;
+    color: #444;
+    /* contenido en gris oscuro */
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #ccc;
+    margin: 1.5rem 0;
 }

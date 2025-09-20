@@ -1,18 +1,21 @@
 {{ define "title" }}Noticias{{ end }}
 
 {{ define "content" }}
+<h1>Noticias</h1>
+
+<hr> <!-- Barra divisora -->
 
 <!-- Se verifica que los resultados no estén vacíos -->
 {{if .Results}}
-<ul>
+<div class="noticias">
     {{range .Results}}
-    <li>
-        <strong>{{.Titulo}}</strong><br>
-        {{.Contenido | safeHTML}}
-    </li>
-
+    <article class="noticia">
+        <h2 class="noticia-titulo">{{.Titulo}}</h2>
+        <p class="noticia-contenido">{{.Contenido | safeHTML}}</p>
+    </article>
+    <hr>
     {{end}}
-</ul>
+</div>
 
 <form action="/noticias" method="get">
     <input type="hidden" name="offset" value="{{add .Offset 5}}">
