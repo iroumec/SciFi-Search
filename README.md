@@ -21,15 +21,12 @@ Los siguientes comandos solo deben ejecutarse una vez:
 ```bash
 # Borrado de contenedores y volúmenes.
 sudo docker compose down -v
-
-# Construcción del contenedor.
-sudo docker compose build
 ```
 
 Para correr la aplicación:
 
 ```bash
-sudo docker compose up
+sudo docker compose up --build
 ```
 
 ## Limpieza

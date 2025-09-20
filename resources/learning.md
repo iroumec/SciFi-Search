@@ -28,3 +28,9 @@ En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A dif
 El navegador no peude acceder a ningún recurso que no esté en static (la ruta de archvios que se sirve). Por eso, se pone el css y laas imágenes ahí.
 
 Cuidado con UTF-8 con BOM... No renderiza los HTML.
+
+docker compose up --build
+En lugar de:
+docker compose build --no-cache
+docker compose up
+Esto hace build solo lo que cambió y levanta el contenedor. Mucho más rápido que --no-cache todo el tiempo.
