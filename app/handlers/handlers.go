@@ -123,7 +123,8 @@ func registrarIndexHTML() {
 				if len(s) == 0 {
 					return s
 				}
-				return string(s[0]-32) + s[1:] // Capitalización.
+				// Se capitaliza la primera letra de la facultad.
+				return string(s[0]-32) + s[1:]
 			},
 		}
 
@@ -139,14 +140,19 @@ func registrarIndexHTML() {
 
 func obtenerFotos(path string) []string {
 
+	// Se obtienen todas las entradas del directorio.
 	files, err := os.ReadDir(path)
 	if err != nil {
-		fmt.Println("No encontré fotos")
+		// No se hallaron fotos.
 		return nil
 	}
 
+	// TODO: si el directorio tiene un archivo que no sea un
+	// directorio o una foto, esto se rompe. Solucionarlo.
+
 	var fotos []string
 	for _, file := range files {
+		// Si la entrada no es un directorio, la agrega a la lista de fotos.
 		if !file.IsDir() {
 			fotos = append(fotos, path+file.Name())
 		}

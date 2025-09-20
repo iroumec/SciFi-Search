@@ -8,7 +8,9 @@ import (
 	"strings"
 )
 
-// gzipMiddleware comprime la respuesta si el cliente acepta gzip y el archivo existe.
+/*
+Comprime la respuesta si el cliente acepta gzip y el archivo existe.
+*/
 func GzipMiddleware(fileDir string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -23,28 +25,34 @@ func GzipMiddleware(fileDir string, next http.Handler) http.Handler {
 		info, err := os.Stat(path)
 		if err != nil || info.IsDir() {
 
-			// Archivo no existe o es directorio: se sirve sin compresión.
+			// Si el archivo no existe o es un directorio,
+			// se sirve la solicitud sin compresión.
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// Archivo existe: se aplica gzip.
+		// Si el archivo existe, se aplica la compresión mediante gzip.
 		w.Header().Set("Content-Encoding", "gzip")
 		w.Header().Set("Vary", "Accept-Encoding")
 
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
 
-		// Se envuelve ResponseWriter para comprimir la salida.
+		// Se envuelve el ResponseWriter para comprimir la salida.
 		gzw := gzipResponseWriter{ResponseWriter: w, writer: gz}
 		next.ServeHTTP(&gzw, r)
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
+
+// Se envuelve ResponseWriter para comprimir la salida.
 type gzipResponseWriter struct {
 	http.ResponseWriter
 	writer *gzip.Writer
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 	return w.writer.Write(b)

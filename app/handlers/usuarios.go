@@ -63,32 +63,44 @@ func mostrarFormularioRegistro(w http.ResponseWriter, errorMessage string) {
 func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
-	if err := r.ParseMultipartForm(10 << 20); err != nil { // <- Cambiado para multipart
+	// 10 es el número base y 20 es el desplazamiento en bit a izquierda.
+	// 10 * 2^20 = 10 * 1.048.576 = 10.485.760 bytes = 10 MB.
+	// De esta forma, se limita el tamaño del PDF que se suba a 10 MB para no saturar la memoria.
+	// Si el formulario es más grande, el resto se guarda automáticamente
+	// en archivos temporales en disco (r.MultipartForm.File).
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
 
-	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado. TODO
+	// TODO: podría limitarse el tamaño del archivo.
 
+	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado. TODO
 	dni := r.FormValue("dni")
 	name := r.FormValue("name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
+	// Se verifica que ninguno de los campos esté incompleto.
 	if hayCampoIncompleto(dni, name, email, password) {
 		mostrarFormularioRegistro(w, "Faltan campos obligatorios.")
 		return
 	}
 
-	// Se obtiene el archivo del formulario
-	file, _, err := r.FormFile("certificado") // <- nombre del input en HTML
+	// Se lee tanto la parte en memoria como la parte en disco.
+	// Se obtiene el archivo del formulario.
+	file, _, err := r.FormFile("certificado")
 	if err != nil {
+		// De no haber adjuntado un certificado de alumno regular,
+		// se muestra un mensaje de error.
 		mostrarFormularioRegistro(w, "Debe adjuntar el certificado de alumno regular.")
 		return
 	}
+
+	// Independientemente de lo que pase, se cierra el archivo.
 	defer file.Close()
 
-	// Validación del PDF con tu función existente
+	// Validación del PDF.
 	valido, err := utils.ValidarConstancia(file)
 	if err != nil {
 		mostrarFormularioRegistro(w, err.Error())

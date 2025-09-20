@@ -27,6 +27,9 @@ WORKDIR /app
 # Se instalan "git" y "bash".
 RUN apk add --no-cache git bash
 
+# Se instalan dependencias necesarias para la validación de la constancia de alumno regular.
+RUN apk add --no-cache poppler-utils chromium nss freetype harfbuzz ttf-freefont
+
 # Se instala Air.
 RUN go install github.com/air-verse/air@latest
 
@@ -59,5 +62,5 @@ COPY --from=builder /app/template ./template
 RUN chown -R olimpiadas-unicen:olimpiadas-unicen /app
 
 EXPOSE 8080
-USER uki
+USER olimpiadas-unicen
 CMD ["./main"]
