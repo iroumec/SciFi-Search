@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS noticias (
     id SERIAL PRIMARY KEY,
     titulo TEXT NOT NULL,
     contenido TEXT NOT NULL,
-    publicada_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    tiempo_lectura_estimado TIMESTAMP,
-    visualizaciones INT DEFAULT 0
+    visualizaciones INT DEFAULT 0,
+    tiempo_lectura_estimado INT NOT NULL,
+    publicada_en TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS likes_noticia (

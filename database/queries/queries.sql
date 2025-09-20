@@ -23,7 +23,7 @@ INSERT INTO perfiles (id_usuario, image) VALUES ($1, $2) RETURNING *;
 DELETE FROM usuarios WHERE id = $1;
 
 -- name: CrearNoticia :one
-INSERT INTO noticias (titulo, contenido, publicada_en, tiempo_lectura_estimado) VALUES ($1, $2, $3, $4) RETURNING *;
+INSERT INTO noticias (titulo, contenido, tiempo_lectura_estimado) VALUES ($1, $2, $3) RETURNING *;
 
 -- name: ListarNoticias :many
 SELECT * FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1;

@@ -6,6 +6,7 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
 type ComentariosNoticium struct {
@@ -19,6 +20,7 @@ type ComentariosNoticium struct {
 type Deporte struct {
 	ID     int32          `json:"id"`
 	Nombre sql.NullString `json:"nombre"`
+	Foto   sql.NullString `json:"foto"`
 }
 
 type Facultade struct {
@@ -44,9 +46,9 @@ type Noticia struct {
 	ID                    int32         `json:"id"`
 	Titulo                string        `json:"titulo"`
 	Contenido             string        `json:"contenido"`
-	PublicadaEn           sql.NullTime  `json:"publicada_en"`
-	TiempoLecturaEstimado sql.NullTime  `json:"tiempo_lectura_estimado"`
 	Visualizaciones       sql.NullInt32 `json:"visualizaciones"`
+	TiempoLecturaEstimado int32         `json:"tiempo_lectura_estimado"`
+	PublicadaEn           time.Time     `json:"publicada_en"`
 }
 
 type Participa struct {
@@ -88,6 +90,13 @@ type Puntaje struct {
 	Puntos2     int32         `json:"puntos2"`
 	Puntoss1    sql.NullInt32 `json:"puntoss1"`
 	Puntoss2    sql.NullInt32 `json:"puntoss2"`
+}
+
+type PuntajesSimple struct {
+	IDDisciplina int32          `json:"id_disciplina"`
+	IDFacultad   int32          `json:"id_facultad"`
+	Puntos       int32          `json:"puntos"`
+	Nombre       sql.NullString `json:"nombre"`
 }
 
 type Usuario struct {

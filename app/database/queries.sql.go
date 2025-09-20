@@ -63,31 +63,25 @@ func (q *Queries) AgregarComentario(ctx context.Context, arg AgregarComentarioPa
 }
 
 const crearNoticia = `-- name: CrearNoticia :one
-INSERT INTO noticias (titulo, contenido, publicada_en, tiempo_lectura_estimado) VALUES ($1, $2, $3, $4) RETURNING id, titulo, contenido, publicada_en, tiempo_lectura_estimado, visualizaciones
+INSERT INTO noticias (titulo, contenido, tiempo_lectura_estimado) VALUES ($1, $2, $3) RETURNING id, titulo, contenido, visualizaciones, tiempo_lectura_estimado, publicada_en
 `
 
 type CrearNoticiaParams struct {
-	Titulo                string       `json:"titulo"`
-	Contenido             string       `json:"contenido"`
-	PublicadaEn           sql.NullTime `json:"publicada_en"`
-	TiempoLecturaEstimado sql.NullTime `json:"tiempo_lectura_estimado"`
+	Titulo                string `json:"titulo"`
+	Contenido             string `json:"contenido"`
+	TiempoLecturaEstimado int32  `json:"tiempo_lectura_estimado"`
 }
 
 func (q *Queries) CrearNoticia(ctx context.Context, arg CrearNoticiaParams) (Noticia, error) {
-	row := q.db.QueryRowContext(ctx, crearNoticia,
-		arg.Titulo,
-		arg.Contenido,
-		arg.PublicadaEn,
-		arg.TiempoLecturaEstimado,
-	)
+	row := q.db.QueryRowContext(ctx, crearNoticia, arg.Titulo, arg.Contenido, arg.TiempoLecturaEstimado)
 	var i Noticia
 	err := row.Scan(
 		&i.ID,
 		&i.Titulo,
 		&i.Contenido,
-		&i.PublicadaEn,
-		&i.TiempoLecturaEstimado,
 		&i.Visualizaciones,
+		&i.TiempoLecturaEstimado,
+		&i.PublicadaEn,
 	)
 	return i, err
 }
@@ -276,7 +270,7 @@ func (q *Queries) ListarComentarios(ctx context.Context, offset int32) ([]Coment
 }
 
 const listarNoticias = `-- name: ListarNoticias :many
-SELECT id, titulo, contenido, publicada_en, tiempo_lectura_estimado, visualizaciones FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1
+SELECT id, titulo, contenido, visualizaciones, tiempo_lectura_estimado, publicada_en FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1
 `
 
 func (q *Queries) ListarNoticias(ctx context.Context, offset int32) ([]Noticia, error) {
@@ -292,9 +286,9 @@ func (q *Queries) ListarNoticias(ctx context.Context, offset int32) ([]Noticia, 
 			&i.ID,
 			&i.Titulo,
 			&i.Contenido,
-			&i.PublicadaEn,
-			&i.TiempoLecturaEstimado,
 			&i.Visualizaciones,
+			&i.TiempoLecturaEstimado,
+			&i.PublicadaEn,
 		); err != nil {
 			return nil, err
 		}

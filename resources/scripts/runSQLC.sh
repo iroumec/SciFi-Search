@@ -4,7 +4,7 @@
 # It copies the sqlc configuration file from the resources directory, runs the sqlc generate command,
 # and then removes the copied configuration file.
 
-cp resources/sqlc.yaml .
+cp database/sqlc.yaml .
 go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 export PATH="$PATH:$(go env GOPATH)/bin"
 sqlc generate

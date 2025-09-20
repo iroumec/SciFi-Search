@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"database/sql"
 	"html/template"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/microcosm-cc/bluemonday"
 
@@ -67,7 +65,7 @@ func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		manejarGETCargaNoticias(w)
+		manejarGETCargaNoticias(w, "")
 	case http.MethodPost:
 		manejarPOSTCargaNoticias(w, r)
 	default:
@@ -75,9 +73,13 @@ func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func manejarGETCargaNoticias(w http.ResponseWriter) {
+func manejarGETCargaNoticias(w http.ResponseWriter, errorMessage string) {
 
-	renderizeTemplate(w, "template/noticias/cargar-noticia.html", nil, nil)
+	data := map[string]any{
+		"ErrorMessage": errorMessage,
+	}
+
+	renderizeTemplate(w, "template/noticias/cargar-noticia.html", data, nil)
 }
 
 func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
@@ -90,22 +92,20 @@ func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	contenidoRaw := r.FormValue("contenido")
 	tiempoStr := r.FormValue("tiempo_estimado_lectura")
 
+	// string -> int
+	tiempo, err := strconv.Atoi(tiempoStr)
+	if err != nil {
+		manejarGETCargaNoticias(w, "El tiempo estimado debe ser un número.")
+	}
+
 	// Sanitizar HTML (permitir solo etiquetas seguras para usuarios finales)
 	p := bluemonday.UGCPolicy()
 	contenido := p.Sanitize(contenidoRaw)
 
-	var tiempo sql.NullTime
-	if tiempoStr != "" {
-		// Si se maneja como duración, conviene cambiar la columna a int.
-		parsed, _ := time.Parse("15:04:05", tiempoStr)
-		tiempo = sql.NullTime{Time: parsed, Valid: true}
-	}
-
-	_, err := queries.CrearNoticia(r.Context(), sqlc.CrearNoticiaParams{
+	_, err = queries.CrearNoticia(r.Context(), sqlc.CrearNoticiaParams{
 		Titulo:                titulo,
 		Contenido:             contenido,
-		PublicadaEn:           sql.NullTime{Time: time.Now(), Valid: true},
-		TiempoLecturaEstimado: tiempo,
+		TiempoLecturaEstimado: int32(tiempo),
 	})
 	if err != nil {
 		http.Error(w, "Error guardando noticia", http.StatusInternalServerError)
