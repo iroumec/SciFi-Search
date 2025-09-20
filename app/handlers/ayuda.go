@@ -4,17 +4,7 @@ import (
 	"net/http"
 )
 
-// Handler genérico para GET
-func handlerTemplate(path string, data map[string]any) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, "Método no permitido.", http.StatusMethodNotAllowed)
-			return
-		}
-		renderizeTemplate(w, path, data, nil)
-	}
-}
-
+// Se registran los handlers de ayuda.
 func registrarHandlersAyuda() {
 	rutas := map[string]struct {
 		tmpl string
@@ -36,5 +26,18 @@ func registrarHandlersAyuda() {
 
 	for ruta, def := range rutas {
 		http.HandleFunc(ruta, handlerTemplate(def.tmpl, def.data))
+	}
+}
+
+// Handler genérico para GET.
+func handlerTemplate(path string, data map[string]any) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		// Si el método no es GET, error.
+		if r.Method != http.MethodGet {
+			http.Error(w, "Método no permitido.", http.StatusMethodNotAllowed)
+			return
+		}
+		renderizeTemplate(w, path, data, nil)
 	}
 }

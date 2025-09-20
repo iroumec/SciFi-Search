@@ -9,13 +9,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Registro de Handlers de Consultas
+// ------------------------------------------------------------------------------------------------
+
 func registrarHandlersConsultas() {
 
 	http.HandleFunc("/consultar", manejarConsultas)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Enquery Handler
+// Manejo de Consultas
 // ------------------------------------------------------------------------------------------------
 
 func manejarConsultas(w http.ResponseWriter, r *http.Request) {
@@ -47,10 +51,11 @@ func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
+		mostrarFormularioConsulta(w, "Error al procesar el formulario.")
 		return
 	}
 
+	// Se obtienen los datos del formulatio.
 	name := r.FormValue("name")
 	surname := r.FormValue("surname")
 	email := r.FormValue("email")
@@ -58,20 +63,21 @@ func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 	address := r.FormValue("address")
 	enquery := r.FormValue("enquery")
 
+	// Se verifica que no haya campos obligatorios vacíos.
 	if hayCampoIncompleto(email, enquery) {
 		mostrarFormularioConsulta(w, "Faltan campos obligatorios.")
 		return
 	}
 
-	// Create a new message
+	// Se crea un nuevo mensaje.
 	message := gomail.NewMessage()
 
-	// Set email headers
+	// Se setean los encabezados del email.
 	message.SetHeader("From", "consultas@olimpiadas.com")
 	message.SetHeader("To", "iroumec@alumnos.exa.unicen.edu.ar")
 	message.SetHeader("Subject", "Consulta - Olimpiadas")
 
-	// Set email body
+	// Se define el cuerpo del mensaje.
 	emailBodyFormat := `
 		Consulta automatizada de la página de la facultad.
 
@@ -86,20 +92,22 @@ func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 		%s
 	`
 
+	// Se le da formato al cuerpo del mensaje.
 	emailBody := fmt.Sprintf(emailBodyFormat, name, surname, email, phone, address, enquery)
 
+	// Se establece el cuerpo del mensaje.
 	message.SetBody("text/plain", emailBody)
 
 	/*
 
-		Ver después para enviar email directamente
+		TODO: arreglar para poder enviar luego un email directamente.
 
 		// Set up the SMTP dialer
 			dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")
 
 			// Send the email
 			if err := dialer.DialAndSend(message); err != nil {
-				enqueryHandleGET(w, "Ha ocurrido un erro al enviar la consulta. Tranquilo. ¡La culpa no es tuya! Intenta envviar el email directamente.")
+				enqueryHandleGET(w, "Ha ocurrido un error al enviar la consulta. Tranquilo. ¡La culpa no es tuya! Intenta envviar el email directamente.")
 				panic(err)
 				return
 			}
@@ -107,6 +115,5 @@ func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 	*/
 
 	// El email fue enviado exitosamente.
-
 	renderizeTemplate(w, "template/consultas/consulta-enviada.html", nil, nil)
 }

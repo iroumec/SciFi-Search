@@ -1,7 +1,6 @@
 ﻿package handlers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -14,47 +13,63 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Constantes del Paquete
+// ------------------------------------------------------------------------------------------------
+
 // Ruta a partir de la cual se servirán los archivos estáticos.
 const (
 	fileDir = "./static"
 )
 
+// ------------------------------------------------------------------------------------------------
+// variables Globales al Paquete
+// ------------------------------------------------------------------------------------------------
+
 var queries *sqlc.Queries
+
+// ------------------------------------------------------------------------------------------------
 
 // registerHandlers registra todos los endpoints
 func RegisterHandlers(queryObject *sqlc.Queries) {
 
-	// Guardamos el objeto de consultas como variable global
+	// Se guarda el objeto de consultas como variable global
 	// para poder utilizarlo en todos los handlers que lo requieran.
 	queries = queryObject
 
+	// Se registra el hander para los archivos estáticos.
 	registrarHandlerStatic()
 
+	// Se registra el handler para el index.html.
 	registrarIndexHTML()
 
+	// Se registran los handlers para la página de consultas.
 	registrarHandlersConsultas()
 
-	http.HandleFunc("/perfil", manejarPerfil)
+	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
+	registrarHandlersUsuarios()
 
+	// Se registran los handlers correspondientes al perfil de usuario.
+	registrarHandlersPerfiles()
+
+	// Se registran los handlers correspondientes a las noticias.
 	registrarHandlersNoticias()
 
-	http.HandleFunc("/facultades", manejarFacultades)
+	// Se registran los handlers correspondientes a servir las páginas de las facultades.
+	registerHandlersFacultades()
 
+	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
 	registrarHandlersAyuda()
-
-	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
-	registerUserHandlers()
-
-	fmt.Println("Handlers registrados con éxito.")
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func registrarHandlerStatic() {
 
 	// Se crea un manejador (handler) de servidor de archivos.
 	fileServer := http.FileServer(http.Dir(fileDir))
 
-	// Servir estáticos en /static/
-	// Se envuelve en un gzip middleware.
+	// Se sirven archivos estáticos en /static/, comprimidos en gzip si el navegador así lo acepta.
 	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
 }
 
@@ -64,13 +79,15 @@ func registrarHandlerStatic() {
 
 func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]any, funcs template.FuncMap) {
 
+	// Se aplica el layout y las funciones correspondientes a la plantilla.
 	tmpl := applyLayout(htmlPath, funcs)
 
 	// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
+	// Se renderiza la plantilla.
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
+		http.Error(w, "Error al renderizar la plantilla.", http.StatusInternalServerError)
 	}
 }
 
@@ -78,9 +95,7 @@ func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]a
 // Aplicación de Layout
 // ------------------------------------------------------------------------------------------------
 
-/*
-Esta función aplica el layout a una página HTML.
-*/
+// Esta función aplica el layout a la página HTML.
 func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 
 	tmpl := template.New("layout")
@@ -107,7 +122,10 @@ func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 // ------------------------------------------------------------------------------------------------
 
 func registrarIndexHTML() {
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+		// Se definen las facultades.
 		data := struct {
 			Facultades []string
 		}{
@@ -118,16 +136,22 @@ func registrarIndexHTML() {
 			},
 		}
 
+		// Se define una función que establezca los títulos de los botones,
+		// la cual se renderizará junto a la página.
 		funcs := template.FuncMap{
 			"title": func(s string) string {
+
+				// Si no tiene ningún carácter...
 				if len(s) == 0 {
 					return s
 				}
+
 				// Se capitaliza la primera letra de la facultad.
 				return string(s[0]-32) + s[1:]
 			},
 		}
 
+		// Se renderiza la plantilla.
 		renderizeTemplate(w, "template/index.html", map[string]any{
 			"Facultades": data.Facultades,
 		}, funcs)

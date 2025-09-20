@@ -34,3 +34,5 @@ En lugar de:
 docker compose build --no-cache
 docker compose up
 Esto hace build solo lo que cambió y levanta el contenedor. Mucho más rápido que --no-cache todo el tiempo.
+
+En las funciones, minúscula inicial si es privado del paquete y mayúscula inicial si es público.

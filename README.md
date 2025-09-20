@@ -1,5 +1,7 @@
 # Olimpiadas UNICEN
 
+![logo](resources/logo.png)
+
 Aplicación web de las Olimpiadas Interfacultativas de la UNICEN.
 
 Trabajo Práctico Integrador para las materias Programación Web y Sistemas Operativos.
@@ -12,23 +14,33 @@ Alumnos:
 
 ## Configuración del entorno
 
-Antes de ejecutar la aplicación, crea tu archivo de variables de entorno basado en el ejemplo:
+Antes de ejecutar la aplicación, es necesario crear un archivo con las variables de entorno basado en el ejemplo:
 
 ```bash
 cp resources/.env.example .env
 ```
 
-Luego edita `.env` y completa tus credenciales de la base de datos y otros parámetros necesarios.
+Luego, debe editar `.env` y remplazar los valores por defecto con sus a la base de datos y otros parámetros necesarios.
 
 ## Ejecución
 
-Modo desarrollo (con AIR):
+La aplicación cuenta con dos modos: el modo desarrollo y el modo producción.
+
+### Modo Desarrollo
+
+Este modo cuenta con la particularidad de que, además de utilizar una imagen que cuenta con las herramientas de Golang, se halla integrado Air, el cual permite que los cambios realizados en los archivos se reflejen automáticamente, lo que facilita el desarrollo.
+
+Para iniciar la aplicación en este modo, debe ejecutar el siguiente comando:
 
 ```bash
 docker compose up --build
 ```
 
-Modo producción:
+### Modo Producción
+
+Este modo se compone de una imagen liviana, compuesta únicamente de lo estrictamente necesario para correr la aplicación.
+
+Para iniciar la aplicación en este modo, debe ejecutar el siguiente comando:
 
 ```bash
 docker compose -f docker-compose.yml up -d --build
@@ -42,7 +54,12 @@ Ante cambios en la base de datos, es necesario eliminar el volumen y reconstruir
 docker compose down -v --rmi all
 ```
 
-IDEAS:
+## Estructura del Proyecto
 
-- Seguir deportes.
-- Predicciones.
+La aplicación está distribuida en cuatro directorios principales.
+
+### 1. `app/`
+
+### Otros directorios
+
+Directorios adicionales como `resources`, el cual contiene comandos, _scripts_ y recursos adicionales usados durante el planeamiento y desarrollo de la aplicación.

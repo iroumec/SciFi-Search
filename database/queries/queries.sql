@@ -82,6 +82,9 @@ INSERT INTO facultades (nombre) VALUES ($1) RETURNING *;
 -- name: ObtenerFacultad :one
 SELECT * FROM facultades WHERE id = $1;
 
+-- name: ObtenerNombreFacultad :one
+SELECT nombre FROM facultades WHERE id = $1;
+
 -- name: ObtenerFacultades :many
 SELECT * FROM facultades ORDER BY nombre;
 
@@ -114,3 +117,15 @@ SELECT * FROM partidos WHERE id_deporte = $1;
 
 -- name: ListarPartidosPorFacultadYDeporte :many
 SELECT * FROM partidos WHERE (id_facultad1 = $1 OR id_facultad2 = $1) AND id_deporte = $2;
+
+-- name: IniciarPartido :exec
+INSERT INTO puntajes (id_partido,puntos1,puntos2) VALUES ($1,0,0);
+
+-- name: IniciarPartidoComplejo :exec
+INSERT INTO puntajes (id_partido,puntos1,puntos2,puntosS1,puntosS2) VALUES ($1,0,0,0,0);
+
+-- name: SumarPuntos :exec
+CALL PR_SUMARPUNTOS($1,$2,$3);
+
+-- name: FinalizarPartido :exec
+CALL PR_FINALIZARPARTIDO($1);

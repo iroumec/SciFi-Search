@@ -10,6 +10,10 @@ import (
 	sqlc "tpe/web/app/database"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Registro de Handlers de Noticias
+// ------------------------------------------------------------------------------------------------
+
 func registrarHandlersNoticias() {
 
 	http.HandleFunc("/noticia", manejarNoticias)

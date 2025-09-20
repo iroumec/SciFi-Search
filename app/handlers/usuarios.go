@@ -22,7 +22,7 @@ import (
 Se registran todos los endpoints relacionados al
 registro e inicio de sesión de usuarios.
 */
-func registerUserHandlers() {
+func registrarHandlersUsuarios() {
 
 	// Handler que maneja el registro de usuarios.
 	http.HandleFunc("/registrarse", registrarUsuario)
@@ -119,7 +119,7 @@ func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := queries.CrearUsuario(r.Context(), sqlc.CrearUsuarioParams{
+	_, err = queries.CrearUsuario(r.Context(), sqlc.CrearUsuarioParams{
 		Dni:        dni,
 		Nombre:     name,
 		Email:      email,
@@ -136,9 +136,6 @@ func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "error interno", http.StatusInternalServerError)
 		return
 	}
-
-	// Quizás pueda usarse después...
-	_ = createdUser
 
 	renderizeTemplate(w, "template/usuarios/registro/registro-exitoso.html", nil, nil)
 }
@@ -189,7 +186,6 @@ func procesarLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hacer funcionar esto...
 	user, err := queries.ObtenerUsuarioPorDNI(r.Context(), dni)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -201,6 +197,7 @@ func procesarLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Se compara la contraseña con la almacenada en el servidor.
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Contraseña), []byte(password)); err != nil {
 		mostrarFormularioLogin(w, "Contraseña incorrecta.")
 		return

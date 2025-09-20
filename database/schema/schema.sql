@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 CREATE TABLE IF NOT EXISTS perfiles (
     id_usuario INT PRIMARY KEY,
-    foto TEXT -- url
-    --insignias, foto de perfil
+    foto TEXT
+    --insignias
 );
 
 CREATE TABLE IF NOT EXISTS pertenece (
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS facultades (
     nombre VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS perfiles_facultad (
+CREATE TABLE IF NOT EXISTS perfiles_facultad (--altas posibilidades de volar
     id_facultad INT PRIMARY KEY
     --insignias y otras cosas
 );
@@ -70,21 +70,35 @@ CREATE TABLE IF NOT EXISTS puntajes (
     puntos1 INT NOT NULL,
     puntos2 INT NOT NULL,
     puntosS1 INT DEFAULT NULL,
-    puntosS2 INT DEFAULT NULL,
+    puntosS2 INT DEFAULT NULL
+    --puntaje_techo: cuando puntosS1 llega a puntaje_techo, suma puntos en puntos1 (puede cambiar en base al deporte).
 );
 
 CREATE TABLE IF NOT EXISTS partidos (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     id_deporte INT,
     tipo VARCHAR(20),
     zona CHAR DEFAULT 'A',
     id_facultad1 INT,
     id_facultad2 INT,
     incio TIMESTAMP,
-    fin TIMESTAMP DEFAULT NULL,
+    lugar VARCHAR(255),
+    cancha TEXT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS partidos_historicos (
+    id_partido INT PRIMARY KEY,
+    id_deporte INT NOT NULL,
+    tipo VARCHAR(20),
+    zona CHAR DEFAULT 'A',
+    id_facultad1 INT NOT NULL,
+    id_facultad2 INT NOT NULL,
+    inicio TIMESTAMP NOT NULL,
+    fin TIMESTAMP NOT NULL,
     lugar VARCHAR(255),
     cancha TEXT DEFAULT NULL,
-    CONSTRAINT pk_partidos PRIMARY KEY (id,id_facultad1,id_facultad2,id_deporte)
+    puntos1 INT NOT NULL,
+    puntos2 INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS deportes (
@@ -105,7 +119,7 @@ CREATE TABLE IF NOT EXISTS participa (
     id_participante INT,
     id_partido INT,
     id_facultad INT,
-    CONSTRAINT pk_participa PRIMARY KEY (id_participante,id_partido)
+    CONSTRAINT pk_participa PRIMARY KEY (id_participante,id_partido,id_facultad)
 );
 
 --------------------- Foreign Keys ---------------------
@@ -167,8 +181,15 @@ ALTER TABLE participa ADD CONSTRAINT fk_participa_usuario
 ;
 
 ALTER TABLE participa ADD CONSTRAINT fk_participa_partido
-    FOREIGN KEY (id_partido,id_facultad)
-    REFERENCES partidos(id,id_facultad)
+    FOREIGN KEY (id_partido)
+    REFERENCES partidos(id)
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+ALTER TABLE participa ADD CONSTRAINT fk_participa_facultad
+    FOREIGN KEY (id_facultad)
+    REFERENCES facultades(id)
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -245,3 +266,23 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER TRI_PARTICIPA 
 BEFORE INSERT ON participa 
 FOR EACH ROW EXECUTE FUNCTION FN_TRI_PARTICIPA;
+
+--------------------- Procedimientos ---------------------
+
+CREATE OR REPLACE PROCEDURE PR_SUMARPUNTOS(id_partido INT, nro_equipo INT, cant_puntos INT)
+LANGUAGE 'plpgsql' AS $$
+BEGIN
+    IF(nro_equipo == 1)THEN
+        UPDATE puntajes this SET this.puntos1 = this.puntos1+cant_puntos WHERE this.id_partido = id_partido;
+    ELSE
+        UPDATE puntajes this SET this.puntos2 = this.puntos2+cant_puntos WHERE this.id_partido = id_partido;
+    END IF;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE PR_FINALIZARPARTIDO(id_partido INT)
+LANGUAGE 'plpgsql' AS $$
+BEGIN
+    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,)
+END;
+$$;

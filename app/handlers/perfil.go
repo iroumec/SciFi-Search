@@ -14,6 +14,11 @@ import (
 // Mapea un token de inicio de sesión a un userID.
 var sessions = make(map[string]int32)
 
+func registrarHandlersPerfiles() {
+
+	http.HandleFunc("/perfil", manejarPerfil)
+}
+
 // ------------------------------------------------------------------------------------------------
 // Profile Handler
 // ------------------------------------------------------------------------------------------------
