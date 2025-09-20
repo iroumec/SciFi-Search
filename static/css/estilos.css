@@ -319,23 +319,28 @@ footer {
 
 .carrusel {
     position: relative;
-    width: 600px;
-    height: 400px;
+    width: 80vw;
+    /* más ancho */
+    max-width: 1000px;
+    height: 70vh;
+    /* más alto */
+    max-height: 700px;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .imagenes {
     display: flex;
     transition: transform 0.5s ease-in-out;
-    width: 100%;
     height: 100%;
 }
 
 .imagenes img {
-    width: 600px;
-    height: 400px;
+    width: 80vw;
+    max-width: 1000px;
+    height: 70vh;
+    max-height: 700px;
     object-fit: cover;
     flex-shrink: 0;
 }
@@ -347,16 +352,16 @@ footer {
     background: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 15px 20px;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 30px;
     border-radius: 50%;
 }
 
 .flecha.izquierda {
-    left: 10px;
+    left: 15px;
 }
 
 .flecha.derecha {
-    right: 10px;
+    right: 15px;
 }

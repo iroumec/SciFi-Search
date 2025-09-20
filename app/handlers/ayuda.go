@@ -4,26 +4,37 @@ import (
 	"net/http"
 )
 
-// Crea un handler genérico que sirve un template si es GET.
-func handlerTemplate(path string) http.HandlerFunc {
+// Handler genérico para GET
+func handlerTemplate(path string, data map[string]any) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, "Método no permitido.", http.StatusMethodNotAllowed)
 			return
 		}
-		renderizeTemplate(w, path, nil, nil)
+		renderizeTemplate(w, path, data, nil)
 	}
 }
 
 func registrarHandlersAyuda() {
-	rutas := map[string]string{
-		"/ayuda":            "template/ayuda/ayuda.html",
-		"/albergue":         "template/ayuda/albergue.html",
-		"/carnet-deportivo": "template/ayuda/carnet-deportivo.html",
-		// Acá se puede seguir agregando.
+	rutas := map[string]struct {
+		tmpl string
+		data map[string]any
+	}{
+		"/ayuda": {
+			tmpl: "template/ayuda/ayuda.html",
+		},
+		"/albergue": {
+			tmpl: "template/ayuda/albergue.html",
+			data: map[string]any{
+				"fotos": obtenerFotos("static/img/albergue/"),
+			},
+		},
+		"/carnet-deportivo": {
+			tmpl: "template/ayuda/carnet-deportivo.html",
+		},
 	}
 
-	for ruta, tmpl := range rutas {
-		http.HandleFunc(ruta, handlerTemplate(tmpl))
+	for ruta, def := range rutas {
+		http.HandleFunc(ruta, handlerTemplate(def.tmpl, def.data))
 	}
 }

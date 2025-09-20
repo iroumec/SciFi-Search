@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 	"slices"
 
 	"uki/app/utils"
@@ -21,8 +22,6 @@ var queries *sqlc.Queries
 
 // registerHandlers registra todos los endpoints
 func RegisterHandlers(queryObject *sqlc.Queries) {
-
-	fmt.Println("Comenzando a registrar handlers...")
 
 	queries = queryObject
 
@@ -73,11 +72,14 @@ func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]a
 // Aplicación de Layout
 // ------------------------------------------------------------------------------------------------
 
+/*
+Esta función aplica el layout a una página HTML.
+*/
 func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 
 	tmpl := template.New("layout")
 
-	// Si vienen funciones, se aplican
+	// Si vienen funciones, se aplican.
 	if funcs != nil {
 		tmpl = tmpl.Funcs(funcs)
 	}
@@ -94,14 +96,18 @@ func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 	)
 }
 
+// ------------------------------------------------------------------------------------------------
+// Registro de Index
+// ------------------------------------------------------------------------------------------------
+
 func registrarIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := struct {
 			Facultades []string
 		}{
 			Facultades: []string{
-				"agronomia", "sociales", "humanas", "exactas",
-				"ingenieria", "salud", "economicas", "derecho",
+				"agronomía", "sociales", "humanas", "exactas",
+				"ingeniería", "salud", "económicas", "derecho",
 				"veterinarias", "arte",
 			},
 		}
@@ -111,7 +117,7 @@ func registrarIndexHTML() {
 				if len(s) == 0 {
 					return s
 				}
-				return string(s[0]-32) + s[1:] // Capitalización
+				return string(s[0]-32) + s[1:] // Capitalización.
 			},
 		}
 
@@ -119,6 +125,30 @@ func registrarIndexHTML() {
 			"Facultades": data.Facultades,
 		}, funcs)
 	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// Obtener Fotos
+// ------------------------------------------------------------------------------------------------
+
+func obtenerFotos(path string) []string {
+
+	fmt.Println("Entré")
+
+	files, err := os.ReadDir(path)
+	if err != nil {
+		fmt.Println("No encontré fotos")
+		return nil
+	}
+
+	var fotos []string
+	for _, file := range files {
+		if !file.IsDir() {
+			fotos = append(fotos, path+file.Name())
+		}
+	}
+
+	return fotos
 }
 
 // ------------------------------------------------------------------------------------------------
