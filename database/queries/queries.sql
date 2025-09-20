@@ -132,3 +132,17 @@ CALL PR_FINALIZARPARTIDO($1);
 
 -- name: ObtenerResultadosFacultades :many
 SELECT 
+
+
+-- (Probando)
+
+SELECT id_facultad, SUM(puntos)
+FROM (
+    SELECT id_facultad1, puntos1
+
+)
+JOIN 
+WHERE EXTRACT(YEAR FROM lugar) = EXTRACT(YEAR FROM NOW())
+GROUP BY 
+
+-- partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2)

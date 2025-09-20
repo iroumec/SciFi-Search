@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS partidos (--maybe fusionar partidos y puntajes?
     cancha TEXT DEFAULT NULL
 );
 
-CREATE TABLE IF NOT EXISTS partidos_historicos (
+CREATE TABLE IF NOT EXISTS partidos_historicos (--hay que hacer tabla historica de "participo"
     id_partido INT PRIMARY KEY,
     id_deporte INT NOT NULL,
     tipo VARCHAR(20),
@@ -98,7 +98,9 @@ CREATE TABLE IF NOT EXISTS partidos_historicos (
     lugar VARCHAR(255),
     cancha TEXT DEFAULT NULL,
     puntos1 INT NOT NULL,
-    puntos2 INT NOT NULL
+    puntos2 INT NOT NULL,
+    puntosS1 INT DEFAULT NULL,
+    puntosS2 INT DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS deportes (
@@ -250,6 +252,7 @@ ALTER TABLE pertenece ADD CONSTRAINT fk_pertenece_facultad
     INITIALLY IMMEDIATE
 ;
 
+
 --------------------- Funciones + Triggers ---------------------
 -- Creo que podrían estar en otro archivo, porque el sqlc no los usa y solo los usa docker.
 -- Tampoco creo que usa los alter table.
@@ -283,11 +286,12 @@ $$;
 CREATE OR REPLACE PROCEDURE PR_FINALIZARPARTIDO(id_partido INT)
 LANGUAGE 'plpgsql' AS $$
 BEGIN
-    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2)
-    (SELECT pa.id,pa.id_deporte,pa.tipo,pa.zona,pa.id_facultad1,pa.id_facultad2,pa.inicio,NOW() as fin,pa.lugar,pa.cancha,pu.puntos1,pu.puntos2
+    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2,puntosS1,puntosS2)
+    (SELECT pa.id,pa.id_deporte,pa.tipo,pa.zona,pa.id_facultad1,pa.id_facultad2,pa.inicio,NOW() as fin,pa.lugar,pa.cancha,pu.puntos1,pu.puntos2,pu.puntosS1,pu.puntosS2
     FROM partidos pa 
     LEFT JOIN puntajes pu ON (pa.id = pu.id_partido) 
     WHERE id = id_partido);
     DELETE FROM partidos WHERE id = id_partido;
+    DELETE FROM puntajes WHERE id = id_partido;
 END;
 $$;
