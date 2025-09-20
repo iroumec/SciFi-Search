@@ -74,14 +74,14 @@ CREATE TABLE IF NOT EXISTS puntajes (
     --puntaje_techo: cuando puntosS1 llega a puntaje_techo, suma puntos en puntos1 (puede cambiar en base al deporte).
 );
 
-CREATE TABLE IF NOT EXISTS partidos (
+CREATE TABLE IF NOT EXISTS partidos (--maybe fusionar partidos y puntajes?
     id SERIAL PRIMARY KEY,
     id_deporte INT,
     tipo VARCHAR(20),
     zona CHAR DEFAULT 'A',
     id_facultad1 INT,
     id_facultad2 INT,
-    incio TIMESTAMP,
+    inicio TIMESTAMP,
     lugar VARCHAR(255),
     cancha TEXT DEFAULT NULL
 );
@@ -283,6 +283,11 @@ $$;
 CREATE OR REPLACE PROCEDURE PR_FINALIZARPARTIDO(id_partido INT)
 LANGUAGE 'plpgsql' AS $$
 BEGIN
-    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,)
+    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2)
+    (SELECT pa.id,pa.id_deporte,pa.tipo,pa.zona,pa.id_facultad1,pa.id_facultad2,pa.inicio,NOW() as fin,pa.lugar,pa.cancha,pu.puntos1,pu.puntos2
+    FROM partidos pa 
+    LEFT JOIN puntajes pu ON (pa.id = pu.id_partido) 
+    WHERE id = id_partido);
+    DELETE FROM partidos WHERE id = id_partido;
 END;
 $$;
