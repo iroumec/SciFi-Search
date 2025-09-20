@@ -11,6 +11,10 @@ FROM alpine:latest
 
 WORKDIR /app
 
+# Se instala poppler-utils para poder usar pdftotext.
+# Esto sirve para la validación de la constancia de alumno regular.
+RUN apk add --no-cache poppler-utils
+
 # Creación de un usuario y grupo no root.
 RUN addgroup -S uki && adduser -S uki -G uki
 

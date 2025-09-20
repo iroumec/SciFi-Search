@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"uki/app/handlers"
+	"uki/app/utils"
 
 	sqlc "uki/app/database"
 
@@ -53,7 +54,11 @@ func main() {
 
 	fmt.Printf("\nServidor escuchando en http://localhost%s\n", port)
 
+	utils.ValidarConstancia()
+
 	if err := http.ListenAndServe(port, nil); err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 	}
+
+	// Nada de lo que esté acá debajo se ejecuta.
 }

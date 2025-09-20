@@ -30,3 +30,4 @@ go.work
 app/utils/Comprobante Alumno Regular.pdf
 # Para testeo. Borrar luego.
 app/utils/Comprobante.pdf
+static/Comprobante.pdf

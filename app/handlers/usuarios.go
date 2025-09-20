@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -20,15 +19,11 @@ import (
 // registerHandlers registra todos los endpoints
 func registerUserHandlers() {
 
-	fmt.Println("Registrando handlers de usuarios...")
-
 	// Handler que maneja el registro de usuarios.
 	http.HandleFunc("/signin", signInHandler)
 
 	// Handler que maneja el login de usuarios.
 	http.HandleFunc("/login", logInHandler)
-
-	fmt.Println("Handlers de usuarios registrados...")
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -55,7 +50,7 @@ func signInHandleGET(w http.ResponseWriter, errorMessage string) {
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/signin.html", data, nil)
+	renderizeTemplate(w, "template/usuarios/registro/registrarse.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -107,7 +102,7 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 	// Quizás pueda usarse después...
 	_ = createdUser
 
-	renderizeTemplate(w, "template/userRegistered.html", nil, nil)
+	renderizeTemplate(w, "template/usuarios/registro/registro-exitoso.html", nil, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -134,7 +129,7 @@ func logInHandleGET(w http.ResponseWriter, errorMessage string) {
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/login.html", data, nil)
+	renderizeTemplate(w, "template/usuarios/iniciar-sesion.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
