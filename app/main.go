@@ -48,7 +48,6 @@ func main() {
 	defer db.Close()
 
 	queries := sqlc.New(db)
-	//ctx := context.Background()
 
 	handlers.RegisterHandlers(queries)
 

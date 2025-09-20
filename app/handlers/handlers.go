@@ -45,32 +45,12 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	http.HandleFunc("/facultades", manejarFacultades)
 
-	setStaticHandler("/carnet-deportivo", "template/card.html")
+	registrarHandlersAyuda()
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registerUserHandlers()
 
 	fmt.Println("Handlers registrados con éxito.")
-}
-
-// ------------------------------------------------------------------------------------------------
-// Set Static Handler
-// ------------------------------------------------------------------------------------------------
-
-func setStaticHandler(path string, htmlPath string) {
-
-	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-
-		tmpl := applyLayout(htmlPath, nil)
-
-		// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-		if err := tmpl.ExecuteTemplate(w, "layout", nil); err != nil {
-			http.Error(w, "Error al renderizar la plantilla", http.StatusInternalServerError)
-		}
-	})
-
 }
 
 // ------------------------------------------------------------------------------------------------

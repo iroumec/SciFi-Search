@@ -1,0 +1,80 @@
+{{ define "title" }}Albergue Universitario{{ end }}
+
+{{ define "content" }}
+
+<h1>Albergue Universitario - DORMIS </h1>
+
+<p>El albergue Universitario esta situado en el Gimnasio del Campus Universitario de la ciudad de Tandil -Paraje Arroyo
+Seco: en calle Reforma Universitaria y Rector R. Cruz- a unos 6 km. del centro de la ciudad. El albergue esta destinado
+a grupos no inferiores a 20 personas y hasta 60.
+
+Capacidad Máxima: 60 plazas (2 sectores de 30)
+
+Servicios:
+
+- Camas cuchetas e individuales provistas de colchón con funda, almohada, frazada y cubrecama. (El alberguista deberá
+traer su ropa de cama o bolsa de dormir)
+
+- Vestuario, duchas y baños
+
+- Alarma monitoreada
+
+- Estacionamiento
+
+- Wi-fi
+
+- El Campus Universitario cuenta con un Comedor, con el cual se pueden coordinar desayunos, almuerzos y cenas a precios
+accesibles. (de lunes a viernes)
+
+
+
+Una vez confirmada la reserva se deberá enviar por nota o vía mail (dormisunicen@gmail.com) la solicitud del lugar con
+los días de uso, horario de llegada y salida del mismo, datos del responsable del grupo o delegación. Nombre de la
+institución dirección y teléfono.</p>
+
+<h2>Condiciones de Reserva y Uso</h2>
+
+1. Las delegaciones ingresaran al albergue en el horario comprendido entre las 08:00 hs y las 22:00 hs.
+2. El alojamiento se considerará por día hasta las 12:00 hs del siguiente al ingreso; pasado este horario se considerará
+otro
+día completo y así sucesivamente.
+3. Los albergados deberán conservar buen comportamiento durante su estadía teniendo presente que el lugar es para
+descansar. Se prohíbe FUMAR y el consumo de BEBIDAS ALCOHÓLICAS. En el albergue no se permite la entrada de
+animales o mascotas. No se permite cocinar dentro de las instalaciones. No contamos con espacio para almuerzo y cena
+4. El faltante de elementos del albergue al retiro de la delegación así como roturas de muebles o sanitarios, o
+elementos del gimnasio deberán ser repuestos por el responsable de la delegación.
+5. Las llaves correspondientes a los sectores del albergue deberán entregarse al responsable del mismo en la oficina de
+la
+Dirección de Deportes, no pudiendo retirarlas del albergue.
+6. Antes del PRIMER INGRESO de la delegación el responsable deberá entregar la lista de los integrantes de la misma con
+APELLIDO Y NOMBRE, No DE DOCUMENTO, y datos de CONTACTO.
+7. Se recomienda NO DEJAR NINGUN ELEMENTO DE VALOR O DINERO en los dormis. La Universidad no será
+
+responsable por el faltante de los mismos.
+8. Cada grupo o delegación deberá contar con su póliza de seguro por accidentes personales.
+
+<h2>Fotos de las Instalaciones</h2>
+
+<div class="carrusel">
+    <div class="imagenes" id="imagenes">
+        <img src="static/img/albergue/foto1.jpg" alt="Foto 1">
+        <img src="static/img/albergue/foto2.jpg" alt="Foto 2">
+        <img src="static/img/albergue/foto3.jpg" alt="Foto 3">
+    </div>
+    <button class="flecha izquierda" onclick="mover(-1)">‹</button>
+    <button class="flecha derecha" onclick="mover(1)">›</button>
+</div>
+
+<script>
+    let indice = 0;
+    const imagenes = document.getElementById("imagenes");
+    const total = imagenes.children.length;
+
+    function mover(direccion) {
+        indice = (indice + direccion + total) % total;
+        imagenes.style.transform = `translateX(${-indice * 600}px)`;
+    }
+</script>
+
+
+{{ end }}
