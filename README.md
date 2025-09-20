@@ -6,8 +6,8 @@ Aplicación web de las Olimpiadas Interfacultativas de la UNICEN.
 
 ## Índice
 
-- [¿Cómo se estructura el proyecto?](resources/markdown/estructura.md).
-- [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md).
+- [¿Cómo se estructura el proyecto?](resources/markdown/estructura.md)
+- [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md)
 
 ## Créditos
 
@@ -17,4 +17,4 @@ Los alumnos que trabajaron en este proyecto son:
 
 - Roumec, Iñaki. <iroumec@alumnos.exa.unicen.edu.ar>.
 - Velis, Ulises. <uvelis@alumnos.exa.unicen.edu.ar>.
-- Zaffaroni, Gerónimo.
+- Zaffaroni, Gerónimo. <gzaffaroni@alumnos.exa.unicen.edu.ar>.

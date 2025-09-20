@@ -129,3 +129,6 @@ CALL PR_SUMARPUNTOS($1,$2,$3);
 
 -- name: FinalizarPartido :exec
 CALL PR_FINALIZARPARTIDO($1);
+
+-- name: ObtenerResultadosFacultades :many
+SELECT 
