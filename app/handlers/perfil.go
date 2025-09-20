@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	sqlc "uki/app/database"
+	sqlc "tpe/web/app/database"
 
 	_ "github.com/lib/pq"
 )

@@ -16,17 +16,16 @@ Luego edita `.env` y completa tus credenciales de la base de datos y otros pará
 
 ## Ejecución
 
-Los siguientes comandos solo deben ejecutarse una vez:
+Modo desarrollo (con AIR):
 
 ```bash
-# Borrado de contenedores y volúmenes.
-sudo docker compose down -v
+docker compose up --build
 ```
 
-Para correr la aplicación:
+Modo producción:
 
 ```bash
-sudo docker compose up --build
+docker compose -f docker-compose.yml up -d --build
 ```
 
 ## Limpieza
@@ -34,14 +33,10 @@ sudo docker compose up --build
 Ante cambios en la base de datos, es necesario eliminar el volumen y reconstruirlo. Para ello, ejecute el siguiente comando:
 
 ```sh
-docker-compose down -v
+docker compose down -v --rmi all
 ```
 
 IDEAS:
 
 - Seguir deportes.
 - Predicciones.
-
-PRIMER SPRINT
-
--

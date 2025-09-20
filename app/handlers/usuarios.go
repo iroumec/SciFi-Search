@@ -11,9 +11,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	utils "uki/app/utils"
+	utils "tpe/web/app/utils"
 
-	sqlc "uki/app/database"
+	sqlc "tpe/web/app/database"
 
 	_ "github.com/lib/pq"
 )

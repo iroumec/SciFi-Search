@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"uki/app/handlers"
+	"tpe/web/app/handlers"
 
-	sqlc "uki/app/database"
+	sqlc "tpe/web/app/database"
 
 	_ "github.com/lib/pq"
 )

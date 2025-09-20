@@ -7,7 +7,7 @@ import (
 
 	"github.com/microcosm-cc/bluemonday"
 
-	sqlc "uki/app/database"
+	sqlc "tpe/web/app/database"
 )
 
 /*
