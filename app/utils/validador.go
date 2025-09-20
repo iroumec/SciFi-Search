@@ -1,21 +1,27 @@
 package utils
 
 import (
+	"bytes"
+	"context"
 	"fmt"
+	"io"
+	"log"
+	"mime/multipart"
 	"os/exec"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/chromedp/chromedp"
 )
 
-func ValidarConstancia() {
+func ValidarConstancia(pdf multipart.File) bool {
 
-	texto := leerPDF("static/Comprobante.pdf")
+	texto := leerPDF(pdf)
 
 	// Se normalizan espacios y mayúsculas para facilitar el matching.
 	textoNormalizado := strings.ReplaceAll(texto, "\n", " ")
 	textoNormalizado = strings.TrimSpace(textoNormalizado)
-
-	fmt.Println("Entré")
 
 	dni := hallarDNI(textoNormalizado)
 	fmt.Println(dni)
@@ -25,19 +31,33 @@ func ValidarConstancia() {
 	fmt.Printf("DNI   : %s\n", dni)
 	fmt.Printf("Código: %s\n", codigo)
 
-	if dni != "" && codigo != "" {
-		valURL := "https://guarani.unicen.edu.ar/autogestion/exactas/validador_certificados"
-		fmt.Printf("\nValidador: %s\n", valURL)
-		fmt.Println("Podés usar DNI y Código para completar el formulario del validador.")
+	valido := realizarValidacion(dni, codigo)
+
+	fmt.Println("Mensaje:")
+	if valido {
+		fmt.Println("Certificado válido")
+		return true
+	} else {
+		fmt.Println("Certificado inválido")
+		return false
 	}
 }
 
-func leerPDF(path string) string {
-	out, err := exec.Command("pdftotext", path, "-").Output()
+func leerPDF(file multipart.File) string {
+
+	// Se lee todo el contenido del archivo
+	data, err := io.ReadAll(file)
+	if err != nil {
+		// Error al leer el archivo.
+		return ""
+	}
+
+	cmd := exec.Command("pdftotext", "-", "-") // stdin -> stdout
+	cmd.Stdin = bytes.NewReader(data)
+	out, err := cmd.Output()
 	if err != nil {
 		panic(err)
 	}
-
 	return string(out)
 }
 
@@ -66,4 +86,45 @@ func hallarCodigoValidacion(text string) string {
 		return m2[1]
 	}
 	return ""
+}
+
+func realizarValidacion(dni, codigo string) bool {
+
+	// Se crea un contexto de Chrome.
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+
+	// Timeout general.
+	ctx, cancel = context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	var resultado string
+
+	// Se ejecutan las tareas.
+	err := chromedp.Run(ctx,
+		// 1. Abrir la página del validador.
+		chromedp.Navigate(`https://guarani.unicen.edu.ar/autogestion/exactas/validador_certificados`),
+
+		// 2. Rellenar los campos del formulario.
+		chromedp.SetValue(`#documento`, dni),
+		chromedp.SetValue(`#codigo_valid`, codigo),
+
+		// 3. Hacer click en el botón Validar.
+		chromedp.Click(`#validar`, chromedp.NodeVisible),
+
+		// 4. Esperar a que aparezca el resultado y obtener el texto.
+		chromedp.Text(`div.hero-unit h1`, &resultado, chromedp.NodeVisible, chromedp.ByQuery),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Resultado:", resultado)
+	if resultado == "Certificado Válido" || resultado == "Certificado Valido" {
+		fmt.Println("Certificado válido")
+		return true
+	} else {
+		fmt.Println("Certificado inválido")
+		return false
+	}
 }

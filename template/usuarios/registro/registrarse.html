@@ -5,7 +5,8 @@
     <section class="fondo-registro"></section>
     <section class="formulario">
         <h2>Registro</h2>
-        <form action="/signin" method="POST">
+        <!-- Colocar "multipart/form-data" es obligatorio para subir archivos -->
+        <form action="/signin" method="POST" enctype="multipart/form-data">
             
             <input type="text" id="dni" placeholder="DNI" name="dni" autocomplete="" required>
             <div class="fila">
@@ -16,7 +17,7 @@
             <input type="password" id="password" name="password" placeholder="Contraseña" autocomplete="new-password" required>
             <div class="archivo">
                 <label>
-                    <input type="file" hidden>
+                    <input type="file" name="certificado" hidden>
                     <span> Adjunte su certificado de alumno regular </span>
                 </label>
             </div>

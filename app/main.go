@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"uki/app/handlers"
-	"uki/app/utils"
 
 	sqlc "uki/app/database"
 
@@ -53,8 +52,6 @@ func main() {
 	handlers.RegisterHandlers(queries)
 
 	fmt.Printf("\nServidor escuchando en http://localhost%s\n", port)
-
-	utils.ValidarConstancia()
 
 	if err := http.ListenAndServe(port, nil); err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)

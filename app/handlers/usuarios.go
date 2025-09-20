@@ -11,6 +11,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	utils "uki/app/utils"
+
 	sqlc "uki/app/database"
 
 	_ "github.com/lib/pq"
@@ -20,10 +22,10 @@ import (
 func registerUserHandlers() {
 
 	// Handler que maneja el registro de usuarios.
-	http.HandleFunc("/signin", signInHandler)
+	http.HandleFunc("/registrarse", signInHandler)
 
 	// Handler que maneja el login de usuarios.
-	http.HandleFunc("/login", logInHandler)
+	http.HandleFunc("/iniciar-sesion", logInHandler)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -58,10 +60,12 @@ func signInHandleGET(w http.ResponseWriter, errorMessage string) {
 func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
-	if err := r.ParseForm(); err != nil {
+	if err := r.ParseMultipartForm(10 << 20); err != nil { // <- Cambiado para multipart
 		http.Error(w, "Error al procesar el formulario", http.StatusBadRequest)
 		return
 	}
+
+	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado.
 
 	dni := r.FormValue("dni")
 	name := r.FormValue("name")
@@ -70,6 +74,21 @@ func signInHandlePOST(w http.ResponseWriter, r *http.Request) {
 
 	if hayCampoIncompleto(dni, name, email, password) {
 		signInHandleGET(w, "Faltan campos obligatorios.")
+		return
+	}
+
+	// Se obtiene el archivo del formulario
+	file, _, err := r.FormFile("certificado") // <- nombre del input en HTML
+	if err != nil {
+		signInHandleGET(w, "Debe adjuntar el certificado de alumno regular.")
+		return
+	}
+	defer file.Close()
+
+	// Validación del PDF con tu función existente
+	valido := utils.ValidarConstancia(file)
+	if !valido {
+		signInHandleGET(w, "Certificado inválido: " /*+ mensaje*/)
 		return
 	}
 

@@ -12,8 +12,10 @@ FROM alpine:latest
 WORKDIR /app
 
 # Se instala poppler-utils para poder usar pdftotext.
-# Esto sirve para la validación de la constancia de alumno regular.
+# También se instala chronium para podder ussar crodp.
+# Ambos sirven para la validación de la constancia de alumno regular.
 RUN apk add --no-cache poppler-utils
+RUN apk add --no-cache chromium nss freetype harfbuzz ttf-freefont
 
 # Creación de un usuario y grupo no root.
 RUN addgroup -S uki && adduser -S uki -G uki
