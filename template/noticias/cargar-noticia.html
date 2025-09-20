@@ -1,0 +1,42 @@
+{{ define "title" }}Cargar Noticia{{ end }}
+
+{{ define "content" }}
+
+<h1>Ingrese los datos de la noticia:</h1>
+
+<form action="/cargar-noticia" method="POST">
+
+    <label for="título">Título</label><br>
+    <input type="text" id="título" name="título" required><br><br>
+
+    <label for="tiempo_estimado_lectura">Tiempo estimado de lectura</label><br>
+    <!-- Required step se asegura de que el número no sea decimal y min="1" se asegura de que el número no sea menor a 1. -->
+    <input type="number" id="tiempo_estimado_lectura" name="tiempo_estimado_lectura" required step="1" min="1" />
+
+    <label for="contenido">Contenido</label><br>
+    <textarea id="contenido" name="contenido" rows="15" cols="80"></textarea><br><br>
+
+    <button type="submit">Publicar</button>
+</form>
+
+<!-- TinyMCE self-hosted -->
+<script src="static/js/tinymce/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector: '#contenido',
+        license_key: 'gpl',
+        menubar: false,
+        plugins: 'link image lists code',
+        toolbar: 'undo redo | bold italic underline | bullist numlist | link image | code',
+        branding: false,
+        height: 400
+    });
+</script>
+
+{{ if .ErrorMessage }}
+<div id="mensaje" style="color:red;">
+    {{ .ErrorMessage }}
+</div>
+{{ end }}
+
+{{ end }}

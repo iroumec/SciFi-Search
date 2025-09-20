@@ -1,0 +1,14 @@
+{{ define "header" }}
+    <header>
+        <div class="header-logo">
+            <a href="/">
+                <img src="static/img/logo_cabecera.png" alt="Logo Olimpiadas" id="logo">
+            </a>
+        </div>
+        <div class="header-buttons">
+            <button class="btn-registro" onclick="window.location.href='/registrarse'">Registrarse</button>
+            <button class="btn-registro" onclick="window.location.href='/iniciar-sesion'">Iniciar sesión</button>
+            <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
+        </div>
+    </header>
+{{ end }}
