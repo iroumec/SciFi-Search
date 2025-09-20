@@ -192,14 +192,21 @@ main {
 
 /* --------------- Partidos --------------- */
 .partidos {
-    
+    height: 700px;
 }
+
 .partidos-contenedor {
     background: black;
     border: 2px solid var(--color-unicen);
     border-radius: 8px;
     padding: 20px;
     color: white;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    height: 500px;
+    width: 60%;
+    transform: translate(-50%,-50%);
 }
 
 .filtros {

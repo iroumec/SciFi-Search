@@ -19,32 +19,24 @@
         </div>
     </section>
 
-    <section id="countdown-section">
-        <h2>Faltan para el inicio de las Olimpiadas UNICEN 2026:</h2>
-        <div id="countdown">
-            <span id="dias">00</span> días
-            <span id="horas">00</span> horas
-            <span id="minutos">00</span> minutos
-            <span id="segundos">00</span> segundos
-        </div>
-    </section>
-
     <section class="partidos">
-        <h2>Proximo partido: </h3>
-        <!-- Filtros -->
-        <div class="filtros">
-            <div class="filtro">
-                <span>Facultad:</span>
-                <button data-facultad="Exactas">Exactas</button>
-                <button data-facultad="Económicas">Económicas</button>
-                <button data-facultad="Arte">Arte</button>
-                <button data-facultad="Veterinarias">Veterinarias</button>
-            </div>
-            <div class="filtro">
-                <span>Deporte:</span>
-                <button data-deporte="Hockey">Hockey</button>
-                <button data-deporte="Fútbol">Fútbol</button>
-                <button data-deporte="Voley">Voley</button>
+        <div class="partidos-contenedor">
+            <h2>Proximo partido: </h3>
+            <!-- Filtros -->
+            <div class="filtros">
+                <div class="filtro">
+                    <span>Facultad:</span>
+                    <button data-facultad="Exactas">Exactas</button>
+                    <button data-facultad="Económicas">Económicas</button>
+                    <button data-facultad="Arte">Arte</button>
+                    <button data-facultad="Veterinarias">Veterinarias</button>
+                </div>
+                <div class="filtro">
+                    <span>Deporte:</span>
+                    <button data-deporte="Hockey">Hockey</button>
+                    <button data-deporte="Fútbol">Fútbol</button>
+                    <button data-deporte="Voley">Voley</button>
+                </div>
             </div>
         </div>
     </section>
@@ -59,6 +51,17 @@
         <p>Aca van los posteos de los ultimos partidos. Se publica las facultades, el resultado y fotos del post original. Aca se va a poder comentar comentarios y fotos.</p>
     </section>
 
+    <!-- El contador va en la epoca no-olimpiadas ----------------------------------------------------
+
+    <section id="countdown-section">
+        <h2>Faltan para el inicio de las Olimpiadas UNICEN 2026:</h2>
+        <div id="countdown">
+            <span id="dias">00</span> días
+            <span id="horas">00</span> horas
+            <span id="minutos">00</span> minutos
+            <span id="segundos">00</span> segundos
+        </div>
+    </section>
     <script>
         // Fecha objetivo (ejemplo: 1 de mayo de 2026, 10:00)
         const fechaObjetivo = new Date("2026-05-01T10:00:00").getTime();
@@ -87,4 +90,5 @@
         const intervalo = setInterval(actualizarContador, 1000);
         actualizarContador(); // inicializa al cargar
     </script>
+    -->
 {{ end }}

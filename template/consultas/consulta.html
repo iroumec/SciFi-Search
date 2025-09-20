@@ -1,0 +1,87 @@
+{{ define "title" }}Consultanos{{ end }}
+
+{{ define "content" }}
+
+    <section class="fondo-registro"></section>
+    <section class="formulario">
+        <h1>Consultanos</h1>
+
+        <p>Envianos tu consulta completando el formulario que está a continuación. Si preferís, también podés mandarnos un mail
+            con
+            tu consulta a <span id="correo"></span>.
+        
+            Te responderemos a la brevedad.</p>
+
+        <form action="/consultar" method="POST">
+    
+            <div class="fila">
+                <input type="text" id="name" placeholder="Nombre" name="name" required>
+                <input type="text" id="surname" placeholder="Apellido" name="surname" required>
+            </div>
+            <input type="email" id="email" name="email" placeholder="E-mail" required>
+            <input type="text" id="phone" name="phone" placeholder="Teléfono">
+            <input type="text" id="direccion" name="direccion" placeholder="Dirección">
+            <input type="text" id="consulta" name="consulta" placeholder="Escribe aquí tu consulta" required>
+    
+            <button class="btn-registro" type="submit">Enviar consulta</button>
+        </form>
+    </section>
+
+    <!-- Obfuscación del correo por motivos de seguridad ante bots -->
+    <script>
+        /*
+        IIFE — Immediately Invoked Function Expression.
+        Se define una función y se ejecuta inmediatamente para:
+        - evitar contaminar el scope global,
+        - ejecutar la lógica al cargar el script automáticamente.
+        */
+        (function () {
+
+            // 1) Nombre de usuario (parte antes del @).
+            //    Guardarlo separado evita que el correo aparezca como texto continuo en el HTML.
+            var usuario = "deportes";
+
+            // 2) Dominio del correo (parte después del @).
+            //    También separado para dificultar la extracción por bots que leen el HTML estático.
+            var dominio = "rec.unicen.edu.ar";
+
+            // 3) Crear un elemento <a> dinámicamente.
+            //    document.createElement crea un nodo de tipo tag (en este caso un enlace).
+            var enlace = document.createElement("a");
+
+            // 4) Construir el atributo href con el esquema mailto: concatenando usuario y dominio.
+            enlace.href = "mailto:" + usuario + "@" + dominio;
+
+            // 5) Establecer el texto visible del enlace.
+            //    Se muestra al usuario el correo en forma legible.
+            enlace.textContent = usuario + "@" + dominio;
+
+            // 6) Accesibilidad: agregar un aria-label descriptivo.
+            //    Ayuda a usuarios con lectores de pantalla a entender la acción.
+            enlace.setAttribute("aria-label", "Enviar correo a " + usuario + "@" + dominio);
+
+            // 7) Obtener el contenedor destino en el DOM donde se insertará el enlace.
+            //      El contenedor debe ser un elemento con id="correo".
+            //    Aquí se espera un elemento con id="correo".
+            var contenedor = document.getElementById("correo");
+
+            // 8) Verificación: comprobar que el contenedor existe antes de insertar.
+            //    Si existe, se añade el enlace como hijo; si no, se registra una advertencia.
+            if (contenedor) {
+                contenedor.appendChild(enlace); // inserta <a> dentro del <span id="correo">
+            } else {
+                // Aviso en consola para depuración: útil si olvidaste poner el span en el HTML.
+                console.warn("Elemento con id 'correo' no encontrado en el DOM.");
+            }
+
+            // Cierre de la IIFE: () ejecuta la función inmediatamente después de definirla.
+        })();
+    </script>
+
+    
+    {{ if.ErrorMessage }}
+    <div id="mensaje" style="color:red;">
+        {{ .ErrorMessage }}
+    </div>
+    {{ end }}
+{{ end }}

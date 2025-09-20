@@ -57,3 +57,17 @@ SELECT COUNT(*) FROM likes_comentario WHERE id_noticia = $1 AND id_comentario = 
 
 -- name: ListarComentarios :many
 SELECT * FROM comentarios_noticia ORDER BY publicado_en LIMIT 10 OFFSET $1;
+
+-- name: CrearDeporte :one
+INSERT INTO deportes (nombre,foto) VALUES ($1,$2) RETURNING *;
+
+-- name: ObtenerDeporte :one
+SELECT * FROM deportes WHERE id = $1;
+
+-- name: ObtenerDeportes :many
+SELECT * FROM deportes 
+
+-- name: CrearFacultad :one
+INSERT INTO facultades (nombre) VALUES ($1) RETURNING *;
+
+

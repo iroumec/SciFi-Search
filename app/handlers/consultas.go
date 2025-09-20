@@ -11,7 +11,7 @@ import (
 
 func registrarHandlersConsultas() {
 
-	http.HandleFunc("/consulta", manejarConsultas)
+	http.HandleFunc("/consultar", manejarConsultas)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -22,9 +22,9 @@ func manejarConsultas(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		manejarGETConsultas(w, "")
+		mostrarFormularioConsulta(w, "")
 	case http.MethodPost:
-		manejarPOSTConsultas(w, r)
+		procesarConsulta(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -32,18 +32,18 @@ func manejarConsultas(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func manejarGETConsultas(w http.ResponseWriter, errorMessage string) {
+func mostrarFormularioConsulta(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
 		"ErrorMessage": errorMessage,
 	}
 
-	renderizeTemplate(w, "template/enquery/enquery.html", data, nil)
+	renderizeTemplate(w, "template/consultas/consulta.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func manejarPOSTConsultas(w http.ResponseWriter, r *http.Request) {
+func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 
 	// Se parsean los datos del formulario enviados vía POST.
 	if err := r.ParseForm(); err != nil {
@@ -59,7 +59,7 @@ func manejarPOSTConsultas(w http.ResponseWriter, r *http.Request) {
 	enquery := r.FormValue("enquery")
 
 	if hayCampoIncompleto(email, enquery) {
-		manejarGETConsultas(w, "Faltan campos obligatorios.")
+		mostrarFormularioConsulta(w, "Faltan campos obligatorios.")
 		return
 	}
 
@@ -108,5 +108,5 @@ func manejarPOSTConsultas(w http.ResponseWriter, r *http.Request) {
 
 	// El email fue enviado exitosamente.
 
-	renderizeTemplate(w, "template/enquery/enquerySent.html", nil, nil)
+	renderizeTemplate(w, "template/consultas/consulta-enviada.html", nil, nil)
 }
