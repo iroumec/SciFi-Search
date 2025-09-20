@@ -1,20 +1,20 @@
 # .dockerignore
 
-# Ignorar control de versiones
+# Ignorar control de versiones.
 .git
 .gitignore
 
-# Ignorar archivos de configuración de IDEs
+# Ignorar archivos de configuración de IDEs.
 .vscode/
 .idea/
 
-# Ignorar dependencias de otros lenguajes (si las hubiera)
+# Ignorar dependencias de otros lenguajes (si las hubiera).
 node_modules/
 
-# Ignorar directorios temporales de Air y otros
+# Ignorar directorios temporales de Air y otros.
 tmp/
 vendor/
 
-# Ignorar archivos de entorno y documentación
+# Ignorar archivos de entorno y documentación.
 .env
 *.md
