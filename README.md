@@ -7,7 +7,9 @@ Aplicación web de las Olimpiadas Interfacultativas de la UNICEN.
 ## Índice
 
 - [¿Cómo se estructura el proyecto?](resources/markdown/estructura.md)
+- [¿Qué necesito para ejecutar la aplicación?](resources/markdown/requisitos.md)
 - [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md)
+- [¿Cómo navego en la aplicación?](resources/markdown/tutorial.md)
 
 ## Créditos
 
