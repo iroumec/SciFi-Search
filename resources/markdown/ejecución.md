@@ -2,13 +2,17 @@
 
 ## Configuración del entorno
 
-Antes de ejecutar la aplicación, es necesario que defina un archivo con las variables de entorno. Para ello puede basarse en el ejemplo:
+Antes de ejecutar la aplicación, es necesario que defina un archivo con las variables de entorno. Para ello puede basarse en el archivo de ejemplo:
 
 ```bash
 cp resources/.env.example .env
 ```
 
 Luego, debe editar `.env` y remplazar los valores por defecto con sus credenciales solicitadas.
+
+> [!Tip] Las credenciales en el archivo `.env.example` ya están preparadas para que el programa funcione sin problemas. Por lo tanto, solo debe copiarlas en un archivo .env dentro de la carpeta principal.
+
+![Ubicación de .env](images/env.png)
 
 ## Ejecución
 
@@ -42,4 +46,4 @@ Ante cambios en la base de datos, es necesario eliminar el volumen y reconstruir
 docker compose down -v --rmi all
 ```
 
-También se recomiendo ejecutar el comando en caso de que no vaya a utilizar más la aplicación.
+**También se recomiendo ejecutar el comando en caso de que no vaya a utilizar más la aplicación.**
