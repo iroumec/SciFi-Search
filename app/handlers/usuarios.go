@@ -14,9 +14,9 @@ import (
 	utils "tpe/web/app/utils"
 
 	sqlc "tpe/web/app/database"
-
-	_ "github.com/lib/pq"
 )
+
+// ------------------------------------------------------------------------------------------------
 
 /*
 Se registran todos los endpoints relacionados al
@@ -73,7 +73,8 @@ func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: podría limitarse el tamaño del archivo.
+	// TODO: podría limitarse el tamaño del archivo en lugar de cuánto se gaurda en memoria.
+	// Los certificados siempre van a pesar poco.
 
 	// DNI, nombre y apellido no deberían pedirse. Se obtienen del certificado. TODO
 	dni := r.FormValue("dni")

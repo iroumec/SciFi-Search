@@ -4,6 +4,10 @@ import (
 	"net/http"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Registro de los Handlers de Ayuda
+// ------------------------------------------------------------------------------------------------
+
 // Se registran los handlers de ayuda.
 func registrarHandlersAyuda() {
 	rutas := map[string]struct {
@@ -28,6 +32,8 @@ func registrarHandlersAyuda() {
 		http.HandleFunc(ruta, handlerTemplate(def.tmpl, def.data))
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
 
 // Handler genérico para GET.
 func handlerTemplate(path string, data map[string]any) http.HandlerFunc {

@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-/*
-Comprime la respuesta si el cliente acepta gzip y el archivo existe.
-*/
+// ------------------------------------------------------------------------------------------------
+
+// Comprime la respuesta si el cliente acepta gzip y el archivo existe.
 func GzipMiddleware(fileDir string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

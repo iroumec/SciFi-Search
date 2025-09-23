@@ -9,8 +9,6 @@ import (
 	"tpe/web/app/utils"
 
 	sqlc "tpe/web/app/database"
-
-	_ "github.com/lib/pq"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -126,6 +124,7 @@ func registrarIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se definen las facultades.
+		// El objetivo de esto es que no estén hard-codeadas en el HTML.
 		data := struct {
 			Facultades []string
 		}{

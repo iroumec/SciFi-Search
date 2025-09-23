@@ -3,16 +3,15 @@ package handlers
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"net/http"
 
 	sqlc "tpe/web/app/database"
-
-	_ "github.com/lib/pq"
 )
 
 // Mapea un token de inicio de sesión a un userID.
 var sessions = make(map[string]int32)
+
+// ------------------------------------------------------------------------------------------------
 
 func registrarHandlersPerfiles() {
 
@@ -24,8 +23,6 @@ func registrarHandlersPerfiles() {
 // ------------------------------------------------------------------------------------------------
 
 func manejarPerfil(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Println("\nManejando renderizado del perfil...")
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
@@ -51,9 +48,7 @@ func manejarPerfil(w http.ResponseWriter, r *http.Request) {
 		"Email":    user.Email,
 	}
 
-	renderizeTemplate(w, "template/profile.html", data, nil)
-
-	fmt.Println("Plantilla renderizada.")
+	renderizeTemplate(w, "template/usuarios/perfil.html", data, nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -70,14 +65,12 @@ func handleProfileAccess(user sqlc.Usuario, w http.ResponseWriter, r *http.Reque
 
 	sessions[token] = user.ID
 
-	fmt.Println("Se agregó un nuevo token de sesión.")
-
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   false, // true si se usa HTTPS
+		Secure:   false, // true si se usa HTTPS.
 		SameSite: http.SameSiteStrictMode,
 	})
 

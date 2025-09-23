@@ -1,5 +1,7 @@
 package handlers
 
+// Para después.
+
 /*
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 

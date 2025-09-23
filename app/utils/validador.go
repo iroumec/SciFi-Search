@@ -15,6 +15,8 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
+// ------------------------------------------------------------------------------------------------
+
 func ValidarConstancia(pdf multipart.File) (bool, error) {
 
 	texto, err := leerPDF(pdf)
@@ -57,7 +59,7 @@ func leerPDF(file multipart.File) (string, error) {
 		return "", fmt.Errorf("Error leyendo archivo: %w", err)
 	}
 
-	// Se mira la cabecera para verificar que le archvio sea un PDF.
+	// Se mira la cabecera para verificar que el archvio sea un PDF.
 	if !bytes.HasPrefix(data, []byte("%PDF-")) {
 		return "", fmt.Errorf("El archivo no es un PDF válido.")
 	}
@@ -123,7 +125,6 @@ func hallarCodigoValidacion(text string) string {
 	// Los grupos de captura van entre paréntesis.
 	m := re.FindStringSubmatch(text)
 	if len(m) >= 2 {
-		fmt.Println("Primer regex")
 		return m[1]
 	}
 
@@ -138,10 +139,18 @@ func hallarCodigoValidacion(text string) string {
 func realizarValidacion(dni, codigo string) bool {
 
 	// Configuración del ExecAllocator con flags para Docker.
-	// chromedp.DefaultExecAllocatorOptions[:] --> toma las opciones por defecto de chromedp para iniciar Chromium.
-	// chromedp.ExecPath() --> indica dónde está el ejecutable de Chromium (en nuestro caso, en Alpine).
-	// chromedp.Flag("no-sandbox", true) --> desactiva el sandbox de Chromium. Es necesario porque el contenedor se corre en modo usuario (sin privilegios).
-	// chromedp.Flag("disable-gpu", true) → desactiva aceleración por GPU. Mejora el rendimiento ya que no hay entorno gráfico.
+	//
+	// chromedp.DefaultExecAllocatorOptions[:] --> toma las opciones por defecto de chromedp para
+	// iniciar Chromium.
+	//
+	// chromedp.ExecPath() --> indica dónde está el ejecutable de Chromium
+	// (en nuestro caso, la imagen de Alpine).
+	//
+	// chromedp.Flag("no-sandbox", true) --> desactiva el sandbox de Chromium. Es necesario
+	// porque el contenedor se corre en modo usuario (sin privilegios).
+	//
+	// chromedp.Flag("disable-gpu", true) → desactiva aceleración por GPU. Mejora el rendimiento
+	// ya que no hay entorno gráfico.
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.ExecPath("/usr/bin/chromium-browser"), // o "chromium" según tu apk
 		chromedp.Flag("no-sandbox", true),
@@ -153,7 +162,7 @@ func realizarValidacion(dni, codigo string) bool {
 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 	defer cancel()
 
-	// Segundo contexto: Chrome real (usando allocCtx, no uno nuevo)
+	// Segundo contexto: Chrome real (usando allocCtx).
 	ctx, cancel := chromedp.NewContext(allocCtx)
 	defer cancel()
 
@@ -189,3 +198,5 @@ func realizarValidacion(dni, codigo string) bool {
 
 	return resultado == "Certificado Válido" || resultado == "Certificado Valido"
 }
+
+// TODO: agregar la validación de certificados de otras facultades.

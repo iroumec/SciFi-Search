@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// ------------------------------------------------------------------------------------------------
+
 func registerHandlersFacultades() {
 
 	http.HandleFunc("/facultades", manejarFacultades)

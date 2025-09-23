@@ -32,12 +32,12 @@ func manejarNoticias(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	manejarGETNoticias(w, r)
+	mostrarNoticias(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func manejarGETNoticias(w http.ResponseWriter, r *http.Request) {
+func mostrarNoticias(w http.ResponseWriter, r *http.Request) {
 
 	// Se lee el offset del query.
 	offsetStr := r.URL.Query().Get("offset")
@@ -84,9 +84,9 @@ func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		manejarGETCargaNoticias(w, "")
+		mostrarFormularioCargaNoticia(w, "")
 	case http.MethodPost:
-		manejarPOSTCargaNoticias(w, r)
+		procesarCargaNoticia(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -94,7 +94,7 @@ func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func manejarGETCargaNoticias(w http.ResponseWriter, errorMessage string) {
+func mostrarFormularioCargaNoticia(w http.ResponseWriter, errorMessage string) {
 
 	data := map[string]any{
 		"ErrorMessage": errorMessage,
@@ -105,7 +105,7 @@ func manejarGETCargaNoticias(w http.ResponseWriter, errorMessage string) {
 
 // ------------------------------------------------------------------------------------------------
 
-func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
+func procesarCargaNoticia(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error procesando formulario", http.StatusBadRequest)
 		return
@@ -118,7 +118,7 @@ func manejarPOSTCargaNoticias(w http.ResponseWriter, r *http.Request) {
 	// string -> int
 	tiempo, err := strconv.Atoi(tiempoStr)
 	if err != nil {
-		manejarGETCargaNoticias(w, "El tiempo estimado debe ser un número.")
+		mostrarFormularioCargaNoticia(w, "El tiempo estimado debe ser un número.")
 	}
 
 	// Sanitizar HTML (permitir solo etiquetas seguras para usuarios finales)
