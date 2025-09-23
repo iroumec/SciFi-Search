@@ -1,5 +1,5 @@
 -- name: CrearUsuario :one
-INSERT INTO usuarios (dni, nombre, email, contraseña) VALUES ($1, $2, $3, $4) RETURNING *;
+INSERT INTO usuarios (dni, nombre, email, contrasena) VALUES ($1, $2, $3, $4) RETURNING *;
 
 -- name: ObtenerUsuarioPorID :one
 SELECT * FROM usuarios WHERE id = $1;
@@ -11,7 +11,7 @@ SELECT * FROM usuarios WHERE dni = $1;
 SELECT * FROM usuarios ORDER BY id;
 
 -- name: ActualizarUsuario :exec
-UPDATE usuarios SET nombre = $2, email = $3 WHERE id = $1;
+UPDATE usuarios SET nombre = $2, email = $3, contrasena = $4 WHERE id = $1;
 
 -- name: ActualizarDNI :exec
 UPDATE usuarios SET dni = $2 WHERE id = $1;
