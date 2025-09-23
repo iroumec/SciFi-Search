@@ -22,60 +22,6 @@ DELETE FROM usuarios WHERE id = $1;
 -- name: CrearPerfil :one
 INSERT INTO perfiles (id_usuario, foto) VALUES ($1, $2) RETURNING *;
 
--- name: CrearNoticia :one
-INSERT INTO noticias (titulo, contenido, tiempo_lectura_estimado) VALUES ($1, $2, $3) RETURNING *;
-
--- name: ObtenerNoticia :one
-SELECT * FROM noticias WHERE id = $1;
-
--- name: ListarNoticias :many
-SELECT * FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1;
-
--- name: LikearNoticia :one
-INSERT INTO likes_noticia (id_noticia, id_usuario) VALUES ($1, $2) RETURNING *;
-
--- name: DeslikearNoticia :exec
-DELETE FROM likes_noticia WHERE id_noticia = $1 AND id_usuario = $2;
-
--- name: ObtenerLikesNoticia :one
-SELECT COUNT(*) FROM likes_noticia WHERE id_noticia = $1;
-
--- name: AgregarComentario :one
-INSERT INTO comentarios_noticia (id_noticia, id_usuario, comentario) VALUES ($1, $2, $3) RETURNING *;
-
--- name: EliminarComentario :exec
-DELETE FROM comentarios_noticia WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3;
-
--- name: ObtenerComentariosNoticia :one
-SELECT COUNT(*) FROM comentarios_noticia WHERE id_noticia = $1;
-
--- name: LikearComentario :one
-INSERT INTO likes_comentario (id_noticia, id_usuario, id_comentario, id_usuario_like) VALUES ($1, $2, $3, $4) RETURNING *;
-
--- name: DeslikearComentario :exec
-DELETE FROM likes_comentario WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3 AND id_usuario_like = $4;
-
--- name: ObtenerLikesComentario :one
-SELECT COUNT(*) FROM likes_comentario WHERE id_noticia = $1 AND id_comentario = $2;
-
--- name: ListarComentarios :many
-SELECT * FROM comentarios_noticia ORDER BY publicado_en LIMIT 10 OFFSET $1;
-
--- name: CrearDeporte :one
-INSERT INTO deportes (nombre,foto) VALUES ($1,$2) RETURNING *;
-
--- name: ObtenerDeporte :one
-SELECT * FROM deportes WHERE id = $1;
-
--- name: ObtenerDeportes :many
-SELECT * FROM deportes ORDER BY nombre;
-
--- name: ActualizarDeporte :exec
-UPDATE deportes SET nombre = $2 , foto = $3 WHERE id = $1;
-
--- name: EliminarDeporte :exec
-DELETE FROM deportes WHERE id = $1;
-
 -- name: CrearFacultad :one
 INSERT INTO facultades (nombre) VALUES ($1) RETURNING *;
 
@@ -93,6 +39,27 @@ UPDATE facultades SET nombre = $2 WHERE id = $1;
 
 -- name: EliminarFacultad :exec
 DELETE FROM facultades WHERE id = $1;
+
+-- name: AsignarFacultad :exec
+INSERT INTO pertenece (id_usuario,id_facultad) VALUES ($1,$2);
+
+-- name: EliminarAsginacionFacultad :exec
+DELETE FROM pertenece WHERE id_usuario = $1 AND id_facultad = $2;
+
+-- name: CrearDeporte :one
+INSERT INTO deportes (nombre,masculino,foto) VALUES ($1,$2,$3) RETURNING *;
+
+-- name: ObtenerDeporte :one
+SELECT * FROM deportes WHERE id = $1;
+
+-- name: ObtenerDeportes :many
+SELECT * FROM deportes ORDER BY nombre;
+
+-- name: ActualizarDeporte :exec
+UPDATE deportes SET nombre = $2 , masculino = $3 foto = $4 WHERE id = $1;
+
+-- name: EliminarDeporte :exec
+DELETE FROM deportes WHERE id = $1;
 
 -- name: CrearPartidoZonas :one
 INSERT INTO partidos (id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,lugar) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *;
@@ -118,6 +85,12 @@ SELECT * FROM partidos WHERE id_deporte = $1;
 -- name: ListarPartidosPorFacultadYDeporte :many
 SELECT * FROM partidos WHERE (id_facultad1 = $1 OR id_facultad2 = $1) AND id_deporte = $2;
 
+-- name: MANUAL_EditarPartido :exec
+UPDATE partidos SET id_deporte = $2, tipo = $3, zona = $4, id_facultad1 = $5, id_facultad2 = $6, inicio = $7, lugar = $8, cancha = $9 WHERE id = $1;
+
+-- name: MANUAL_EliminarPartido :exec
+DELETE FROM partidos WHERE id = $1;
+
 -- name: IniciarPartido :exec
 INSERT INTO puntajes (id_partido,puntos1,puntos2) VALUES ($1,0,0);
 
@@ -127,22 +100,128 @@ INSERT INTO puntajes (id_partido,puntos1,puntos2,puntosS1,puntosS2) VALUES ($1,0
 -- name: SumarPuntos :exec
 CALL PR_SUMARPUNTOS($1,$2,$3);
 
+-- name: MANUAL_ModificarPuntaje :exec
+UPDATE puntajes SET puntos1 = $2, puntos2 =$3, puntosS1 = $4, puntosS2 = $5 WHERE id_partido = $1;
+
+-- name: MANUAL_EliminarPuntaje :exec
+DELETE FROM puntajes WHERE id_partido = $1;
+
+-- name: CargarPuntajeSimpleFacultad :exec
+INSERT INTO puntajes_simples (id_disciplina,id_facultad,puntos) VALUES ($1,$2,$3);
+
+-- name: ObtenerPuntajeSimple :one
+SELECT * FROM puntajes_simples WHERE id_simple = $1;
+
+-- name: ObtenerXPuestoDisciplina :one
+SELECT id_facultad FROM puntajes_simples WHERE id_disciplina = $1 ORDER BY puntos LIMIT $2 OFFSET (SELECT $2 - 1);
+
+-- name: ListarPuntajesSimplesDisciplina :many
+SELECT * FROM puntajes_simples WHERE id_disciplina = $1 ORDER BY puntos;
+
+-- name: MANUAL_ModificarPuntajesSimples :exec
+UPDATE puntajes_simples SET id_disciplina = $2 , id_facultad = $3 , puntos = $4 WHERE id_simple = $1;
+
+-- name: MANUAL_EliminarPuntajeSimple :exec
+DELETE FROM puntajes_simples WHERE id_simple = $1;
+
+-- name: CargarParticipanteDeporte :exec
+INSERT INTO participa (id_participante,id_deporte,id_facultad) VALUES ($1,$2,$3) 
+
+-- name: MANUAL_EliminarParticipante :exec
+DELETE FROM participa WHERE id_participante = $1 , id_deporte = $2 , id_facultad = $3;
+
+-- name: CrearNoticia :one
+INSERT INTO noticias (titulo, contenido, tiempo_lectura_estimado) VALUES ($1, $2, $3) RETURNING *;
+
+-- name: ObtenerNoticia :one
+SELECT * FROM noticias WHERE id = $1;
+
+-- name: ListarNoticias :many
+SELECT * FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1;
+
+-- name: EliminarNoticia :exec
+DELETE FROM noticias WHERE id = $1;
+
+-- name: LikearNoticia :one
+INSERT INTO likes_noticia (id_noticia, id_usuario) VALUES ($1, $2) RETURNING *;
+
+-- name: ObtenerLikesNoticia :one
+SELECT COUNT(*) FROM likes_noticia WHERE id_noticia = $1;
+
+-- name: DeslikearNoticia :exec
+DELETE FROM likes_noticia WHERE id_noticia = $1 AND id_usuario = $2;
+
+-- name: AgregarComentarioNoticia :one
+INSERT INTO comentarios_noticia (id_noticia, id_usuario, comentario) VALUES ($1, $2, $3) RETURNING *;
+
+-- name: ObtenerComentarioNoticia :one
+SELECT * FROM comentarios_noticia WHERE id_comentario = $1;
+
+-- name: ListarComantariosNoticia :many
+SELECT * FROM comentarios_noticia WHERE id_noticia = $1 ORDER BY publicado_en DESC LIMIT 10 OFFSET $1;
+
+-- name: ObtenerCantidadComentariosNoticia :one
+SELECT COUNT(*) FROM comentarios_noticia WHERE id_noticia = $1;
+
+-- name: EliminarComentarioNoticia :exec
+DELETE FROM comentarios_noticia WHERE id_comentario = $1;
+
+-- name: LikearComentarioNoticia :one
+INSERT INTO likes_comentario (id_comentario,id_usuario) VALUES ($1, $2) RETURNING *;
+
+-- name: ObtenerLikesComentarioNoticia :one
+SELECT COUNT(*) FROM likes_comentario WHERE id_noticia = $1 AND id_comentario = $2;
+
+-- name: DeslikearComentarioNoticia :exec
+DELETE FROM likes_comentario WHERE id_comentario = $1 AND id_usuario = $2;
+
 -- name: FinalizarPartido :exec
-CALL PR_FINALIZARPARTIDO($1);
+CALL PR_FINALIZARPARTIDO($1,$2);
 
--- name: ObtenerResultadosFacultades :many
+-- name: MANUAL_CrearPartidoHistorico :exec
+INSERT INTO partidos_historicos VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14);
+
+-- name: ObtenerPartidoHistorico :one
+SELECT * FROM partidos_historicos WHERE id_partido = $1;
+
+-- name: ListarPartidosHistoricos :many
+SELECT * FROM partidos_historicos ORDER BY fin DESC;
+
+-- name: ListarPartidosHistoricosPorAnio :many
+SELECT * FROM partidos_historicos WHERE $1 = EXTRACT(YEAR FROM fin) ORDER BY fin DESC;
+
+-- name: ListarPartidosDeParticipante :many
 SELECT 
+    id_partido as id,
+    id_deporte as disciplina,
+    (SELECT id_facultad 
+    FROM participa_historico p 
+    WHERE p.id_participante = $1) as facultad,
+    (EXTRACT (YEAR FROM ph.fin)) as anio,
+    (SELECT ph2.puntos1 FROM partidos_historicos ph2 WHERE ph2.id_facultad1 = ph.facultad 
+                    UNION 
+    SELECT ph2.puntos2 FROM partidos_historicos ph2 WHERE ph2.id_facultad2 = ph.facultad) as puntos
+FROM partidos_historicos ph WHERE EXISTS (
+    SELECT 1 FROM participa_historico p 
+    WHERE p.id_participante = $1 
+    AND p.id_deporte = ph.id_deporte 
+    AND (p.id_facultad = ph.id_facultad1 OR p.id_facultad = ph.id_facultad2))
 
+UNION 
 
--- (Probando)
-
-SELECT id_facultad, SUM(puntos)
-FROM (
-    SELECT id_facultad1, puntos1
-
+SELECT sh.id_simple as id, sh.id_disciplina as disciplina, sh.id_facultad as facultad, sh.anio, sh.puntos 
+FROM simples_historicos sh WHERE EXISTS (
+    SELECT 1 FROM participa_historico p 
+    WHERE p.id_participante = $1 
+    AND p.id_deporte = sh.id_deporte 
+    AND (p.id_facultad = sh.id_facultad)
 )
-JOIN 
-WHERE EXTRACT(YEAR FROM lugar) = EXTRACT(YEAR FROM NOW())
-GROUP BY 
 
--- partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2)
+-- name: CerrarPuntajeSimple :exec
+CALL PR_CERRAR_PUNTAJE_SIMPLE($1,$2);
+
+-- name: CerrarDisciplina :exec
+CALL PR_CERRAR_DISCIPLINA($1,$2);
+
+-- name: FinalizarOlimpiadas :exec
+CALL PR_FINALIZAR_OLIMPIADAS();

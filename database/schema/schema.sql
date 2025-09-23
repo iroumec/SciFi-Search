@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS facultades (
     nombre VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS perfiles_facultad (--altas posibilidades de volar
+CREATE TABLE IF NOT EXISTS perfiles_facultad (--altas posibilidades de volar, si on vuela CRUD
     id_facultad INT PRIMARY KEY
     --insignias y otras cosas
 );
@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS puntajes (
     id_partido INT PRIMARY KEY,
     puntos1 INT NOT NULL,
     puntos2 INT NOT NULL,
-    puntosS1 INT DEFAULT NULL,
-    puntosS2 INT DEFAULT NULL
+    puntosS1 INT,
+    puntosS2 INT
     --puntaje_techo: cuando puntosS1 llega a puntaje_techo, suma puntos en puntos1 (puede cambiar en base al deporte).
 );
 
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS participa_historico (
     id_participante INT,
     id_deporte INT,
     id_facultad INT,
-    anio INT EXTRACT (YEAR FROM (CURRENT_TIMESTAMP)),
+    anio INT DEFAULT EXTRACT (YEAR FROM (CURRENT_TIMESTAMP)),
     CONSTRAINT pk_participa PRIMARY KEY (id_participante,id_deporte,id_facultad,anio)
 );
 
@@ -159,6 +159,7 @@ CREATE TABLE IF NOT EXISTS publicaciones ( --se genera el posteo una vez finaliz
     id_publicacion SERIAL PRIMARY KEY,
     id_partido INT,
     id_simple INT,
+    id_disciplina INT,
     link_fotos TEXT, --url a un drive dedicado a fotos?
     visualizaciones INT NOT NULL DEFAULT 0
 );
@@ -345,11 +346,13 @@ ALTER TABLE participa_historico ADD CONSTRAINT fk_participa_historico_facultades
 -- Publicaciones --
 -------------------
 ALTER TABLE publicaciones ADD CONSTRAINT check_asociacion_historico
-    CHECK( 
-        (id_partido IS NULL AND id_simple IS NOT NULL) 
+    CHECK(( 
+        (id_partido IS NULL AND id_simple IS NOT NULL) --publicacion particular de facultad y disciplina
         OR 
-        (id_partido IS NOT NULL AND id_simple IS NULL) 
-        )
+        (id_partido IS NOT NULL AND id_simple IS NULL) --publicacion de partido fac vs fac
+        ) OR 
+        id_disciplina IS NOT NULL --publicacion de disciplina/deporte general
+    )
 ;
 
 ALTER TABLE publicaciones ADD CONSTRAINT fk_publicaciones_partidos_historicos
@@ -410,9 +413,13 @@ ALTER TABLE likes_comentario_publicacion ADD CONSTRAINT fk_likes_comentario_publ
 CREATE OR REPLACE FUNCTION FN_TRI_PARTICIPA()
 RETURNS TRIGGER AS $$
     BEGIN
-        IF(new.id_facultad NOT IN (SELECT id_facultad FROM pertenece p WHERE p.id_usuario = NEW.id_usuario))THEN
-            RAISE EXCEPTION 'Una persona puede participar en un partido por una unica facultad.';
+        IF NOT EXISTS (SELECT 1 FROM pertenece p WHERE p.id_usuario = NEW.id_participante AND p.id_facultad = NEW.id_facultad)THEN
+            RAISE EXCEPTION 'Una persona debe participar en un partido por una facultad de la que pertenezca.';
         END IF;
+        IF EXISTS (SELECT 1 FROM participa p WHERE NEW.id_deporte = p.id_deporte AND NEW.id_participante = p.id_participante)THEN 
+            RAISE EXCEPTION 'Una persona solo puede participar en un deporte por una facultad.';
+        END IF;
+        RETURN NEW;
     END;
 $$ LANGUAGE plpgsql;
 
@@ -433,15 +440,96 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE PR_FINALIZARPARTIDO(id_partido INT)
+CREATE OR REPLACE PROCEDURE PR_FINALIZARPARTIDO(id_partido INT,link TEXT)
 LANGUAGE 'plpgsql' AS $$
 BEGIN
-    INSERT INTO partidos_historicos (id_partido,id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2,puntosS1,puntosS2)
-    (SELECT pa.id,pa.id_deporte,pa.tipo,pa.zona,pa.id_facultad1,pa.id_facultad2,pa.inicio,NOW() as fin,pa.lugar,pa.cancha,pu.puntos1,pu.puntos2,pu.puntosS1,pu.puntosS2
-    FROM partidos pa 
-    LEFT JOIN puntajes pu ON (pa.id = pu.id_partido) 
+    INSERT INTO partidos_historicos 
+        (id_partido,
+        id_deporte,
+        tipo,
+        zona,
+        id_facultad1,
+        id_facultad2,
+        inicio,
+        fin,
+        lugar,
+        cancha,
+        puntos1,
+        puntos2,
+        puntosS1,
+        puntosS2
+        )
+    (SELECT 
+        pa.id,
+        pa.id_deporte,
+        pa.tipo,
+        pa.zona,
+        pa.id_facultad1,
+        pa.id_facultad2,
+        pa.inicio,
+        NOW() as fin,
+        pa.lugar,
+        pa.cancha,
+        pu.puntos1,
+        pu.puntos2,
+        pu.puntosS1,
+        pu.puntosS2
+    FROM partidos pa LEFT JOIN puntajes pu ON (pa.id = pu.id_partido) 
     WHERE id = id_partido);
+
     DELETE FROM partidos WHERE id = id_partido;
     DELETE FROM puntajes WHERE id = id_partido;
+
+    --Publicacion automática al finalizar el partido
+    INSERT INTO publicaciones (id_partido,link_fotos) VALUES (id_partido,link);
+END;
+$$;
+
+--Solo se debe ejecutar cuando se confirman los resultados, cierra UN puntaje de UNA disciplina de UNA facultad 
+CREATE OR REPLACE PROCEDURE PR_CERRAR_PUNTAJE_SIMPLE(id_simple INT, link TEXT)
+LANGUAGE 'plpgsql' AS $$
+BEGIN
+    INSERT INTO simples_historicos (id_simple,id_disciplina,id_facultad,puntos) 
+        (SELECT this.id_simple,
+                this.id_disciplina,
+                this.id_facultad,
+                this.puntos
+                FROM puntajes_simples this WHERE this.id_simple = id_simple);
+    DELETE FROM puntajes_simples this WHERE this.id_simple = id_simple;
+    
+    --Publicacion automática al finalizar
+    INSERT INTO publicaciones (id_simple,link_fotos) VALUES (id_simple,link);
+END;
+$$;
+
+--Solo se debe ejecutar para disciplinas culturales, ajedrez o cross (e-games?)
+CREATE OR REPLACE PROCEDURE PR_CERRAR_DISCIPLINA(id_disciplina INT, link TEXT)
+LANGUAGE 'plpgsql' AS $$
+BEGIN
+    INSERT INTO simples_historicos (id_simple,id_disciplina,id_facultad,puntos) 
+        (SELECT this.id_simple,
+                this.id_disciplina,
+                this.id_facultad,
+                this.puntos
+                FROM puntajes_simples this WHERE this.id_disciplina = id_disciplina);
+    DELETE FROM puntajes_simples this WHERE this.id_disciplina = id_disciplina;
+    
+    --Publicacion automática al finalizar
+    INSERT INTO publicaciones (id_disciplina,link_fotos) VALUES (id_disciplina,link);
+END;
+$$;
+
+--Verifica que no haya partidos pendientes, si no es el caso: pasa las participaciones a historicos. 
+CREATE OR REPLACE PROCEDURE PR_FINALIZAR_OLIMPIADAS()
+LANGUAGE 'plpgsql' AS $$
+BEGIN
+    IF (EXISTS (SELECT 1 FROM partidos)) OR (EXISTS (SELECT 1 FROM puntajes_simples)) THEN 
+        RAISE EXCEPTION 'Error. Quedan partidos sin finalizar.';
+    ELSE
+        INSERT INTO participa_historico (id_participante,id_deporte,id_facultad) (
+            SELECT * FROM participa
+        );
+        DELETE FROM participa;
+    END IF;
 END;
 $$;
