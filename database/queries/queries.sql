@@ -190,32 +190,11 @@ SELECT * FROM partidos_historicos ORDER BY fin DESC;
 -- name: ListarPartidosHistoricosPorAnio :many
 SELECT * FROM partidos_historicos WHERE $1 = EXTRACT(YEAR FROM fin) ORDER BY fin DESC;
 
--- name: ListarPartidosDeParticipante :many
-SELECT 
-    id_partido as id,
-    id_deporte as disciplina,
-    (SELECT id_facultad 
-    FROM participa_historico p 
-    WHERE p.id_participante = $1) as facultad,
-    (EXTRACT (YEAR FROM ph.fin)) as anio,
-    (SELECT ph2.puntos1 FROM partidos_historicos ph2 WHERE ph2.id_facultad1 = ph.facultad 
-                    UNION 
-    SELECT ph2.puntos2 FROM partidos_historicos ph2 WHERE ph2.id_facultad2 = ph.facultad) as puntos
-FROM partidos_historicos ph WHERE EXISTS (
-    SELECT 1 FROM participa_historico p 
-    WHERE p.id_participante = $1 
-    AND p.id_deporte = ph.id_deporte 
-    AND (p.id_facultad = ph.id_facultad1 OR p.id_facultad = ph.id_facultad2))
+-- name: MANUAL_ActualizarPartidoHistorico :exec
+UPDATE partidos_historicos SET (id_deporte,tipo,zona,id_facultad1,id_facultad2,inicio,fin,lugar,cancha,puntos1,puntos2,puntosS1,puntosS2) = ($2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) WHERE id_partido = $1;
 
-UNION 
-
-SELECT sh.id_simple as id, sh.id_disciplina as disciplina, sh.id_facultad as facultad, sh.anio, sh.puntos 
-FROM simples_historicos sh WHERE EXISTS (
-    SELECT 1 FROM participa_historico p 
-    WHERE p.id_participante = $1 
-    AND p.id_deporte = sh.id_deporte 
-    AND (p.id_facultad = sh.id_facultad)
-)
+-- name: MANUAL_EliminarPartidoHistorico :exec
+DELETE FROM partidos_historicos WHERE id_partido = $1;
 
 -- name: CerrarPuntajeSimple :exec
 CALL PR_CERRAR_PUNTAJE_SIMPLE($1,$2);
@@ -223,5 +202,50 @@ CALL PR_CERRAR_PUNTAJE_SIMPLE($1,$2);
 -- name: CerrarDisciplina :exec
 CALL PR_CERRAR_DISCIPLINA($1,$2);
 
+-- name: MANUAL_CrearSimpleHistorico :exec
+INSERT INTO simples_historicos VALUES ($1,$2,$3,$4,$5);
+
+-- name: ObtenerSimpleHistorico :one
+SELECT * FROM simples_historicos WHERE id_simple = $1;
+
+-- name: ListarSimplesHistoricos :many
+SELECT * FROM simples_historicos ORDER BY anio,id_disciplina DESC;
+
+-- name: MANUAL_ActualizarSimpleHistorico :exec
+UPDATE simples_historicos SET id_disciplina = $2, id_facultad = $3, anio = $4, puntos = $5 WHERE id_simple = $1;
+
+-- name: MANUAL_EliminarSimpleHistorico :exec
+DELETE FROM simples_historicos WHERE id_simple = $1;
+
 -- name: FinalizarOlimpiadas :exec
 CALL PR_FINALIZAR_OLIMPIADAS();
+
+-- name: MANUAL_CrearParticipaHistorico :exec
+INSERT INTO participa_historico VALUES ($1,$2,$3,$4);
+
+-- name: ObtenerParticipaHistorico :one
+SELECT * FROM participa_historico WHERE id_participante = $1 AND id_deporte = $2 AND id_facultad = $3 AND anio = $4;
+
+-- name: ListarParticipaHistorico :many
+SELECT * FROM participa_historico ORDER BY anio,id_facultad,id_deporte,id_participante DESC;
+
+-- name: ListarParticipacionesHistoricas :many
+SELECT * FROM participa_historico WHERE id_participante = $1 ORDER BY id_facultad,anio,id_deporte DESC;
+
+-- name: CrearPublicacionPartido :exec
+INSERT INTO publicaciones (id_partido,link_fotos) VALUES ($1,$2);
+
+-- name: CrearPublicacionSimple :exec 
+INSERT INTO publicaciones (id_simple,link_fotos) VALUES ($1,$2);
+
+-- name: CrearPublicacionDisciplina :exec
+INSERT INTO publicaciones (id_disciplina,link_fotos) VALUES ($1,$2);
+
+-- name: ObtenerPublicacion :one
+SELECT * FROM publicaciones WHERE id = $1;
+
+-- name: ListarPublicaciones :many
+SELECT * FROM publicaciones ORDER BY fecha DESC LIMIT $1 OFFSET $2;
+
+-- name: ActualizarPublicacion :exec
+UPDATE publicaciones 

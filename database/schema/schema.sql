@@ -161,6 +161,7 @@ CREATE TABLE IF NOT EXISTS publicaciones ( --se genera el posteo una vez finaliz
     id_simple INT,
     id_disciplina INT,
     link_fotos TEXT, --url a un drive dedicado a fotos?
+    fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     visualizaciones INT NOT NULL DEFAULT 0
 );
 
