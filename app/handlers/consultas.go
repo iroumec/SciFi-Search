@@ -98,21 +98,7 @@ func procesarConsulta(w http.ResponseWriter, r *http.Request) {
 	// Se establece el cuerpo del mensaje.
 	message.SetBody("text/plain", emailBody)
 
-	/*
-
-		TODO: arreglar para poder enviar luego un email directamente.
-
-		// Set up the SMTP dialer
-			dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", "1a2b3c4d5e6f7g")
-
-			// Send the email
-			if err := dialer.DialAndSend(message); err != nil {
-				enqueryHandleGET(w, "Ha ocurrido un error al enviar la consulta. Tranquilo. ¡La culpa no es tuya! Intenta envviar el email directamente.")
-				panic(err)
-				return
-			}
-
-	*/
+	// TODO: implementar el envío del email.
 
 	// El email fue enviado exitosamente.
 	renderizeTemplate(w, "template/consultas/consulta-enviada.html", nil, nil)
