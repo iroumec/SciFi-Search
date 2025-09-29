@@ -248,4 +248,49 @@ SELECT * FROM publicaciones WHERE id = $1;
 SELECT * FROM publicaciones ORDER BY fecha DESC LIMIT $1 OFFSET $2;
 
 -- name: ActualizarPublicacion :exec
-UPDATE publicaciones 
+UPDATE publicaciones SET id_partido = $2 , id_simple = $3 , id_disciplina = $4 , link_fotos = $5 , fecha = $6 , visualizaciones = $7 WHERE id_publicacion = $1;
+
+-- name: EliminarPublicacion :exec
+DELETE FROM publicacion WHERE id_publicacion = $1;
+
+-- name: ComentarPublicacion :exec
+INSERT INTO comentarios_publicacion(id_publicacion,id_usuario,comentario) VALUES ($1,$2,$3);
+
+-- name: ObtenerComentarioPublicacion :one
+SELECT * FROM comentarios_publicacion WHERE id = $1;
+
+-- name: ListarComentariosPublicacion :many
+SELECT * FROM comentarios_publicacion WHERE id_publicacion = $1;
+
+-- name: EliminarComentarioPublicacion :exec
+DELETE FROM comentarios_publicacion WHERE id = $1;
+
+-- name: LikearPublicacion :exec
+INSERT INTO likes_publicacion(id_publicacion,id_usuario) VALUES ($1,$2);
+
+-- name: ObtenerLikesPublicacion :one
+SELECT COUNT(*) FROM likes_publicacion WHERE id_publicacion = $1;
+
+-- name: EliminarLikePublicacion :exec
+DELETE FROM likes_publicacion WHERE id_publicacion = $1 AND id_usuario = $2;
+
+-- name: ResponderComentarioPublicacion :exec
+INSERT INTO respuestas_comentario_publicacion(id_comentario,id_usuario,comentario) VALUES ($1,$2,$3);
+
+-- name: ObtenerRespuestaComentarioPublicacion :one
+SELECT * FROM respuestas_comentario_publicacion WHERE id = $1;
+
+-- name: ListarRespuestasComentarioPublicacion :many
+SELECT * FROM respuestas_comentario_publicacion WHERE id_comentario = $1;
+
+-- name: EliminarRespuestaComentarioPublicacion :exec
+DELETE FROM respuestas_comentario_publicacion WHERE id = $1;
+
+-- name: LikearComentarioPublicacion :exec
+INSERT INTO likes_comentario_publicacion(id_comentario,id_usuario) VALUES ($1,$2);
+
+-- name: ObtenerLikesComentarioPublicacion :one
+SELECT COUNT(*) FROM likes_comentario_publicacion WHERE id_comentario = $1;
+
+-- name: EliminarLikeComentarioPublicacion :exec
+DELETE FROM likes_comentario_publicacion WHERE id_comentario = $1 AND id_usuario = $2;
