@@ -37,7 +37,9 @@ cp resources/.env.example .env
 
 Luego, debe editar `.env` y remplazar los valores por defecto con sus credenciales solicitadas.
 
-> [!TIP] Las credenciales en el archivo `.env.example` ya están preparadas para que el programa funcione sin problemas. Por lo tanto, solo debe copiarlas en un archivo .env dentro de la carpeta principal. El resultado debería verse así: ![Ubicación de .env](images/env.png)
+> [!TIP]
+> Las credenciales en el archivo `.env.example` ya están preparadas para que el programa funcione sin problemas. Por lo tanto, solo debe copiarlas en un archivo .env dentro de la carpeta principal. El resultado debería verse así:
+> ![Ubicación de .env](images/env.png)
 
 ---
 

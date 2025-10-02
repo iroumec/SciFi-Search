@@ -16,7 +16,7 @@ import (
 
 func registrarHandlersNoticias() {
 
-	http.HandleFunc("/noticia", manejarNoticias)
+	http.HandleFunc("/noticias", manejarNoticias)
 
 	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
 }

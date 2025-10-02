@@ -2,7 +2,7 @@
 
 En PostgreSQL **da lo mismo en rendimiento** usar `VARCHAR(255)` o `TEXT`. A diferencia de MySQL, Postgres no limita internamente `VARCHAR(n)` a `n` bytes: solo lo valida al insertar/actualizar.
 
-## Diferencias prácticas
+## Diferencias
 
 - `VARCHAR(255)`
 
