@@ -1,0 +1,34 @@
+{{ define "title" }}Registrarse{{ end }}
+
+{{ define "content" }}
+
+    <section class="fondo-registro"></section>
+    <section class="formulario">
+        <h2>Registro</h2>
+        <!-- Colocar "multipart/form-data" es obligatorio para subir archivos -->
+        <form action="/registrarse" method="POST" enctype="multipart/form-data">
+            
+            <input type="text" id="dni" placeholder="DNI" name="dni" autocomplete="" required>
+            <div class="fila">
+                <input type="text" id="name" placeholder="Nombre" name="name" required>
+                <input type="text" id="surname" placeholder="Apellido" name="surname" required>
+            </div>
+            <input type="email" id="email" name="email" placeholder="E-mail" autocomplete="email" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" autocomplete="new-password" required>
+            <div class="archivo">
+                <label>
+                    <input type="file" name="certificado" hidden>
+                    <span> Adjunte su certificado de alumno regular </span>
+                </label>
+            </div>
+
+            <button class="btn-registro" type="submit">Registrarse</button>
+        </form>
+    </section>
+
+    {{ if.ErrorMessage }}
+        <div id="mensaje" style="color:red;">
+            {{ .ErrorMessage }}
+        </div>
+    {{ end }}
+{{ end }}
