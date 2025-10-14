@@ -1,0 +1,82 @@
+{{ define "title" }}Albergue Universitario{{ end }}
+
+{{ define "content" }}
+
+<h1>Albergue Universitario - DORMIS</h1>
+
+<section>
+    <p>
+        El Albergue Universitario está situado en el Gimnasio del Campus Universitario de la ciudad de Tandil
+        (Paraje Arroyo Seco: calle Reforma Universitaria y Rector R. Cruz), a unos 6 km del centro de la ciudad.
+        Está destinado a grupos no inferiores a 20 personas y hasta 60.
+    </p>
+
+    <p><strong>Capacidad Máxima:</strong> 60 plazas (2 sectores de 30)</p>
+
+    <h2>Servicios</h2>
+    <ul>
+        <li>Camas cuchetas e individuales con colchón, funda, almohada, frazada y cubrecama.
+            <em>(El alberguista debe traer su ropa de cama o bolsa de dormir)</em>
+        </li>
+        <li>Vestuario, duchas y baños</li>
+        <li>Alarma monitoreada</li>
+        <li>Estacionamiento</li>
+        <li>Wi-Fi</li>
+        <li>Comedor universitario con posibilidad de coordinar desayunos, almuerzos y cenas a precios accesibles (lunes
+            a viernes).</li>
+    </ul>
+
+    <p>
+        Una vez confirmada la reserva se deberá enviar por nota o por correo electrónico
+        <a href="mailto:dormisunicen@gmail.com">dormisunicen@gmail.com</a>
+        la solicitud del lugar con los días de uso, horario de llegada y salida, y datos del responsable de la
+        delegación
+        (nombre, institución, dirección y teléfono).
+    </p>
+</section>
+
+<section>
+    <h2>Condiciones de Reserva y Uso</h2>
+    <ol>
+        <li>Las delegaciones ingresarán al albergue entre las 08:00 y las 22:00 hs.</li>
+        <li>El alojamiento se considera por día hasta las 12:00 hs del siguiente al ingreso.</li>
+        <li>Se prohíbe fumar y consumir bebidas alcohólicas. No se permiten mascotas ni cocinar en las instalaciones.
+        </li>
+        <li>El faltante o rotura de elementos deberá ser repuesto por el responsable de la delegación.</li>
+        <li>Las llaves deberán entregarse al responsable en la oficina de la Dirección de Deportes.</li>
+        <li>Antes del primer ingreso, se deberá entregar la lista de integrantes con nombre, DNI y contacto.</li>
+        <li>No dejar objetos de valor o dinero en los dormis (la Universidad no se hace responsable).</li>
+        <li>El grupo o delegación debe contar con seguro por accidentes personales.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>Fotos de las Instalaciones</h2>
+    <div class="carrusel">
+        <div class="carrusel">
+            <div class="imagenes" id="imagenes">
+                {{range .fotos}}
+                <img src="{{.}}" alt="foto">
+                {{end}}
+            </div>
+            <button class="flecha izquierda" onclick="mover(-1)">‹</button>
+            <button class="flecha derecha" onclick="mover(1)">›</button>
+        </div>
+        
+        
+        <script>
+            let indice = 0;
+            const imagenes = document.getElementById("imagenes");
+            const total = imagenes.children.length;
+
+            function mover(direccion) {
+                const ancho = imagenes.children[0].clientWidth; // Cálculo dinámico.
+                indice = (indice + direccion + total) % total;
+                imagenes.style.transform = `translateX(${-indice * ancho}px)`;
+            }
+
+        </script>
+    </div>
+</section>
+
+{{ end }}

@@ -1,0 +1,139 @@
+package handlers
+
+import (
+	"html/template"
+	"net/http"
+	"strconv"
+
+	"github.com/microcosm-cc/bluemonday"
+
+	sqlc "tpe/web/app/database"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Registro de Handlers de Noticias
+// ------------------------------------------------------------------------------------------------
+
+func registrarHandlersNoticias() {
+
+	http.HandleFunc("/noticias", manejarNoticias)
+
+	http.HandleFunc("/cargar-noticia", manejarCargaNoticias)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Noticias
+// ------------------------------------------------------------------------------------------------
+
+func manejarNoticias(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodGet {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	mostrarNoticias(w, r)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func mostrarNoticias(w http.ResponseWriter, r *http.Request) {
+
+	// Se lee el offset del query.
+	offsetStr := r.URL.Query().Get("offset")
+	offset := 0
+	if offsetStr != "" {
+		if val, err := strconv.Atoi(offsetStr); err == nil {
+			offset = val
+		}
+	}
+
+	noticias := obtenerNoticias(r, offset)
+
+	data := map[string]any{
+		"Results": noticias,
+		"Offset":  offset,
+	}
+
+	// Permite ir sumándole 5 all offset. Y usar safeHTML.
+	funcs := template.FuncMap{
+		"add":      func(a, b int) int { return a + b },
+		"safeHTML": func(s string) template.HTML { return template.HTML(s) },
+	}
+
+	renderizeTemplate(w, "template/noticias/noticias.html", data, funcs)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func obtenerNoticias(r *http.Request, offset int) []sqlc.Noticia {
+
+	noticias, err := queries.ListarNoticias(r.Context(), int32(offset))
+	if err != nil {
+		noticias = []sqlc.Noticia{}
+	}
+
+	return noticias
+}
+
+// ------------------------------------------------------------------------------------------------
+// Carga de Noticias
+// ------------------------------------------------------------------------------------------------
+
+func manejarCargaNoticias(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		mostrarFormularioCargaNoticia(w, "")
+	case http.MethodPost:
+		procesarCargaNoticia(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func mostrarFormularioCargaNoticia(w http.ResponseWriter, errorMessage string) {
+
+	data := map[string]any{
+		"ErrorMessage": errorMessage,
+	}
+
+	renderizeTemplate(w, "template/noticias/cargar-noticia.html", data, nil)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func procesarCargaNoticia(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error procesando formulario", http.StatusBadRequest)
+		return
+	}
+
+	titulo := r.FormValue("título")
+	contenidoRaw := r.FormValue("contenido")
+	tiempoStr := r.FormValue("tiempo_estimado_lectura")
+
+	// string -> int
+	tiempo, err := strconv.Atoi(tiempoStr)
+	if err != nil {
+		mostrarFormularioCargaNoticia(w, "El tiempo estimado debe ser un número.")
+	}
+
+	// Sanitizar HTML (permitir solo etiquetas seguras para usuarios finales)
+	p := bluemonday.UGCPolicy()
+	contenido := p.Sanitize(contenidoRaw)
+
+	_, err = queries.CrearNoticia(r.Context(), sqlc.CrearNoticiaParams{
+		Titulo:                titulo,
+		Contenido:             contenido,
+		TiempoLecturaEstimado: int32(tiempo),
+	})
+	if err != nil {
+		http.Error(w, "Error guardando noticia", http.StatusInternalServerError)
+		return
+	}
+
+	renderizeTemplate(w, "template/noticias/carga-exitosa.html", nil, nil)
+}
