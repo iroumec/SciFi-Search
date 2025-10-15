@@ -31,3 +31,6 @@ go.work
 # Archivos generados por AIR.
 tmp/
 app/tmp
+
+# Archivos de meili
+meili_data
