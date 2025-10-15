@@ -11,8 +11,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	utils "tpe/web/app/utils"
-
 	sqlc "tpe/web/app/database"
 )
 
@@ -85,30 +83,6 @@ func procesarRegistro(w http.ResponseWriter, r *http.Request) {
 	// Se verifica que ninguno de los campos esté incompleto.
 	if hayCampoIncompleto(dni, name, email, password) {
 		mostrarFormularioRegistro(w, "Faltan campos obligatorios.")
-		return
-	}
-
-	// Se lee tanto la parte en memoria como la parte en disco.
-	// Se obtiene el archivo del formulario.
-	file, _, err := r.FormFile("certificado")
-	if err != nil {
-		// De no haber adjuntado un certificado de alumno regular,
-		// se muestra un mensaje de error.
-		mostrarFormularioRegistro(w, "Debe adjuntar el certificado de alumno regular.")
-		return
-	}
-
-	// Independientemente de lo que pase, se cierra el archivo.
-	defer file.Close()
-
-	// Validación del PDF.
-	valido, err := utils.ValidarConstancia(file)
-	if err != nil {
-		mostrarFormularioRegistro(w, err.Error())
-		return
-	}
-	if !valido {
-		mostrarFormularioRegistro(w, "El certificado no es válido.")
 		return
 	}
 

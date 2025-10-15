@@ -10,6 +10,8 @@ import (
 	"tpe/web/app/handlers"
 
 	sqlc "tpe/web/app/database"
+
+	meilisearch "github.com/meilisearch/meilisearch-go"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -71,3 +73,36 @@ func getEnv(key, fallback string) string {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+var client meilisearch.ServiceManager
+
+func initMeilisearch() {
+	host := os.Getenv("MEILI_HOST")
+	apiKey := os.Getenv("MEILI_API_KEY")
+
+	client := meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
+
+	// Nota: si agregas documentos a un índice que no existe, MeiliSearch lo crea implícitamente.
+	documents := []map[string]interface{}{
+		{"id": 1, "title": "Dune"},
+		{"id": 2, "title": "Neuromancer"},
+	}
+
+	_, err := client.Index("books").AddDocuments(documents, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Datos indexados correctamente en MeiliSearch.")
+}
+
+func ejemploSearch() {
+	res, err := client.Index("books").Search("Dune", &meilisearch.SearchRequest{
+		Limit: 10,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Hits: %+v\n", res.Hits)
+
+}
