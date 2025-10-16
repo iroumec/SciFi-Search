@@ -1,10 +1,12 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"net/http"
-	//"github.com/a-h/templ"
-	//"tpe/web/app/views"
-	//sqlc "tpe/web/app/database"
+	"tpe/web/app/views"
+
+	"github.com/a-h/templ"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -15,12 +17,20 @@ registro e inicio de sesión de usuarios.
 */
 func registrarHandlersUsuarios() {
 
-	http.HandleFunc("/users", UserHandler)
+	http.HandleFunc("/users", userHandler)
 }
 
-// HACER LO DE MAILI_SEARCH PARA PODER PASAR LA LISTA
-func UserHandler(w http.ResponseWriter, r *http.Request) {
-	// templ.Handler(views.UserPage( )).ServeHTTP(w, r)
+// ------------------------------------------------------------------------------------------------
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+
+	users, err := queries.ListUsers(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	templ.Handler(views.UserPage(users)).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------

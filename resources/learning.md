@@ -37,3 +37,7 @@ En las funciones, minúscula inicial si es privado del paquete y mayúscula inic
 Solución, falta:
 
 \_ "github.com/lib/pq"
+
+---
+
+El html te dice qué hay y cómo buscarlo. El CSS es la forma.

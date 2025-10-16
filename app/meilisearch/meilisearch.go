@@ -1,4 +1,4 @@
-package handlers
+package meilisearch
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"tpe/web/app/utils"
+
+	sqlc "tpe/web/app/database"
 
 	meilisearch "github.com/meilisearch/meilisearch-go"
 )
@@ -17,22 +19,19 @@ var client meilisearch.ServiceManager
 
 // ------------------------------------------------------------------------------------------------
 
+var queries *sqlc.Queries
+
+// ------------------------------------------------------------------------------------------------
+
 type SearchResponse struct {
 	Hits []any `json:"hits"`
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func registerSearchHandlers() {
+func Init(queries *sqlc.Queries) {
 
-	initMeilisearch()
-
-	http.HandleFunc("/search", handleSearch)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func initMeilisearch() {
+	queries = queries
 
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
@@ -40,7 +39,11 @@ func initMeilisearch() {
 	client = meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
 
 	indexarDatos()
+
+	http.HandleFunc("/search", handleSearch)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func indexarDatos() {
 	data, err := os.ReadFile("resources/planillas/fundingRecords.json")
@@ -113,6 +116,8 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(SearchResponse{Hits: hits})
+	params := sqlc.CreateHistoricSearchParams{user_id: 1, SearchString: query}
+	queries.CreateHistoricSearch(r.Context(), params)
 }
 
 // ------------------------------------------------------------------------------------------------
