@@ -41,20 +41,11 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	// Se registra el handler para el index.html.
 	registrarIndexHTML()
 
-	// Se registran los handlers para la página de consultas.
-	registrarHandlersConsultas()
-
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registrarHandlersUsuarios()
 
 	// Se registran los handlers correspondientes al perfil de usuario.
 	registrarHandlersPerfiles()
-
-	// Se registran los handlers correspondientes a las noticias.
-	registrarHandlersNoticias()
-
-	// Se registran los handlers correspondientes a servir las páginas de las facultades.
-	registerHandlersFacultades()
 
 	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
 	registrarHandlersAyuda()

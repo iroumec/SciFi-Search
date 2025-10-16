@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"tpe/web/app/handlers"
+	"tpe/web/app/utils"
 
 	sqlc "tpe/web/app/database"
-
-	meilisearch "github.com/meilisearch/meilisearch-go"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -20,12 +18,12 @@ func main() {
 
 	// Obtención de las variables de ambiente necesarias
 	// para conectarse a la base de datos.
-	port := getEnv("APP_PORT", ":8080")
-	host := getEnv("DB_HOST", "db")
-	dbPort := getEnv("DB_PORT", "5432")
-	user := getEnv("DB_USER", "postgres")
-	password := getEnv("DB_PASSWORD", "postgres")
-	dbname := getEnv("DB_NAME", "postgres")
+	port := utils.GetEnv("APP_PORT", ":8080")
+	host := utils.GetEnv("DB_HOST", "db")
+	dbPort := utils.GetEnv("DB_PORT", "5432")
+	user := utils.GetEnv("DB_USER", "postgres")
+	password := utils.GetEnv("DB_PASSWORD", "postgres")
+	dbname := utils.GetEnv("DB_NAME", "postgres")
 
 	// Se obtiene la información necesaria para conectarnos a la base de datos a partir de
 	// los datos de sesión definidos anteriormente.
@@ -58,51 +56,4 @@ func main() {
 	// Nada de lo que esté acá debajo se ejecuta.
 }
 
-// ------------------------------------------------------------------------------------------------
-
-/*
-Permite obtener una variable de ambiente o
-un valor por defecto, en caso de no hallar la primera.
-*/
-func getEnv(key, fallback string) string {
-	val := os.Getenv(key)
-	if val == "" {
-		return fallback
-	}
-	return val
-}
-
-// ------------------------------------------------------------------------------------------------
-
-var client meilisearch.ServiceManager
-
-func initMeilisearch() {
-	host := os.Getenv("MEILI_HOST")
-	apiKey := os.Getenv("MEILI_API_KEY")
-
-	client := meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
-
-	// Nota: si agregas documentos a un índice que no existe, MeiliSearch lo crea implícitamente.
-	documents := []map[string]interface{}{
-		{"id": 1, "title": "Dune"},
-		{"id": 2, "title": "Neuromancer"},
-	}
-
-	_, err := client.Index("books").AddDocuments(documents, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Datos indexados correctamente en MeiliSearch.")
-}
-
-func ejemploSearch() {
-	res, err := client.Index("books").Search("Dune", &meilisearch.SearchRequest{
-		Limit: 10,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Hits: %+v\n", res.Hits)
-
-}
+// -----------------------------------------------------------------------------------------------

@@ -34,3 +34,6 @@ app/tmp
 
 # Archivos de meili
 meili_data
+
+# Scripts de Python.
+venv

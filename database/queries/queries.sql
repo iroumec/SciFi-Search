@@ -1,6 +1,6 @@
 -- name: CrearUsuario :one
 INSERT INTO usuarios (dni, nombre, email, contrasena) VALUES ($1, $2, $3, $4) RETURNING *;
-
+INSERT INTO users(username,email,name,middlename,surname,)
 -- name: ObtenerUsuarioPorID :one
 SELECT * FROM usuarios WHERE id = $1;
 
