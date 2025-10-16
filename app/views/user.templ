@@ -6,13 +6,13 @@ import sqlc "tpe/web/app/database"
 templ UserList(users []sqlc.User) {
     <ul>
         for _, user := range users {
-            <li> { user.Username } - { user.Email } - { user.Name }  - 
+            <li> { user.Name }  - 
                 if user.Middlename.Valid {
                     { user.Middlename.String }
                 } else {
                     { "" }
                 }
-             - { user.Surname } - { user.Password } </li>
+             - { user.Surname } </li>
         }
     </ul>
 }

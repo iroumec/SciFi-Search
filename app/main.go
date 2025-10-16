@@ -7,12 +7,11 @@ import (
 	"net/http"
 
 	"tpe/web/app/handlers"
+	"tpe/web/app/meili"
 	"tpe/web/app/supertokens"
 	"tpe/web/app/utils"
 
 	sqlc "tpe/web/app/database"
-
-	"github.com/meilisearch/meilisearch-go"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -49,7 +48,7 @@ func main() {
 	handlers.RegisterHandlers(queries)
 
 	// Se incializan las aplicaciones de terceros.
-	initThirdPartyApplication()
+	initThirdPartyApplication(queries)
 
 	// Se informa que el servidor está corriendo.
 	fmt.Printf("\nServidor escuchando en http://localhost:%s\n", port)
@@ -65,6 +64,6 @@ func main() {
 // -----------------------------------------------------------------------------------------------
 
 func initThirdPartyApplication(queries *sqlc.Queries) {
-	meilisearch.Init(queries)
-	supertokens.Init(queries)
+	meili.Init(queries)
+	supertokens.Init()
 }

@@ -11,18 +11,18 @@ import (
 )
 
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
-INSERT INTO historic_searches(username,search_string) VALUES ($1,$2) RETURNING historic_search_id, username, search_string
+INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string
 `
 
 type CreateHistoricSearchParams struct {
-	Username     sql.NullString `json:"username"`
-	SearchString string         `json:"search_string"`
+	UserID       int32  `json:"user_id"`
+	SearchString string `json:"search_string"`
 }
 
 func (q *Queries) CreateHistoricSearch(ctx context.Context, arg CreateHistoricSearchParams) (HistoricSearch, error) {
-	row := q.db.QueryRowContext(ctx, createHistoricSearch, arg.Username, arg.SearchString)
+	row := q.db.QueryRowContext(ctx, createHistoricSearch, arg.UserID, arg.SearchString)
 	var i HistoricSearch
-	err := row.Scan(&i.HistoricSearchID, &i.Username, &i.SearchString)
+	err := row.Scan(&i.HistoricSearchID, &i.UserID, &i.SearchString)
 	return i, err
 }
 
@@ -37,35 +37,29 @@ func (q *Queries) CreatePreference(ctx context.Context, preference string) (stri
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users(username,email,name,middlename,surname,password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, name, middlename, surname, password
+INSERT INTO users(user_id,name,middlename,surname) VALUES ($1, $2, $3, $4) RETURNING user_id, name, middlename, surname
 `
 
 type CreateUserParams struct {
-	Username   string         `json:"username"`
-	Email      string         `json:"email"`
+	UserID     int32          `json:"user_id"`
 	Name       string         `json:"name"`
 	Middlename sql.NullString `json:"middlename"`
 	Surname    string         `json:"surname"`
-	Password   string         `json:"password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
-		arg.Username,
-		arg.Email,
+		arg.UserID,
 		arg.Name,
 		arg.Middlename,
 		arg.Surname,
-		arg.Password,
 	)
 	var i User
 	err := row.Scan(
-		&i.Username,
-		&i.Email,
+		&i.UserID,
 		&i.Name,
 		&i.Middlename,
 		&i.Surname,
-		&i.Password,
 	)
 	return i, err
 }
@@ -89,20 +83,20 @@ func (q *Queries) DeletePreference(ctx context.Context, preference string) error
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users WHERE username = $1
+DELETE FROM users WHERE user_id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, username string) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, username)
+func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, userID)
 	return err
 }
 
 const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
-SELECT search_string FROM historic_searches WHERE username = $1
+SELECT search_string FROM historic_searches WHERE user_id = $1
 `
 
-func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, username sql.NullString) ([]string, error) {
-	rows, err := q.db.QueryContext(ctx, listHistoricSearchesFromUser, username)
+func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, userID int32) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listHistoricSearchesFromUser, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -152,11 +146,11 @@ func (q *Queries) ListPreferences(ctx context.Context) ([]string, error) {
 }
 
 const listPreferencesFromUser = `-- name: ListPreferencesFromUser :many
-SELECT preference FROM user_preferences WHERE username = $1
+SELECT preference FROM user_preferences WHERE user_id = $1
 `
 
-func (q *Queries) ListPreferencesFromUser(ctx context.Context, username string) ([]string, error) {
-	rows, err := q.db.QueryContext(ctx, listPreferencesFromUser, username)
+func (q *Queries) ListPreferencesFromUser(ctx context.Context, userID int32) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listPreferencesFromUser, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +173,7 @@ func (q *Queries) ListPreferencesFromUser(ctx context.Context, username string) 
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT username, email, name, middlename, surname, password FROM users ORDER BY username
+SELECT user_id, name, middlename, surname FROM users ORDER BY user_id
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -192,12 +186,10 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(
-			&i.Username,
-			&i.Email,
+			&i.UserID,
 			&i.Name,
 			&i.Middlename,
 			&i.Surname,
-			&i.Password,
 		); err != nil {
 			return nil, err
 		}
@@ -213,56 +205,52 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 }
 
 const removePreference = `-- name: RemovePreference :exec
-DELETE FROM user_preferences WHERE username = $1 AND preference = $2
+DELETE FROM user_preferences WHERE user_id = $1 AND preference = $2
 `
 
 type RemovePreferenceParams struct {
-	Username   string `json:"username"`
+	UserID     int32  `json:"user_id"`
 	Preference string `json:"preference"`
 }
 
 func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferenceParams) error {
-	_, err := q.db.ExecContext(ctx, removePreference, arg.Username, arg.Preference)
+	_, err := q.db.ExecContext(ctx, removePreference, arg.UserID, arg.Preference)
 	return err
 }
 
 const setPreference = `-- name: SetPreference :one
-INSERT INTO user_preferences(username,preference) VALUES ($1,$2) RETURNING username, preference
+INSERT INTO user_preferences(user_id,preference) VALUES ($1,$2) RETURNING user_id, preference
 `
 
 type SetPreferenceParams struct {
-	Username   string `json:"username"`
+	UserID     int32  `json:"user_id"`
 	Preference string `json:"preference"`
 }
 
 func (q *Queries) SetPreference(ctx context.Context, arg SetPreferenceParams) (UserPreference, error) {
-	row := q.db.QueryRowContext(ctx, setPreference, arg.Username, arg.Preference)
+	row := q.db.QueryRowContext(ctx, setPreference, arg.UserID, arg.Preference)
 	var i UserPreference
-	err := row.Scan(&i.Username, &i.Preference)
+	err := row.Scan(&i.UserID, &i.Preference)
 	return i, err
 }
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE users SET email = $2, name = $3, middlename = $4, surname = $5, password = $6 WHERE username = $1
+UPDATE users SET  name = $2, middlename = $3, surname = $4 WHERE user_id = $1
 `
 
 type UpdateUserParams struct {
-	Username   string         `json:"username"`
-	Email      string         `json:"email"`
+	UserID     int32          `json:"user_id"`
 	Name       string         `json:"name"`
 	Middlename sql.NullString `json:"middlename"`
 	Surname    string         `json:"surname"`
-	Password   string         `json:"password"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	_, err := q.db.ExecContext(ctx, updateUser,
-		arg.Username,
-		arg.Email,
+		arg.UserID,
 		arg.Name,
 		arg.Middlename,
 		arg.Surname,
-		arg.Password,
 	)
 	return err
 }

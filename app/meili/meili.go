@@ -1,4 +1,4 @@
-package meilisearch
+package meili
 
 import (
 	"encoding/json"
@@ -29,9 +29,9 @@ type SearchResponse struct {
 
 // ------------------------------------------------------------------------------------------------
 
-func Init(queries *sqlc.Queries) {
+func Init(q *sqlc.Queries) {
 
-	queries = queries
+	queries = q
 
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
@@ -116,7 +116,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(SearchResponse{Hits: hits})
-	params := sqlc.CreateHistoricSearchParams{user_id: 1, SearchString: query}
+	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
 	queries.CreateHistoricSearch(r.Context(), params)
 }
 

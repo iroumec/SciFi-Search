@@ -1,11 +1,11 @@
 -- CREACIÓN DE TABLAS
 CREATE TABLE IF NOT EXISTS users(
     user_id INT PRIMARY KEY,
-    --username VARCHAR(16),
+    --username VARCHAR(16),a
     --email TEXT NOT NULL,
     name VARCHAR(32) NOT NULL,
     middlename VARCHAR(32),
-    surname VARCHAR(32) NOT NULL,
+    surname VARCHAR(32) NOT NULL
     --password TEXT NOT NULL
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 
 CREATE TABLE IF NOT EXISTS historic_searches (
     historic_search_id SERIAL PRIMARY KEY,
-    user_id INT,
+    user_id INT NOT NULL,
     search_string TEXT NOT NULL
 );
 

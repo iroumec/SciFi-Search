@@ -9,9 +9,9 @@ import (
 )
 
 type HistoricSearch struct {
-	HistoricSearchID int32          `json:"historic_search_id"`
-	Username         sql.NullString `json:"username"`
-	SearchString     string         `json:"search_string"`
+	HistoricSearchID int32  `json:"historic_search_id"`
+	UserID           int32  `json:"user_id"`
+	SearchString     string `json:"search_string"`
 }
 
 type Preference struct {
@@ -19,15 +19,13 @@ type Preference struct {
 }
 
 type User struct {
-	Username   string         `json:"username"`
-	Email      string         `json:"email"`
+	UserID     int32          `json:"user_id"`
 	Name       string         `json:"name"`
 	Middlename sql.NullString `json:"middlename"`
 	Surname    string         `json:"surname"`
-	Password   string         `json:"password"`
 }
 
 type UserPreference struct {
-	Username   string `json:"username"`
+	UserID     int32  `json:"user_id"`
 	Preference string `json:"preference"`
 }

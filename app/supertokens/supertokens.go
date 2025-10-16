@@ -15,7 +15,6 @@ import (
 func Init() {
 
 	// La condifuración de Supertokens obliga a que sean punteros.
-	apiBasePath := "/auth"
 	websiteBaseURL := "http://localhost:8080"
 
 	err := supertokens.Init(supertokens.TypeInput{
@@ -25,7 +24,6 @@ func Init() {
 		},
 		AppInfo: supertokens.AppInfo{
 			AppName:         "TPE App",
-			APIBasePath:     &apiBasePath,
 			WebsiteBasePath: &websiteBaseURL,
 		},
 		RecipeList: []supertokens.Recipe{

@@ -1,7 +1,7 @@
 -- name: CreateUser :one
-INSERT INTO users(user_id,name,middlename,surname) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+INSERT INTO users(user_id,name,middlename,surname) VALUES ($1, $2, $3, $4) RETURNING *;
 
--- name: ListUsersById :many
+-- name: ListUsers :many
 SELECT * FROM users ORDER BY user_id;
 
 -- name: UpdateUser :exec
