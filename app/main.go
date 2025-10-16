@@ -46,7 +46,7 @@ func main() {
 	handlers.RegisterHandlers(queries)
 
 	// Se informa que el servidor está corriendo.
-	fmt.Printf("\nServidor escuchando en http://localhost%s\n", port)
+	fmt.Printf("\nServidor escuchando en http://localhost:%s\n", port)
 
 	// El servidor queda a la espera de solicitudes.
 	if err := http.ListenAndServe(":"+port, nil); err != nil {

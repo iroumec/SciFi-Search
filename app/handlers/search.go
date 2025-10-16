@@ -48,12 +48,39 @@ func indexarDatos() {
 		log.Fatal(err)
 	}
 
-	var docs []map[string]interface{}
+	var docs []map[string]any
 	if err := json.Unmarshal(data, &docs); err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = client.Index("funding").AddDocuments(docs, nil)
+	var indexDocs []map[string]any
+
+	for i, doc := range docs {
+		// Crear id único
+		if doc["ofibusubID"] == nil {
+			doc["id"] = fmt.Sprintf("doc-%d", i)
+		} else {
+			doc["id"] = doc["ofibusubID"]
+		}
+
+		// Solo los campos relevantes
+		filtered := map[string]any{
+			"id":          doc["id"],
+			"Nombre":      doc["Nombre"],
+			"Descripcion": doc["Descripcion"],
+			"Gran area 1": doc["Gran area 1"],
+			"Gran area 2": doc["Gran area 2"],
+			"Tipo":        doc["Tipo"],
+		}
+
+		indexDocs = append(indexDocs, filtered)
+	}
+
+	index := client.Index("funding")
+
+	_, err = index.AddDocuments(indexDocs, nil) /*, &meilisearch.Add{
+		PrimaryKey: "id",
+	})*/
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,19 +92,21 @@ func indexarDatos() {
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {
 	// Obtención de la query
-	query := r.URL.Query().Get("q")
+	query := r.URL.Query().Get("query")
 	if query == "" {
-		http.Error(w, "missing query parameter 'q'", http.StatusBadRequest)
+		http.Error(w, "missing query parameter 'query'", http.StatusBadRequest)
 		return
 	}
 
-	res, err := client.Index("usuarios").Search(query, &meilisearch.SearchRequest{})
+	res, err := client.Index("funding").Search(query, &meilisearch.SearchRequest{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	hits := make([]interface{}, len(res.Hits))
+	// No puedo utilizar res.Hist directamnete porque es un slice reservado
+	// de Meilisearch. Debo almacenarlo en una variable local.
+	hits := make([]any, len(res.Hits))
 	for i, h := range res.Hits {
 		hits[i] = h
 	}

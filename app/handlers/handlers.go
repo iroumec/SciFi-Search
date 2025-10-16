@@ -49,6 +49,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
 	registrarHandlersAyuda()
+
+	registerSearchHandlers()
 }
 
 // ------------------------------------------------------------------------------------------------

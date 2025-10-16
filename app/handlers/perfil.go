@@ -1,5 +1,7 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"crypto/rand"
 	"encoding/base64"
@@ -9,6 +11,8 @@ import (
 
 	_ "github.com/lib/pq"
 )
+
+// ------------------------------------------------------------------------------------------------
 
 // Mapea un token de inicio de sesión a un userID.
 var sessions = make(map[string]int32)
