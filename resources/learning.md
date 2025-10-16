@@ -29,3 +29,11 @@ docker compose up
 Esto hace build solo lo que cambió y levanta el contenedor. Mucho más rápido que --no-cache todo el tiempo.
 
 En las funciones, minúscula inicial si es privado del paquete y mayúscula inicial si es público.
+
+---
+
+2025/10/16 14:56:02 cannot connect to db:sql: unknown driver "postgres" (forgotten import?)
+
+Solución, falta:
+
+\_ "github.com/lib/pq"

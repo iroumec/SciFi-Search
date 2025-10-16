@@ -1,17 +1,10 @@
 package handlers
 
 import (
-	"database/sql"
-	"errors"
-	"log"
 	"net/http"
-
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
-
-	"golang.org/x/crypto/bcrypt"
-
-	sqlc "tpe/web/app/database"
+	//"github.com/a-h/templ"
+	//"tpe/web/app/views"
+	//sqlc "tpe/web/app/database"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -22,17 +15,19 @@ registro e inicio de sesión de usuarios.
 */
 func registrarHandlersUsuarios() {
 
-	// Handler que maneja el registro de usuarios.
-	http.HandleFunc("/registrarse", registrarUsuario)
+	http.HandleFunc("/users", UserHandler)
+}
 
-	// Handler que maneja el login de usuarios.
-	http.HandleFunc("/iniciar-sesion", iniciarSesion)
+// HACER LO DE MAILI_SEARCH PARA PODER PASAR LA LISTA
+func UserHandler(w http.ResponseWriter, r *http.Request) {
+	// templ.Handler(views.UserPage( )).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
 // SignIn Handler
 // ------------------------------------------------------------------------------------------------
 
+/*
 func registrarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
@@ -180,3 +175,4 @@ func procesarLogin(w http.ResponseWriter, r *http.Request) {
 
 	handleProfileAccess(user, w, r)
 }
+*/

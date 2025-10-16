@@ -2,6 +2,29 @@
 
 {{ define "content" }}
 
+    <!DOCTYPE html>
+    <html lang="es">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>Buscador MeiliSearch</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    <body>
+        <main>
+            <h1>Buscador</h1>
+            <input type="text" id="query" placeholder="Buscar...">
+            <button id="searchBtn">Buscar</button>
+            <ul id="results"></ul>
+        </main>
+    
+        <script src="app.js"></script>
+    </body>
+    
+    </html>
+
+
     {{ $facultades := .Facultades }}
     <section class="navegacion-facultades">
         <nav>
@@ -51,44 +74,36 @@
         <p>Aca van los posteos de los ultimos partidos. Se publica las facultades, el resultado y fotos del post original. Aca se va a poder comentar comentarios y fotos.</p>
     </section>
 
-    <!-- El contador va en la epoca no-olimpiadas ----------------------------------------------------
-
-    <section id="countdown-section">
-        <h2>Faltan para el inicio de las Olimpiadas UNICEN 2026:</h2>
-        <div id="countdown">
-            <span id="dias">00</span> días
-            <span id="horas">00</span> horas
-            <span id="minutos">00</span> minutos
-            <span id="segundos">00</span> segundos
-        </div>
-    </section>
     <script>
-        // Fecha objetivo (ejemplo: 1 de mayo de 2026, 10:00)
-        const fechaObjetivo = new Date("2026-05-01T10:00:00").getTime();
-
-        function actualizarContador() {
-            const ahora = new Date().getTime();
-            const distancia = fechaObjetivo - ahora;
-
-            if (distancia < 0) {
-                document.getElementById("countdown").innerHTML = "¡Ya comenzó!";
-                clearInterval(intervalo);
+        document.getElementById("searchBtn").addEventListener("click", async () => {
+        const query = document.getElementById("query").value.trim();
+        if (!query) return;
+        
+        const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+        if (!res.ok) {
+        alert("Error al realizar la búsqueda");
+        return;
+        }
+        
+        const data = await res.json();
+        mostrarResultados(data.hits);
+        });
+        
+        function mostrarResultados(hits) {
+            const list = document.getElementById("results");
+            list.innerHTML = "";
+            
+            if (!hits || hits.length === 0) {
+                list.innerHTML = "<li>Sin resultados</li>";
                 return;
             }
-
-            const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
-            const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
-
-            document.getElementById("dias").textContent = String(dias).padStart(2, '0');
-            document.getElementById("horas").textContent = String(horas).padStart(2, '0');
-            document.getElementById("minutos").textContent = String(minutos).padStart(2, '0');
-            document.getElementById("segundos").textContent = String(segundos).padStart(2, '0');
+            
+            hits.forEach(hit => {
+                const li = document.createElement("li");
+                li.textContent = JSON.stringify(hit);
+                list.appendChild(li);
+            });
         }
 
-        const intervalo = setInterval(actualizarContador, 1000);
-        actualizarContador(); // inicializa al cargar
     </script>
-    -->
 {{ end }}

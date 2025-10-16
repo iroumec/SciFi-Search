@@ -1,0 +1,29 @@
+package views
+
+import sqlc "tpe/web/app/database"
+
+//Defino los datos que precisa de Usuario
+templ UserList(users []sqlc.User) {
+    <ul>
+        for _, user := range users {
+            <li> { user.Username } - { user.Email } - { user.Name }  - 
+                if user.Middlename.Valid {
+                    { user.Middlename.String }
+                } else {
+                    { "" }
+                }
+             - { user.Surname } - { user.Password } </li>
+        }
+    </ul>
+}
+
+//Pagina del Usuario
+templ UserPage(users []sqlc.User) {
+    <html>
+        <body>
+            <h1>Lista de Usuarios</h1>
+            @UserList(users)
+            <h2> </h2>
+        </body>
+    </html>
+}

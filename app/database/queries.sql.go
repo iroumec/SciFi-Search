@@ -10,255 +10,110 @@ import (
 	"database/sql"
 )
 
-const actualizarDNI = `-- name: ActualizarDNI :exec
-UPDATE usuarios SET dni = $2 WHERE id = $1
+const createHistoricSearch = `-- name: CreateHistoricSearch :one
+INSERT INTO historic_searches(username,search_string) VALUES ($1,$2) RETURNING historic_search_id, username, search_string
 `
 
-type ActualizarDNIParams struct {
-	ID  int32  `json:"id"`
-	Dni string `json:"dni"`
+type CreateHistoricSearchParams struct {
+	Username     sql.NullString `json:"username"`
+	SearchString string         `json:"search_string"`
 }
 
-func (q *Queries) ActualizarDNI(ctx context.Context, arg ActualizarDNIParams) error {
-	_, err := q.db.ExecContext(ctx, actualizarDNI, arg.ID, arg.Dni)
-	return err
-}
-
-const actualizarUsuario = `-- name: ActualizarUsuario :exec
-UPDATE usuarios SET nombre = $2, email = $3 WHERE id = $1
-`
-
-type ActualizarUsuarioParams struct {
-	ID     int32  `json:"id"`
-	Nombre string `json:"nombre"`
-	Email  string `json:"email"`
-}
-
-func (q *Queries) ActualizarUsuario(ctx context.Context, arg ActualizarUsuarioParams) error {
-	_, err := q.db.ExecContext(ctx, actualizarUsuario, arg.ID, arg.Nombre, arg.Email)
-	return err
-}
-
-const agregarComentario = `-- name: AgregarComentario :one
-INSERT INTO comentarios_noticia (id_noticia, id_usuario, comentario) VALUES ($1, $2, $3) RETURNING id_noticia, id_usuario, id_comentario, comentario, publicado_en
-`
-
-type AgregarComentarioParams struct {
-	IDNoticia  int32  `json:"id_noticia"`
-	IDUsuario  int32  `json:"id_usuario"`
-	Comentario string `json:"comentario"`
-}
-
-func (q *Queries) AgregarComentario(ctx context.Context, arg AgregarComentarioParams) (ComentariosNoticium, error) {
-	row := q.db.QueryRowContext(ctx, agregarComentario, arg.IDNoticia, arg.IDUsuario, arg.Comentario)
-	var i ComentariosNoticium
-	err := row.Scan(
-		&i.IDNoticia,
-		&i.IDUsuario,
-		&i.IDComentario,
-		&i.Comentario,
-		&i.PublicadoEn,
-	)
+func (q *Queries) CreateHistoricSearch(ctx context.Context, arg CreateHistoricSearchParams) (HistoricSearch, error) {
+	row := q.db.QueryRowContext(ctx, createHistoricSearch, arg.Username, arg.SearchString)
+	var i HistoricSearch
+	err := row.Scan(&i.HistoricSearchID, &i.Username, &i.SearchString)
 	return i, err
 }
 
-const crearNoticia = `-- name: CrearNoticia :one
-INSERT INTO noticias (titulo, contenido, tiempo_lectura_estimado) VALUES ($1, $2, $3) RETURNING id, titulo, contenido, visualizaciones, tiempo_lectura_estimado, publicada_en
+const createPreference = `-- name: CreatePreference :one
+INSERT INTO preferences(preference) VALUES ($1) RETURNING preference
 `
 
-type CrearNoticiaParams struct {
-	Titulo                string `json:"titulo"`
-	Contenido             string `json:"contenido"`
-	TiempoLecturaEstimado int32  `json:"tiempo_lectura_estimado"`
+func (q *Queries) CreatePreference(ctx context.Context, preference string) (string, error) {
+	row := q.db.QueryRowContext(ctx, createPreference, preference)
+	err := row.Scan(&preference)
+	return preference, err
 }
 
-func (q *Queries) CrearNoticia(ctx context.Context, arg CrearNoticiaParams) (Noticia, error) {
-	row := q.db.QueryRowContext(ctx, crearNoticia, arg.Titulo, arg.Contenido, arg.TiempoLecturaEstimado)
-	var i Noticia
-	err := row.Scan(
-		&i.ID,
-		&i.Titulo,
-		&i.Contenido,
-		&i.Visualizaciones,
-		&i.TiempoLecturaEstimado,
-		&i.PublicadaEn,
-	)
-	return i, err
-}
-
-const crearPerfil = `-- name: CrearPerfil :one
-INSERT INTO perfiles (id_usuario, image) VALUES ($1, $2) RETURNING id_usuario, image
+const createUser = `-- name: CreateUser :one
+INSERT INTO users(username,email,name,middlename,surname,password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, email, name, middlename, surname, password
 `
 
-type CrearPerfilParams struct {
-	IDUsuario int32          `json:"id_usuario"`
-	Image     sql.NullString `json:"image"`
+type CreateUserParams struct {
+	Username   string         `json:"username"`
+	Email      string         `json:"email"`
+	Name       string         `json:"name"`
+	Middlename sql.NullString `json:"middlename"`
+	Surname    string         `json:"surname"`
+	Password   string         `json:"password"`
 }
 
-func (q *Queries) CrearPerfil(ctx context.Context, arg CrearPerfilParams) (Perfile, error) {
-	row := q.db.QueryRowContext(ctx, crearPerfil, arg.IDUsuario, arg.Image)
-	var i Perfile
-	err := row.Scan(&i.IDUsuario, &i.Image)
-	return i, err
-}
-
-const crearUsuario = `-- name: CrearUsuario :one
-INSERT INTO usuarios (dni, nombre, email, contraseña) VALUES ($1, $2, $3, $4) RETURNING id, dni, nombre, email, "contraseña", creado_en
-`
-
-type CrearUsuarioParams struct {
-	Dni        string `json:"dni"`
-	Nombre     string `json:"nombre"`
-	Email      string `json:"email"`
-	Contraseña string `json:"contraseña"`
-}
-
-func (q *Queries) CrearUsuario(ctx context.Context, arg CrearUsuarioParams) (Usuario, error) {
-	row := q.db.QueryRowContext(ctx, crearUsuario,
-		arg.Dni,
-		arg.Nombre,
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Username,
 		arg.Email,
-		arg.Contraseña,
+		arg.Name,
+		arg.Middlename,
+		arg.Surname,
+		arg.Password,
 	)
-	var i Usuario
+	var i User
 	err := row.Scan(
-		&i.ID,
-		&i.Dni,
-		&i.Nombre,
+		&i.Username,
 		&i.Email,
-		&i.Contraseña,
-		&i.CreadoEn,
+		&i.Name,
+		&i.Middlename,
+		&i.Surname,
+		&i.Password,
 	)
 	return i, err
 }
 
-const deslikearComentario = `-- name: DeslikearComentario :exec
-DELETE FROM likes_comentario WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3 AND id_usuario_like = $4
+const deleteHistoricSearch = `-- name: DeleteHistoricSearch :exec
+DELETE FROM historic_searches WHERE historic_search_id = $1
 `
 
-type DeslikearComentarioParams struct {
-	IDNoticia     int32 `json:"id_noticia"`
-	IDUsuario     int32 `json:"id_usuario"`
-	IDComentario  int32 `json:"id_comentario"`
-	IDUsuarioLike int32 `json:"id_usuario_like"`
-}
-
-func (q *Queries) DeslikearComentario(ctx context.Context, arg DeslikearComentarioParams) error {
-	_, err := q.db.ExecContext(ctx, deslikearComentario,
-		arg.IDNoticia,
-		arg.IDUsuario,
-		arg.IDComentario,
-		arg.IDUsuarioLike,
-	)
+func (q *Queries) DeleteHistoricSearch(ctx context.Context, historicSearchID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteHistoricSearch, historicSearchID)
 	return err
 }
 
-const deslikearNoticia = `-- name: DeslikearNoticia :exec
-DELETE FROM likes_noticia WHERE id_noticia = $1 AND id_usuario = $2
+const deletePreference = `-- name: DeletePreference :exec
+DELETE FROM preferences WHERE preference = $1
 `
 
-type DeslikearNoticiaParams struct {
-	IDNoticia int32 `json:"id_noticia"`
-	IDUsuario int32 `json:"id_usuario"`
-}
-
-func (q *Queries) DeslikearNoticia(ctx context.Context, arg DeslikearNoticiaParams) error {
-	_, err := q.db.ExecContext(ctx, deslikearNoticia, arg.IDNoticia, arg.IDUsuario)
+func (q *Queries) DeletePreference(ctx context.Context, preference string) error {
+	_, err := q.db.ExecContext(ctx, deletePreference, preference)
 	return err
 }
 
-const eliminarComentario = `-- name: EliminarComentario :exec
-DELETE FROM comentarios_noticia WHERE id_noticia = $1 AND id_usuario = $2 AND id_comentario = $3
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users WHERE username = $1
 `
 
-type EliminarComentarioParams struct {
-	IDNoticia    int32 `json:"id_noticia"`
-	IDUsuario    int32 `json:"id_usuario"`
-	IDComentario int32 `json:"id_comentario"`
-}
-
-func (q *Queries) EliminarComentario(ctx context.Context, arg EliminarComentarioParams) error {
-	_, err := q.db.ExecContext(ctx, eliminarComentario, arg.IDNoticia, arg.IDUsuario, arg.IDComentario)
+func (q *Queries) DeleteUser(ctx context.Context, username string) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, username)
 	return err
 }
 
-const eliminarUsuario = `-- name: EliminarUsuario :exec
-DELETE FROM usuarios WHERE id = $1
+const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
+SELECT search_string FROM historic_searches WHERE username = $1
 `
 
-func (q *Queries) EliminarUsuario(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, eliminarUsuario, id)
-	return err
-}
-
-const likearComentario = `-- name: LikearComentario :one
-INSERT INTO likes_comentario (id_noticia, id_usuario, id_comentario, id_usuario_like) VALUES ($1, $2, $3, $4) RETURNING id_noticia, id_usuario, id_comentario, id_usuario_like, liked_at
-`
-
-type LikearComentarioParams struct {
-	IDNoticia     int32 `json:"id_noticia"`
-	IDUsuario     int32 `json:"id_usuario"`
-	IDComentario  int32 `json:"id_comentario"`
-	IDUsuarioLike int32 `json:"id_usuario_like"`
-}
-
-func (q *Queries) LikearComentario(ctx context.Context, arg LikearComentarioParams) (LikesComentario, error) {
-	row := q.db.QueryRowContext(ctx, likearComentario,
-		arg.IDNoticia,
-		arg.IDUsuario,
-		arg.IDComentario,
-		arg.IDUsuarioLike,
-	)
-	var i LikesComentario
-	err := row.Scan(
-		&i.IDNoticia,
-		&i.IDUsuario,
-		&i.IDComentario,
-		&i.IDUsuarioLike,
-		&i.LikedAt,
-	)
-	return i, err
-}
-
-const likearNoticia = `-- name: LikearNoticia :one
-INSERT INTO likes_noticia (id_noticia, id_usuario) VALUES ($1, $2) RETURNING id_noticia, id_usuario, likeado_en
-`
-
-type LikearNoticiaParams struct {
-	IDNoticia int32 `json:"id_noticia"`
-	IDUsuario int32 `json:"id_usuario"`
-}
-
-func (q *Queries) LikearNoticia(ctx context.Context, arg LikearNoticiaParams) (LikesNoticium, error) {
-	row := q.db.QueryRowContext(ctx, likearNoticia, arg.IDNoticia, arg.IDUsuario)
-	var i LikesNoticium
-	err := row.Scan(&i.IDNoticia, &i.IDUsuario, &i.LikeadoEn)
-	return i, err
-}
-
-const listarComentarios = `-- name: ListarComentarios :many
-SELECT id_noticia, id_usuario, id_comentario, comentario, publicado_en FROM comentarios_noticia ORDER BY publicado_en LIMIT 10 OFFSET $1
-`
-
-func (q *Queries) ListarComentarios(ctx context.Context, offset int32) ([]ComentariosNoticium, error) {
-	rows, err := q.db.QueryContext(ctx, listarComentarios, offset)
+func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, username sql.NullString) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listHistoricSearchesFromUser, username)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ComentariosNoticium
+	var items []string
 	for rows.Next() {
-		var i ComentariosNoticium
-		if err := rows.Scan(
-			&i.IDNoticia,
-			&i.IDUsuario,
-			&i.IDComentario,
-			&i.Comentario,
-			&i.PublicadoEn,
-		); err != nil {
+		var search_string string
+		if err := rows.Scan(&search_string); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, search_string)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -269,30 +124,23 @@ func (q *Queries) ListarComentarios(ctx context.Context, offset int32) ([]Coment
 	return items, nil
 }
 
-const listarNoticias = `-- name: ListarNoticias :many
-SELECT id, titulo, contenido, visualizaciones, tiempo_lectura_estimado, publicada_en FROM noticias ORDER BY publicada_en LIMIT 5 OFFSET $1
+const listPreferences = `-- name: ListPreferences :many
+SELECT preference FROM preferences ORDER BY preference
 `
 
-func (q *Queries) ListarNoticias(ctx context.Context, offset int32) ([]Noticia, error) {
-	rows, err := q.db.QueryContext(ctx, listarNoticias, offset)
+func (q *Queries) ListPreferences(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listPreferences)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Noticia
+	var items []string
 	for rows.Next() {
-		var i Noticia
-		if err := rows.Scan(
-			&i.ID,
-			&i.Titulo,
-			&i.Contenido,
-			&i.Visualizaciones,
-			&i.TiempoLecturaEstimado,
-			&i.PublicadaEn,
-		); err != nil {
+		var preference string
+		if err := rows.Scan(&preference); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, preference)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -303,26 +151,53 @@ func (q *Queries) ListarNoticias(ctx context.Context, offset int32) ([]Noticia, 
 	return items, nil
 }
 
-const listarUsuarios = `-- name: ListarUsuarios :many
-SELECT id, dni, nombre, email, "contraseña", creado_en FROM usuarios ORDER BY id
+const listPreferencesFromUser = `-- name: ListPreferencesFromUser :many
+SELECT preference FROM user_preferences WHERE username = $1
 `
 
-func (q *Queries) ListarUsuarios(ctx context.Context) ([]Usuario, error) {
-	rows, err := q.db.QueryContext(ctx, listarUsuarios)
+func (q *Queries) ListPreferencesFromUser(ctx context.Context, username string) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, listPreferencesFromUser, username)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Usuario
+	var items []string
 	for rows.Next() {
-		var i Usuario
+		var preference string
+		if err := rows.Scan(&preference); err != nil {
+			return nil, err
+		}
+		items = append(items, preference)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listUsers = `-- name: ListUsers :many
+SELECT username, email, name, middlename, surname, password FROM users ORDER BY username
+`
+
+func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
 		if err := rows.Scan(
-			&i.ID,
-			&i.Dni,
-			&i.Nombre,
+			&i.Username,
 			&i.Email,
-			&i.Contraseña,
-			&i.CreadoEn,
+			&i.Name,
+			&i.Middlename,
+			&i.Surname,
+			&i.Password,
 		); err != nil {
 			return nil, err
 		}
@@ -337,76 +212,57 @@ func (q *Queries) ListarUsuarios(ctx context.Context) ([]Usuario, error) {
 	return items, nil
 }
 
-const obtenerComentariosNoticia = `-- name: ObtenerComentariosNoticia :one
-SELECT COUNT(*) FROM comentarios_noticia WHERE id_noticia = $1
+const removePreference = `-- name: RemovePreference :exec
+DELETE FROM user_preferences WHERE username = $1 AND preference = $2
 `
 
-func (q *Queries) ObtenerComentariosNoticia(ctx context.Context, idNoticia int32) (int64, error) {
-	row := q.db.QueryRowContext(ctx, obtenerComentariosNoticia, idNoticia)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+type RemovePreferenceParams struct {
+	Username   string `json:"username"`
+	Preference string `json:"preference"`
 }
 
-const obtenerLikesComentario = `-- name: ObtenerLikesComentario :one
-SELECT COUNT(*) FROM likes_comentario WHERE id_noticia = $1 AND id_comentario = $2
+func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferenceParams) error {
+	_, err := q.db.ExecContext(ctx, removePreference, arg.Username, arg.Preference)
+	return err
+}
+
+const setPreference = `-- name: SetPreference :one
+INSERT INTO user_preferences(username,preference) VALUES ($1,$2) RETURNING username, preference
 `
 
-type ObtenerLikesComentarioParams struct {
-	IDNoticia    int32 `json:"id_noticia"`
-	IDComentario int32 `json:"id_comentario"`
+type SetPreferenceParams struct {
+	Username   string `json:"username"`
+	Preference string `json:"preference"`
 }
 
-func (q *Queries) ObtenerLikesComentario(ctx context.Context, arg ObtenerLikesComentarioParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, obtenerLikesComentario, arg.IDNoticia, arg.IDComentario)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const obtenerLikesNoticia = `-- name: ObtenerLikesNoticia :one
-SELECT COUNT(*) FROM likes_noticia WHERE id_noticia = $1
-`
-
-func (q *Queries) ObtenerLikesNoticia(ctx context.Context, idNoticia int32) (int64, error) {
-	row := q.db.QueryRowContext(ctx, obtenerLikesNoticia, idNoticia)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const obtenerUsuarioPorDNI = `-- name: ObtenerUsuarioPorDNI :one
-SELECT id, dni, nombre, email, "contraseña", creado_en FROM usuarios WHERE dni = $1
-`
-
-func (q *Queries) ObtenerUsuarioPorDNI(ctx context.Context, dni string) (Usuario, error) {
-	row := q.db.QueryRowContext(ctx, obtenerUsuarioPorDNI, dni)
-	var i Usuario
-	err := row.Scan(
-		&i.ID,
-		&i.Dni,
-		&i.Nombre,
-		&i.Email,
-		&i.Contraseña,
-		&i.CreadoEn,
-	)
+func (q *Queries) SetPreference(ctx context.Context, arg SetPreferenceParams) (UserPreference, error) {
+	row := q.db.QueryRowContext(ctx, setPreference, arg.Username, arg.Preference)
+	var i UserPreference
+	err := row.Scan(&i.Username, &i.Preference)
 	return i, err
 }
 
-const obtenerUsuarioPorID = `-- name: ObtenerUsuarioPorID :one
-SELECT id, dni, nombre, email, "contraseña", creado_en FROM usuarios WHERE id = $1
+const updateUser = `-- name: UpdateUser :exec
+UPDATE users SET email = $2, name = $3, middlename = $4, surname = $5, password = $6 WHERE username = $1
 `
 
-func (q *Queries) ObtenerUsuarioPorID(ctx context.Context, id int32) (Usuario, error) {
-	row := q.db.QueryRowContext(ctx, obtenerUsuarioPorID, id)
-	var i Usuario
-	err := row.Scan(
-		&i.ID,
-		&i.Dni,
-		&i.Nombre,
-		&i.Email,
-		&i.Contraseña,
-		&i.CreadoEn,
+type UpdateUserParams struct {
+	Username   string         `json:"username"`
+	Email      string         `json:"email"`
+	Name       string         `json:"name"`
+	Middlename sql.NullString `json:"middlename"`
+	Surname    string         `json:"surname"`
+	Password   string         `json:"password"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser,
+		arg.Username,
+		arg.Email,
+		arg.Name,
+		arg.Middlename,
+		arg.Surname,
+		arg.Password,
 	)
-	return i, err
+	return err
 }

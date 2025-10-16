@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"tpe/web/app/utils"
 
 	meilisearch "github.com/meilisearch/meilisearch-go"
@@ -35,6 +38,27 @@ func initMeilisearch() {
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
 
 	client = meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
+
+	indexarDatos()
+}
+
+func indexarDatos() {
+	data, err := os.ReadFile("resources/planillas/fundingRecords.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var docs []map[string]interface{}
+	if err := json.Unmarshal(data, &docs); err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = client.Index("funding").AddDocuments(docs, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Datos indexados correctamente.")
 }
 
 // ------------------------------------------------------------------------------------------------

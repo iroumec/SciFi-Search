@@ -49,7 +49,7 @@ func main() {
 	fmt.Printf("\nServidor escuchando en http://localhost%s\n", port)
 
 	// El servidor queda a la espera de solicitudes.
-	if err := http.ListenAndServe(port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 	}
 

@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	sqlc "tpe/web/app/database"
+
+	_ "github.com/lib/pq"
 )
 
 // Mapea un token de inicio de sesión a un userID.
@@ -24,7 +26,7 @@ func registrarHandlersPerfiles() {
 
 func manejarPerfil(w http.ResponseWriter, r *http.Request) {
 
-	c, err := r.Cookie("session_token")
+	/*c, err := r.Cookie("session_token")
 	if err != nil {
 		http.Error(w, "no autenticado", http.StatusUnauthorized)
 		return
@@ -48,14 +50,14 @@ func manejarPerfil(w http.ResponseWriter, r *http.Request) {
 		"Email":    user.Email,
 	}
 
-	renderizeTemplate(w, "template/usuarios/perfil.html", data, nil)
+	renderizeTemplate(w, "template/usuarios/perfil.html", data, nil)*/
 }
 
 // ------------------------------------------------------------------------------------------------
 // Handle Profile Access
 // ------------------------------------------------------------------------------------------------
 
-func handleProfileAccess(user sqlc.Usuario, w http.ResponseWriter, r *http.Request) {
+func handleProfileAccess(user sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 	token, err := generateSessionToken()
 	if err != nil {
@@ -63,7 +65,7 @@ func handleProfileAccess(user sqlc.Usuario, w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	sessions[token] = user.ID
+	//sessions[token] = user.ID
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_token",

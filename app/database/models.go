@@ -6,104 +6,28 @@ package database
 
 import (
 	"database/sql"
-	"time"
 )
 
-type ComentariosNoticium struct {
-	IDNoticia    int32        `json:"id_noticia"`
-	IDUsuario    int32        `json:"id_usuario"`
-	IDComentario int32        `json:"id_comentario"`
-	Comentario   string       `json:"comentario"`
-	PublicadoEn  sql.NullTime `json:"publicado_en"`
+type HistoricSearch struct {
+	HistoricSearchID int32          `json:"historic_search_id"`
+	Username         sql.NullString `json:"username"`
+	SearchString     string         `json:"search_string"`
 }
 
-type Deporte struct {
-	ID     int32          `json:"id"`
-	Nombre sql.NullString `json:"nombre"`
-	Foto   sql.NullString `json:"foto"`
+type Preference struct {
+	Preference string `json:"preference"`
 }
 
-type Facultade struct {
-	ID   int32          `json:"id"`
-	Name sql.NullString `json:"name"`
+type User struct {
+	Username   string         `json:"username"`
+	Email      string         `json:"email"`
+	Name       string         `json:"name"`
+	Middlename sql.NullString `json:"middlename"`
+	Surname    string         `json:"surname"`
+	Password   string         `json:"password"`
 }
 
-type LikesComentario struct {
-	IDNoticia     int32        `json:"id_noticia"`
-	IDUsuario     int32        `json:"id_usuario"`
-	IDComentario  int32        `json:"id_comentario"`
-	IDUsuarioLike int32        `json:"id_usuario_like"`
-	LikedAt       sql.NullTime `json:"liked_at"`
-}
-
-type LikesNoticium struct {
-	IDNoticia int32        `json:"id_noticia"`
-	IDUsuario int32        `json:"id_usuario"`
-	LikeadoEn sql.NullTime `json:"likeado_en"`
-}
-
-type Noticia struct {
-	ID                    int32         `json:"id"`
-	Titulo                string        `json:"titulo"`
-	Contenido             string        `json:"contenido"`
-	Visualizaciones       sql.NullInt32 `json:"visualizaciones"`
-	TiempoLecturaEstimado int32         `json:"tiempo_lectura_estimado"`
-	PublicadaEn           time.Time     `json:"publicada_en"`
-}
-
-type Participa struct {
-	IDParticipante int32         `json:"id_participante"`
-	IDPartido      int32         `json:"id_partido"`
-	IDFacultad     sql.NullInt32 `json:"id_facultad"`
-}
-
-type Partido struct {
-	ID        int32          `json:"id"`
-	IDDeporte int32          `json:"id_deporte"`
-	Incio     sql.NullTime   `json:"incio"`
-	Fin       sql.NullTime   `json:"fin"`
-	Lugar     sql.NullString `json:"lugar"`
-	Cancha    sql.NullString `json:"cancha"`
-	Zona      sql.NullString `json:"zona"`
-	Tipo      sql.NullString `json:"tipo"`
-}
-
-type Perfile struct {
-	IDUsuario int32          `json:"id_usuario"`
-	Image     sql.NullString `json:"image"`
-}
-
-type PerfilesFacultad struct {
-	IDFacultad int32 `json:"id_facultad"`
-}
-
-type Pertenece struct {
-	IDUsuario  int32 `json:"id_usuario"`
-	IDFacultad int32 `json:"id_facultad"`
-}
-
-type Puntaje struct {
-	IDFacultad1 int32         `json:"id_facultad1"`
-	IDFacultad2 int32         `json:"id_facultad2"`
-	IDPartido   int32         `json:"id_partido"`
-	Puntos1     int32         `json:"puntos1"`
-	Puntos2     int32         `json:"puntos2"`
-	Puntoss1    sql.NullInt32 `json:"puntoss1"`
-	Puntoss2    sql.NullInt32 `json:"puntoss2"`
-}
-
-type PuntajesSimple struct {
-	IDDisciplina int32          `json:"id_disciplina"`
-	IDFacultad   int32          `json:"id_facultad"`
-	Puntos       int32          `json:"puntos"`
-	Nombre       sql.NullString `json:"nombre"`
-}
-
-type Usuario struct {
-	ID         int32        `json:"id"`
-	Dni        string       `json:"dni"`
-	Nombre     string       `json:"nombre"`
-	Email      string       `json:"email"`
-	Contraseña string       `json:"contraseña"`
-	CreadoEn   sql.NullTime `json:"creado_en"`
+type UserPreference struct {
+	Username   string `json:"username"`
+	Preference string `json:"preference"`
 }
