@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"tpe/web/app/utils"
+	"tpe/web/app/views"
 
 	sqlc "tpe/web/app/database"
 
@@ -114,10 +115,34 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		hits[i] = h
 	}
 
+	fmt.Println(hits...)
+
+	/* Para mostrar en la web.
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(SearchResponse{Hits: hits})
 	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
 	queries.CreateHistoricSearch(r.Context(), params)
+	*/
+
+	// Convertir a []map[string]any de forma segura
+	data, err := json.Marshal(hits)
+	if err != nil {
+		log.Println("Error marshal hits:", err)
+	}
+
+	var hitsMaps []map[string]any
+	if err := json.Unmarshal(data, &hitsMaps); err != nil {
+		log.Println("Error unmarshal hits:", err)
+	}
+
+	// guardar histórico
+	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
+	queries.CreateHistoricSearch(r.Context(), params)
+
+	// pasar maps al templ
+	component := views.SearchResults(query, hitsMaps)
+	component.Render(r.Context(), w)
+
 }
 
 // ------------------------------------------------------------------------------------------------

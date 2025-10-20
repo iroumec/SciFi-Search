@@ -8,7 +8,6 @@ import (
 
 	"tpe/web/app/handlers"
 	"tpe/web/app/meili"
-	"tpe/web/app/supertokens"
 	"tpe/web/app/utils"
 
 	sqlc "tpe/web/app/database"
@@ -65,5 +64,5 @@ func main() {
 
 func initThirdPartyApplication(queries *sqlc.Queries) {
 	meili.Init(queries)
-	supertokens.Init()
+	//supertokens.Init()
 }

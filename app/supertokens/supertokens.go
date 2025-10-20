@@ -24,6 +24,7 @@ func Init() {
 		},
 		AppInfo: supertokens.AppInfo{
 			AppName:         "TPE App",
+			APIDomain:       websiteBaseURL,
 			WebsiteBasePath: &websiteBaseURL,
 		},
 		RecipeList: []supertokens.Recipe{

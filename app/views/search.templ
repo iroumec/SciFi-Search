@@ -1,0 +1,35 @@
+package views
+
+import "tpe/web/app/utils"
+
+templ SearchResults(query string, hits []map[string]any) {
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Resultados para { query }</title>
+    <style>
+        /* tu css */
+    </style>
+</head>
+
+<body>
+    <h1>Resultados de búsqueda para “{ query }”</h1>
+
+    if len(hits) == 0 {
+    <p>No se encontraron resultados.</p>
+    } else {
+    for _, m := range hits {
+    <div class="result">
+        <h3>{ utils.ToString(m["Nombre"]) }</h3>
+        <div class="meta">
+            { utils.ToString(m["Tipo"]) } — { utils.ToString(m["Gran area 1"]) } / { utils.ToString(m["Gran area 2"]) }
+        </div>
+        <p>{ utils.ToString(m["Descripcion"]) }</p>
+    </div>
+    }
+    }
+</body>
+
+</html>
+}
