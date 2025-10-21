@@ -1,0 +1,49 @@
+package views
+
+templ Header() {
+    <header>
+        <div class="header-logo">
+            <a href="/">
+                <img src="static/img/header.png" alt="Logo" id="logo">
+            </a>
+        </div>
+        <div class="bienestar-logo">
+            <a href="https://bienestar.unicen.edu.ar/">
+                <img src="static/img/logo_bienestar.png" alt="Logo Bienestar" id="logobienestar">
+            </a>
+        </div>
+        <div class="header-buttons">
+            <button class="btn-registro" onclick="window.location.href='/registrarse'">Registrarse</button>
+            <button class="btn-registro" onclick="window.location.href='/iniciar-sesion'">Iniciar sesión</button>
+            <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
+        </div>
+    </header>
+}
+
+templ Layout(title string, content func() templ.Component) {
+    <!DOCTYPE html>
+    <html lang="es">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>{ title }</title>
+        <link rel="stylesheet" href="/static/css/styles.css" />
+        <link rel="icon" type="image/png" href="/static/img/icono.png" />
+    </head>
+
+    <body>
+        @Header()
+        <main>
+            @content()
+        </main>
+        @Footer()
+    </body>
+
+    </html>
+}
+
+templ Footer() {
+    <footer>
+        <button onclick="window.location.href='/ayuda'">Ayuda</button>
+    </footer>
+}

@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"tpe/web/app/utils"
+	"tpe/web/app/views"
 
 	sqlc "tpe/web/app/database"
 )
@@ -111,40 +112,20 @@ func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 // ------------------------------------------------------------------------------------------------
 
 func registrarIndexHTML() {
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		// Se definen las facultades.
-		// El objetivo de esto es que no estén hard-codeadas en el HTML.
-		data := struct {
-			Facultades []string
-		}{
-			Facultades: []string{
-				"agronomía", "sociales", "humanas", "exactas",
-				"ingeniería", "salud", "económicas", "derecho",
-				"veterinarias", "arte",
-			},
+		// Se definen los datos que necesita la componente.
+		facultades := []string{
+			"agronomía", "sociales", "humanas", "exactas",
+			"ingeniería", "salud", "económicas", "derecho",
+			"veterinarias", "arte",
 		}
 
-		// Se define una función que establezca los títulos de los botones,
-		// la cual se renderizará junto a la página.
-		funcs := template.FuncMap{
-			"title": func(s string) string {
+		// Se crea una insstancia de la componente de página.
+		component := views.IndexPage(facultades)
 
-				// Si no tiene ningún carácter...
-				if len(s) == 0 {
-					return s
-				}
-
-				// Se capitaliza la primera letra de la facultad.
-				return string(s[0]-32) + s[1:]
-			},
-		}
-
-		// Se renderiza la plantilla.
-		renderizeTemplate(w, "template/index.html", map[string]any{
-			"Facultades": data.Facultades,
-		}, funcs)
+		// Se renderiza la componente.
+		component.Render(r.Context(), w)
 	})
 }
 

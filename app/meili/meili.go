@@ -140,7 +140,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	queries.CreateHistoricSearch(r.Context(), params)
 
 	// pasar maps al templ
-	component := views.SearchResults(query, hitsMaps)
+	component := views.SearchResultsPage(query, hitsMaps)
 	component.Render(r.Context(), w)
 
 }

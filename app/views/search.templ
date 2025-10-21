@@ -2,34 +2,33 @@ package views
 
 import "tpe/web/app/utils"
 
-templ SearchResults(query string, hits []map[string]any) {
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8" />
-    <title>Resultados para { query }</title>
-    <style>
-        /* tu css */
-    </style>
-</head>
-
-<body>
+// This component ONLY defines the content for the search results.
+// Notice there are no <html>, <head>, or <body> tags here.
+templ searchResultsContent(query string, hits []map[string]any) {
     <h1>Resultados de búsqueda para “{ query }”</h1>
 
     if len(hits) == 0 {
-    <p>No se encontraron resultados.</p>
+        <p>No se encontraron resultados.</p>
     } else {
-    for _, m := range hits {
-    <div class="result">
-        <h3>{ utils.ToString(m["Nombre"]) }</h3>
-        <div class="meta">
-            { utils.ToString(m["Tipo"]) } — { utils.ToString(m["Gran area 1"]) } / { utils.ToString(m["Gran area 2"]) }
-        </div>
-        <p>{ utils.ToString(m["Descripcion"]) }</p>
-    </div>
+        for _, m := range hits {
+            <div class="result">
+                <h3>{ utils.ToString(m["Nombre"]) }</h3>
+                <div class="meta">
+                    { utils.ToString(m["Tipo"]) } — { utils.ToString(m["Gran area 1"]) } / { utils.ToString(m["Gran area 2"]) }
+                </div>
+                <p>{ utils.ToString(m["Descripcion"]) }</p>
+            </div>
+        }
     }
-    }
-</body>
+}
 
-</html>
+// This is the component your HTTP handler will render.
+templ SearchResultsPage(query string, hits []map[string]any) {
+    // We call Layout and pass it a function that MATCHES the expected signature.
+    // This part is the key -> │
+    // v
+    @Layout("Resultados para " + query, func() templ.Component {
+    // The function must RETURN a component.
+        return searchResultsContent(query, hits)
+    })
 }
