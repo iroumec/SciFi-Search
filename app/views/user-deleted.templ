@@ -9,5 +9,7 @@ templ userDeletedContent() {
 }
 
 templ UserDeletedPage() {
-    @;
+    @Layout("User deleted",func() templ.Component {
+        return userDeletedContent()
+    })
 }
