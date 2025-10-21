@@ -29,7 +29,7 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header><div class=\"header-logo\"><a href=\"/\"><img src=\"static/img/header.png\" alt=\"Logo\" id=\"logo\"></a></div><div class=\"header-buttons\"><button class=\"btn-registro\" onclick=\"window.location.href='/registrarse'\">Registrarse</button> <button class=\"btn-registro\" onclick=\"window.location.href='/iniciar-sesion'\">Iniciar sesión</button><!--Boton de Desplegar menu, solo cuando ya está iniciado sesion--></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header><div class=\"header-buttons\"><button class=\"header-button\" onclick=\"window.location.href='/registrarse'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/iniciar-sesion'\">Log-in</button><!--Boton de Desplegar menu, solo cuando ya está iniciado sesion--></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -65,7 +65,7 @@ func Layout(title string, content func() templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 24, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `TPE-Web/app/views/layout.templ`, Line: 19, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -124,7 +124,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<footer><button onclick=\"window.location.href='/ayuda'\">Ayuda</button></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<footer><p>powered by</p><a href=\"https://www.meilisearch.com/\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo_meilisearch\"></a></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
