@@ -115,15 +115,8 @@ func registrarIndexHTML() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		// Se definen los datos que necesita la componente.
-		facultades := []string{
-			"agronomía", "sociales", "humanas", "exactas",
-			"ingeniería", "salud", "económicas", "derecho",
-			"veterinarias", "arte",
-		}
-
-		// Se crea una insstancia de la componente de página.
-		component := views.IndexPage(facultades)
+		// Se crea una instancia de la componente de página.
+		component := views.IndexPage()
 
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)

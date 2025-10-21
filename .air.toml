@@ -1,13 +1,41 @@
-# ./.air.toml
+# Config file for Air
 root = "."
 tmp_dir = "tmp"
 
 [build]
-# Este comando ahora funciona porque el módulo está bien definido
+# Este comando se ejecuta ante cualquier cambio.
 cmd = "go build -buildvcs=false -o ./tmp/main ./app"
 bin = "tmp/main"
-include_ext = ["go", "tpl", "tmpl", "html"]
-exclude_dir = ["assets", "tmp", "vendor", "resources", "database"]
+# Add "css" to this list to watch your stylesheet.
+# If you also want to watch, for example, JavaScript files in 'assets',
+# remove 'assets' from 'exclude_dir' and add "js" to this list.
+include_ext = ["go", "tpl", "tmpl", "html", "css"]
+include_dir = ["static", "database"]
+exclude_dir = ["assets", "tmp", "vendor", "resources"]
+include_file = []
+exclude_file = []
+exclude_regex = ["_test.go"]
+exclude_unchanged = false
+follow_symlink = false
+log = "air.log"
+poll = false
+poll_interval = 500 # ms
+stop_on_error = false
+send_interrupt = false
+kill_delay = 500 # ms
 
 [log]
+# Show log time
 time = true
+
+[color]
+# Customize each part's color. If no value is provided, use the default color.
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+# Delete tmp directory on exit
+clean_on_exit = true
+
