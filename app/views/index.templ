@@ -5,21 +5,11 @@ package views
 // =================================================================
 
 // This component contains only the content for the index page.
-templ indexContent(facultades []string) {
+templ indexContent() {
 // Sección del buscador principal
-<h1>Buscador</h1>
-<input type="text" id="query" placeholder="Buscar..." />
-<button id="searchBtn">Buscar</button>
+<input type="text" id="query" placeholder="Search for SCIENCE!!!" />
+<button id="searchBtn">Search</button>
 <ul id="results"></ul>
-
-<section class="fondo">
-    <div class="fondo-contenido"></div>
-</section>
-
-<section class="noticias">
-    <h2>Noticias</h2>
-    <button onclick="window.location.href='/noticias'">Noticias</button>
-</section>
 
 // El script se puede incluir directamente.
 // templ es lo suficientemente inteligente como para no procesar el JavaScript.
@@ -43,8 +33,8 @@ templ indexContent(facultades []string) {
 
 // Este es el componente principal que tu manejador HTTP debe renderizar.
 // Une el Layout con el contenido específico de la página de inicio.
-templ IndexPage(facultades []string) {
-    @Layout("Buscador Olimpiadas", func() templ.Component {
-        return indexContent(facultades)
+templ IndexPage() {
+    @Layout("Search", func() templ.Component {
+        return indexContent()
     })
 }

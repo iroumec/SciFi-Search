@@ -1,15 +1,15 @@
 /* --------------- Constantes --------------- */
 
 :root {
-    --color-unicen: #005785;
-    --color-fondo: white;
+    --scifi: #005785;
+    --background: white;
 }
 
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background-color: var(--color-fondo);
-    color: white;
+    background-color: var(--background);
+    color: black;
 }
 
 /* --------------- Cabecera --------------- */
