@@ -29,7 +29,7 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header><div class=\"header-logo\"><a href=\"/\"><img src=\"static/img/header.png\" alt=\"Logo\" id=\"logo\"></a></div><div class=\"bienestar-logo\"><a href=\"https://bienestar.unicen.edu.ar/\"><img src=\"static/img/logo_bienestar.png\" alt=\"Logo Bienestar\" id=\"logobienestar\"></a></div><div class=\"header-buttons\"><button class=\"btn-registro\" onclick=\"window.location.href='/registrarse'\">Registrarse</button> <button class=\"btn-registro\" onclick=\"window.location.href='/iniciar-sesion'\">Iniciar sesión</button><!--Boton de Desplegar menu, solo cuando ya está iniciado sesion--></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header><div class=\"header-logo\"><a href=\"/\"><img src=\"static/img/header.png\" alt=\"Logo\" id=\"logo\"></a></div><div class=\"header-buttons\"><button class=\"btn-registro\" onclick=\"window.location.href='/registrarse'\">Registrarse</button> <button class=\"btn-registro\" onclick=\"window.location.href='/iniciar-sesion'\">Iniciar sesión</button><!--Boton de Desplegar menu, solo cuando ya está iniciado sesion--></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -65,7 +65,7 @@ func Layout(title string, content func() templ.Component) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 29, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 24, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

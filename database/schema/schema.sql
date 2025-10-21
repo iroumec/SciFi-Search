@@ -1,12 +1,9 @@
 -- CREACIÓN DE TABLAS
 CREATE TABLE IF NOT EXISTS users(
     user_id INT PRIMARY KEY,
-    --username VARCHAR(16),a
-    --email TEXT NOT NULL,
     name VARCHAR(32) NOT NULL,
     middlename VARCHAR(32),
     surname VARCHAR(32) NOT NULL
-    --password TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS preferences (

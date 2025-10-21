@@ -12,54 +12,13 @@ templ indexContent(facultades []string) {
 <button id="searchBtn">Buscar</button>
 <ul id="results"></ul>
 
-// Sección de navegación por facultades
-<section class="navegacion-facultades">
-    <nav>
-        for _, facultad := range facultades {
-        <button class="btn-{ facultad }" onclick="window.location.href='/facultades?facultad={ facultad }'">
-            { facultad }
-        </button>
-        }
-    </nav>
-</section>
-
 <section class="fondo">
-    <div class="fondo-contenido">
-        <!-- <p>puntos parciales</p> TODO -->
-    </div>
-</section>
-
-<section class="partidos">
-    <div class="partidos-contenedor">
-        <h2>Proximo partido:</h2>
-        <!-- Filtros -->
-        <div class="filtros">
-            <div class="filtro">
-                <span>Facultad:</span>
-                <button data-facultad="Exactas">Exactas</button>
-                <button data-facultad="Económicas">Económicas</button>
-                <button data-facultad="Arte">Arte</button>
-                <button data-facultad="Veterinarias">Veterinarias</button>
-            </div>
-            <div class="filtro">
-                <span>Deporte:</span>
-                <button data-deporte="Hockey">Hockey</button>
-                <button data-deporte="Fútbol">Fútbol</button>
-                <button data-deporte="Voley">Voley</button>
-            </div>
-        </div>
-    </div>
+    <div class="fondo-contenido"></div>
 </section>
 
 <section class="noticias">
     <h2>Noticias</h2>
     <button onclick="window.location.href='/noticias'">Noticias</button>
-</section>
-
-<section id="ultimos-partidos">
-    <h2>Ultimos partidos</h2>
-    <p>Aca van los posteos de los ultimos partidos. Se publica las facultades, el resultado y fotos del post original.
-        Aca se va a poder comentar comentarios y fotos.</p>
 </section>
 
 // El script se puede incluir directamente.
@@ -70,7 +29,7 @@ templ indexContent(facultades []string) {
         if (!query) return;
 
         // Redirige a la página de búsqueda con el query.
-        window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        window.location.href = `/search?query=${encodeURIComponent(query)}`;
     });
 
     // Opcional: permitir buscar con la tecla Enter
@@ -85,7 +44,7 @@ templ indexContent(facultades []string) {
 // Este es el componente principal que tu manejador HTTP debe renderizar.
 // Une el Layout con el contenido específico de la página de inicio.
 templ IndexPage(facultades []string) {
-@Layout("Buscador Olimpiadas", func() templ.Component {
-return indexContent(facultades)
-})
+    @Layout("Buscador Olimpiadas", func() templ.Component {
+        return indexContent(facultades)
+    })
 }

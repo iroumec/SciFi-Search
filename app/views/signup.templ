@@ -1,0 +1,34 @@
+package views 
+
+templ signUpContent(errorMessage string) {
+
+    <section class="register-background"></section>
+    <section class="form">
+        <h2>Sign up</h2>
+        
+        <form action="/signup" method="POST">
+            
+            <div class="row">
+                <input type="text" id="name" placeholder="Name" name="name" required>
+                <input type="text" id="middlename" placeholder="Middlename" name="middlename">
+                <input type="text" id="surname" placeholder="Surname" name="surname" required>
+            </div>
+            <input type="email" id="email" name="email" placeholder="E-mail" autocomplete="email" required>
+            <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password" required>
+
+            <button class="btn-registro" type="submit">Sign-up</button>
+        </form>
+    </section>
+
+    if errorMessage != "" {
+        <div id="message" style="color:red;">
+            { errorMessage }
+        </div>
+    }
+}
+
+templ SignUpPage(errorMessage string) {
+    @Layout("Sign up", func() templ.Component {
+        return signUpContent(errorMessage)
+    })
+}

@@ -8,12 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// =================================================================
-// INDEX PAGE SPECIFIC COMPONENTS
-// =================================================================
-
-// This component contains only the content for the index page.
-func indexContent(facultades []string) templ.Component {
+func sucessfulSignUpContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,7 +29,7 @@ func indexContent(facultades []string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Buscador</h1><input type=\"text\" id=\"query\" placeholder=\"Buscar...\"> <button id=\"searchBtn\">Buscar</button><ul id=\"results\"></ul><section class=\"fondo\"><div class=\"fondo-contenido\"></div></section><section class=\"noticias\"><h2>Noticias</h2><button onclick=\"window.location.href='/noticias'\">Noticias</button></section><script>\n    document.getElementById(\"searchBtn\").addEventListener(\"click\", async () => {\n        const query = document.getElementById(\"query\").value.trim();\n        if (!query) return;\n\n        // Redirige a la página de búsqueda con el query.\n        window.location.href = `/search?query=${encodeURIComponent(query)}`;\n    });\n\n    // Opcional: permitir buscar con la tecla Enter\n    document.getElementById(\"query\").addEventListener(\"keypress\", (e) => {\n        if (e.key === \"Enter\") {\n            document.getElementById(\"searchBtn\").click();\n        }\n    });\n</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Sign-up completed with success!</h1><div class=\"menu-options\"><button onclick=\"window.location.href='/'\">Go to main page</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,9 +37,7 @@ func indexContent(facultades []string) templ.Component {
 	})
 }
 
-// Este es el componente principal que tu manejador HTTP debe renderizar.
-// Une el Layout con el contenido específico de la página de inicio.
-func IndexPage(facultades []string) templ.Component {
+func SuccessfulSignUpPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -65,8 +58,8 @@ func IndexPage(facultades []string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Buscador Olimpiadas", func() templ.Component {
-			return indexContent(facultades)
+		templ_7745c5c3_Err = Layout("Successful sign-up", func() templ.Component {
+			return sucessfulSignUpContent()
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

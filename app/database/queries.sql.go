@@ -91,6 +91,22 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 	return err
 }
 
+const getUserByID = `-- name: GetUserByID :one
+SELECT user_id, name, middlename, surname FROM users WHERE user_id = $1
+`
+
+func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByID, userID)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Name,
+		&i.Middlename,
+		&i.Surname,
+	)
+	return i, err
+}
+
 const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
 SELECT search_string FROM historic_searches WHERE user_id = $1
 `

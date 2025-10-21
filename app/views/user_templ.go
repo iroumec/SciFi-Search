@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import sqlc "tpe/web/app/database"
 
 // Defino los datos que precisa de Usuario
-func UserList(users []sqlc.User) templ.Component {
+func userList(users []sqlc.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -135,7 +135,7 @@ func UserPage(users []sqlc.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = UserList(users).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = userList(users).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

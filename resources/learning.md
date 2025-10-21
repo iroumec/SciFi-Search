@@ -41,3 +41,5 @@ Solución, falta:
 ---
 
 El html te dice qué hay y cómo buscarlo. El CSS es la forma.
+
+el código 200 es el por defecto.

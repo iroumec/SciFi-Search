@@ -2,8 +2,7 @@ package views
 
 import "tpe/web/app/utils"
 
-// This component ONLY defines the content for the search results.
-// Notice there are no <html>, <head>, or <body> tags here.
+// Contenido de la página de search.
 templ searchResultsContent(query string, hits []map[string]any) {
     <h1>Resultados de búsqueda para “{ query }”</h1>
 
@@ -22,13 +21,8 @@ templ searchResultsContent(query string, hits []map[string]any) {
     }
 }
 
-// This is the component your HTTP handler will render.
 templ SearchResultsPage(query string, hits []map[string]any) {
-    // We call Layout and pass it a function that MATCHES the expected signature.
-    // This part is the key -> │
-    // v
     @Layout("Resultados para " + query, func() templ.Component {
-    // The function must RETURN a component.
         return searchResultsContent(query, hits)
     })
 }

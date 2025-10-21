@@ -1,13 +1,10 @@
 package handlers
 
-import (
-	"net/http"
-)
-
 // ------------------------------------------------------------------------------------------------
 // Registro de los Handlers de Ayuda
 // ------------------------------------------------------------------------------------------------
 
+/*
 // Se registran los handlers de ayuda.
 func registrarHandlersAyuda() {
 	rutas := map[string]struct {
@@ -47,3 +44,4 @@ func handlerTemplate(path string, data map[string]any) http.HandlerFunc {
 		renderizeTemplate(w, path, data, nil)
 	}
 }
+*/

@@ -49,7 +49,7 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 	registrarHandlersPerfiles()
 
 	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
-	registrarHandlersAyuda()
+	//registrarHandlersAyuda()
 }
 
 // ------------------------------------------------------------------------------------------------

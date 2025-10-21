@@ -4,6 +4,9 @@ INSERT INTO users(user_id,name,middlename,surname) VALUES ($1, $2, $3, $4) RETUR
 -- name: ListUsers :many
 SELECT * FROM users ORDER BY user_id;
 
+-- name: GetUserByID :one
+SELECT * FROM users WHERE user_id = $1;
+
 -- name: UpdateUser :exec
 UPDATE users SET  name = $2, middlename = $3, surname = $4 WHERE user_id = $1;
 
