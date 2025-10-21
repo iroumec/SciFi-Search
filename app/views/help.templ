@@ -1,7 +1,12 @@
 package views
 
 
+templ helpContent() {
+    
+}
+
 templ HelpPage() {
-
-
+    @Layout("Ayuda", func() templ.Component {
+        return helpContent()
+    })
 }
