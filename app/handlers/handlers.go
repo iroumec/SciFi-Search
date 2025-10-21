@@ -112,6 +112,7 @@ func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
 // ------------------------------------------------------------------------------------------------
 
 func registrarIndexHTML() {
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se definen los datos que necesita la componente.

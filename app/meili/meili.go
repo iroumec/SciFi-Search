@@ -115,15 +115,6 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		hits[i] = h
 	}
 
-	fmt.Println(hits...)
-
-	/* Para mostrar en la web.
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(SearchResponse{Hits: hits})
-	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
-	queries.CreateHistoricSearch(r.Context(), params)
-	*/
-
 	// Convertir a []map[string]any de forma segura
 	data, err := json.Marshal(hits)
 	if err != nil {
