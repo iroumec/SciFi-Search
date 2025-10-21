@@ -56,8 +56,6 @@ RUN addgroup -S olimpiadas-unicen && adduser -S olimpiadas-unicen -G olimpiadas-
 # Se copia en la imagen el binario y los assets desde el builder.
 COPY --from=builder /app/main .
 COPY --from=builder /app/static ./static
-COPY --from=builder /app/template ./template
-
 
 RUN chown -R olimpiadas-unicen:olimpiadas-unicen /app
 
