@@ -12,7 +12,7 @@ Aplicación web para búsqueda de financiamiento de ciencia.
 
 ## Créditos
 
-Este proyecto fue realizado por estudiantes de la carrera de Ingeniería en Sistemas, como proyecto integrador de las materias Programación Web y Sistemas Operativos.
+Este proyecto fue realizado por estudiantes de la carrera de Ingeniería en Sistemas como proyecto integrador de las materias Programación Web y Sistemas Operativos.
 
 Los alumnos que trabajaron en este proyecto son:
 
