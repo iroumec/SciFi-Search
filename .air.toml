@@ -4,17 +4,25 @@ tmp_dir = "tmp"
 
 [build]
 # Este comando se ejecuta ante cualquier cambio.
-cmd = "go build -buildvcs=false -o ./tmp/main ./app"
+# Requsitos:
+# chmod +x resources/scripts/recompile.sh
+# chmod +x resources/scripts/sqlc/runSQLC.sh
+# chmod +x resources/scripts/templ/runTEMPL.sh
+cmd = "./resources/scripts/recompile.sh"
+
 bin = "tmp/main"
-# Add "css" to this list to watch your stylesheet.
-# If you also want to watch, for example, JavaScript files in 'assets',
-# remove 'assets' from 'exclude_dir' and add "js" to this list.
-include_ext = ["go", "tpl", "tmpl", "html", "css"]
-include_dir = ["static", "database"]
-exclude_dir = ["assets", "tmp", "vendor", "resources"]
+include_ext = ["go", "templ", "html", "css", "png", "svg", "sql"]
+include_dir = ["static", "database", "app"]
+
+# Si no se excluye app/database, se entra en un ciclo infinito al ejecutar SQLC.
+exclude_dir = ["assets", "tmp", "vendor", "resources", "app/database"]
+
 include_file = []
 exclude_file = []
-exclude_regex = ["_test.go"]
+
+# Se añade una regla para excluir TODOS los archivos .go dentro de app/views.
+# Si no se coloca esto, se entra en un bucle infinito cuando se ejecuta 'templ generate'.
+exclude_regex = ["_test.go", "app/views/.*\\.go$"]
 exclude_unchanged = false
 follow_symlink = false
 log = "air.log"
