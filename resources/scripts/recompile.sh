@@ -3,7 +3,11 @@
 # Detiene el script si algo falla
 set -e
 
-echo "Recompilando todo..."
+echo
+echo "=================================================================================="
+echo "Compilando todo... ¡Espere, por favor! Esto puede tomar un tiempo la primera vez."
+echo "=================================================================================="
+echo
 
 # Generación de sqlc.
 ./resources/scripts/sqlc/runSQLC.sh
@@ -13,3 +17,9 @@ echo "Recompilando todo..."
 
 # Compilación de Go
 go build -buildvcs=false -o ./tmp/main ./app
+
+echo
+echo "=================================================================================="
+echo "¡Compilación finalizada!"
+echo "=================================================================================="
+echo

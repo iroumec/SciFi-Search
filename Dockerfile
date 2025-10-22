@@ -47,18 +47,16 @@ FROM alpine:latest AS production
 
 WORKDIR /app
 
-# Se instalan dependencias necesarias para la validación de la constancia de alumno regular.
-RUN apk add --no-cache poppler-utils chromium nss freetype harfbuzz ttf-freefont
-
 # Se crea un usuario y un grupo.
-RUN addgroup -S olimpiadas-unicen && adduser -S olimpiadas-unicen -G olimpiadas-unicen
+RUN addgroup -S sciFi-search && adduser -S sciFi-search -G sciFi-search
 
 # Se copia en la imagen el binario y los assets desde el builder.
 COPY --from=builder /app/main .
 COPY --from=builder /app/static ./static
+COPY --from=builder /app/resources/planillas ./resources/planillas
 
-RUN chown -R olimpiadas-unicen:olimpiadas-unicen /app
+RUN chown -R sciFi-search:sciFi-search /app
 
 EXPOSE 8080
-USER olimpiadas-unicen
+USER sciFi-search
 CMD ["./main"]

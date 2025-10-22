@@ -24,6 +24,12 @@ var queries *sqlc.Queries
 
 // ------------------------------------------------------------------------------------------------
 
+const (
+	dataPath = "./resources/planillas/fundingRecords.json"
+)
+
+// ------------------------------------------------------------------------------------------------
+
 type SearchResponse struct {
 	Hits []any `json:"hits"`
 }
@@ -47,7 +53,7 @@ func Init(q *sqlc.Queries) {
 // ------------------------------------------------------------------------------------------------
 
 func indexarDatos() {
-	data, err := os.ReadFile("resources/planillas/fundingRecords.json")
+	data, err := os.ReadFile(dataPath)
 	if err != nil {
 		log.Fatal(err)
 	}

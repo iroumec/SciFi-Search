@@ -45,14 +45,14 @@ services: # Producción
     restart: always
 
   # Servicio de autenticación SuperTokens
-  supertokens:
-    image: supertokens/supertokens-core:dev-branch-11.0
-    container_name: supertokens
-    restart: always
-    environment:
-      # Para persistencia con la base de datos Postgres.
-      #POSTGRESQL_CONNECTION_URI: "postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}"
-      SUPERTOKENS_HOST: "${SUPERTOKENS_HOST}"
-      SUPERTOKENS_PORT: "${SUPERTOKENS_PORT}"
-    ports:
-      - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"
+  #supertokens:
+  #  image: supertokens/supertokens-core:dev-branch-11.0
+  #  container_name: supertokens
+  #  restart: always
+  #  environment:
+  #    # Para persistencia con la base de datos Postgres.
+  #    #POSTGRESQL_CONNECTION_URI: "postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}"
+  #    SUPERTOKENS_HOST: "${SUPERTOKENS_HOST}"
+  #    SUPERTOKENS_PORT: "${SUPERTOKENS_PORT}"
+  #  ports:
+  #    - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"

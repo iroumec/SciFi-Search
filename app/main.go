@@ -41,11 +41,12 @@ func main() {
 	initThirdPartyApplication(queries)
 
 	// Se informa que el servidor está corriendo.
-	fmt.Printf("\nServidor escuchando en http://localhost:%s\n", appPort)
+	log.Printf("Server running...")
+	log.Printf("Server listening in http://localhost:%s\n", appPort)
 
 	// El servidor queda a la espera de solicitudes, trabajando en conjunto con un LoggingMiddleware.
 	if err := http.ListenAndServe(":"+appPort, utils.LoggingMiddleware(http.DefaultServeMux)); err != nil {
-		fmt.Printf("Error al iniciar el servidor: %s\n", err)
+		log.Printf("Error al iniciar el servidor: %s\n", err)
 	}
 
 	// Nada de lo que esté acá debajo se ejecuta.

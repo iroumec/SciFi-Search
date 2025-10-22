@@ -17,10 +17,29 @@ test: up ## Levanta el entorno esperando a que esté sano, ejecuta las pruebas y
 	@echo "--> Pruebas finalizadas. Deteniendo el entorno..."
 	@$(MAKE) down
 
-up: ## Construye y levanta los contenedores, esperando a que los servicios estén listos.
-	@echo "--> Construyendo y levantando los contenedores de Docker..."
-	# La opción --wait en el siguiente comando sirve para esperar a que los "healthchecks" pasen.
-	@docker compose up --build -d --wait
+up: ## Construye y levanta los contenedores, esperando a que el servidor avise.
+	@echo
+	@echo "Construyendo y levantando los contenedores de Docker..."
+	@echo
+	
+	@docker compose -f docker-compose.yml up -d --build
+	
+	@echo "Contenedores iniciados. Esperando a que el servidor esté listo..."
+	@echo
+
+	@# Bucle de espera: Intenta conectarse a /health cada segundo.
+	@# 'until' sigue intentando HASTA QUE el comando curl tenga éxito (salga con 0).
+	@# -f: Falla en silencio (no muestra HTML) si hay un error HTTP (como 404 o 500).
+	@# -s: Modo silencioso (no muestra la barra de progreso).
+	@until curl -f -s http://localhost:8080/health > /dev/null; do \
+		sleep 1; \
+	done
+
+	@echo "Servidor corriendo en http://localhost:8000."
+	@echo
+
+development: ## Construye y levanta los contenedores en modo desarrollador (con air activo).
+	@docker compose up --build
 
 run-tests: ## Ejecuta únicamente las pruebas Hurl (asume que el entorno ya está levantado).
 	@echo "--> Verificando que el servidor esté corriendo en localhost:8080..."
@@ -29,8 +48,13 @@ run-tests: ## Ejecuta únicamente las pruebas Hurl (asume que el entorno ya est�
 	@hurl --test ${HURL_FILE}
 
 down: ## Detiene y elimina los contenedores, redes y volúmenes.
-	@echo "--> Deteniendo y limpiando los contenedores de Docker..."
-	@docker compose down --volumes
+	@echo "Deteniendo el servidor..."
+	@docker compose down
+	@docker compose -f docker-compose.yml down -v
+
+clean: down ## Elimina la imagen y los volúmenes.
+	@docker compose down -v --rmi all
+	@docker volume prune -f
 
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"
