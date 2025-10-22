@@ -1,0 +1,28 @@
+package views
+
+import "tpe/web/app/utils"
+
+// Contenido de la página de search.
+templ searchResultsContent(query string, hits []map[string]any) {
+    <h1>Resultados de búsqueda para “{ query }”</h1>
+
+    if len(hits) == 0 {
+        <p>No se encontraron resultados.</p>
+    } else {
+        for _, m := range hits {
+            <div class="result">
+                <h3>{ utils.ToString(m["Nombre"]) }</h3>
+                <div class="meta">
+                    { utils.ToString(m["Tipo"]) } — { utils.ToString(m["Gran area 1"]) } / { utils.ToString(m["Gran area 2"]) }
+                </div>
+                <p>{ utils.ToString(m["Descripcion"]) }</p>
+            </div>
+        }
+    }
+}
+
+templ SearchResultsPage(query string, hits []map[string]any) {
+    @Layout("Resultados para " + query, func() templ.Component {
+        return searchResultsContent(query, hits)
+    })
+}

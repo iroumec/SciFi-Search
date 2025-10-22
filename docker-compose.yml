@@ -1,0 +1,58 @@
+services: # Producción
+  # Base de Datos PostgreSQL
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - ./database/schema:/docker-entrypoint-initdb.d
+    restart: always
+
+  # Aplicación
+  app:
+    build:
+      context: .
+      target: production
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      - db
+      - meilisearch
+      #- supertokens
+    environment:
+      DATABASE_URL: "postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
+      MEILI_URL: "${MEILI_URL}"
+      MEILI_MASTER_KEY: "${MEILI_KEY}"
+      SUPERTOKENS_URL: "${SUPERTOKENS_URL}"
+    env_file:
+      - .env
+    restart: always
+
+  # Motor de búsqueda MeiliSearch
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    ports:
+      - "${MEILI_PORT}:${MEILI_PORT}"
+    volumes:
+      - ./meili_data:/meili_data
+    environment:
+      MEILI_MASTER_KEY: "${MEILI_KEY}"
+    restart: always
+
+  # Servicio de autenticación SuperTokens
+  #supertokens:
+  #  image: supertokens/supertokens-core:dev-branch-11.0
+  #  container_name: supertokens
+  #  restart: always
+  #  environment:
+  #    # Para persistencia con la base de datos Postgres.
+  #    #POSTGRESQL_CONNECTION_URI: "postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}"
+  #    SUPERTOKENS_HOST: "${SUPERTOKENS_HOST}"
+  #    SUPERTOKENS_PORT: "${SUPERTOKENS_PORT}"
+  #  ports:
+  #    - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"

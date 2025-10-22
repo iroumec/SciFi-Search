@@ -1,0 +1,41 @@
+package views
+
+// =================================================================
+// INDEX PAGE SPECIFIC COMPONENTS
+// =================================================================
+
+// This component contains only the content for the index page.
+templ indexContent() {
+// Sección del buscador principal
+<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
+<input type="text" id="query" placeholder="Search for SCIENCE!!!" />
+<button id="search-btn">Search</button>
+<ul id="results"></ul>
+
+// El script se puede incluir directamente.
+// templ es lo suficientemente inteligente como para no procesar el JavaScript.
+<script>
+    document.getElementById("searchBtn").addEventListener("click", async () => {
+        const query = document.getElementById("query").value.trim();
+        if (!query) return;
+
+        // Redirige a la página de búsqueda con el query.
+        window.location.href = `/search?query=${encodeURIComponent(query)}`;
+    });
+
+    // Opcional: permitir buscar con la tecla Enter
+    document.getElementById("query").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            document.getElementById("searchBtn").click();
+        }
+    });
+</script>
+}
+
+// Este es el componente principal que tu manejador HTTP debe renderizar.
+// Une el Layout con el contenido específico de la página de inicio.
+templ IndexPage() {
+    @Layout("SciFi Search", func() templ.Component {
+        return indexContent()
+    })
+}
