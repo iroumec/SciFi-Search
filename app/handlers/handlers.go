@@ -45,7 +45,7 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	registrarHandlerStatic()
 
 	// Se registra el handler para el index.html.
-	registrarIndexHTML()
+	//registrarIndexHTML()
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registrarHandlersUsuarios()
@@ -70,6 +70,8 @@ func registrarHandlerStatic() {
 
 	// Se sirven archivos estáticos en /static/, comprimidos en gzip si el navegador así lo acepta.
 	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
+
+	http.Handle("/", fileServer)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -125,11 +127,11 @@ func registrarIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se crea una instancia de la componente de página.
-		// component := views.IndexPage()
-		component :=
+		component := views.IndexPage()
 
-			// Se renderiza la componente.
-			component.Render(r.Context(), w)
+		// Se renderiza la componente.
+		component.Render(r.Context(), w)
+
 	})
 }
 

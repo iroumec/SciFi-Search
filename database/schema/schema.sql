@@ -1,8 +1,9 @@
 -- CREACIÓN DE TABLAS
 CREATE TABLE IF NOT EXISTS users(
-    user_id INT PRIMARY KEY,
+    user_id SERIAL,
     name VARCHAR(32) NOT NULL,
-    surname VARCHAR(32) NOT NULL
+    surname VARCHAR(32) NOT NULL,
+    CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
 
 CREATE TABLE IF NOT EXISTS preferences (

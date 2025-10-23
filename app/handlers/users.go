@@ -19,7 +19,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-var lastUserID int32 = 12
+var lastUserID int32 = 30
 
 // ------------------------------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ var lastUserID int32 = 12
 func registrarHandlersUsuarios() {
 	http.HandleFunc("/users", userHandler)
 	http.HandleFunc("/sign-up", signUpHandler)
+	registerAPIHandlers()
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -57,9 +58,8 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 // Necesario ya que Javascript no puede convertir a nullString
 type userPayload struct {
-	Name       string `json:"name"`
-	Middlename string `json:"middlename"`
-	Surname    string `json:"surname"`
+	Name    string `json:"name"`
+	Surname string `json:"surname"`
 	// Email    string `json:"email"`    // Descomenta si los usas
 	// Password string `json:"password"` // Descomenta si los usas
 }
@@ -67,63 +67,15 @@ type userPayload struct {
 // Agrega un usuario a la base de datos.
 func addUser(w http.ResponseWriter, r *http.Request) {
 
-	var payload userPayload
-	var err error
-	if err = json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	newUser := addUserToDatabase(w, r)
+	if newUser == nil {
 		return
 	}
-
-	if hayCampoIncompleto(payload.Name, payload.Surname) {
-		// Campos obligatorios incompletos -> 400 Bad Request
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return
-	}
-
-	// Se publica un evento de creación.
-	event := map[string]interface{}{
-		"type": "user_created",
-		"user": payload,
-		"time": time.Now(),
-	}
-
-	eventData, _ := json.Marshal(event)
-	if err := nat.Publish("products.events", eventData); err != nil {
-		http.Error(w, "Error processing request", http.StatusInternalServerError)
-		return
-	}
-
-	/*json.NewEncoder(w).Encode(map[string]string{
-		"status":  "processing",
-		"message": "User creation in progress",
-	})*/
-
-	params := sqlc.CreateUserParams{
-		UserID:  lastUserID,
-		Name:    payload.Name,
-		Surname: payload.Surname,
-		Middlename: sql.NullString{
-			String: payload.Middlename,
-			Valid:  payload.Middlename != "", // El campo es 'Valid' si no es un string vacío
-		},
-	}
-
-	// Creación del usuario en la base de datos.
-	_, err = queries.CreateUser(r.Context(), params)
-	if err != nil {
-		// Error al crear el usuario en la BD -> 500 Internal Server Error.
-		log.Printf("Error al crear usuario: %v", err)
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		return
-	}
-
-	lastUserID++
 
 	// Se establece el código de estado a 201 Created.
-	//w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
-	// Acá tendría que haber un "usuario registrado con éxito".
+	// Se renderiza la página de registro exitoso.
 	component := views.SuccessfulSignUpPage()
 	templ.Handler(component).ServeHTTP(w, r)
 }
@@ -140,6 +92,8 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	//sql.NullInt32{Int32: id, Valid: true
 
 	err = queries.DeleteUser(r.Context(), id)
 	if err != nil {
@@ -258,4 +212,49 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 
 	component := views.UserListPage(users)
 	templ.Handler(component).ServeHTTP(w, r)
+}
+
+func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
+
+	// Se decodifica y valida el payload.
+	var payload userPayload
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
+		return nil
+	}
+
+	if hayCampoIncompleto(payload.Name, payload.Surname) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return nil
+	}
+
+	// Se publica el evento.
+	event := map[string]interface{}{
+		"type": "user_created",
+		"user": payload,
+		"time": time.Now(),
+	}
+	eventData, _ := json.Marshal(event)
+	if err := nat.Publish("products.events", eventData); err != nil {
+		http.Error(w, "Error procesando la solicitud", http.StatusInternalServerError)
+		return nil
+	}
+
+	// Se preparan los parámetros para la BD.
+	params := sqlc.CreateUserParams{
+		Name:    payload.Name,
+		Surname: payload.Surname,
+	}
+
+	lastUserID++
+
+	// Creación del usuario en la base de datos.
+	newUser, err := queries.CreateUser(r.Context(), params)
+	if err != nil {
+		log.Printf("Error al crear usuario: %v", err)
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return nil
+	}
+
+	return &newUser
 }

@@ -31,13 +31,6 @@ body {
     height: 100vh;
 }
 
-.content {
-    grid-area: content;
-
-    /*background-color: #a56e5d;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
 /* --------------- Header --------------- */
 /*header para el index
 to-do: ver como variar los headers*/
@@ -49,8 +42,8 @@ to-do: ver como variar los headers*/
     align-items: center; /* Centrar verticalmente */
     padding: 0px 10px; /* Espacios a los costados */
 
-    /*background-color: #b3e5fc;
-    border: 1px solid rgb(255, 0, 0);*/
+    background-color: #b3e5fc;
+    border: 1px solid rgb(255, 0, 0);
 }
 
 .header-buttons {
@@ -85,8 +78,8 @@ to-do: ver como variar los headers*/
     justify-content: center; /* Centrar horizontalmente */
     align-items: center; /* Centrar verticalmente */
 
-    /*background-color: #c49b5d;
-    border: 1px solid rgb(255, 0, 0);*/
+    background-color: #c49b5d;
+    border: 1px solid rgb(255, 0, 0);
 }
 
 .footer-text {
@@ -103,9 +96,44 @@ to-do: ver como variar los headers*/
 
 /* --------------- Index --------------- */
 
+.index-content {
+    grid-area: content;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+        "inicio inicio"
+        "load-user user-list";
+    
+    background-color: #a56e5d;
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.inicio {
+    grid-area: inicio;
+
+    background-color: #c2c058;
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.load-user {
+    grid-area: load-user;
+
+    background-color: #a7fa3a;
+    border: 1px solid rgb(255, 0, 0);
+}
+
+.user-list {
+    grid-area: user-list;
+
+    background-color: #dd8585;
+    border: 1px solid rgb(255, 0, 0);
+}
+
 #logo_scifi {
     height: 150px;
-    position: absolute;
+    position: relative;
     left: 50%;
     top: 40%;
     transform: translate(-50%,-50%);

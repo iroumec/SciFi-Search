@@ -15,21 +15,6 @@ templ indexContent() {
     // El script se puede incluir directamente.
     // templ es lo suficientemente inteligente como para no procesar el JavaScript.
     <script>
-        /*document.getElementById("search-btn").addEventListener("click", async () => {
-            const query = document.getElementById("query").value.trim();
-            if (!query) return;
-
-            // Redirige a la página de búsqueda con el query.
-            window.location.href = `/search?query=${encodeURIComponent(query)}`;
-        });
-
-        // Opcional: permitir buscar con la tecla Enter
-        document.getElementById("query").addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                document.getElementById("search-btn").click();
-            }
-        });*/
-
         const input = document.getElementById("first-query");
         input.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {

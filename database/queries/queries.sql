@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-INSERT INTO users(user_id,name,surname) VALUES ($1, $2, $3) RETURNING *;
+INSERT INTO users(name,surname) VALUES ($1, $2) RETURNING *;
 
 -- name: ListUsers :many
 SELECT * FROM users ORDER BY user_id;
@@ -8,7 +8,7 @@ SELECT * FROM users ORDER BY user_id;
 SELECT * FROM users WHERE user_id = $1;
 
 -- name: UpdateUser :exec
-UPDATE users SET  name = $2, surname = $3 WHERE user_id = $1;
+UPDATE users SET name = $2, surname = $3 WHERE user_id = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE user_id = $1;

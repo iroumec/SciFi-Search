@@ -36,17 +36,16 @@ func (q *Queries) CreatePreference(ctx context.Context, preference string) (stri
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users(user_id,name,surname) VALUES ($1, $2, $3) RETURNING user_id, name, surname
+INSERT INTO users(name,surname) VALUES ($1, $2) RETURNING user_id, name, surname
 `
 
 type CreateUserParams struct {
-	UserID  int32  `json:"user_id"`
 	Name    string `json:"name"`
 	Surname string `json:"surname"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.UserID, arg.Name, arg.Surname)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Name, arg.Surname)
 	var i User
 	err := row.Scan(&i.UserID, &i.Name, &i.Surname)
 	return i, err
@@ -229,7 +228,7 @@ func (q *Queries) SetPreference(ctx context.Context, arg SetPreferenceParams) (U
 }
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE users SET  name = $2, surname = $3 WHERE user_id = $1
+UPDATE users SET name = $2, surname = $3 WHERE user_id = $1
 `
 
 type UpdateUserParams struct {
