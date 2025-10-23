@@ -125,10 +125,11 @@ func registrarIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se crea una instancia de la componente de página.
-		component := views.IndexPage()
+		// component := views.IndexPage()
+		component :=
 
-		// Se renderiza la componente.
-		component.Render(r.Context(), w)
+			// Se renderiza la componente.
+			component.Render(r.Context(), w)
 	})
 }
 

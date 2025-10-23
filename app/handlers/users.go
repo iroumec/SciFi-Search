@@ -11,9 +11,10 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	sqlc "tpe/web/app/database"
 	"tpe/web/app/utils"
 	"tpe/web/app/views"
+
+	sqlc "tpe/web/app/database"
 
 	"github.com/a-h/templ"
 )
@@ -24,9 +25,7 @@ var lastUserID int32 = 12
 
 // Se registran los endpoints relacionados al manejo de usarios.
 func registrarHandlersUsuarios() {
-
 	http.HandleFunc("/users", userHandler)
-	http.HandleFunc("/api/users", userHandlerAPI)
 	http.HandleFunc("/sign-up", signUpHandler)
 }
 
@@ -54,29 +53,10 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func userHandlerAPI(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-	case http.MethodGet:
-		if utils.HasGETRequestParameters(r) {
-			showUserAPI(w, r)
-		} else {
-			listUsersAPI(w, r)
-		}
-	case http.MethodPost:
-		addUserAPI(w, r)
-	case http.MethodPut:
-		updateUserAPI(w, r)
-	case http.MethodDelete:
-		deleteUserAPI(w, r)
-	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-	}
-}
-
 // ------------------------------------------------------------------------------------------------
 
-type addUserPayload struct {
+// Necesario ya que Javascript no puede convertir a nullString
+type userPayload struct {
 	Name       string `json:"name"`
 	Middlename string `json:"middlename"`
 	Surname    string `json:"surname"`
@@ -87,7 +67,7 @@ type addUserPayload struct {
 // Agrega un usuario a la base de datos.
 func addUser(w http.ResponseWriter, r *http.Request) {
 
-	var payload addUserPayload
+	var payload userPayload
 	var err error
 	if err = json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -148,74 +128,6 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(component).ServeHTTP(w, r)
 }
 
-// addUserAPI crea un usuario y devuelve el nuevo objeto como JSON.
-func addUserAPI(w http.ResponseWriter, r *http.Request) {
-
-	// --- 1. Decodificar y Validar (Sin cambios) ---
-	var payload addUserPayload
-	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if hayCampoIncompleto(payload.Name, payload.Surname) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return
-	}
-
-	// --- 2. Publicar Evento (Sin cambios) ---
-	event := map[string]interface{}{
-		"type": "user_created",
-		"user": payload,
-		"time": time.Now(),
-	}
-	eventData, _ := json.Marshal(event)
-	if err := nat.Publish("products.events", eventData); err != nil {
-		http.Error(w, "Error procesando la solicitud", http.StatusInternalServerError)
-		return
-	}
-
-	// --- 3. Preparar Parámetros de BD (Sin cambios) ---
-	//    (He eliminado la lógica de 'lastUserID' porque la BD
-	//    debería generar el ID automáticamente, por ejemplo, con SERIAL)
-	params := sqlc.CreateUserParams{
-		UserID:  lastUserID,
-		Name:    payload.Name,
-		Surname: payload.Surname,
-		Middlename: sql.NullString{
-			String: payload.Middlename,
-			Valid:  payload.Middlename != "",
-		},
-	}
-
-	lastUserID++
-
-	// --- 4. CREAR EN LA BD (¡Cambio importante!) ---
-	//    Para devolver el nuevo objeto, tu consulta sqlc
-	//    debe usar `RETURNING *` y ':one'.
-	newUser, err := queries.CreateUser(r.Context(), params)
-	if err != nil {
-		log.Printf("Error al crear usuario: %v", err)
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		return
-	}
-
-	// --- 5. RESPONDER CON JSON (¡Este es el cambio!) ---
-
-	// Establece el Header a JSON
-	w.Header().Set("Content-Type", "application/json")
-	// Establece el código de estado a 201 Created
-	w.WriteHeader(http.StatusCreated)
-
-	// Codifica el objeto 'newUser' (que incluye el ID de la BD)
-	// y lo envía como respuesta JSON.
-	json.NewEncoder(w).Encode(newUser)
-
-	// La parte de 'templ' se elimina:
-	// component := views.SuccessfulSignUpPage()
-	// templ.Handler(component).ServeHTTP(w, r)
-}
-
 // ------------------------------------------------------------------------------------------------
 // Eliminación de un Usuario
 // ------------------------------------------------------------------------------------------------
@@ -244,30 +156,6 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	component := views.UserDeletedPage()
 	templ.Handler(component).ServeHTTP(w, r)
-}
-
-func deleteUserAPI(w http.ResponseWriter, r *http.Request) {
-
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	err = queries.DeleteUser(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: El usuario no existe.
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-		} else {
-			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
-			log.Printf("Error al obtener usuario por ID %d: %v", id, err)
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	w.WriteHeader(http.StatusNoContent)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -304,46 +192,9 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(component).ServeHTTP(w, r)
 }
 
-func showUserAPI(w http.ResponseWriter, r *http.Request) {
-
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	user, err := queries.GetUserByID(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: El usuario no existe.
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-		} else {
-			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
-			log.Printf("Error al obtener usuario por ID %d: %v", id, err)
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
-}
-
 // ------------------------------------------------------------------------------------------------
 
 func updateUser(w http.ResponseWriter, r *http.Request) {
-
-	/*
-		id, err := extractID(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
-
-}
-
-func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 
 	/*
 		id, err := extractID(r)
@@ -394,19 +245,6 @@ func getListOfUsers(w http.ResponseWriter, r *http.Request) ([]sqlc.User, error)
 	}
 
 	return users, nil
-}
-
-// listUsersAPI devuelve la lista de usuarios como un array JSON.
-func listUsersAPI(w http.ResponseWriter, r *http.Request) {
-	users, err := queries.ListUsers(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Devuelve JSON
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
 }
 
 // Lista a todos los usuarios.

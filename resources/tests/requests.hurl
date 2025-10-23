@@ -1,10 +1,6 @@
 # ==============================================================================
 # Script de pruebas Hurl para la API CRUD de usuarios.
 # Basado en la consigna de la API que devuelve JSON.
-#
-# Para ejecutarlo:
-# 1. Asegúrate de que tu servidor de Go esté corriendo.
-# 2. Ejecuta en la terminal: hurl --test requests.hurl
 # ==============================================================================
 
 # Prueba 1: Crear un nuevo usuario (POST)
@@ -16,11 +12,6 @@ Content-Type: application/json
     "middlename": "Mathison",
     "surname": "Turing"
 }
-# curl -X POST -H "Content-Type: application/json" -d '{"name": "Alan", "middlename": "Mathison", "surname": "Turing"}' http://localhost:8080/api/users
-# curl http://localhost:8080/api/users | jq
-# curl -i -X DELETE "http://localhost:8080/api/users?id=0"
-# curl -i "http://localhost:8080/api/users?id=1"
-# -i: (Opcional, pero recomendado) Muestra los headers de la respuesta HTTP
 
 HTTP 201
 [Captures]

@@ -2,80 +2,80 @@ package views
 
 templ signUpContent(errorMessage string) {
 
-<section class="register-background"></section>
-<section class="form">
-    <h2>Sign up</h2>
+    <section class="register-background"></section>
+    <section class="form">
+        <h2>Sign up</h2>
 
-    // 1. Quitamos 'action' y 'method' y añadimos un 'id'
-    <form id="signup-form">
+        // 1. Quitamos 'action' y 'method' y añadimos un 'id'
+        <form id="signup-form">
 
-        <div class="row">
-            <input type="text" id="name" placeholder="Name" name="name" required="true" />
-            <input type="text" id="middlename" placeholder="Middlename" name="middlename" />
-            <input type="text" id="surname" placeholder="Surname" name="surname" required="true" />
-        </div>
-        /*<input type="email" id="email" name="email" placeholder="E-mail" autocomplete="email" required>
-        <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password"
-            required>*/
+            <div class="row">
+                <input type="text" id="name" placeholder="Name" name="name" required="true" />
+                <input type="text" id="middlename" placeholder="Middlename" name="middlename" />
+                <input type="text" id="surname" placeholder="Surname" name="surname" required="true" />
+            </div>
+            /*<input type="email" id="email" name="email" placeholder="E-mail" autocomplete="email" required>
+            <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password"
+                required>*/
 
-        <button class="btn-registro" type="submit">Sign-up</button>
-    </form>
-</section>
+            <button class="btn-registro" type="submit">Sign-up</button>
+        </form>
+    </section>
 
-// 2. Damos un 'id' al div de error para que el script pueda usarlo
-<div id="error-message" style="color:red;">
-    if errorMessage != "" {
-    { errorMessage }
-    }
-</div>
+    // 2. Damos un 'id' al div de error para que el script pueda usarlo
+    <div id="error-message" style="color:red;">
+        if errorMessage != "" {
+        { errorMessage }
+        }
+    </div>
 
-// 3. Añadimos el script de JavaScript
-<script>
-    // 'defer' espera a que el HTML esté cargado antes de ejecutar
-    document.addEventListener('DOMContentLoaded', (e) => {
+    // 3. Añadimos el script de JavaScript
+    <script>
+        // 'defer' espera a que el HTML esté cargado antes de ejecutar
+        document.addEventListener('DOMContentLoaded', (e) => {
 
-        const form = document.getElementById('signup-form');
-        const errorMessageDiv = document.getElementById('error-message');
+            const form = document.getElementById('signup-form');
+            const errorMessageDiv = document.getElementById('error-message');
 
-        form.addEventListener('submit', async (event) => {
-            // Prevenimos que el formulario se envíe de la forma tradicional
-            event.preventDefault();
+            form.addEventListener('submit', async (event) => {
+                // Prevenimos que el formulario se envíe de la forma tradicional
+                event.preventDefault();
 
-            // Limpiamos errores anteriores
-            errorMessageDiv.textContent = '';
+                // Limpiamos errores anteriores
+                errorMessageDiv.textContent = '';
 
-            // Creamos un objeto JSON a partir de los datos del formulario
-            // Usamos los atributos 'name' (name, middlename, surname)
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+                // Creamos un objeto JSON a partir de los datos del formulario
+                // Usamos los atributos 'name' (name, middlename, surname)
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
 
-            try {
-                const response = await fetch('/users', { // Tu endpoint POST /user
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json' // MUY IMPORTANTE
-                    },
-                    body: JSON.stringify(data) // Convertimos el objeto a un string JSON
-                });
+                try {
+                    const response = await fetch('/users', { // Tu endpoint POST /user
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json' // MUY IMPORTANTE
+                        },
+                        body: JSON.stringify(data) // Convertimos el objeto a un string JSON
+                    });
 
-                if (response.ok) {
-                    // ¡Éxito! (ej. status 201)
-                    // Redirigimos al login o a donde sea necesario
-                    window.location.href = '/';
-                } else {
-                    // Error del servidor (ej. status 400, 500)
-                    const errorTexto = await response.text();
-                    errorMessageDiv.textContent = errorTexto;
+                    if (response.ok) {
+                        // ¡Éxito! (ej. status 201)
+                        // Redirigimos al login o a donde sea necesario
+                        window.location.href = '/';
+                    } else {
+                        // Error del servidor (ej. status 400, 500)
+                        const errorTexto = await response.text();
+                        errorMessageDiv.textContent = errorTexto;
+                    }
+
+                } catch (error) {
+                    // Error de red (ej. no se pudo conectar)
+                    console.error('Error de red:', error);
+                    errorMessageDiv.textContent = 'Error de conexión. Intente de nuevo.';
                 }
-
-            } catch (error) {
-                // Error de red (ej. no se pudo conectar)
-                console.error('Error de red:', error);
-                errorMessageDiv.textContent = 'Error de conexión. Intente de nuevo.';
-            }
+            });
         });
-    });
-</script>
+    </script>
 }
 
 templ SignUpPage(errorMessage string) {

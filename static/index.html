@@ -1,13 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Sci-Fi Search</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>Sci-Fi Search</title>
+        <link rel="stylesheet" href="/static/css/styles.css" />
+        <link rel="icon" type="image/png" href="/static/img/icono.png" />
     </head>
-<body>
-    <h1>Contenido de la Página</h1>
-    <div id="data-container"></div>
-    
-    <script src="app.js"></script> 
-</body>
+    <body>
+        <header class="header">
+            <div class="header-buttons"> 
+                <button class="header-button" onclick="window.location.href='/sign-up'">Sign-up</button>
+                <button class="header-button" onclick="window.location.href='/log-in'">Log-in</button>            
+                <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
+            </div>
+        </header>
+        <main>
+            <div class="inicio">
+                <img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
+                <input type="text" id="first-query" placeholder="Search for SCIENCE!!!" />
+            </div>
+            <div class="load_user">
+                <form id="signup-form">
+                    <div class="row">
+                        <input type="text" id="name" placeholder="Name" name="name" required="true" />
+                        <input type="text" id="surname" placeholder="Surname" name="surname" required="true" />
+                    </div>
+                    <button class="submit-button" type="submit">Submit</button>
+                </form>
+            </div>
+            <div class="user_list">
+                <h1>Lista de Usuarios</h1>
+                <ul>
+                    Lista
+                </ul>
+            </div>
+        </main>
+        <footer>
+            <p class="footer-text">powered by
+                <a href="https://www.meilisearch.com/" target="_blank">
+                    <img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch">
+                </a>
+            </p>
+        </footer>
+        
+        <script src="app.js"></script> 
+    </body>
 </html>

@@ -2,7 +2,6 @@
 CREATE TABLE IF NOT EXISTS users(
     user_id INT PRIMARY KEY,
     name VARCHAR(32) NOT NULL,
-    middlename VARCHAR(32),
     surname VARCHAR(32) NOT NULL
 );
 
