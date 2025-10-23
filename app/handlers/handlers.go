@@ -1,9 +1,7 @@
 ﻿package handlers
 
 import (
-	"html/template"
 	"net/http"
-	"os"
 	"slices"
 
 	"tpe/web/app/utils"
@@ -75,50 +73,6 @@ func registrarHandlerStatic() {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Render Template
-// ------------------------------------------------------------------------------------------------
-
-func renderizeTemplate(w http.ResponseWriter, htmlPath string, data map[string]any, funcs template.FuncMap) {
-
-	// Se aplica el layout y las funciones correspondientes a la plantilla.
-	tmpl := applyLayout(htmlPath, funcs)
-
-	// Se garantiza que el navegador interprete la página como html y con codificación utf-8.
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// Se renderiza la plantilla.
-	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		http.Error(w, "Error al renderizar la plantilla.", http.StatusInternalServerError)
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-// Aplicación de Layout
-// ------------------------------------------------------------------------------------------------
-
-// Esta función aplica el layout a la página HTML.
-func applyLayout(htmlPath string, funcs template.FuncMap) *template.Template {
-
-	tmpl := template.New("layout")
-
-	// Si vienen funciones, se aplican.
-	if funcs != nil {
-		tmpl = tmpl.Funcs(funcs)
-	}
-
-	// `template.ParseFiles` abre el archivo y lo convierte en un objeto `*template.Template`.
-	// `template.Must` hace que si hay un error al leer la plantilla, el programa panic automáticamente.
-	return template.Must(
-		tmpl.ParseFiles(
-			"template/layout/layout.html",
-			"template/layout/header.html",
-			"template/layout/footer.html",
-			htmlPath,
-		),
-	)
-}
-
-// ------------------------------------------------------------------------------------------------
 // Registro de Index
 // ------------------------------------------------------------------------------------------------
 
@@ -147,33 +101,6 @@ func registrarLogIn() {
 
 		component.Render(r.Context(), w)
 	})
-}
-
-// ------------------------------------------------------------------------------------------------
-// Obtener Fotos
-// ------------------------------------------------------------------------------------------------
-
-func obtenerFotos(path string) []string {
-
-	// Se obtienen todas las entradas del directorio.
-	files, err := os.ReadDir(path)
-	if err != nil {
-		// No se hallaron fotos.
-		return nil
-	}
-
-	// TODO: si el directorio tiene un archivo que no sea un
-	// directorio o una foto, esto se rompe. Solucionarlo.
-
-	var fotos []string
-	for _, file := range files {
-		// Si la entrada no es un directorio, la agrega a la lista de fotos.
-		if !file.IsDir() {
-			fotos = append(fotos, path+file.Name())
-		}
-	}
-
-	return fotos
 }
 
 // ------------------------------------------------------------------------------------------------

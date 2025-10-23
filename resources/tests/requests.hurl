@@ -3,8 +3,7 @@
 # Basado en la consigna de la API que devuelve JSON.
 # ==============================================================================
 
-# Prueba 1: Crear un nuevo usuario (POST)
-# Verifica que el estado es 201 y captura el ID de la respuesta.
+# Creación de dos usuarios mediante POST.
 POST http://localhost:8080/users
 Content-Type: application/json
 {
@@ -13,6 +12,7 @@ Content-Type: application/json
     "surname": "Turing"
 }
 
+# Se verifica que el estado es 201 y se captura la respuesta.
 HTTP 201
 [Captures]
 new_id: jsonpath "$.id"

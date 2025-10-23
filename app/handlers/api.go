@@ -111,7 +111,7 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// --- 1. Decodificar y Validar (Sin cambios) ---
-	var payload userPayload
+	var payload sqlc.User
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
@@ -134,9 +134,6 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// --- 3. Preparar Parámetros de BD (Sin cambios) ---
-	//    (He eliminado la lógica de 'lastUserID' porque la BD
-	//    debería generar el ID automáticamente, por ejemplo, con SERIAL)
 	params := sqlc.UpdateUserParams{
 		UserID:  id,
 		Name:    payload.Name,

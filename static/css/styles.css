@@ -112,6 +112,8 @@ to-do: ver como variar los headers*/
 
 .inicio {
     grid-area: inicio;
+    align-items: center;
+    justify-items: center;
 
     background-color: #c2c058;
     border: 1px solid rgb(255, 0, 0);
@@ -133,19 +135,20 @@ to-do: ver como variar los headers*/
 
 #logo_scifi {
     height: 150px;
-    position: relative;
+    text-align: center;
+    /*position: relative;
     left: 50%;
     top: 40%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);*/
 }
 
 #first-query {
     height: 40px;
     width: 700px;
-    position: absolute;
+    /*position: relative;
     left: 50%;
     top: 52%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);*/
 
     color: black;
 

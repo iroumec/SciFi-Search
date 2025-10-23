@@ -19,8 +19,6 @@ import (
 	"github.com/a-h/templ"
 )
 
-var lastUserID int32 = 30
-
 // ------------------------------------------------------------------------------------------------
 
 // Se registran los endpoints relacionados al manejo de usarios.
@@ -55,14 +53,6 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
-
-// Necesario ya que Javascript no puede convertir a nullString
-type userPayload struct {
-	Name    string `json:"name"`
-	Surname string `json:"surname"`
-	// Email    string `json:"email"`    // Descomenta si los usas
-	// Password string `json:"password"` // Descomenta si los usas
-}
 
 // Agrega un usuario a la base de datos.
 func addUser(w http.ResponseWriter, r *http.Request) {
@@ -157,7 +147,6 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	*/
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -217,7 +206,7 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 
 	// Se decodifica y valida el payload.
-	var payload userPayload
+	var payload sqlc.User
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return nil
@@ -245,8 +234,6 @@ func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 		Name:    payload.Name,
 		Surname: payload.Surname,
 	}
-
-	lastUserID++
 
 	// Creación del usuario en la base de datos.
 	newUser, err := queries.CreateUser(r.Context(), params)

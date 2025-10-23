@@ -29,20 +29,13 @@ func main() {
 	dbName := utils.GetEnv("DB_NAME", "postgres")
 
 	db := openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName)
-
-	// Independientemente de lo que ocurra, se cierra la conexión con la base de datos al final.
-	defer db.Close()
+	defer db.Close() // Independientemente de lo que ocurra, se cierra la conexión con la base de datos al final.
 
 	// Se obtiene un objeto que nos permita realizar las queries.
 	queries := sqlc.New(db)
 
-	// Conexión a NATS.
-	var err error
-	nat, err := nats.Connect("nats://nats:4222")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer nat.Close()
+	nat := openNATConnection()
+	defer nat.Close() // Independientemente de lo que ocurra, se cierra el NAT al final.
 
 	// Se registran los handlers.
 	handlers.RegisterHandlers(queries, nat)
@@ -79,6 +72,15 @@ func openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName string)
 	}
 
 	return db
+}
+
+func openNATConnection() *nats.Conn {
+	nat, err := nats.Connect("nats://nats:4222")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return nat
 }
 
 // -----------------------------------------------------------------------------------------------
