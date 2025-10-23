@@ -29,7 +29,7 @@ func loginContent(errorMessage string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"fondo-registro\"></section><section class=\"formulario\"><h2>Iniciar sesión</h2><form action=\"/iniciar-sesion\" method=\"POST\"><input type=\"text\" id=\"dni\" name=\"dni\" placeholder=\"DNI\" required><br><input type=\"password\" id=\"password\" name=\"password\" placeholder=\"Constraseña\" required><br><button class=\"btn-registro\" type=\"submit\">Iniciar sesión</button></form></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"fondo-registro\"></section><section class=\"formulario\"><h2>Iniciar sesión</h2><form action=\"/log-in\" method=\"POST\"><input type=\"text\" id=\"nombre\" name=\"nombre\" placeholder=\"Nombre\" required><br><input type=\"text\" id=\"apellido\" name=\"apellido\" placeholder=\"Apellido\" required><br><button class=\"log-in-button\" type=\"submit\">Iniciar sesión</button></form></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +41,7 @@ func loginContent(errorMessage string) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/iniciar-sesion.templ`, Line: 19, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/iniciar-sesion.templ`, Line: 20, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -77,7 +77,7 @@ func LoginPage(errorMessage string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Iniciar Sesion", func() templ.Component {
+		templ_7745c5c3_Err = Layout("Log-In", func() templ.Component {
 			return loginContent(errorMessage)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

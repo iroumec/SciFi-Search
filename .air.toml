@@ -11,7 +11,7 @@ tmp_dir = "tmp"
 cmd = "./resources/scripts/recompile.sh"
 
 bin = "tmp/main"
-include_ext = ["go", "templ", "html", "css", "png", "svg", "sql"]
+include_ext = ["go", "templ", "temp", "html", "css", "png", "svg", "sql"]
 include_dir = ["static", "database", "app"]
 
 # Si no se excluye app/database, se entra en un ciclo infinito al ejecutar SQLC.

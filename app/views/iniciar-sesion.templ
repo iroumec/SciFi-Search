@@ -5,15 +5,16 @@ templ loginContent(errorMessage string) {
     <section class="fondo-registro"></section>
     <section class="formulario"> 
         <h2>Iniciar sesión</h2>
-        <form action="/iniciar-sesion" method="POST">
-            
-            <input type="text" id="dni" name="dni" placeholder="DNI" required><br>
-            <input type="password" id="password" name="password" placeholder="Constraseña" required><br>
+        <form action="/log-in" method="POST">
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre" required><br>
+                        <input type="text" id="apellido" name="apellido" placeholder="Apellido" required><br>
+            /*<input type="text" id="dni" name="dni" placeholder="DNI" required><br>
+            <input type="password" id="password" name="password" placeholder="Constraseña" required><br>*/
 
-            <button class="btn-registro" type="submit">Iniciar sesión</button>
+            <button class="log-in-button" type="submit">Iniciar sesión</button>
         </form>
     </section>
-
+    /*tira STRING en rojo, nose xq*/
     if errorMessage != "" {
         <div id="mensaje" style="color:red;">
         { errorMessage }
@@ -24,7 +25,7 @@ templ loginContent(errorMessage string) {
 
 
 templ LoginPage(errorMessage string) {
-    @Layout("Iniciar Sesion", func() templ.Component {
+    @Layout("Log-In", func() templ.Component {
         return loginContent(errorMessage)
     })
 }

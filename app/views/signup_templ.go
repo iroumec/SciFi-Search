@@ -29,28 +29,24 @@ func signUpContent(errorMessage string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"register-background\"></section><section class=\"form\"><h2>Sign up</h2><form action=\"/signup\" method=\"POST\"><div class=\"row\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required> <input type=\"text\" id=\"middlename\" placeholder=\"Middlename\" name=\"middlename\"> <input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required></div><input type=\"email\" id=\"email\" name=\"email\" placeholder=\"E-mail\" autocomplete=\"email\" required> <input type=\"password\" id=\"password\" name=\"password\" placeholder=\"Password\" autocomplete=\"new-password\" required> <button class=\"btn-registro\" type=\"submit\">Sign-up</button></form></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"register-background\"></section><section class=\"form\"><h2>Sign up</h2><form id=\"signup-form\"><div class=\"row\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required=\"true\"> <input type=\"text\" id=\"middlename\" placeholder=\"Middlename\" name=\"middlename\"> <input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required=\"true\"></div><button class=\"btn-registro\" type=\"submit\">Sign-up</button></form></section><div id=\"error-message\" style=\"color:red;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if errorMessage != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div id=\"message\" style=\"color:red;\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/signup.templ`, Line: 25, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/signup.templ`, Line: 28, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><script>\n    // 'defer' espera a que el HTML esté cargado antes de ejecutar\n    document.addEventListener('DOMContentLoaded', (e) => {\n\n        const form = document.getElementById('signup-form');\n        const errorMessageDiv = document.getElementById('error-message');\n\n        form.addEventListener('submit', async (event) => {\n            // Prevenimos que el formulario se envíe de la forma tradicional\n            event.preventDefault();\n\n            // Limpiamos errores anteriores\n            errorMessageDiv.textContent = '';\n\n            // Creamos un objeto JSON a partir de los datos del formulario\n            // Usamos los atributos 'name' (name, middlename, surname)\n            const formData = new FormData(form);\n            const data = Object.fromEntries(formData.entries());\n\n            try {\n                const response = await fetch('/users', { // Tu endpoint POST /user\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json' // MUY IMPORTANTE\n                    },\n                    body: JSON.stringify(data) // Convertimos el objeto a un string JSON\n                });\n\n                if (response.ok) {\n                    // ¡Éxito! (ej. status 201)\n                    // Redirigimos al login o a donde sea necesario\n                    window.location.href = '/';\n                } else {\n                    // Error del servidor (ej. status 400, 500)\n                    const errorTexto = await response.text();\n                    errorMessageDiv.textContent = errorTexto;\n                }\n\n            } catch (error) {\n                // Error de red (ej. no se pudo conectar)\n                console.error('Error de red:', error);\n                errorMessageDiv.textContent = 'Error de conexión. Intente de nuevo.';\n            }\n        });\n    });\n</script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		return nil
 	})

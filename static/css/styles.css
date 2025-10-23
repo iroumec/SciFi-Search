@@ -1,3 +1,7 @@
+/* agrego la URL de la fuente*/
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap');
+
+
 /* --------------- Constantes --------------- */
 :root {
     --scifi: rgba(0, 87, 133);
@@ -7,7 +11,8 @@
 
 /* --------------- Generales --------------- */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'IBM PLex Sans', sans-serif;
+    font-weight: 400; /*peso regular de fuente (700 Implica Bold) */
     background-color: var(--background);
     background-image: url('../img/fondo.png');
     background-size: cover;

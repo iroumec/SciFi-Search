@@ -39,7 +39,9 @@ to-do: ver como variar los headers*/
 }
 
 #logo_scifi_header {
-    height: 65px;
+    height: 55px;
+    width: auto;
+    cursor: pointer;
 }
 
 #query {

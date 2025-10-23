@@ -22,12 +22,15 @@ services: # Producción
     depends_on:
       - db
       - meilisearch
+      - nats
       #- supertokens
     environment:
       DATABASE_URL: "postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
       MEILI_URL: "${MEILI_URL}"
       MEILI_MASTER_KEY: "${MEILI_KEY}"
       SUPERTOKENS_URL: "${SUPERTOKENS_URL}"
+      NATS_HOST: "nats"
+      NATS_PORT: "4222"
     env_file:
       - .env
     restart: always
@@ -43,6 +46,11 @@ services: # Producción
     environment:
       MEILI_MASTER_KEY: "${MEILI_KEY}"
     restart: always
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
 
   # Servicio de autenticación SuperTokens
   #supertokens:

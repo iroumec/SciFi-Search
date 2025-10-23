@@ -10,6 +10,8 @@ import (
 	"tpe/web/app/views"
 
 	sqlc "tpe/web/app/database"
+
+	"github.com/nats-io/nats.go"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -26,11 +28,14 @@ const (
 // ------------------------------------------------------------------------------------------------
 
 var queries *sqlc.Queries
+var nat *nats.Conn
 
 // ------------------------------------------------------------------------------------------------
 
 // registerHandlers registra todos los endpoints
-func RegisterHandlers(queryObject *sqlc.Queries) {
+func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
+
+	nat = natObject
 
 	// Se guarda el objeto de consultas como variable global
 	// para poder utilizarlo en todos los handlers que lo requieran.
@@ -50,6 +55,8 @@ func RegisterHandlers(queryObject *sqlc.Queries) {
 
 	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
 	//registrarHandlersAyuda()
+
+	registrarLogIn()
 
 	http.HandleFunc("/health", healthCheckHandler)
 }
@@ -121,6 +128,20 @@ func registrarIndexHTML() {
 		component := views.IndexPage()
 
 		// Se renderiza la componente.
+		component.Render(r.Context(), w)
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// Registro de LogIn
+// ------------------------------------------------------------------------------------------------
+
+func registrarLogIn() {
+
+	http.HandleFunc("/log-in", func(w http.ResponseWriter, r *http.Request) {
+
+		component := views.LoginPage("string")
+
 		component.Render(r.Context(), w)
 	})
 }

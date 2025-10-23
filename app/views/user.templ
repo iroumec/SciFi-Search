@@ -3,7 +3,8 @@ package views
 import sqlc "tpe/web/app/database"
 
 //Defino los datos que precisa de Usuario
-templ userList(users []sqlc.User) {
+templ userListContent(users []sqlc.User) {
+    <h1>Lista de Usuarios</h1>
     <ul>
         for _, user := range users {
             <li> { user.Name }  - 
@@ -17,13 +18,8 @@ templ userList(users []sqlc.User) {
     </ul>
 }
 
-//Pagina del Usuario
-templ UserPage(users []sqlc.User) {
-    <html>
-        <body>
-            <h1>Lista de Usuarios</h1>
-            @userList(users)
-            <h2> </h2>
-        </body>
-    </html>
+templ UserListPage(users []sqlc.User) {
+    @Layout("Listado de usuarios", func() templ.Component {
+        return userListContent(users)
+    })
 }

@@ -10,6 +10,8 @@ import (
 	"tpe/web/app/meili"
 	"tpe/web/app/utils"
 
+	"github.com/nats-io/nats.go"
+
 	sqlc "tpe/web/app/database"
 )
 
@@ -34,8 +36,16 @@ func main() {
 	// Se obtiene un objeto que nos permita realizar las queries.
 	queries := sqlc.New(db)
 
+	// Conexión a NATS.
+	var err error
+	nat, err := nats.Connect("nats://nats:4222")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nat.Close()
+
 	// Se registran los handlers.
-	handlers.RegisterHandlers(queries)
+	handlers.RegisterHandlers(queries, nat)
 
 	// Se incializan las aplicaciones de terceros.
 	initThirdPartyApplication(queries)
