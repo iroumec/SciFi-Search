@@ -4,22 +4,44 @@ import "tpe/web/app/utils"
 
 // Contenido de la página de search.
 templ searchResultsContent(query string, hits []map[string]any) {
-    <h1>Resultados de búsqueda para “{ query }”</h1>
-
-    if len(hits) == 0 {
+    <div class="search-container-grid">
+        <div class="filter-section">
+            Filtros
+        </div>
+        <div class="results-section">
+            <div class="results">
+                <h1>Resultados de búsqueda para “{ query }”</h1>
+                if len(hits) == 0 {
         <p>No se encontraron resultados.</p>
     } else {
-        for _, m := range hits {
-            <div class="result">
-                <h3>{ utils.ToString(m["Nombre"]) }</h3>
-                <div class="meta">
-                    { utils.ToString(m["Tipo"]) } — { utils.ToString(m["Gran area 1"]) } / { utils.ToString(m["Gran area 2"]) }
-                </div>
-                <p>{ utils.ToString(m["Descripcion"]) }</p>
-            </div>
+            <table>
+            <thead>
+                <tr>
+                    <th> Nombre </th>
+                    <th> Tipo </th>
+                    <th> Gran area 1 </th>
+                    <th> Gran area 2 </th>
+                    <th> Descripcion </th>
+                </tr>
+            </thead>
+            <tbody>
+                for _, m := range hits {
+                    <tr>
+                        <td>{ utils.ToString(m["Nombre"]) }</td>
+                        <td>{ utils.ToString(m["Tipo"]) }</td>
+                        <td>{ utils.ToString(m["Gran area 1"]) }</td>
+                        <td>{ utils.ToString(m["Gran area 2"]) }</td>
+                        <td>{ utils.ToString(m["Descripcion"]) }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
         }
-    }
+            </div>
+        </div>
+    </div>
 }
+
 
 templ SearchResultsPage(query string, hits []map[string]any) {
     @Layout("Resultados para " + query, func() templ.Component {

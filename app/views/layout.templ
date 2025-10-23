@@ -1,42 +1,66 @@
 package views
 
+//header unicamente para INDEX!! to-do: ver como variar las cabeceras
 templ Header() {
-    <header>
-        <div class="header-buttons">
-            <button class="header-button" onclick="window.location.href='/registrarse'">Sign-up</button>
-            <button class="header-button" onclick="window.location.href='/iniciar-sesion'">Log-in</button>
+    <header class="header">
+        <div class="header-buttons"> 
+            <button class="header-button" onclick="window.location.href='/sign-up'">Sign-up</button>
+            <button class="header-button" onclick="window.location.href='/log-in'">Log-in</button>
             <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
         </div>
     </header>
 }
 
+//header unicamente para RESULTADOS!! to-do: ver como variar las cabeceras
+/*templ Header() {
+    <header class="header">
+        <div class="header-left">
+            <a href="/">
+                <img src="static/img/logo_blanco.png" alt="Logo Scifi" id="logo_scifi_header">
+            </a>
+            <input type="text" id="query" placeholder="Search for SCIENCE!!!" />
+        </div>
+        
+        <div class="header-right">
+            <div class="header-buttons"> 
+            <button class="header-button" onclick="window.location.href='/sign-up'">Sign-up</button>
+            <button class="header-button" onclick="window.location.href='/log-in'">Log-in</button>
+            <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
+            </div>
+        </div>
+    </header>
+}*/
+
 templ Layout(title string, content func() templ.Component) {
     <!DOCTYPE html>
     <html lang="es">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>{ title }</title>
-        <link rel="stylesheet" href="/static/css/styles.css" />
-        <link rel="icon" type="image/png" href="/static/img/icono.png" />
-    </head>
+        <head>
+            <meta charset="UTF-8">
+            <title>{ title }</title>
+            <link rel="stylesheet" href="/static/css/styles.css" />
+            <link rel="icon" type="image/png" href="/static/img/icono.png" />
+        </head>
 
-    <body>
-        @Header()
-        <main>
-            @content()
-        </main>
-        @Footer()
-    </body>
+        <body>
+            <div class="contenedor-grid">
+                @Header()
+                <main class="item-grid content"> 
+                    @content() 
+                </main>
+                @Footer() 
+            </div>
+        </body>
 
     </html>
 }
 
 templ Footer() {
-    <footer>
-        <p>powered by</p>
-        <a href="https://www.meilisearch.com/">
-                <img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo_meilisearch">
-        </a>
+    <footer class="footer">
+        <p class="footer-text">powered by
+            <a href="https://www.meilisearch.com/" target="_blank">
+                <img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch">
+            </a>
+        </p>
     </footer>
 }

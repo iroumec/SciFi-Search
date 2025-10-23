@@ -6,30 +6,39 @@ package views
 
 // This component contains only the content for the index page.
 templ indexContent() {
-// Sección del buscador principal
-<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
-<input type="text" id="query" placeholder="Search for SCIENCE!!!" />
-<button id="search-btn">Search</button>
-<ul id="results"></ul>
+    // Sección del buscador principal
+    <img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
+    <input type="text" id="first-query" placeholder="Search for SCIENCE!!!" />
+    <!-- Cuando se posicione para escribir, debería mostrarse las ultimas búsquedas, si está iniciado sesion-->
 
-// El script se puede incluir directamente.
-// templ es lo suficientemente inteligente como para no procesar el JavaScript.
-<script>
-    document.getElementById("searchBtn").addEventListener("click", async () => {
-        const query = document.getElementById("query").value.trim();
-        if (!query) return;
 
-        // Redirige a la página de búsqueda con el query.
-        window.location.href = `/search?query=${encodeURIComponent(query)}`;
-    });
+    // El script se puede incluir directamente.
+    // templ es lo suficientemente inteligente como para no procesar el JavaScript.
+    <script>
+        /*document.getElementById("search-btn").addEventListener("click", async () => {
+            const query = document.getElementById("query").value.trim();
+            if (!query) return;
 
-    // Opcional: permitir buscar con la tecla Enter
-    document.getElementById("query").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            document.getElementById("searchBtn").click();
-        }
-    });
-</script>
+            // Redirige a la página de búsqueda con el query.
+            window.location.href = `/search?query=${encodeURIComponent(query)}`;
+        });
+
+        // Opcional: permitir buscar con la tecla Enter
+        document.getElementById("query").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                document.getElementById("search-btn").click();
+            }
+        });*/
+
+        const input = document.getElementById("first-query");
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const query = input.value.trim();
+                if (!query) return;
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        });
+    </script>
 }
 
 // Este es el componente principal que tu manejador HTTP debe renderizar.
