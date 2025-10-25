@@ -1,4 +1,8 @@
-package supertokens
+package handlers
+
+// ------------------------------------------------------------------------------------------------
+// TODO: a desarrollar en etapas posteriores.
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"encoding/json"
@@ -12,7 +16,9 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
-func Init() {
+// ------------------------------------------------------------------------------------------------
+
+func initializeSupertokens() {
 
 	// La condifuración de Supertokens obliga a que sean punteros.
 	websiteBaseURL := "http://localhost:8080"
@@ -37,7 +43,11 @@ func Init() {
 	}
 }
 
-func RegisterHandlers() {
+// ------------------------------------------------------------------------------------------------
+
+func initSupertokens() {
+
+	initializeSupertokens()
 
 	http.HandleFunc("/signup", signUp)
 
@@ -48,6 +58,8 @@ func RegisterHandlers() {
 	})
 
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func signUp(w http.ResponseWriter, r *http.Request) {
 
@@ -74,6 +86,8 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(resp)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func signIn(w http.ResponseWriter, r *http.Request) {
 

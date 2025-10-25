@@ -43,3 +43,20 @@ Solución, falta:
 El html te dice qué hay y cómo buscarlo. El CSS es la forma.
 
 el código 200 es el por defecto.
+
+El patrón estándar de un middleware en Go es recibir un handler y devolver otro.
+
+## Meili
+
+go get github.com/meilisearch/meilisearch-go
+
+go mod tidy # Para actualziar las dependnecias.
+
+sudo rm -rf /home/iroumec/Documents/University/"Programación Web"/TPE/meili_data
+
+## Supertokens
+
+go get github.com/supertokens/supertokens-golang
+go mod tidy
+
+PLANEAR LA APLICACIÓN PARA TENER CONCURRENCIA A FUTURO.

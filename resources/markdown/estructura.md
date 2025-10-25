@@ -7,8 +7,9 @@ La aplicación está distribuida en cuatro directorios principales.
 Contiene todo el código Go de la aplicación. Dentro de él, pueden hallarse tres subdirectorios:
 
 - `database`: contiene todos los archivos generados por SQLC. Estos permiten interactuar con la base de datos de forma sencilla desde el código Go.
-- `handlers`: contiene todos los _handlers_ definidos para servir las rutas de la aplicación, tales como `/registrarse`, `/noticias`, y demás.
-- `utils`: contiene funcionalidades adicionales, tales como la compresión de archivos y la validación de las constancias de alumnos.
+- `handlers`: contiene todos los _handlers_ definidos para servir las rutas de la aplicación, tales como `/users`, `/search`, y demás.
+- `utils`: contiene funcionalidades adicionales, tales como la compresión de archivos, _middlewares_ de _logging_, etc.
+- `views`: contiene todos los códigos `.templ`, los cuales permiten servir páginas dinámicamente a partir de renderizado del lado del server.
 
 ## `database`
 
@@ -16,11 +17,7 @@ Adicionalmente al archivo `sqlc.yaml`, el cual permite generar el código Go men
 
 ## `static`
 
-Contiene todos los archivos que se sirven de forma estática en la aplicación. Esto incluye: imágenes, archivos CSS, archivos PDF y código JavaScript.
-
-## `template`
-
-Contiene todos los archivos `.html` servidos en la aplicación. Estos están modularizados de forma de evitar la redundancia y, agrupados de acuerdo al propósito que sirven.
+Contiene todos los archivos que se sirven de forma estática en la aplicación. Esto incluye: imágenes, archivos CSS, PDF y HTML y código JavaScript.
 
 ## `resources`
 

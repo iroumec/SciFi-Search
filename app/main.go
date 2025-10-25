@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"tpe/web/app/handlers"
-	"tpe/web/app/meili"
 	"tpe/web/app/utils"
 
 	"github.com/nats-io/nats.go"
@@ -39,9 +38,6 @@ func main() {
 
 	// Se registran los handlers.
 	handlers.RegisterHandlers(queries, nat)
-
-	// Se incializan las aplicaciones de terceros.
-	initThirdPartyApplication(queries)
 
 	// Se informa que el servidor está corriendo.
 	log.Printf("Server running...")
@@ -81,11 +77,4 @@ func openNATConnection() *nats.Conn {
 	}
 
 	return nat
-}
-
-// -----------------------------------------------------------------------------------------------
-
-func initThirdPartyApplication(queries *sqlc.Queries) {
-	meili.Init(queries)
-	//supertokens.Init()
 }

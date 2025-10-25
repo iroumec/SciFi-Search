@@ -1,5 +1,7 @@
 ﻿package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"net/http"
 	"slices"
@@ -33,10 +35,9 @@ var nat *nats.Conn
 // registerHandlers registra todos los endpoints
 func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 
+	// Se guarda el NAT y el objeto de consultas para que puedan ser utilizados
+	// en todos los handlers que lo requierean.
 	nat = natObject
-
-	// Se guarda el objeto de consultas como variable global
-	// para poder utilizarlo en todos los handlers que lo requieran.
 	queries = queryObject
 
 	// Se registra el hander para los archivos estáticos.
@@ -51,11 +52,13 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes al perfil de usuario.
 	registrarHandlersPerfiles()
 
-	// Se registran los handlers correspondientes al área de ayuda/soporte/información.
-	//registrarHandlersAyuda()
-
+	// Se registra el handler correspondiente al logIn.
 	registrarLogIn()
 
+	// Se registran los handlers correspondientes a la búsqueda.
+	registerSearchHandlers()
+
+	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }
 

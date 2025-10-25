@@ -1,4 +1,4 @@
-package meili
+package handlers
 
 import (
 	"encoding/json"
@@ -20,10 +20,6 @@ var client meilisearch.ServiceManager
 
 // ------------------------------------------------------------------------------------------------
 
-var queries *sqlc.Queries
-
-// ------------------------------------------------------------------------------------------------
-
 const (
 	dataPath = "./resources/planillas/fundingRecords.json"
 )
@@ -36,9 +32,7 @@ type SearchResponse struct {
 
 // ------------------------------------------------------------------------------------------------
 
-func Init(q *sqlc.Queries) {
-
-	queries = q
+func registerSearchHandlers() {
 
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
@@ -101,6 +95,7 @@ func indexarDatos() {
 // ------------------------------------------------------------------------------------------------
 
 func handleSearch(w http.ResponseWriter, r *http.Request) {
+
 	// Obtención de la query
 	query := r.URL.Query().Get("query")
 	if query == "" {
@@ -132,11 +127,11 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
-	// guardar histórico
+	// Guardar histórico.
 	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
 	queries.CreateHistoricSearch(r.Context(), params)
 
-	// pasar maps al templ
+	// Pasar maps al templ.
 	component := views.SearchResultsPage(query, hitsMaps)
 	component.Render(r.Context(), w)
 

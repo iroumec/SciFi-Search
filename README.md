@@ -9,6 +9,7 @@ Aplicación web para búsqueda de financiamiento de ciencia.
 - [¿Cómo se estructura el proyecto?](resources/markdown/estructura.md)
 - [¿Qué necesito para ejecutar la aplicación?](resources/markdown/requisitos.md)
 - [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md)
+- [Uso de la API](resources/markdown/api.md)
 
 ## Créditos
 
