@@ -2,8 +2,6 @@
 # Makefile para levantar un entorno Docker, ejecutar pruebas Hurl y limpiar.
 # ==============================================================================
 
-# La opción `-s` silencia los mensajes de Make.
-
 # --- Variables de Configuración ---
 HURL_VERSION ?= 7.0.0
 INSTALL_DIR ?= /tmp
