@@ -56,13 +56,13 @@ run-tests: is-running ## Ejecuta únicamente las pruebas Hurl (asume que el ento
 	@echo
 	@PATH=$(HURL_BIN_DIR):$$PATH hurl --test ${HURL_FILE}
 
-down: ## Detiene y elimina los contenedores, redes y volúmenes.
+down: ## Detiene los contenedores y redes, sin eliminar volúmenes.
 	@echo "Deteniendo el servidor..."
-	@docker compose down
-	@docker compose -f docker-compose.yml down -v
+	@ #Se detiene la versión de producción. La versión no sobrescritra.
+	@docker compose -f docker-compose.yml down
 
 clean: down ## Elimina la imagen y los volúmenes.
-	@docker compose down -v --rmi all
+	@docker compose -f docker-compose.yml down -v --rmi all
 	@docker volume prune -f
 
 is-running: ## Verifica que el servidor esté corriendo.

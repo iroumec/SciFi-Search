@@ -10,6 +10,7 @@ services: # Producción
       - "${DB_PORT}:${DB_PORT}"
     volumes:
       - ./database/schema:/docker-entrypoint-initdb.d
+      - tpe-db-data:/var/lib/postgresql/data # Volumen nombrado para persistencia.
     restart: always
 
   # Aplicación
@@ -64,3 +65,6 @@ services: # Producción
   #    SUPERTOKENS_PORT: "${SUPERTOKENS_PORT}"
   #  ports:
   #    - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"
+
+volumes:
+  tpe-db-data:
