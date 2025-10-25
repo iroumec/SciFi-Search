@@ -1,13 +1,11 @@
-/* agrego la URL de la fuente*/
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap');
-
-
 /* --------------- Constantes --------------- */
 :root {
     --scifi: rgba(0, 87, 133);
     --scifi30: rgba(0, 87, 133, 0.3);
+    --white80: rgba(255,255,255,0.8);
     --background: white;
 }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap');
 
 /* --------------- Generales --------------- */
 body {
@@ -42,8 +40,8 @@ to-do: ver como variar los headers*/
     align-items: center; /* Centrar verticalmente */
     padding: 0px 10px; /* Espacios a los costados */
 
-    background-color: #b3e5fc;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #b3e5fc;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .header-buttons {
@@ -78,8 +76,8 @@ to-do: ver como variar los headers*/
     justify-content: center; /* Centrar horizontalmente */
     align-items: center; /* Centrar verticalmente */
 
-    background-color: #c49b5d;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #c49b5d;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .footer-text {
@@ -106,49 +104,169 @@ to-do: ver como variar los headers*/
         "inicio inicio"
         "load-user user-list";
     
-    background-color: #a56e5d;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #a56e5d;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .inicio {
-    grid-area: inicio;
+    grid-area: inicio; 
+    
+    display: flex;
+    justify-content: center;
     align-items: center;
-    justify-items: center;
 
-    background-color: #c2c058;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #c2c058;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.inicio .centered-container {
+    height: 50%;
+    width: 50%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 70% 30%;
+    grid-template-areas: 
+        "centered-container-up70"
+        "centered-container-down30";
+}
+
+.inicio-image-container {
+    grid-area: centered-container-up70;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /*background-color: #33aada;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.inicio-query-container {
+    grid-area: centered-container-down30;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /*background-color: #e96ea8;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .load-user {
     grid-area: load-user;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    background-color: #a7fa3a;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #51b418;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.load-user .centered-container {
+    height: 80%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--scifi30);
+    border: 20px solid var(--white80);
+    border-radius: 15px;
+
+    /*background-color: #18b473;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.load-user #signup-form {
+    height: 65%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 40% 40% 20%;
+    grid-template-areas: 
+        "centered-container-up45"
+        "centered-container-middle45"
+        "centered-container-down10";
+
+    border-radius: inherit;
+}
+
+.form-name-container {
+    grid-area: centered-container-up45;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: inherit;
+
+    /*background-color: #b41818;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.form-surname-container {
+    grid-area: centered-container-middle45;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: inherit;
+
+    /*background-color: #b8ac10;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.form-submit-container {
+    grid-area: centered-container-down10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: inherit;
+
+    /*background-color: #5eb418;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .user-list {
     grid-area: user-list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    background-color: #dd8585;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #dd8585;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.user-list .centered-container {
+    height: 80%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--white80);
+    border-radius: 20px;
+    border: 0px;
+
+    /*background-color: #18b473;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.delete-button {
+    background-color: var(--scifi);   /* color del boton */
+    color: white;             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.2rem 0.5rem;       /* espacio interno */
+    border-radius: 2px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold; /* Efecto de la letra */
 }
 
 #logo_scifi {
-    height: 150px;
-    text-align: center;
-    /*position: relative;
-    left: 50%;
-    top: 40%;
-    transform: translate(-50%,-50%);*/
+    height: 100%;
 }
 
 #first-query {
-    height: 40px;
-    width: 700px;
-    /*position: relative;
-    left: 50%;
-    top: 52%;
-    transform: translate(-50%,-50%);*/
+    height: 70%;
+    width: 75%;
 
     color: black;
 
@@ -165,6 +283,44 @@ to-do: ver como variar los headers*/
 
 #first-query:focus { /* Efecto de borde al entrar al input */
     border: 0.5px black;
+}
+
+#name {
+    height: 60%;
+    width: 75%;
+
+    color: black;
+
+    border-radius: 20px;
+    border: 0px;
+
+    background-color: var(--scifi30);
+
+    padding-left: 15px;
+}
+
+#surname {
+    height: 60%;
+    width: 75%;
+
+    color: black;
+
+    border-radius: 20px; 
+    border: 0px;
+
+    background-color: var(--scifi30);
+
+    padding-left: 15px;
+}
+
+.submit-button {
+    background-color: var(--scifi);   /* color del boton */
+    color: white;             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.5rem 1rem;       /* espacio interno */
+    border-radius: 5px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold; /* Efecto de la letra */
 }
 
 /* --------------- Search --------------- */
@@ -195,4 +351,90 @@ to-do: ver como variar los headers*/
 
     /*background-color: #5dd859;
     border: 1px solid rgb(255, 0, 0);*/
+}
+
+/* Search header */
+.search-header {
+    grid-area: header;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "header-left header-right";
+
+    background-color: var(--scifi30);
+
+    /*background-color: #c959d8;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.search-header .header-right {
+    grid-area: header-right;
+
+    display: flex;
+    justify-content: flex-end; /* Ubicar a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    padding: 0px 10px; /* Espacios a los costados */
+
+    /*background-color: #b3e5fc;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.search-header .header-left {
+    grid-area: header-left;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px 10px;
+    gap: 20px;
+
+    /*background-color: #b5fcb3;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.search-header #logo_scifi_header {
+    height: 55px;
+    width: auto;
+    cursor: pointer;
+}
+
+.search-header #query {
+    height: 40px;
+    width: 700px;
+
+    color: black;
+
+    border-radius: 32px; /* Redondeo del input de texto */
+    border: 0px;
+
+    background-color: var(--scifi30);
+
+    background-image: url('../img/icono_busqueda_blanco.svg');
+    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
+    background-position: 10px 10px; /*Ubica la imagen centrada*/
+    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
+
+}
+
+.search-header .header-buttons {
+    display: flex;
+    gap: 10px; /* Espacio entre botones */
+
+    /*border: 1px solid rgb(255, 0, 0);*/
+}
+
+.search-header .header-button {
+    background-color: var(--scifi);   /* color del boton */
+    color: white;             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.5rem 1rem;       /* espacio interno */
+    border-radius: 5px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold; /* Efecto de la letra */
+    transition: background 0.2s; /* Efecto */
+}
+
+.search-header .header-button:hover {
+    background-color: white;   
+    color: var(--scifi);                
 }

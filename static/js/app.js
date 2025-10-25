@@ -112,9 +112,20 @@ function enviarUsuario(event) {
 }
 
 // ======================================================================================
+// Búsqueda
+// ======================================================================================
+const input = document.getElementById("first-query");
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const query = input.value.trim();
+                if (!query) return;
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        });
+
+// ======================================================================================
 // Inicialización
 // ======================================================================================
-// --- Inicialización ---
 document.addEventListener('DOMContentLoaded', () => {
     obtenerEntidades();
     document.getElementById('signup-form').addEventListener('submit', enviarUsuario);

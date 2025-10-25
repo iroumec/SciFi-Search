@@ -13,8 +13,8 @@ package views
 }*/
 
 //header unicamente para RESULTADOS!! to-do: ver como variar las cabeceras
-/*templ Header() {
-    <header class="header">
+templ Header() {
+    <header class="search-header">
         <div class="header-left">
             <a href="/">
                 <img src="static/img/logo_blanco.png" alt="Logo Scifi" id="logo_scifi_header">
@@ -30,10 +30,10 @@ package views
             </div>
         </div>
     </header>
-}*/
+}
 
 //header para login y signup
-templ Header() {
+/*templ Header() {
     <header class="header">
         <div class="header-left"> 
             <a href="/" title="Volver a la página principal">
@@ -43,7 +43,7 @@ templ Header() {
             </a>
         </div>
         </header>
-}
+}*/
 
 templ Layout(title string, content func() templ.Component) {
     <!DOCTYPE html>

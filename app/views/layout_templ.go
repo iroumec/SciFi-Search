@@ -20,27 +20,7 @@ import templruntime "github.com/a-h/templ/runtime"
     </header>
 }*/
 
-//header unicamente para RESULTADOS!! to-do: ver como variar las cabeceras
-/*templ Header() {
-    <header class="header">
-        <div class="header-left">
-            <a href="/">
-                <img src="static/img/logo_blanco.png" alt="Logo Scifi" id="logo_scifi_header">
-            </a>
-            <input type="text" id="query" placeholder="Search for SCIENCE!!!" />
-        </div>
-
-        <div class="header-right">
-            <div class="header-buttons">
-            <button class="header-button" onclick="window.location.href='/sign-up'">Sign-up</button>
-            <button class="header-button" onclick="window.location.href='/log-in'">Log-in</button>
-            <!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
-            </div>
-        </div>
-    </header>
-}*/
-
-// header para login y signup
+// header unicamente para RESULTADOS!! to-do: ver como variar las cabeceras
 func Header() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -62,13 +42,26 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"header\"><div class=\"header-left\"><a href=\"/\" title=\"Volver a la página principal\"><img src=\"/static/img/logo_negro.png\" alt=\"Logo Scifi - Ir a Inicio\" class=\"home-logo-button\"></a></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"search-header\"><div class=\"header-left\"><a href=\"/\"><img src=\"static/img/logo_blanco.png\" alt=\"Logo Scifi\" id=\"logo_scifi_header\"></a> <input type=\"text\" id=\"query\" placeholder=\"Search for SCIENCE!!!\"></div><div class=\"header-right\"><div class=\"header-buttons\"><button class=\"header-button\" onclick=\"window.location.href='/sign-up'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/log-in'\">Log-in</button><!--Boton de Desplegar menu, solo cuando ya está iniciado sesion--></div></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
 }
+
+//header para login y signup
+/*templ Header() {
+    <header class="header">
+        <div class="header-left">
+            <a href="/" title="Volver a la página principal">
+                <img src="/static/img/logo_negro.png"
+                    alt="Logo Scifi - Ir a Inicio"
+                    class="home-logo-button">
+            </a>
+        </div>
+        </header>
+}*/
 
 func Layout(title string, content func() templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

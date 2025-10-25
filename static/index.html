@@ -17,23 +17,36 @@
             </header>
             <main class="index-content">
                 <div class="inicio">
-                    <img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
-                    <input type="text" id="first-query" placeholder="Search for SCIENCE!!!" />
+                    <div class="centered-container"> 
+                        <div class="inicio-image-container">
+                            <img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
+                        </div>
+                        <div class="inicio-query-container">
+                            <input type="text" id="first-query" placeholder="Search for SCIENCE!!!" />
+                        </div>
+                    </div>
                 </div>
                 <div class="load-user">
-                    <form id="signup-form">
-                        <div class="row">
-                            <input type="text" id="name" placeholder="Name" name="name" required="true" />
-                            <input type="text" id="surname" placeholder="Surname" name="surname" required="true" />
-                        </div>
-                        <button class="submit-button" type="submit">Submit</button>
-                    </form>
+                    <div class="centered-container">
+                            <form id="signup-form">
+                                <div class="form-name-container">
+                                    <input type="text" id="name" placeholder="Name" name="name" required="true" />
+                                </div>
+                                <div class="form-surname-container">
+                                    <input type="text" id="surname" placeholder="Surname" name="surname" required="true" />
+                                </div>
+                                <div class="form-submit-container">
+                                    <button class="submit-button" type="submit">Submit</button>
+                                </div>
+                            </form>
+                    </div>
                 </div>
                 <div class="user-list">
-                    <h1>Lista de Usuarios</h1>
-                    <ul id="user-list">
-                        <!-- Aquí se inyectarán los usuarios -->
-                    </ul>
+                    <div class="centered-container">
+                        <ul id="user-list">
+                            <!-- Aquí se inyectarán los usuarios -->
+                        </ul>
+                    </div>
                 </div>
             </main>
             <footer class="footer">
