@@ -1,41 +1,70 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"database/sql"
 	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 	sqlc "tpe/web/app/database"
-	"tpe/web/app/utils"
 )
+
+// ------------------------------------------------------------------------------------------------
 
 func registerAPIHandlers() {
 	http.HandleFunc("/api/users", userHandlerAPI)
+	http.HandleFunc("/api/users/", userWithIDHandlerAPI)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func userHandlerAPI(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		if utils.HasGETRequestParameters(r) {
-			showUserAPI(w, r)
-		} else {
-			listUsersAPI(w, r)
-		}
+		listUsersAPI(w, r)
 	case http.MethodPost:
 		addUserAPI(w, r)
-	case http.MethodPut:
-		updateUserAPI(w, r)
-	case http.MethodDelete:
-		deleteUserAPI(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 }
 
-// addUserAPI crea un usuario y devuelve el nuevo objeto como JSON.
+// ------------------------------------------------------------------------------------------------
+
+func userWithIDHandlerAPI(w http.ResponseWriter, r *http.Request) {
+
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/users/")
+	idInt, err := strconv.Atoi(idStr)
+	if err != nil || idInt <= 0 {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	id := int32(idInt)
+
+	switch r.Method {
+	case http.MethodGet:
+		showUserAPI(w, r, id)
+	case http.MethodPut:
+		updateUserAPI(w, r, id)
+	case http.MethodDelete:
+		deleteUserAPI(w, r, id)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+// Creación de Usuario
+// ------------------------------------------------------------------------------------------------
+
+// Crea un usuario y devuelve el nuevo objeto como JSON.
 func addUserAPI(w http.ResponseWriter, r *http.Request) {
 
 	newUser := addUserToDatabase(w, r)
@@ -53,15 +82,13 @@ func addUserAPI(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newUser)
 }
 
-func deleteUserAPI(w http.ResponseWriter, r *http.Request) {
+// ------------------------------------------------------------------------------------------------
+// Eliminación de Usuario
+// ------------------------------------------------------------------------------------------------
 
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+func deleteUserAPI(w http.ResponseWriter, r *http.Request, id int32) {
 
-	err = queries.DeleteUser(r.Context(), id)
+	err := queries.DeleteUser(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// Error 404: El usuario no existe.
@@ -77,13 +104,11 @@ func deleteUserAPI(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func showUserAPI(w http.ResponseWriter, r *http.Request) {
+// ------------------------------------------------------------------------------------------------
+// Muestra de Usuario
+// ------------------------------------------------------------------------------------------------
 
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+func showUserAPI(w http.ResponseWriter, r *http.Request, id int32) {
 
 	user, err := queries.GetUserByID(r.Context(), id)
 	if err != nil {
@@ -102,15 +127,12 @@ func showUserAPI(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func updateUserAPI(w http.ResponseWriter, r *http.Request) {
+// ------------------------------------------------------------------------------------------------
+// Actualización de Usuario
+// ------------------------------------------------------------------------------------------------
 
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+func updateUserAPI(w http.ResponseWriter, r *http.Request, id int32) {
 
-	// --- 1. Decodificar y Validar (Sin cambios) ---
 	var payload sqlc.User
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
@@ -122,7 +144,6 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// --- 2. Publicar Evento (Sin cambios) ---
 	event := map[string]interface{}{
 		"type": "user_created",
 		"user": payload,
@@ -140,7 +161,7 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 		Surname: payload.Surname,
 	}
 
-	err = queries.UpdateUser(r.Context(), params)
+	err := queries.UpdateUser(r.Context(), params)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// Error 404: El usuario no existe.
@@ -154,7 +175,10 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// listUsersAPI devuelve la lista de usuarios como un array JSON.
+// ------------------------------------------------------------------------------------------------
+// Listado de Usuarios
+// ------------------------------------------------------------------------------------------------
+
 func listUsersAPI(w http.ResponseWriter, r *http.Request) {
 	users, err := queries.ListUsers(r.Context())
 	if err != nil {
@@ -163,6 +187,12 @@ func listUsersAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Devuelve JSON
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	if err := json.NewEncoder(w).Encode(users); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
+
+// ------------------------------------------------------------------------------------------------

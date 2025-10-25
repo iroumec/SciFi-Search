@@ -35,7 +35,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		if utils.HasGETRequestParameters(r) {
-			showUserAPI(w, r)
+			showUser(w, r)
 		} else {
 			listUsers(w, r)
 		}
