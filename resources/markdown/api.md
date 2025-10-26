@@ -22,7 +22,7 @@ curl -i -X PUT -H "Content-Type: application/json" -d '{"name": "<name>", "surna
 ## Eliminación de un Usuario
 
 ```sh
-curl -i -X DELETE "http://localhost:8080/api/users/=<id>"
+curl -i -X DELETE "http://localhost:8080/api/users/<id>"
 ```
 
 ## Obtener los Datos de un Usuario
