@@ -10,6 +10,7 @@ Aplicación web para búsqueda de financiamiento de ciencia.
 - [¿Qué necesito para ejecutar la aplicación?](resources/markdown/requisitos.md)
 - [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md)
 - [Uso de la API](resources/markdown/api.md)
+- [TP3 y TP4 - Instrucciones de Evaluación](resources/markdown/instructions.md)
 
 ## Créditos
 
