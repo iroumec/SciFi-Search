@@ -1,144 +1,142 @@
 // ======================================================================================
+// Configuración Global
+// ======================================================================================
+
+const API_BASE = 'http://localhost:8080/api';
+const USERS_ENDPOINT = `${API_BASE}/users`;
+
+// ======================================================================================
+// Funciones Utilitarias
+// ======================================================================================
+
+async function apiFetch(url, options = {}) {
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(`Error HTTP ${response.status}`);
+    // Si la respuesta tiene contenido JSON, se parsea; si no, se devuelve null.
+    return response.status !== 204 ? response.json() : null;
+}
+
+// --------------------------------------------------------------------------------------
+
+function mostrarError(mensaje, destino = 'user-list') {
+    console.error(mensaje);
+    const contenedor = document.getElementById(destino);
+    if (contenedor) contenedor.innerHTML = `<li>${mensaje}</li>`;
+}
+
+// ======================================================================================
 // Obtención de Usuarios (GET)
 // ======================================================================================
 
-function obtenerEntidades() {
-    const endpoint = 'http://localhost:8080/api/users';
+async function obtenerEntidades() {
+    const lista = document.getElementById('user-list');
 
-    fetch(endpoint)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error HTTP! Estado: ${response.status}`);
+    try {
+        const data = await apiFetch(USERS_ENDPOINT);
+        console.log('Datos recibidos de la API:', data);
+
+        lista.innerHTML = ''; // Se vacía la lista.
+
+        if (Array.isArray(data) && data.length > 0) {
+            for (const { name, surname, user_id } of data) {
+                const li = document.createElement('li');
+                li.textContent = `${name} ${surname} `;
+
+                // Creación del botón de eliminar.
+                const btnEliminar = document.createElement('button');
+                btnEliminar.textContent = 'Eliminar';
+                btnEliminar.classList.add('delete-button');
+                btnEliminar.dataset.id = user_id; // Guardado del ID.
+
+                li.appendChild(btnEliminar);
+                lista.appendChild(li);
             }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Datos recibidos de la API:', data);
+        } else {
+            lista.innerHTML = '<li>No hay usuarios registrados.</li>';
+        }
 
-            const lista = document.getElementById('user-list');
-            lista.innerHTML = ''; // Se limpia la lista previa.
-
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(usuario => {
-                    const li = document.createElement('li');
-                    li.textContent = `${usuario.name} ${usuario.surname} `;
-
-                    // Creación del botón de eliminar.
-                    const btnEliminar = document.createElement('button');
-                    btnEliminar.textContent = 'Eliminar';
-                    btnEliminar.classList.add('delete-button');
-                    btnEliminar.dataset.id = usuario.user_id;  // Se guarda el id.
-                    li.appendChild(btnEliminar);
-
-                    li.appendChild(btnEliminar);
-                    lista.appendChild(li);
-                });
-            } else {
-                lista.innerHTML = '<li>No hay usuarios registrados.</li>';
-            }
-        })
-        .catch(error => {
-            console.error('Error en la petición Fetch:', error);
-            const lista = document.getElementById('user-list');
-            lista.innerHTML = '<li>Error al cargar los usuarios.</li>';
-        });
+    } catch (error) {
+        mostrarError('Error al cargar los usuarios.');
+    }
 }
 
 // ======================================================================================
 // Eliminación de Usuario (DELETE)
 // ======================================================================================
 
-function eliminarUsuario(id) {
-    const endpoint = `http://localhost:8080/api/users/${id}`;
-
-    if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-        return;
-    }
-
-    fetch(endpoint, {
-        method: 'DELETE'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP! Estado: ${response.status}`);
-        }
+async function eliminarUsuario(id) {
+    try {
+        await apiFetch(`${USERS_ENDPOINT}/${id}`, { method: 'DELETE' });
         console.log(`Usuario ${id} eliminado correctamente`);
-        obtenerEntidades(); // Actualiza la lista
-    })
-    .catch(error => {
+        await obtenerEntidades();
+    } catch (error) {
         console.error('Error al eliminar usuario:', error);
         alert('Hubo un problema al eliminar el usuario.');
-    });
+    }
 }
 
 // ======================================================================================
 // Envío de Nuevo Usuario (POST)
 // ======================================================================================
 
-function enviarUsuario(event) {
-    event.preventDefault(); // Se evita que el formulario recargue la página.
+async function enviarUsuario(event) {
+    event.preventDefault();
 
-    const endpoint = 'http://localhost:8080/api/users';
-    const name = document.getElementById('name').value.trim();
-    const surname = document.getElementById('surname').value.trim();
+    const form = event.target;
+    const { name, surname } = Object.fromEntries(new FormData(form));
 
-    if (!name || !surname) {
+    if (!name.trim() || !surname.trim()) {
         alert('Por favor, completa ambos campos.');
         return;
     }
 
-    const nuevoUsuario = { name, surname };
+    try {
+        const nuevoUsuario = { name: name.trim(), surname: surname.trim() };
+        const data = await apiFetch(USERS_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(nuevoUsuario)
+        });
 
-    fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(nuevoUsuario)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Error HTTP! Estado: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
         console.log('Usuario agregado exitosamente:', data);
-        document.getElementById('signup-form').reset();
-        obtenerEntidades();
-    })
-    .catch(error => {
+        form.reset();
+        await obtenerEntidades();
+    } catch (error) {
         console.error('Error al enviar usuario:', error);
         alert('Hubo un problema al enviar el usuario.');
-    });
+    }
 }
 
 // ======================================================================================
 // Búsqueda
 // ======================================================================================
-const input = document.getElementById("first-query");
-        input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                const query = input.value.trim();
-                if (!query) return;
-                window.location.href = `/search?query=${encodeURIComponent(query)}`;
-            }
-        });
+
+const input = document.getElementById('first-query');
+input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const query = input.value.trim();
+        if (!query) return;
+        window.location.href = `/search?query=${encodeURIComponent(query)}`;
+    }
+});
 
 // ======================================================================================
 // Inicialización
 // ======================================================================================
-document.addEventListener('DOMContentLoaded', () => {
-    obtenerEntidades();
-    document.getElementById('signup-form').addEventListener('submit', enviarUsuario);
 
-    // Delegación.
-    document.getElementById('user-list').addEventListener('click', (event) => {
-        if (event.target.classList.contains('delete-button')) {
-            const id = event.target.dataset.id;
-            if (!id) return;
-            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-                eliminarUsuario(id);
+(async () => {
+    await obtenerEntidades();
+
+    document.getElementById('signup-form')
+        .addEventListener('submit', enviarUsuario);
+
+    document.getElementById('user-list')
+        .addEventListener('click', async (e) => {
+            if (e.target.matches('.delete-button')) {
+                const id = e.target.dataset.id;
+                if (id && confirm('¿Está seguro de que desea eliminar este usuario?')) {
+                    await eliminarUsuario(id);
+                }
             }
-        }
-    });
-});
-
+        });
+})();
