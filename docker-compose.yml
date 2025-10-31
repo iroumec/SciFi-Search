@@ -2,6 +2,8 @@ services: # Producción
   # Base de Datos PostgreSQL
   db:
     image: postgres:15
+    container_name: scifi-search-db
+    # TODO: agregar healthcheck luego.
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

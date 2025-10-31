@@ -34,7 +34,7 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@# -s: Modo silencioso (no muestra la barra de progreso).
 	
 	@echo "Esperando a que la base de datos esté lista..."
-	@until docker exec scifi-search-db-1 pg_isready -U postgres > /dev/null 2>&1; do \
+	@until docker exec scifi-search-db pg_isready -U postgres > /dev/null 2>&1; do \
 		sleep 1; \
 	done
 	@until curl -f -s http://localhost:8080/health > /dev/null; do \
