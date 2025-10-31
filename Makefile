@@ -32,11 +32,16 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@# 'until' sigue intentando HASTA QUE el comando curl tenga éxito (salga con 0).
 	@# -f: Falla en silencio (no muestra HTML) si hay un error HTTP (como 404 o 500).
 	@# -s: Modo silencioso (no muestra la barra de progreso).
+	
+	@echo "Esperando a que la base de datos esté lista..."
+	@until docker exec scifi-search-db-1 pg_isready -U postgres > /dev/null 2>&1; do \
+		sleep 1; \
+	done
 	@until curl -f -s http://localhost:8080/health > /dev/null; do \
 		sleep 1; \
 	done
 
-	@echo "Servidor corriendo en http://localhost:8000."
+	@echo "Servidor corriendo en http://localhost:8080."
 	@echo
 
 development: create-env ## Construye y levanta los contenedores en modo desarrollador (con air activo).
