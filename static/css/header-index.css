@@ -1,0 +1,36 @@
+/*header para el index
+to-do: ver como variar los headers*/
+.header {
+    grid-area: header;
+
+    display: flex;
+    justify-content: flex-end; /* Ubicar a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    padding: 0px 10px; /* Espacios a los costados */
+
+    /*background-color: #b3e5fc;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px; /* Espacio entre botones */
+
+    /*border: 1px solid rgb(255, 0, 0);*/
+}
+
+.header-button {
+    background-color: var(--scifi);   /* color del boton */
+    color: white;             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.5rem 1rem;       /* espacio interno */
+    border-radius: 5px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold; /* Efecto de la letra */
+    transition: background 0.2s; /* Efecto */
+}
+
+.header-button:hover {
+    background-color: white;   
+    color: var(--scifi);                
+}
