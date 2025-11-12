@@ -108,7 +108,31 @@ func Layout(title string, content func() templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"index-content\"><div class=\"inicio\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"load-user\"><div class=\"centered-container\"><form id=\"signup-form\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required=\"true\"></div><div class=\"form-surname-container\"><input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required=\"true\"></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div></main></div><script src=\"js/app.js\"></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"index-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = firstQuery().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = userForm().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = userList().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Footer().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><script src=\"js/app.js\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
