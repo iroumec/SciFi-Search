@@ -76,6 +76,9 @@ is-running: ## Verifica que el servidor esté corriendo.
 create-env: ## Crea un archivo `.env` con valores por defecto para las variables de ambiente.
 	@cp resources/.env.example .env
 
+delete-meili-data: ## Elimina los datos almacenados por Meilisearch. Útil ante mensajes de incompatibilidad de la versión de la base de datos y el engine.
+	@sudo rm -rf meili_data
+
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'

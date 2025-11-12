@@ -58,6 +58,8 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes a la búsqueda.
 	registerSearchHandlers()
 
+	registerIndexHTML()
+
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }
@@ -71,15 +73,13 @@ func registrarHandlerStatic() {
 
 	// Se sirven archivos estáticos en /static/, comprimidos en gzip si el navegador así lo acepta.
 	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
-
-	http.Handle("/", fileServer)
 }
 
 // ------------------------------------------------------------------------------------------------
 // Registro de Index
 // ------------------------------------------------------------------------------------------------
 
-func registrarIndexHTML() {
+func registerIndexHTML() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 

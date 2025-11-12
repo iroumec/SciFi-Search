@@ -29,7 +29,7 @@ func initializeSupertokens() {
 			APIKey:        os.Getenv("SUPERTOKENS_API_KEY"),
 		},
 		AppInfo: supertokens.AppInfo{
-			AppName:         "TPE App",
+			AppName:         "scifi-search",
 			APIDomain:       websiteBaseURL,
 			WebsiteBasePath: &websiteBaseURL,
 		},
@@ -55,6 +55,17 @@ func initSupertokens() {
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
+	})
+
+	http.HandleFunc("/auth/sessioninfo", func(w http.ResponseWriter, r *http.Request) {
+		sessionContainer := session.GetSessionFromRequestContext(r.Context())
+		if sessionContainer == nil {
+			http.Error(w, "No session", http.StatusUnauthorized)
+			return
+		}
+
+		userID := sessionContainer.GetUserID()
+		fmt.Fprintf(w, "Session activa. Usuario: %s", userID)
 	})
 
 }
