@@ -29,7 +29,7 @@ func firstQuery() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"inicio\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"inicio\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><script>\n        const input = document.getElementById(\"first-query\");\n        input.addEventListener(\"keypress\", (e) => {\n            if (e.key === \"Enter\") {\n                const query = input.value.trim();\n                if (!query) return;\n                window.location.href = `/search?query=${encodeURIComponent(query)}`;\n            }\n        });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

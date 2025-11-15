@@ -44,7 +44,7 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	registrarHandlerStatic()
 
 	// Se registra el handler para el index.html.
-	//registrarIndexHTML()
+	registerIndexHTML()
 
 	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
 	registrarHandlersUsuarios()
@@ -53,13 +53,11 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	registrarHandlersPerfiles()
 
 	// Se registra el handler correspondiente al logIn.
-	registrarLogIn()
+	registerLogIn()
 
 	// Se registran los handlers correspondientes a la búsqueda.
 	registerSearchHandlers()
-
-	registerIndexHTML()
-
+	
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }
@@ -83,8 +81,10 @@ func registerIndexHTML() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
+		list, _ := getListOfUsers(w, r)
+
 		// Se crea una instancia de la componente de página.
-		component := views.IndexPage()
+		component := views.IndexPage(list)
 
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)
@@ -96,7 +96,7 @@ func registerIndexHTML() {
 // Registro de LogIn
 // ------------------------------------------------------------------------------------------------
 
-func registrarLogIn() {
+func registerLogIn() {
 
 	http.HandleFunc("/log-in", func(w http.ResponseWriter, r *http.Request) {
 

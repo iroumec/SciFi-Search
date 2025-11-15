@@ -1,12 +1,20 @@
 package views 
 
-templ userList() {
+import (
+    sqlc "tpe/web/app/database"
+)
+
+templ userList(list []sqlc.User) {
     <div class="user-list">
         <div class="centered-container">
             <ul id="user-list">
-                <!-- Aquí se inyectarán los usuarios -->
+                for _, user := range list {
+                    <li> 
+                        { user.Name } 
+                        { user.Surname }
+                    </li>
+                } 
             </ul>
         </div>
     </div>
-    <script src="js/app.js"></script> 
 }

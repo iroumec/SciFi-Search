@@ -1,0 +1,36 @@
+package views
+
+templ SessionInfo(userID string, payload map[string]string) {
+    <html>
+        <head>
+            <title>Session Info</title>
+        </head>
+
+        <body>
+            <h1>Session activa</h1>
+
+            <p><strong>User ID:</strong> { userID }</p>
+
+            <h2>Datos de sesión</h2>
+            <ul>
+                for key, value := range payload {
+                <li>
+                    <strong>{ key }:</strong> { value }
+                </li>
+                }
+            </ul>
+        </body>
+    </html>
+}
+
+templ NoSessionInfo() {
+<html>
+    <head>
+        <title>Session Info</title>
+    </head>
+
+    <body>
+        <h1>No hay una sesión activa</h1>
+    </body>
+</html>
+}

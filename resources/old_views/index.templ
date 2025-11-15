@@ -6,11 +6,12 @@ package views
 
 // This component contains only the content for the index page.
 templ indexContent() {
-    // Sección del buscador principal
-    <img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi">
-    <input type="text" id="first-query" placeholder="Search for SCIENCE!!!" />
-    <!-- Cuando se posicione para escribir, debería mostrarse las ultimas búsquedas, si está iniciado sesion-->
 
+    <main class="index-content">
+        @firstQuery()
+        @userForm()
+        @userList()
+    </main>
 
     // El script se puede incluir directamente.
     // templ es lo suficientemente inteligente como para no procesar el JavaScript.

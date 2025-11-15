@@ -8,12 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// =================================================================
-// INDEX PAGE SPECIFIC COMPONENTS
-// =================================================================
-
-// This component contains only the content for the index page.
-func indexContent() templ.Component {
+func loginContent(errorMessage string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -34,17 +29,34 @@ func indexContent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"> <input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"><!-- Cuando se posicione para escribir, debería mostrarse las ultimas búsquedas, si está iniciado sesion--><script>\n        const input = document.getElementById(\"first-query\");\n        input.addEventListener(\"keypress\", (e) => {\n            if (e.key === \"Enter\") {\n                const query = input.value.trim();\n                if (!query) return;\n                window.location.href = `/search?query=${encodeURIComponent(query)}`;\n            }\n        });\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"fondo-registro\"></section><section class=\"formulario\"><h2>Iniciar sesión</h2><form action=\"/log-in\" method=\"POST\"><input type=\"text\" id=\"nombre\" name=\"nombre\" placeholder=\"Nombre\" required><br><input type=\"text\" id=\"apellido\" name=\"apellido\" placeholder=\"Apellido\" required><br><button class=\"log-in-button\" type=\"submit\">Iniciar sesión</button></form></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
+		}
+		if errorMessage != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div id=\"mensaje\" style=\"color:red;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/iniciar-sesion.templ`, Line: 20, Col: 22}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})
 }
 
-// Este es el componente principal que tu manejador HTTP debe renderizar.
-// Une el Layout con el contenido específico de la página de inicio.
-func IndexPage() templ.Component {
+func LoginPage(errorMessage string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -60,13 +72,13 @@ func IndexPage() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("SciFi Search", func() templ.Component {
-			return indexContent()
+		templ_7745c5c3_Err = Layout("Log-In", func() templ.Component {
+			return loginContent(errorMessage)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

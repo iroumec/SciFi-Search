@@ -67,7 +67,7 @@ func userWithIDHandlerAPI(w http.ResponseWriter, r *http.Request) {
 // Crea un usuario y devuelve el nuevo objeto como JSON.
 func addUserAPI(w http.ResponseWriter, r *http.Request) {
 
-	newUser := addUserToDatabase(w, r)
+	newUser := addUserToDatabaseAPI(w, r)
 	if newUser == nil {
 		// Ocurrió un error que ya se trató antes.
 		return
@@ -196,3 +196,46 @@ func listUsersAPI(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func addUserToDatabaseAPI(w http.ResponseWriter, r *http.Request) *sqlc.User {
+
+	// Se decodifica y valida el payload.
+	var payload sqlc.User
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
+		return nil
+	}
+
+	if hayCampoIncompleto(payload.Name, payload.Surname) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return nil
+	}
+
+	// Se publica el evento.
+	event := map[string]interface{}{
+		"type": "user_created",
+		"user": payload,
+		"time": time.Now(),
+	}
+	eventData, _ := json.Marshal(event)
+	if err := nat.Publish("products.events", eventData); err != nil {
+		http.Error(w, "Error procesando la solicitud", http.StatusInternalServerError)
+		return nil
+	}
+
+	// Se preparan los parámetros para la BD.
+	params := sqlc.CreateUserParams{
+		Name:    payload.Name,
+		Surname: payload.Surname,
+	}
+
+	// Creación del usuario en la base de datos.
+	newUser, err := queries.CreateUser(r.Context(), params)
+	if err != nil {
+		log.Printf("Error al crear usuario: %v", err)
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return nil
+	}
+
+	return &newUser
+}

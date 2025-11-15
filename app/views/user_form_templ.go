@@ -29,7 +29,7 @@ func userForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"load-user\"><div class=\"centered-container\"><form id=\"signup-form\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required=\"true\"></div><div class=\"form-surname-container\"><input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required=\"true\"></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"load-user\"><div class=\"centered-container\"><form id=\"signup-form\" action=\"/users\" method=\"POST\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required></div><div class=\"form-surname-container\"><input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

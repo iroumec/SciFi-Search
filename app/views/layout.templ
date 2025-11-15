@@ -29,20 +29,14 @@ templ Layout(title string, content func() templ.Component) {
             <title>{ title }</title>
             <link rel="stylesheet" href="/static/css/styles.css" />
             <link rel="icon" type="image/png" href="/static/img/icono.png" />
-            
         </head>
 
         <body>
             <div class="contenedor-grid">
                 @Header()
-                <main class="index-content">
-                    @firstQuery()
-                    @userForm()
-                    @userList()
-                </main>
+                @content()
                 @Footer()
-            </div>
-            <script src="js/app.js"></script> 
+            </div> 
         </body>
 
     </html>

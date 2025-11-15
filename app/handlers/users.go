@@ -63,11 +63,13 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se establece el código de estado a 201 Created.
-	w.WriteHeader(http.StatusCreated)
+	//w.WriteHeader(http.StatusCreated)
+	// Si se escribe el estado, el redirect no funciona.
 
 	// Se renderiza la página de registro exitoso.
-	component := views.SuccessfulSignUpPage()
-	templ.Handler(component).ServeHTTP(w, r)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+	//component := views.SuccessfulSignUpPage()
+	//templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -97,9 +99,10 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	component := views.UserDeletedPage()
-	templ.Handler(component).ServeHTTP(w, r)
+	
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+	//component := views.UserDeletedPage()
+	//templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -211,19 +214,24 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 
 func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 
-	// Se decodifica y valida el payload.
-	var payload sqlc.User
-	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		http.Error(w, "Cuerpo JSON inválido: "+err.Error(), http.StatusBadRequest)
+	// Parseo del formulario enviado por POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
 		return nil
 	}
 
+	// Construcción del payload.
+	var payload sqlc.User
+	payload.Name = r.Form.Get("name")
+	payload.Surname = r.Form.Get("surname")
+
+	// Validación.
 	if hayCampoIncompleto(payload.Name, payload.Surname) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return nil
 	}
 
-	// Se publica el evento.
+	// Publicación de un evento.
 	event := map[string]interface{}{
 		"type": "user_created",
 		"user": payload,
@@ -235,13 +243,13 @@ func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 		return nil
 	}
 
-	// Se preparan los parámetros para la BD.
+	// Parámetros para la DB.
 	params := sqlc.CreateUserParams{
 		Name:    payload.Name,
 		Surname: payload.Surname,
 	}
 
-	// Creación del usuario en la base de datos.
+	// Creación en la base.
 	newUser, err := queries.CreateUser(r.Context(), params)
 	if err != nil {
 		log.Printf("Error al crear usuario: %v", err)
@@ -251,3 +259,4 @@ func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 
 	return &newUser
 }
+
