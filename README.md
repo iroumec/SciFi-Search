@@ -2,21 +2,21 @@
 
 ![logo](static/img/logo_negro.png)
 
-Aplicación web para búsqueda de financiamiento de ciencia.
+A web application to search for science funding.
 
 ## Índice
 
-- [¿Cómo se estructura el proyecto?](resources/markdown/estructura.md)
-- [¿Qué necesito para ejecutar la aplicación?](resources/markdown/requisitos.md)
-- [¿Cómo ejecuto la aplicación?](resources/markdown/ejecución.md)
-- [Uso de la API](resources/markdown/api.md)
-- [TP3 y TP4 - Instrucciones de Evaluación](resources/markdown/instructions.md)
+- [How is the project structured?](resources/markdown/estructura.md)
+- [What do I need to run the application?](resources/markdown/requisitos.md)
+- [How do I run the application?](resources/markdown/ejecución.md)
+- [API usage](resources/markdown/api.md)
+- [TP3 and TP4 - Evaluation Instructions](resources/markdown/instructions.md)
 
 ## Créditos
 
-Este proyecto fue realizado por estudiantes de la carrera de Ingeniería en Sistemas como proyecto integrador de las materias Programación Web y Sistemas Operativos.
+This project was carried out by students of the Systems Engineering degree as an integrative project of the subjects Web Programming and Operating Systems.
 
-Los alumnos que trabajaron en este proyecto son:
+The students who worked on this project are:
 
 - Roumec, Iñaki. <iroumec@alumnos.exa.unicen.edu.ar>.
 - Velis, Ulises. <uvelis@alumnos.exa.unicen.edu.ar>.
