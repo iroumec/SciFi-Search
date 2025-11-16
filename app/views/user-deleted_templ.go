@@ -8,6 +8,9 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+// ------------------------------------------------------------------------------------------------
+// User Deleted Content
+// ------------------------------------------------------------------------------------------------
 func userDeletedContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -37,6 +40,9 @@ func userDeletedContent() templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
+// User Deleted Page
+// ------------------------------------------------------------------------------------------------
 func UserDeletedPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

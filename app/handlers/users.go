@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"scifi-search/app/utils"
+	"scifi-search/app/views"
 	"strconv"
 	"time"
-	"tpe/web/app/utils"
-	"tpe/web/app/views"
 
-	sqlc "tpe/web/app/database"
+	sqlc "scifi-search/app/database"
 
 	"github.com/a-h/templ"
 )
@@ -99,7 +99,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 	//component := views.UserDeletedPage()
 	//templ.Handler(component).ServeHTTP(w, r)
@@ -259,4 +259,3 @@ func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 
 	return &newUser
 }
-

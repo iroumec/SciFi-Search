@@ -8,10 +8,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"tpe/web/app/utils"
-	"tpe/web/app/views"
+	"scifi-search/app/utils"
+	"scifi-search/app/views"
 
-	sqlc "tpe/web/app/database"
+	sqlc "scifi-search/app/database"
 
 	meilisearch "github.com/meilisearch/meilisearch-go"
 )

@@ -1,4 +1,4 @@
-module tpe/web
+module scifi-search
 
 go 1.25
 

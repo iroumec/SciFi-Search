@@ -8,8 +8,11 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import sqlc "tpe/web/app/database"
+// ------------------------------------------------------------------------------------------------
 
+import sqlc "scifi-search/app/database"
+
+// ------------------------------------------------------------------------------------------------
 func indexContent(list []sqlc.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -55,6 +58,7 @@ func indexContent(list []sqlc.User) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func IndexPage(list []sqlc.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -86,4 +90,5 @@ func IndexPage(list []sqlc.User) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 var _ = templruntime.GeneratedTemplate

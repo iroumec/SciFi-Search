@@ -1,5 +1,9 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// User Deleted Content
+// ------------------------------------------------------------------------------------------------
+
 templ userDeletedContent() {
     <h1>User deleted with success!</h1>
 
@@ -7,6 +11,10 @@ templ userDeletedContent() {
         <button onclick="window.location.href='/'">Go to main page</button>
     </div>
 }
+
+// ------------------------------------------------------------------------------------------------
+// User Deleted Page
+// ------------------------------------------------------------------------------------------------
 
 templ UserDeletedPage() {
     @Layout("User deleted",func() templ.Component {

@@ -8,9 +8,15 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "tpe/web/app/utils"
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
-// Contenido de la página de search.
+import "scifi-search/app/utils"
+
+// ------------------------------------------------------------------------------------------------
+// Search Results Content
+// ------------------------------------------------------------------------------------------------
 func searchResultsContent(query string, hits []map[string]any) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -39,7 +45,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(query)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 13, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 20, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -67,7 +73,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ToString(m["Nombre"]))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 30, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 37, Col: 57}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -80,7 +86,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ToString(m["Tipo"]))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 31, Col: 55}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 38, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -93,7 +99,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ToString(m["Gran area 1"]))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 32, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 39, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -106,7 +112,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ToString(m["Gran area 2"]))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 33, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 40, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -119,7 +125,7 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ToString(m["Descripcion"]))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 34, Col: 62}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 41, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -143,6 +149,9 @@ func searchResultsContent(query string, hits []map[string]any) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
+// Search Results Page
+// ------------------------------------------------------------------------------------------------
 func SearchResultsPage(query string, hits []map[string]any) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

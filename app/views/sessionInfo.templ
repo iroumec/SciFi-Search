@@ -1,5 +1,9 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Session Info Page
+// ------------------------------------------------------------------------------------------------
+
 templ SessionInfo(userID string, payload map[string]string) {
     <html>
         <head>
@@ -21,16 +25,4 @@ templ SessionInfo(userID string, payload map[string]string) {
             </ul>
         </body>
     </html>
-}
-
-templ NoSessionInfo() {
-<html>
-    <head>
-        <title>Session Info</title>
-    </head>
-
-    <body>
-        <h1>No hay una sesión activa</h1>
-    </body>
-</html>
 }

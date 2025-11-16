@@ -11,8 +11,8 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
-	sqlc "tpe/web/app/database"
-	"tpe/web/app/views"
+	sqlc "scifi-search/app/database"
+	"scifi-search/app/views"
 
 	"github.com/a-h/templ"
 )

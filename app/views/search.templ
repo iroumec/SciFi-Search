@@ -1,8 +1,15 @@
 package views
 
-import "tpe/web/app/utils"
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
-// Contenido de la página de search.
+import "scifi-search/app/utils"
+
+// ------------------------------------------------------------------------------------------------
+// Search Results Content
+// ------------------------------------------------------------------------------------------------
+
 templ searchResultsContent(query string, hits []map[string]any) {
     <div class="search-container-grid">
         <div class="filter-section">
@@ -42,6 +49,9 @@ templ searchResultsContent(query string, hits []map[string]any) {
     </div>
 }
 
+// ------------------------------------------------------------------------------------------------
+// Search Results Page
+// ------------------------------------------------------------------------------------------------
 
 templ SearchResultsPage(query string, hits []map[string]any) {
     @Layout("Resultados para " + query, func() templ.Component {

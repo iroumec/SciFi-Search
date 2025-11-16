@@ -1,5 +1,9 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Header
+// ------------------------------------------------------------------------------------------------
+
 templ Header() {
     <header class="header">
         <div class="header-buttons"> 
@@ -10,18 +14,9 @@ templ Header() {
     </header>
 }
 
-templ Footer() {
-    <footer class="footer">
-        <p class="footer-text">powered by
-            <a href="https://www.meilisearch.com/" target="_blank">
-                <img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch">
-            </a>
-            <a href="https://supertokens.com/" target="_blank">
-                <img src="static/img/logo_supertokens.png" alt="Logo Meilisearch" id="logo-meilisearch">
-            </a>
-        </p>
-    </footer>
-}
+// ------------------------------------------------------------------------------------------------
+// Layout
+// ------------------------------------------------------------------------------------------------
 
 templ Layout(title string, content func() templ.Component) {
     <!DOCTYPE html>
@@ -43,4 +38,21 @@ templ Layout(title string, content func() templ.Component) {
         </body>
 
     </html>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Footer
+// ------------------------------------------------------------------------------------------------
+
+templ Footer() {
+<footer class="footer">
+    <p class="footer-text">powered by
+        <a href="https://www.meilisearch.com/" target="_blank">
+            <img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch">
+        </a>
+        <a href="https://supertokens.com/" target="_blank">
+            <img src="static/img/logo_supertokens.png" alt="Logo Meilisearch" id="logo-meilisearch">
+        </a>
+    </p>
+</footer>
 }

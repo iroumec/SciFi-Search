@@ -8,10 +8,10 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	sqlc "scifi-search/app/database"
 	"strconv"
 	"strings"
 	"time"
-	sqlc "tpe/web/app/database"
 )
 
 // ------------------------------------------------------------------------------------------------

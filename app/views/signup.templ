@@ -1,5 +1,9 @@
 package views 
 
+// ------------------------------------------------------------------------------------------------
+// Sign Up Content
+// ------------------------------------------------------------------------------------------------
+
 templ signUpContent(errorMessage string) {
 
 <main>
@@ -27,8 +31,34 @@ templ signUpContent(errorMessage string) {
 </main>
 }
 
+// ------------------------------------------------------------------------------------------------
+// Sign Up Page
+// ------------------------------------------------------------------------------------------------
+
 templ SignUpPage(errorMessage string) {
     @Layout("Sign up", func() templ.Component {
         return signUpContent(errorMessage)
     })
+}
+
+// ------------------------------------------------------------------------------------------------
+// Successful Sign Up Content
+// ------------------------------------------------------------------------------------------------
+
+templ sucessfulSignUpContent() {
+<h1>Sign-up completed with success!</h1>
+
+<div class="menu-options">
+    <button onclick="window.location.href='/'">Go to main page</button>
+</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Sucessful Sign Up Page
+// ------------------------------------------------------------------------------------------------
+
+templ SuccessfulSignUpPage() {
+@Layout("Successful sign-up", func() templ.Component {
+return sucessfulSignUpContent()
+})
 }

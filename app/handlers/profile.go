@@ -9,7 +9,7 @@ import (
 	"encoding/base64"
 	"net/http"
 
-	sqlc "tpe/web/app/database"
+	sqlc "scifi-search/app/database"
 
 	_ "github.com/lib/pq"
 )

@@ -6,12 +6,12 @@ import (
 	"log"
 	"net/http"
 
-	"tpe/web/app/handlers"
-	"tpe/web/app/utils"
+	"scifi-search/app/handlers"
+	"scifi-search/app/utils"
 
 	"github.com/nats-io/nats.go"
 
-	sqlc "tpe/web/app/database"
+	sqlc "scifi-search/app/database"
 )
 
 // ------------------------------------------------------------------------------------------------

@@ -8,8 +8,15 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import sqlc "tpe/web/app/database"
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
+import sqlc "scifi-search/app/database"
+
+// ------------------------------------------------------------------------------------------------
+// Profile Page
+// ------------------------------------------------------------------------------------------------
 func ProfilePage(user sqlc.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -38,7 +45,7 @@ func ProfilePage(user sqlc.User) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 6, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 14, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -51,7 +58,7 @@ func ProfilePage(user sqlc.User) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.UserID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 7, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 15, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -64,7 +71,7 @@ func ProfilePage(user sqlc.User) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Surname)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 8, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/profile.templ`, Line: 16, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
