@@ -52,12 +52,12 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes al perfil de usuario.
 	registrarHandlersPerfiles()
 
-	// Se registra el handler correspondiente al logIn.
-	registerLogIn()
-
 	// Se registran los handlers correspondientes a la búsqueda.
 	registerSearchHandlers()
-	
+
+	// Se registran los handlers correspondientes a la autenticación.
+	registerAuthenticationHandlers()
+
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }
@@ -89,20 +89,6 @@ func registerIndexHTML() {
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)
 
-	})
-}
-
-// ------------------------------------------------------------------------------------------------
-// Registro de LogIn
-// ------------------------------------------------------------------------------------------------
-
-func registerLogIn() {
-
-	http.HandleFunc("/log-in", func(w http.ResponseWriter, r *http.Request) {
-
-		component := views.LoginPage("string")
-
-		component.Render(r.Context(), w)
 	})
 }
 
