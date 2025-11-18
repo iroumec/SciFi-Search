@@ -58,6 +58,26 @@ func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes a la autenticación.
 	registerAuthenticationHandlers()
 
+	http.HandleFunc("/conditional-false", func(w http.ResponseWriter, r *http.Request) {
+
+		// Se crea una instancia de la componente de página.
+		component := views.ConditionalPage("", false)
+
+		// Se renderiza la componente.
+		component.Render(r.Context(), w)
+
+	})
+
+	http.HandleFunc("/conditional-true", func(w http.ResponseWriter, r *http.Request) {
+
+		// Se crea una instancia de la componente de página.
+		component := views.ConditionalPage("", true)
+
+		// Se renderiza la componente.
+		component.Render(r.Context(), w)
+
+	})
+
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }

@@ -1,0 +1,23 @@
+package views
+
+// ------------------------------------------------------------------------------------------------
+// LogIn Content
+// ------------------------------------------------------------------------------------------------
+templ conditionalContent(show bool) {
+	<main>
+		if show {
+			<p>Esto es un mensaje oculto.</p>
+		} else {
+			<p>Puede que haya algo oculto aquí...</p>
+		}
+	</main>
+}
+
+// ------------------------------------------------------------------------------------------------
+// LogIn Page
+// ------------------------------------------------------------------------------------------------
+templ ConditionalPage(errorMessage string, show bool) {
+	@Layout("Conditional Test", func() templ.Component {
+		return conditionalContent(show)
+	})
+}
