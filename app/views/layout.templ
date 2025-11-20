@@ -6,9 +6,12 @@ package views
 templ Header(isUserAuthenticated bool) {
 	<header class="header">
 		<div class="header-buttons">
-			<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
-			<button class="header-button" onclick="window.location.href='/signin'">Log-in</button>
-			<!--Boton de Desplegar menu, solo cuando ya está iniciado sesion-->
+			if !isUserAuthenticated {
+				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
+				<button class="header-button" onclick="window.location.href='/signin'">Log-in</button>
+			} else {
+				<button class="header-button" onclick="window.location.href='/'">Perfil</button>
+			}
 		</div>
 	</header>
 }

@@ -220,8 +220,20 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 
 // Retorna si el usuario está autenticado.
 func isUserAuthenticated(r *http.Request) bool {
-	sessionContainer := session.GetSessionFromRequestContext(r.Context())
-	return sessionContainer != nil
+	// Intentar obtener la sesión sin requerirla
+	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+		SessionRequired: boolPtr(false),
+	})
+
+	return err == nil && sessionContainer != nil
+}
+
+// ---------------------------------------------------------------------
+
+// Necesaria para obtener un puntero a un booleano,
+// el cual Supertokens requiere.
+func boolPtr(b bool) *bool {
+	return &b
 }
 
 // ---------------------------------------------------------------------

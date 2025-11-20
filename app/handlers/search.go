@@ -77,7 +77,7 @@ func indexarDatos() {
 			"Gran area 1": doc["Gran area 1"],
 			"Gran area 2": doc["Gran area 2"],
 			"Tipo":        doc["Tipo"],
-			"Link":		   doc["Link"],
+			"Link":        doc["Link"],
 		}
 
 		indexDocs = append(indexDocs, filtered)
@@ -135,7 +135,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	queries.CreateHistoricSearch(r.Context(), params)
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps)
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r))
 	component.Render(r.Context(), w)
 
 }

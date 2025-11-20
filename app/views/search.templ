@@ -40,8 +40,8 @@ templ searchResultsContent(query string, hits []map[string]any) {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any) {
-	@Layout("Resultados para "+query, false, func() templ.Component {
+templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool) {
+	@Layout("Resultados para "+query, isUserAuthenticated, func() templ.Component {
 		return searchResultsContent(query, hits)
 	})
 }
