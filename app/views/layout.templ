@@ -19,6 +19,7 @@ templ Header() {
 templ Layout(title string, content func() templ.Component) {
 	<!DOCTYPE html>
 	<html lang="es">
+		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ title }</title>

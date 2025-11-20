@@ -4,9 +4,15 @@ package views
 // User Form (Solo para TP5)
 // ------------------------------------------------------------------------------------------------
 templ userForm() {
+
 	<div class="load-user">
 		<div class="centered-container">
-			<form id="signup-form" action="/users" method="POST">
+		
+			<form id="signup-form"
+				hx-post="/users" 
+				hx-target="#the-user-list" 
+				hx-swap="beforeend" 
+			>
 				<div class="form-name-container">
 					<input type="text" id="name" placeholder="Name" name="name" required/>
 				</div>

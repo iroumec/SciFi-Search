@@ -13,6 +13,7 @@ import (
 	"scifi-search/app/views"
 	"strconv"
 	"time"
+	"strings"
 
 	sqlc "scifi-search/app/database"
 
@@ -24,11 +25,31 @@ import (
 // Se registran los endpoints relacionados al manejo de usarios.
 func registrarHandlersUsuarios() {
 	http.HandleFunc("/users", userHandler)
+	http.HandleFunc("/users/", userWithIDHandler)
 	http.HandleFunc("/sign-up", signUpHandler)
 	registerAPIHandlers()
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func userWithIDHandler(w http.ResponseWriter, r *http.Request) {
+
+	idStr := strings.TrimPrefix(r.URL.Path, "/users/")
+	idInt, err := strconv.Atoi(idStr)
+	if err != nil || idInt <= 0 {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	id := int32(idInt)
+
+	switch r.Method {
+	case http.MethodDelete:
+		deleteUser(w, r, id)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -41,10 +62,6 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	case http.MethodPost:
 		addUser(w, r)
-	case http.MethodPut:
-		updateUser(w, r)
-	case http.MethodDelete:
-		deleteUser(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -62,14 +79,8 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Se establece el código de estado a 201 Created.
-	//w.WriteHeader(http.StatusCreated)
-	// Si se escribe el estado, el redirect no funciona.
-
-	// Se renderiza la página de registro exitoso.
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	//component := views.SuccessfulSignUpPage()
-	//templ.Handler(component).ServeHTTP(w, r)
+	component := views.UserIndividual(*newUser)
+	templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -77,17 +88,9 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 // Elimina un usuario de la base de datos.
-func deleteUser(w http.ResponseWriter, r *http.Request) {
+func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
 
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	//sql.NullInt32{Int32: id, Valid: true
-
-	err = queries.DeleteUser(r.Context(), id)
+	err := queries.DeleteUser(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// Error 404: El usuario no existe.
@@ -100,9 +103,9 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	//component := views.UserDeletedPage()
-	//templ.Handler(component).ServeHTTP(w, r)
+	log.Printf("Se eliminó al usuario de ID %d.", id)
+
+	// Por defecto, la respuesta es 200 OK.
 }
 
 // ------------------------------------------------------------------------------------------------
