@@ -98,7 +98,7 @@ func sucessfulSignUpContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<h1>Sign-up completed with success!</h1><div class=\"menu-options\"><button onclick=\"window.location.href='/'\">Go to main page</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<h1>Sign-up completed with success!</h1><main><button class=\"header-button\" onclick=\"window.location.href='/'\">Go to main page</button></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

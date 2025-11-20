@@ -9,6 +9,7 @@ import (
 
 	emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/session"
+	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
 	sqlc "scifi-search/app/database"
@@ -40,7 +41,11 @@ func initializeSupertokens() {
 
 		RecipeList: []supertokens.Recipe{
 			emailpassword.Init(nil),
-			session.Init(nil),
+			session.Init(&sessmodels.TypeInput{
+				GetTokenTransferMethod: func(req *http.Request, forCreateNewSession bool, userContext supertokens.UserContext) sessmodels.TokenTransferMethod {
+					return sessmodels.CookieTransferMethod
+				},
+			}),
 		},
 	})
 
@@ -64,7 +69,7 @@ func registerAuthenticationHandlers() {
 
 	// Al usar VerifySession, la sesión ya está garantizada y puesta en el contexto
 	// si las cookies de sesión son válidas.
-	http.HandleFunc("/auth/sessioninfo", /*session.VerifySession(nil, */func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/auth/sessioninfo", session.VerifySession(nil, func(w http.ResponseWriter, r *http.Request) {
 		// Al usar session.VerifySession, la sesión ya estará garantizada y
 		// puesta en el contexto si las cookies de sesión son válidas.
 
@@ -153,10 +158,12 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Devolver un OK
-	json.NewEncoder(w).Encode(map[string]string{
+	/*json.NewEncoder(w).Encode(map[string]string{
 		"status": "OK",
 		"userId": resp.OK.User.ID,
-	})
+	})*/
+	component := views.SuccessfulSignUpPage()
+	templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ---------------------------------------------------------------------
