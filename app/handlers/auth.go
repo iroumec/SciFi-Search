@@ -73,11 +73,7 @@ func registerAuthenticationHandlers() {
 		// Al usar session.VerifySession, la sesión ya estará garantizada y
 		// puesta en el contexto si las cookies de sesión son válidas.
 
-		log.Printf("Llegué 0")
-
 		sessionContainer := session.GetSessionFromRequestContext(r.Context())
-
-		log.Printf("Llegué 1")
 
 		if sessionContainer == nil {
 			// Este caso sólo debería ocurrir si hay un error interno en el middleware
@@ -85,8 +81,6 @@ func registerAuthenticationHandlers() {
 			http.Error(w, "No session (Error interno o configuración)", http.StatusUnauthorized)
 			return
 		}
-
-		log.Printf("Llegué 2")
 
 		userID := sessionContainer.GetUserID()
 		rawPayload := sessionContainer.GetAccessTokenPayload()
@@ -157,11 +151,6 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Devolver un OK
-	/*json.NewEncoder(w).Encode(map[string]string{
-		"status": "OK",
-		"userId": resp.OK.User.ID,
-	})*/
 	component := views.SuccessfulSignUpPage()
 	templ.Handler(component).ServeHTTP(w, r)
 }
@@ -226,3 +215,13 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	// Manejo de cualquier otro caso inesperado.
 	http.Error(w, "Error desconocido durante el inicio de sesión", http.StatusInternalServerError)
 }
+
+// ---------------------------------------------------------------------
+
+// Retorna si el usuario está autenticado.
+func isUserAuthenticated(r *http.Request) bool {
+	sessionContainer := session.GetSessionFromRequestContext(r.Context())
+	return sessionContainer != nil
+}
+
+// ---------------------------------------------------------------------

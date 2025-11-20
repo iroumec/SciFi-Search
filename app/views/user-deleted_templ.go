@@ -64,7 +64,7 @@ func UserDeletedPage() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("User deleted", func() templ.Component {
+		templ_7745c5c3_Err = Layout("User deleted", false, func() templ.Component {
 			return userDeletedContent()
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -14,7 +14,7 @@ templ userDeletedContent() {
 // User Deleted Page
 // ------------------------------------------------------------------------------------------------
 templ UserDeletedPage() {
-	@Layout("User deleted", func() templ.Component {
+	@Layout("User deleted", false, func() templ.Component {
 		return userDeletedContent()
 	})
 }

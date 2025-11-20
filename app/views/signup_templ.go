@@ -64,7 +64,7 @@ func SignUpPage(errorMessage string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Sign up", func() templ.Component {
+		templ_7745c5c3_Err = Layout("Sign up", false, func() templ.Component {
 			return signUpContent(errorMessage)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -130,7 +130,7 @@ func SuccessfulSignUpPage() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Successful sign-up", func() templ.Component {
+		templ_7745c5c3_Err = Layout("Successful sign-up", false, func() templ.Component {
 			return sucessfulSignUpContent()
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

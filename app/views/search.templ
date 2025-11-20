@@ -22,13 +22,13 @@ templ searchResultsContent(query string, hits []map[string]any) {
 					<h1>Resultados de búsqueda para “{ query }”</h1>
 					for _, m := range hits {
 						<div class="result">
-							<a id="title" href={ utils.ToString(m["Link"]) }> { utils.ToString(m["Nombre"]) }</a>
-							<p id="extra-info" >
+							<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
+							<p id="extra-info">
 								{ utils.ToString(m["Tipo"]) }
 								{ utils.ToString(m["Gran area 1"]) }
 								{ utils.ToString(m["Gran area 2"]) }
 							</p>
-							<p id="description" > { utils.ToString(m["Descripcion"]) } </p>
+							<p id="description">{ utils.ToString(m["Descripcion"]) } </p>
 						</div>
 					}
 				}
@@ -41,7 +41,7 @@ templ searchResultsContent(query string, hits []map[string]any) {
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
 templ SearchResultsPage(query string, hits []map[string]any) {
-	@Layout("Resultados para "+query, func() templ.Component {
+	@Layout("Resultados para "+query, false, func() templ.Component {
 		return searchResultsContent(query, hits)
 	})
 }

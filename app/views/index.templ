@@ -1,25 +1,23 @@
 package views
 
-// ------------------------------------------------------------------------------------------------
-
 import sqlc "scifi-search/app/database"
 
 // ------------------------------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------------------------------
 templ indexContent(list []sqlc.User) {
-    <main class="index-content">
-        @firstQuery()
-        @userForm()
-        @UserList(list)
-    </main>
+	<main class="index-content">
+		@firstQuery()
+		@userForm()
+		@UserList(list)
+	</main>
 }
 
 // ------------------------------------------------------------------------------------------------
-
-templ IndexPage(list []sqlc.User) {
-    @Layout("SciFi Search", func() templ.Component {
-        return indexContent(list)
-    })
+templ IndexPage(list []sqlc.User, isUserAuthenticated bool) {
+	@Layout("SciFi Search", isUserAuthenticated, func() templ.Component {
+		return indexContent(list)
+	})
 }
 
 // ------------------------------------------------------------------------------------------------

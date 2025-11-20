@@ -81,7 +81,7 @@ func registerIndexHTML() {
 		list, _ := getListOfUsers(w, r)
 
 		// Se crea una instancia de la componente de página.
-		component := views.IndexPage(list)
+		component := views.IndexPage(list, isUserAuthenticated(r))
 
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)

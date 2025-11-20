@@ -33,7 +33,7 @@ templ signUpContent(errorMessage string) {
 // Sign Up Page
 // ------------------------------------------------------------------------------------------------
 templ SignUpPage(errorMessage string) {
-	@Layout("Sign up", func() templ.Component {
+	@Layout("Sign up", false, func() templ.Component {
 		return signUpContent(errorMessage)
 	})
 }
@@ -52,7 +52,7 @@ templ sucessfulSignUpContent() {
 // Sucessful Sign Up Page
 // ------------------------------------------------------------------------------------------------
 templ SuccessfulSignUpPage() {
-	@Layout("Successful sign-up", func() templ.Component {
+	@Layout("Successful sign-up", false, func() templ.Component {
 		return sucessfulSignUpContent()
 	})
 }

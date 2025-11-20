@@ -26,7 +26,7 @@ templ loginContent(errorMessage string) {
 // LogIn Page
 // ------------------------------------------------------------------------------------------------
 templ LoginPage(errorMessage string) {
-	@Layout("Log-In", func() templ.Component {
+	@Layout("Log-In", false, func() templ.Component {
 		return loginContent(errorMessage)
 	})
 }

@@ -106,7 +106,7 @@ func UserListPage(users []sqlc.User) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Listado de usuarios", func() templ.Component {
+		templ_7745c5c3_Err = Layout("Listado de usuarios", false, func() templ.Component {
 			return userListContent(users)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

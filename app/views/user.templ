@@ -24,7 +24,7 @@ templ userListContent(users []sqlc.User) {
 // User List Page
 // ------------------------------------------------------------------------------------------------
 templ UserListPage(users []sqlc.User) {
-	@Layout("Listado de usuarios", func() templ.Component {
+	@Layout("Listado de usuarios", false, func() templ.Component {
 		return userListContent(users)
 	})
 }
