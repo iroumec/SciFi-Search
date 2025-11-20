@@ -1,0 +1,60 @@
+package views 
+
+// ------------------------------------------------------------------------------------------------
+// Sign Up Content
+// ------------------------------------------------------------------------------------------------
+templ signUpContent(errorMessage string) {
+	<main>
+		<div class="load-user">
+			<div class="centered-container">
+				<form id="signup-form" action="/users" method="POST">
+					<div class="form-name-container">
+						<input type="text" id="name" placeholder="Name" name="name" required/>
+					</div>
+					<div class="form-surname-container">
+						<input type="text" id="surname" placeholder="Surname" name="surname" required/>
+					</div>
+					<div class="form-email-container">
+						<input type="email" id="email" placeholder="Email" name="email" required/>
+					</div>
+					<div class="form-password-container">
+						<input type="password" id="password" placeholder="Password" name="password" required/>
+					</div>
+					<div class="form-submit-container">
+						<button class="submit-button" type="submit">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Sign Up Page
+// ------------------------------------------------------------------------------------------------
+templ SignUpPage(errorMessage string) {
+	@Layout("Sign up", func() templ.Component {
+		return signUpContent(errorMessage)
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// Successful Sign Up Content
+// ------------------------------------------------------------------------------------------------
+templ sucessfulSignUpContent() {
+	<h1>Sign-up completed with success!</h1>
+	<div class="menu-options">
+		<button onclick="window.location.href='/'">Go to main page</button>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Sucessful Sign Up Page
+// ------------------------------------------------------------------------------------------------
+templ SuccessfulSignUpPage() {
+	@Layout("Successful sign-up", func() templ.Component {
+		return sucessfulSignUpContent()
+	})
+}
+
+// ------------------------------------------------------------------------------------------------

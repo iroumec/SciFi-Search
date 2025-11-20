@@ -1,0 +1,23 @@
+# SciFi Search
+
+![logo](static/img/logo_negro.png)
+
+A web application to search for science funding.
+
+## Índice
+
+- [How is the project structured?](resources/markdown/estructura.md)
+- [What do I need to run the application?](resources/markdown/requisitos.md)
+- [How do I run the application?](resources/markdown/ejecución.md)
+- [API usage](resources/markdown/api.md)
+- [TP3 and TP4 - Evaluation Instructions](resources/markdown/instructions.md)
+
+## Créditos
+
+This project was carried out by students of the Systems Engineering degree as an integrative project of the subjects Web Programming and Operating Systems.
+
+The students who worked on this project are:
+
+- Roumec, Iñaki. <iroumec@alumnos.exa.unicen.edu.ar>.
+- Velis, Ulises. <uvelis@alumnos.exa.unicen.edu.ar>.
+- Zaffaroni, Gerónimo. <gzaffaroni@alumnos.exa.unicen.edu.ar>.
