@@ -77,6 +77,7 @@ func indexarDatos() {
 			"Gran area 1": doc["Gran area 1"],
 			"Gran area 2": doc["Gran area 2"],
 			"Tipo":        doc["Tipo"],
+			"Link":		   doc["Link"],
 		}
 
 		indexDocs = append(indexDocs, filtered)

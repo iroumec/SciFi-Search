@@ -16,32 +16,21 @@ templ searchResultsContent(query string, hits []map[string]any) {
 		</div>
 		<div class="results-section">
 			<div class="results">
-				<h1>Resultados de búsqueda para “{ query }”</h1>
 				if len(hits) == 0 {
 					<p>No se encontraron resultados.</p>
 				} else {
-					<table>
-						<thead>
-							<tr>
-								<th>Nombre </th>
-								<th>Tipo </th>
-								<th>Gran area 1 </th>
-								<th>Gran area 2 </th>
-								<th>Descripcion </th>
-							</tr>
-						</thead>
-						<tbody>
-							for _, m := range hits {
-								<tr>
-									<td>{ utils.ToString(m["Nombre"]) }</td>
-									<td>{ utils.ToString(m["Tipo"]) }</td>
-									<td>{ utils.ToString(m["Gran area 1"]) }</td>
-									<td>{ utils.ToString(m["Gran area 2"]) }</td>
-									<td>{ utils.ToString(m["Descripcion"]) }</td>
-								</tr>
-							}
-						</tbody>
-					</table>
+					<h1>Resultados de búsqueda para “{ query }”</h1>
+					for _, m := range hits {
+						<div class="result">
+							<a id="title" href={ utils.ToString(m["Link"]) }> { utils.ToString(m["Nombre"]) }</a>
+							<p id="extra-info" >
+								{ utils.ToString(m["Tipo"]) }
+								{ utils.ToString(m["Gran area 1"]) }
+								{ utils.ToString(m["Gran area 2"]) }
+							</p>
+							<p id="description" > { utils.ToString(m["Descripcion"]) } </p>
+						</div>
+					}
 				}
 			</div>
 		</div>

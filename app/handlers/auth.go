@@ -64,11 +64,15 @@ func registerAuthenticationHandlers() {
 
 	// Al usar VerifySession, la sesión ya está garantizada y puesta en el contexto
 	// si las cookies de sesión son válidas.
-	http.HandleFunc("/auth/sessioninfo", session.VerifySession(nil, func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/auth/sessioninfo", /*session.VerifySession(nil, */func(w http.ResponseWriter, r *http.Request) {
 		// Al usar session.VerifySession, la sesión ya estará garantizada y
 		// puesta en el contexto si las cookies de sesión son válidas.
 
+		log.Printf("Llegué 0")
+
 		sessionContainer := session.GetSessionFromRequestContext(r.Context())
+
+		log.Printf("Llegué 1")
 
 		if sessionContainer == nil {
 			// Este caso sólo debería ocurrir si hay un error interno en el middleware
@@ -76,6 +80,8 @@ func registerAuthenticationHandlers() {
 			http.Error(w, "No session (Error interno o configuración)", http.StatusUnauthorized)
 			return
 		}
+
+		log.Printf("Llegué 2")
 
 		userID := sessionContainer.GetUserID()
 		rawPayload := sessionContainer.GetAccessTokenPayload()
@@ -105,18 +111,25 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Name     string `json:"name"`
-		Surname  string `json:"surname"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Parseo del formulario enviado por POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	resp, err := emailpassword.SignUp("", body.Email, body.Password)
+	// Obtención de los datos del usuario.
+	name := r.Form.Get("name")
+	surname := r.Form.Get("surname")
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	// Validación.
+	if hayCampoIncompleto(name, surname, email, password) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return
+	}
+
+	resp, err := emailpassword.SignUp("", email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -124,8 +137,8 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	if resp.OK != nil {
 		_, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-			Name:    body.Name,
-			Surname: body.Surname,
+			Name:    name,
+			Surname: surname,
 		})
 		if err != nil {
 			log.Println("Error creando usuario interno:", err)
@@ -144,7 +157,6 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		"status": "OK",
 		"userId": resp.OK.User.ID,
 	})
-	return
 }
 
 // ---------------------------------------------------------------------

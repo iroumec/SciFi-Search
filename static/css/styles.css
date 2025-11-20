@@ -493,3 +493,13 @@ to-do: ver como variar los headers*/
     background-color: white;   
     color: var(--scifi);                
 }
+
+.result {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.result .extra-info {
+    font-size: small;
+}
