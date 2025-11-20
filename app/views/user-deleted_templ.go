@@ -74,4 +74,5 @@ func UserDeletedPage() templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 var _ = templruntime.GeneratedTemplate

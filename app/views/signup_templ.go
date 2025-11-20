@@ -140,4 +140,5 @@ func SuccessfulSignUpPage() templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 var _ = templruntime.GeneratedTemplate
