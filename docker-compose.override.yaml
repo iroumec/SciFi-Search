@@ -6,3 +6,8 @@ services: # Desarrolo.
       - .:/app
     environment:
       GIN_MODE: debug
+
+  db:
+    volumes:
+      # Base de datos utilizada por atlas.
+      - ./database/init:/docker-entrypoint-initdb.d

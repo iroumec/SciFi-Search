@@ -38,7 +38,7 @@ func main() {
 	defer nat.Close() // Independientemente de lo que ocurra, se cierra el NAT al final.
 
 	// Se registran los handlers.
-	handlers.RegisterHandlers(queries, nat)
+	handlers.Init(queries, nat)
 
 	// Se informa que el servidor está corriendo.
 	log.Printf("Server running...")
@@ -70,6 +70,8 @@ func openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName string)
 
 	return db
 }
+
+// -----------------------------------------------------------------------------------------------
 
 func openNATConnection() *nats.Conn {
 	nat, err := nats.Connect("nats://nats:4222")

@@ -33,7 +33,7 @@ var nat *nats.Conn
 // ------------------------------------------------------------------------------------------------
 
 // registerHandlers registra todos los endpoints
-func RegisterHandlers(queryObject *sqlc.Queries, natObject *nats.Conn) {
+func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 
 	// Se guarda el NAT y el objeto de consultas para que puedan ser utilizados
 	// en todos los handlers que lo requierean.

@@ -10,7 +10,6 @@ A web application to search for science funding.
 - [What do I need to run the application?](resources/markdown/requisitos.md)
 - [How do I run the application?](resources/markdown/ejecución.md)
 - [API usage](resources/markdown/api.md)
-- [TP3 and TP4 - Evaluation Instructions](resources/markdown/instructions.md)
 
 ## Créditos
 

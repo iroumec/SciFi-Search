@@ -37,3 +37,9 @@ meili_data
 
 # Scripts de Python.
 venv
+
+# Se egenra automáticamente junto a las migraciones.
+database/migrations/atlas.sum 
+
+# Los logs no se incluyen.
+logs/

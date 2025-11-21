@@ -24,14 +24,18 @@ FROM golang:1.25-alpine AS dev
 
 WORKDIR /app
 
-# Se instalan "git" y "bash".
-RUN apk add --no-cache git bash
-
-# Se instalan dependencias necesarias para la validación de la constancia de alumno regular.
-RUN apk add --no-cache poppler-utils chromium nss freetype harfbuzz ttf-freefont
+# Se instalan las herramientas base: "git", "bash" y "curl".
+RUN apk add --no-cache git bash curl
 
 # Se instala Air.
 RUN go install github.com/air-verse/air@latest
+
+# Se instala Atlas CLI.
+RUN curl -sSfL https://release.ariga.io/atlas/atlas-linux-amd64-latest -o /usr/local/bin/atlas && \
+    chmod +x /usr/local/bin/atlas
+
+# Se verifica la instalación de Atlas.
+RUN atlas version
 
 # Se expone el puerto 8080.
 EXPOSE 8080

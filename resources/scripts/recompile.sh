@@ -9,13 +9,25 @@ echo "Compilando todo... ¡Espere, por favor! Esto puede tomar un tiempo la prim
 echo "=================================================================================="
 echo
 
-# Generación de sqlc.
+# 1. Generaración y aplicación migraciones con Atlas.
+echo "Verificando migraciones de base de datos..."
+
+# Generación de migraciones.
+atlas migrate diff --env docker
+
+# Aplicación de migraciones.
+atlas migrate apply --env docker
+
+# 2. Generación de sqlc.
+echo "Generando sqlc..."
 ./resources/scripts/sqlc/runSQLC.sh
 
-# Generación de templ.
+# 3. Generación de templ
+echo "Generando templ..."
 ./resources/scripts/templ/runTEMPL.sh
 
-# Compilación de Go
+# 4. Compilación de Go
+echo "Compilando aplicación Go..."
 go build -buildvcs=false -o ./tmp/main ./app
 
 echo
