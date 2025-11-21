@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -61,9 +60,9 @@ func registerAuthenticationHandlers() {
 
 	initializeSupertokens()
 
-	http.HandleFunc("/signup", signUp)
-	http.HandleFunc("/signin", signIn)
-	http.HandleFunc("/signout", signOut)
+	http.HandleFunc("/signup", signUpHandler)
+	http.HandleFunc("/signin", signInHandler)
+	http.HandleFunc("/signout", signOutHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -101,7 +100,7 @@ func registerAuthenticationHandlers() {
 // Sign Up (Registro)
 // ------------------------------------------------------------------------------------------------
 
-func signUp(w http.ResponseWriter, r *http.Request) {
+func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		component := views.SignUpPage("")
@@ -164,7 +163,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 // Sign In (Log In)
 // ------------------------------------------------------------------------------------------------
 
-func signIn(w http.ResponseWriter, r *http.Request) {
+func signInHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		component := views.LoginPage("")
@@ -177,16 +176,23 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	resp, err := emailpassword.SignIn("", body.Email, body.Password)
+	// Parseo del formulario enviado por POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Obtención de los datos del usuario.
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	// Inicio de sesión.
+	resp, err := emailpassword.SignIn("", email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -210,12 +216,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Si es una API, responde con éxito
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{
-			"status": "OK",
-			"userId": userID,
-		})
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 		return
 	}
 
@@ -227,7 +228,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 // Sign Out (Log Out)
 // ------------------------------------------------------------------------------------------------
 
-func signOut(w http.ResponseWriter, r *http.Request) {
+func signOutHandler(w http.ResponseWriter, r *http.Request) {
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 		SessionRequired: boolPtr(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
 	})

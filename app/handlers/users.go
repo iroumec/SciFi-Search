@@ -26,7 +26,6 @@ import (
 func registrarHandlersUsuarios() {
 	http.HandleFunc("/users", userHandler)
 	http.HandleFunc("/users/", userWithIDHandler)
-	http.HandleFunc("/sign-up", signUpHandler)
 	registerAPIHandlers()
 }
 
@@ -160,12 +159,6 @@ func extractID(r *http.Request) (int32, error) {
 
 	// Si todo fue exitoso, se convierte el id a int32.
 	return int32(id64), nil
-}
-
-func signUpHandler(w http.ResponseWriter, r *http.Request) {
-
-	component := views.SignUpPage("")
-	templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
