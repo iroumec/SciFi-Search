@@ -18,6 +18,7 @@ type User struct {
 	UserID  int32  `json:"user_id"`
 	Name    string `json:"name"`
 	Surname string `json:"surname"`
+	AuthID  string `json:"auth_id"`
 }
 
 type UserPreference struct {

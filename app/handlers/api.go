@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	sqlc "scifi-search/app/database"
+	"scifi-search/app/utils"
 	"strconv"
 	"strings"
 	"time"
@@ -139,7 +140,7 @@ func updateUserAPI(w http.ResponseWriter, r *http.Request, id int32) {
 		return
 	}
 
-	if hayCampoIncompleto(payload.Name, payload.Surname) {
+	if utils.HayCampoIncompleto(payload.Name, payload.Surname) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
@@ -206,7 +207,7 @@ func addUserToDatabaseAPI(w http.ResponseWriter, r *http.Request) *sqlc.User {
 		return nil
 	}
 
-	if hayCampoIncompleto(payload.Name, payload.Surname) {
+	if utils.HayCampoIncompleto(payload.Name, payload.Surname) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return nil
 	}

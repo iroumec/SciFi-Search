@@ -4,7 +4,6 @@
 
 import (
 	"net/http"
-	"slices"
 
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
@@ -55,6 +54,9 @@ func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes a la autenticación (EN PROCESO).
 	registerAuthenticationHandlers()
 
+	// Se registran los handlers correspondientes al perfil del usuario.
+	registerProfileHandlers()
+
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }
@@ -87,15 +89,6 @@ func registerIndexHTML() {
 		component.Render(r.Context(), w)
 
 	})
-}
-
-// ------------------------------------------------------------------------------------------------
-// Verificación de campos
-// ------------------------------------------------------------------------------------------------
-
-func hayCampoIncompleto(campos ...string) bool {
-
-	return slices.Contains(campos, "")
 }
 
 // ------------------------------------------------------------------------------------------------

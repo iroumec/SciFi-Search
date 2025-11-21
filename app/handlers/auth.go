@@ -13,6 +13,7 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 
 	sqlc "scifi-search/app/database"
+	"scifi-search/app/utils"
 	"scifi-search/app/views"
 
 	"github.com/a-h/templ"
@@ -62,6 +63,7 @@ func registerAuthenticationHandlers() {
 
 	http.HandleFunc("/signup", signUp)
 	http.HandleFunc("/signin", signIn)
+	http.HandleFunc("/signout", signOut)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -95,7 +97,9 @@ func registerAuthenticationHandlers() {
 	}))
 }
 
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Sign Up (Registro)
+// ------------------------------------------------------------------------------------------------
 
 func signUp(w http.ResponseWriter, r *http.Request) {
 
@@ -123,7 +127,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	password := r.Form.Get("password")
 
 	// Validación.
-	if hayCampoIncompleto(name, surname, email, password) {
+	if utils.HayCampoIncompleto(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
@@ -138,6 +142,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		_, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
 			Name:    name,
 			Surname: surname,
+			AuthID:  resp.OK.User.ID,
 		})
 		if err != nil {
 			log.Println("Error creando usuario interno:", err)
@@ -155,7 +160,9 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(component).ServeHTTP(w, r)
 }
 
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Sign In (Log In)
+// ------------------------------------------------------------------------------------------------
 
 func signIn(w http.ResponseWriter, r *http.Request) {
 
@@ -216,7 +223,35 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Error desconocido durante el inicio de sesión", http.StatusInternalServerError)
 }
 
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Sign Out (Log Out)
+// ------------------------------------------------------------------------------------------------
+
+func signOut(w http.ResponseWriter, r *http.Request) {
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
+		SessionRequired: boolPtr(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if sessionContainer == nil {
+		http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
+		return
+	}
+
+	if err := sessionContainer.RevokeSession(); err != nil {
+		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones Auxiliares
+// ------------------------------------------------------------------------------------------------
 
 // Retorna si el usuario está autenticado.
 func isUserAuthenticated(r *http.Request) bool {

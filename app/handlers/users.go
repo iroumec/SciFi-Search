@@ -12,8 +12,8 @@ import (
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	sqlc "scifi-search/app/database"
 
@@ -50,6 +50,8 @@ func userWithIDHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -134,23 +136,8 @@ func showUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component := views.ProfilePage(user)
+	component := views.LoggedProfilePage(user)
 	templ.Handler(component).ServeHTTP(w, r)
-}
-
-// ------------------------------------------------------------------------------------------------
-// Actualización de Usuario
-// ------------------------------------------------------------------------------------------------
-
-func updateUser(w http.ResponseWriter, r *http.Request) {
-
-	/*
-		id, err := extractID(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -229,7 +216,7 @@ func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
 	payload.Surname = r.Form.Get("surname")
 
 	// Validación.
-	if hayCampoIncompleto(payload.Name, payload.Surname) {
+	if utils.HayCampoIncompleto(payload.Name, payload.Surname) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return nil
 	}

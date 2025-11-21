@@ -5,15 +5,21 @@ import sqlc "scifi-search/app/database"
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
+templ loggedProfileContent(user sqlc.User) {
+	<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
+	<a href="/signout">Cerrar sesión</a>
+}
 
 // ------------------------------------------------------------------------------------------------
 // Profile Page
 // ------------------------------------------------------------------------------------------------
-templ ProfilePage(user sqlc.User) {
-	<h1>Bienvenido, { user.Name }!</h1>
-	<p><strong>Usuario:</strong> { user.UserID }</p>
-	<p><strong>Email:</strong> { user.Surname }</p>
-	<a href="/">Cerrar sesión</a>
+templ LoggedProfilePage(user sqlc.User) {
+	@Layout(user.Name, true, func() templ.Component {
+		return loggedProfileContent(user)
+	})
 }
 
 // ------------------------------------------------------------------------------------------------
+templ UnloggedProfilePage() {
+	<h1>INICIE SESIÓN. NO HAY SESIÓN</h1>
+}

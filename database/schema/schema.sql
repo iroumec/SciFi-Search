@@ -1,8 +1,9 @@
 -- CREACIÓN DE TABLAS
 CREATE TABLE IF NOT EXISTS users(
-    user_id SERIAL,
+    user_id SERIAL, -- Podría sacarse este y usar el de autenticación únicamente después de la entrega del TP6.
     name VARCHAR(32) NOT NULL,
     surname VARCHAR(32) NOT NULL,
+    auth_id TEXT UNIQUE NOT NULL,
     CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
 
