@@ -36,17 +36,25 @@ body {
 .header {
     grid-area: header;
 
-    display: flex;
-    justify-content: flex-end; /* Ubicar a la derecha */
-    align-items: center; /* Centrar verticalmente */
-    padding: 0px 10px; /* Espacios a los costados */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "logo buttons";
+    align-items: center;
+    /* Centrar verticalmente */
+    padding: 0px 10px;
+    /* Espacios a los costados */
 
-    background-color: #fccab3;
-    border: 1px solid rgb(255, 0, 0);
+    /*background-color: #fccab3;
+    border: 1px solid rgb(255, 0, 0);*/
 }
 
 .header-buttons {
+
+    grid-area: buttons;
+
     display: flex;
+    justify-content: flex-end; /* Ubicar a la derecha */
     gap: 10px; /* Espacio entre botones */
 
     /*border: 1px solid rgb(255, 0, 0);*/
@@ -66,6 +74,17 @@ body {
 .header-button:hover {
     background-color: white;   
     color: var(--scifi);                
+}
+
+#header-logo {
+
+    grid-area: logo;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: flex-start;
+
+    /*border: 1px solid rgb(255, 0, 0);*/
 }
 
 /* --------------- Footer --------------- */
@@ -502,4 +521,30 @@ body {
 
 .result .extra-info {
     font-size: small;
+}
+
+.profile-container {
+    grid-area: content;
+}
+
+#signout {
+    
+    background-color: var(--scifi);
+    /* color del boton */
+    color: white;
+    /* color del texto */
+    border: none;
+    /* sin borde */
+    padding: 0.5rem 1rem;
+    /* espacio interno */
+    border-radius: 5px;
+    /* esquinas redondeadas */
+    cursor: pointer;
+    /* cambia el cursor al pasar */
+    font-weight: bold;
+    /* Efecto de la letra */
+}
+
+.sucessful-signup-container {
+    grid-area: content;
 }

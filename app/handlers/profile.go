@@ -37,6 +37,7 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 func showProfile(w http.ResponseWriter, r *http.Request) {
 
+	// Si el usuario está autenticado (tiene cookies de sesión)...
 	if isUserAuthenticated(r) {
 
 		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{

@@ -32,7 +32,7 @@ func Header(isUserAuthenticated bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"header\"><div class=\"header-buttons\"><button class=\"header-button\" onclick=\"window.location.href='/'\"><img src=\"static/img/logo.png\" alt=\"icono\" style=\"width:16px; height:16px;\"></button> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"header\"><a onclick=\"window.location.href='/'\"><img src=\"static/img/logo.png\" alt=\"icono\" style=\"width:240px; height:70px;\" id=\"header-logo\"></a><div class=\"header-buttons\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

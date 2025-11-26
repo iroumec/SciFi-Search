@@ -6,8 +6,10 @@ import sqlc "scifi-search/app/database"
 // Imports
 // ------------------------------------------------------------------------------------------------
 templ loggedProfileContent(user sqlc.User) {
-	<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
-	<a href="/signout">Cerrar sesión</a>
+	<div class="profile-container">
+		<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
+		<a href="/signout" id="signout">Cerrar sesión</a>
+	</div>
 }
 
 // ------------------------------------------------------------------------------------------------

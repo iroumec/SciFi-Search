@@ -93,7 +93,7 @@ func registerIndexHTML() {
 
 // ------------------------------------------------------------------------------------------------
 
-// healthCheckHandler responde con un simple 200 OK.
+// Responde con un simple 200 OK. Se utiliza para saber si la aplicación ya se levantó.
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Solo responde a peticiones GET.

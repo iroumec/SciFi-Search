@@ -4,7 +4,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -13,7 +12,6 @@ import (
 	"scifi-search/app/views"
 	"strconv"
 	"strings"
-	"time"
 
 	sqlc "scifi-search/app/database"
 
@@ -171,56 +169,4 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 
 	component := views.UserListPage(users)
 	templ.Handler(component).ServeHTTP(w, r)
-}
-
-// ------------------------------------------------------------------------------------------------
-// Agregado de Usuario a la Base de Datos
-// ------------------------------------------------------------------------------------------------
-
-func addUserToDatabase(w http.ResponseWriter, r *http.Request) *sqlc.User {
-
-	// Parseo del formulario enviado por POST.
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
-		return nil
-	}
-
-	// Construcción del payload.
-	var payload sqlc.User
-	payload.Name = r.Form.Get("name")
-	payload.Surname = r.Form.Get("surname")
-
-	// Validación.
-	if utils.HayCampoIncompleto(payload.Name, payload.Surname) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return nil
-	}
-
-	// Publicación de un evento.
-	event := map[string]interface{}{
-		"type": "user_created",
-		"user": payload,
-		"time": time.Now(),
-	}
-	eventData, _ := json.Marshal(event)
-	if err := nat.Publish("products.events", eventData); err != nil {
-		http.Error(w, "Error procesando la solicitud", http.StatusInternalServerError)
-		return nil
-	}
-
-	// Parámetros para la DB.
-	params := sqlc.CreateUserParams{
-		Name:    payload.Name,
-		Surname: payload.Surname,
-	}
-
-	// Creación en la base.
-	newUser, err := queries.CreateUser(r.Context(), params)
-	if err != nil {
-		log.Printf("Error al crear usuario: %v", err)
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		return nil
-	}
-
-	return &newUser
 }

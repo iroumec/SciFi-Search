@@ -5,7 +5,7 @@ package views
 // ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string) {
 	<main>
-		<div class="load-user">
+		<div class="signup-container">
 			<div class="centered-container">
 				<form id="signup-form" action="/signup" method="POST">
 					<div class="form-name-container">
@@ -42,10 +42,10 @@ templ SignUpPage(errorMessage string) {
 // Successful Sign Up Content
 // ------------------------------------------------------------------------------------------------
 templ sucessfulSignUpContent() {
-	<h1>Sign-up completed with success!</h1>
-	<main>
+	<div class="sucessful-signup-container">
+		<h1>Sign-up completed with success!</h1>
 		<button class="header-button" onclick="window.location.href='/'">Go to main page</button>
-	</main>
+	</div>
 }
 
 // ------------------------------------------------------------------------------------------------

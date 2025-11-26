@@ -39,10 +39,13 @@ func registerSearchHandlers() {
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
 
+	// Creación del cliente de Meilisearch.
 	client = meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
 
+	// Se indexan los datos.
 	indexarDatos()
 
+	// Se registra el handler.
 	http.HandleFunc("/search", handleSearch)
 }
 
@@ -85,9 +88,7 @@ func indexarDatos() {
 
 	index := client.Index("funding")
 
-	_, err = index.AddDocuments(indexDocs, nil) /*, &meilisearch.Add{
-		PrimaryKey: "id",
-	})*/
+	_, err = index.AddDocuments(indexDocs, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
