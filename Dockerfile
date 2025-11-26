@@ -14,7 +14,8 @@ COPY . .
 
 # Se compila el paquete dentro de ./app.
 # La opción "-buildvcs=false" la pedía una dependencia.
-RUN go build -buildvcs=false -o /app/main ./app
+# Se usa CGO_ENABLED=0 para binario estático y output correcto.
+RUN CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o main ./app
 
 # ============================================================
 # Stage 2: Development
@@ -59,7 +60,8 @@ COPY --from=builder /app/main .
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/resources/planillas ./resources/planillas
 
-RUN chown -R sciFi-search:sciFi-search /app
+RUN chown -R sciFi-search:sciFi-search /app && \
+    chmod +x /app/main
 
 EXPOSE 8080
 USER sciFi-search

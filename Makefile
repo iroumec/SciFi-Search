@@ -25,7 +25,7 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	
 	@docker compose -f docker-compose.yml up -d --build
 	
-	@echo "Contenedores iniciados. Esperando a que el servidor esté listo..."
+	@echo "Contenedores iniciados."
 	@echo
 
 	@# Bucle de espera: Intenta conectarse a /health cada segundo.
@@ -37,9 +37,17 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@until docker exec scifi-search-db pg_isready -U postgres > /dev/null 2>&1; do \
 		sleep 1; \
 	done
-	@until curl -f -s http://localhost:8080/health > /dev/null; do \
+	@echo
+
+	@echo "Aplicando migraciones..."
+	@docker exec -i scifi-search-db psql -U postgres -d postgres  < database/schema/schema.sql > /dev/null 2>&1
+	@echo
+
+	@echo "Base de datos lista. Esperando a que el servidor esté listo..."
+	@until curl -f -s http://localhost:8080/health > /dev/null 2>&1; do \
 		sleep 1; \
 	done
+	@echo
 
 	@echo "Servidor corriendo en http://localhost:8080."
 	@echo

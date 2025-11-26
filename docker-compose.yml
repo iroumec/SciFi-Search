@@ -7,18 +7,11 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      # Únicamente se muestran warnings en la consola,
-      # para reducir la verborragia.
       POSTGRES_LOGGING_COLLECTOR: "off"
       POSTGRES_LOG_MIN_MESSAGES: "WARNING"
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
-      # - ./database/schema:/docker-entrypoint-initdb.d
-      # Si la línea anteriro se descomenta, Postgres va a
-      # cargar automáticamente el SQL cada vez que el contenedor
-      # se inicialice. Si se utiliza Atlas, este realiza dicho
-      # trabajo, por lo que la línea debe mantenerse comentada.
       - tpe-db-data:/var/lib/postgresql/data
       - ./logs/db:/var/log
     logging:
@@ -28,7 +21,7 @@ services:
         max-file: "5"
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -p ${DB_PORT}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -37,7 +30,8 @@ services:
   app:
     build:
       context: .
-      target: dev # Cambiar a 'production' en producción
+      target: production
+    container_name: tpe-app-1
     ports:
       - "${APP_PORT}:${APP_PORT}"
     depends_on:
@@ -64,7 +58,6 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app
       - ./logs/app:/var/log
     logging:
       driver: local
@@ -77,14 +70,6 @@ services:
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: meilisearch
-    # Se reduce la verborragia
-    # de la aplicación.
-    command:
-      #- "--no-analytics"
-      #- "--env"
-      #- "production"
-      #- "--log-level"
-      #- "error"
     ports:
       - "${MEILI_PORT}:${MEILI_PORT}"
     volumes:
@@ -101,7 +86,6 @@ services:
 
   nats:
     image: nats:latest
-    # Reducción de la verborragia en la salida.
     command:
       - "-DV=false"
     ports:
@@ -114,7 +98,7 @@ services:
         max-size: "10m"
         max-file: "5"
 
-  # Servicio de autenticación SuperTokens.
+  # Servicio de autenticación SuperTokens
   supertokens:
     image: supertokens/supertokens-core:dev-branch-11.0
     container_name: supertokens
@@ -124,7 +108,6 @@ services:
         condition: service_healthy
     environment:
       POSTGRESQL_CONNECTION_URI: "postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}"
-      # Se reduce la verborragia de la salida, únicamente mostrando warnings.
       SUPERTOKENS_LOG_LEVEL: "warn"
     ports:
       - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"
