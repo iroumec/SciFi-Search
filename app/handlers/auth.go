@@ -7,6 +7,7 @@ import (
 	"os"
 
 	emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
+	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
@@ -63,6 +64,7 @@ func registerAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/signin", signInHandler)
 	http.HandleFunc("/signout", signOutHandler)
+	http.HandleFunc("/create-user", userCreationHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -108,15 +110,61 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	newUser, resp := createUser(w, r)
+
+	if newUser != nil && resp != nil {
+
+		// Creación de sesión en SuperTokens.
+		_, err := session.CreateNewSession(r, w, "", resp.OK.User.ID, nil, nil)
+		if err != nil {
+			http.Error(w, "Error al crear la sesión: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		component := views.SuccessfulSignUpPage()
+		templ.Handler(component).ServeHTTP(w, r)
+	} else {
+
+		// Manejo de cualquier otro caso inesperado.
+		http.Error(w, "Error desconocido durante el registro.", http.StatusInternalServerError)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func userCreationHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodGet {
+		component := views.SignUpPage("")
+		templ.Handler(component).ServeHTTP(w, r)
+		return
+	}
+
+	newUser, _ := createUser(w, r)
+	if newUser != nil {
+		component := views.UserIndividual(*newUser)
+		templ.Handler(component).ServeHTTP(w, r)
+	} else {
+		// Manejo de cualquier otro caso inesperado.
+		http.Error(w, "Error desconocido durante la creación del usuario.", http.StatusInternalServerError)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.SignUpResponse) {
+
+	var newUser sqlc.User
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
+		return &newUser, nil
 	}
 
 	// Parseo del formulario enviado por POST.
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
-		return
+		return &newUser, nil
 	}
 
 	// Obtención de los datos del usuario.
@@ -128,17 +176,17 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	// Validación.
 	if utils.HayCampoIncompleto(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return
+		return &newUser, nil
 	}
 
 	resp, err := emailpassword.SignUp("", email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return &newUser, nil
 	}
 
 	if resp.OK != nil {
-		_, err := queries.CreateUser(r.Context(), sqlc.CreateUserParams{
+		newUser, err = queries.CreateUser(r.Context(), sqlc.CreateUserParams{
 			Name:    name,
 			Surname: surname,
 			AuthID:  resp.OK.User.ID,
@@ -148,15 +196,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Crear sesión en SuperTokens
-	_, err = session.CreateNewSession(r, w, "", resp.OK.User.ID, nil, nil)
-	if err != nil {
-		http.Error(w, "Error al crear la sesión: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	component := views.SuccessfulSignUpPage()
-	templ.Handler(component).ServeHTTP(w, r)
+	return &newUser, &resp
 }
 
 // ------------------------------------------------------------------------------------------------

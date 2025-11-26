@@ -6,6 +6,9 @@ package views
 templ Header(isUserAuthenticated bool) {
 	<header class="header">
 		<div class="header-buttons">
+			<button class="header-button" onclick="window.location.href='/'">
+				<img src="static/img/logo.png" alt="icono" style="width:16px; height:16px;"/>
+			</button>
 			if !isUserAuthenticated {
 				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
 				<button class="header-button" onclick="window.location.href='/signin'">Log-in</button>
@@ -49,9 +52,9 @@ templ Footer() {
 			<a href="https://www.meilisearch.com/" target="_blank">
 				<img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
 			</a>
-			<a href="https://supertokens.com/" target="_blank">
+			<!--a href="https://supertokens.com/" target="_blank">
 				<img src="static/img/logo_supertokens.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
-			</a>
+			</a-->
 		</p>
 	</footer>
 }

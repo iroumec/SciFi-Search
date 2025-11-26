@@ -130,7 +130,7 @@ func SuccessfulSignUpPage() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Successful sign-up", false, func() templ.Component {
+		templ_7745c5c3_Err = Layout("Successful sign-up", true, func() templ.Component {
 			return sucessfulSignUpContent()
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -61,27 +61,9 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			listUsers(w, r)
 		}
-	case http.MethodPost:
-		addUser(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-// Agregado de un Usuario.
-// ------------------------------------------------------------------------------------------------
-
-// Agrega un usuario a la base de datos.
-func addUser(w http.ResponseWriter, r *http.Request) {
-
-	newUser := addUserToDatabase(w, r)
-	if newUser == nil {
-		return
-	}
-
-	component := views.UserIndividual(*newUser)
-	templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------

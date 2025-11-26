@@ -32,7 +32,7 @@ func Header(isUserAuthenticated bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"header\"><div class=\"header-buttons\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<header class=\"header\"><div class=\"header-buttons\"><button class=\"header-button\" onclick=\"window.location.href='/'\"><img src=\"static/img/logo.png\" alt=\"icono\" style=\"width:16px; height:16px;\"></button> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,7 +86,7 @@ func Layout(title string, isUserAuthenticated bool, content func() templ.Compone
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 28, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 31, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -140,7 +140,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<footer class=\"footer\"><p class=\"footer-text\">powered by <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo_supertokens.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a></p></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<footer class=\"footer\"><p class=\"footer-text\">powered by <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a><!--a href=\"https://supertokens.com/\" target=\"_blank\">\n\t\t\t\t<img src=\"static/img/logo_supertokens.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"/>\n\t\t\t</a--></p></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

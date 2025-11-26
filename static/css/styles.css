@@ -21,18 +21,18 @@ body {
 
 .contenedor-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 9% 85% 6%;
-    grid-template-areas: 
+    height: 100vh;
+    
+    grid-template-columns: 1fr; /* Una única columna */
+    grid-template-rows: 9% 85% 6%; /* Tres filas por columna */
+    grid-template-areas: /* Cantidad de áreas, definida en base a filas y columnas */
         "header"
         "content"
         "footer";
-    height: 100vh;
 }
 
 /* --------------- Header --------------- */
-/*header para el index
-to-do: ver como variar los headers*/
+/*header para el index */
 .header {
     grid-area: header;
 
@@ -41,8 +41,8 @@ to-do: ver como variar los headers*/
     align-items: center; /* Centrar verticalmente */
     padding: 0px 10px; /* Espacios a los costados */
 
-    /*background-color: #b3e5fc;
-    border: 1px solid rgb(255, 0, 0);*/
+    background-color: #fccab3;
+    border: 1px solid rgb(255, 0, 0);
 }
 
 .header-buttons {
@@ -102,7 +102,7 @@ to-do: ver como variar los headers*/
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     grid-template-areas: 
-        "inicio inicio"
+        "inicio inicio" /* Única área para ambas columnas */
         "load-user user-list";
     
     /*background-color: #a56e5d;
@@ -181,7 +181,7 @@ to-do: ver como variar los headers*/
     width: 100%;
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 40% 40% 20%;
+    grid-template-rows: 20% 20% 20% 20% 20%;
     grid-template-areas: 
         "name"
         "surname"

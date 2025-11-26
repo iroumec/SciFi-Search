@@ -32,7 +32,7 @@ func userForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"load-user\"><div class=\"centered-container\"><form id=\"signup-form\" hx-post=\"/users\" hx-target=\"#the-user-list\" hx-swap=\"beforeend\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required></div><div class=\"form-surname-container\"><input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"load-user\"><div class=\"centered-container\"><form id=\"signup-form\" hx-post=\"/create-user\" hx-target=\"#the-user-list\" hx-swap=\"beforeend\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required></div><div class=\"form-surname-container\"><input type=\"text\" id=\"surname\" placeholder=\"Surname\" name=\"surname\" required></div><div class=\"form-email-container\"><input type=\"email\" id=\"email\" placeholder=\"Email\" name=\"email\" required></div><div class=\"form-password-container\"><input type=\"password\" id=\"password\" placeholder=\"Password\" name=\"password\" required></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

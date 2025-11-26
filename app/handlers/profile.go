@@ -31,8 +31,9 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func showProfile(w http.ResponseWriter, r *http.Request) {
 

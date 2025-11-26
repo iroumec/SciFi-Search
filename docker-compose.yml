@@ -64,7 +64,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app # Para hot reload con Air
+      - .:/app
       - ./logs/app:/var/log
     logging:
       driver: local

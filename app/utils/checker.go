@@ -36,3 +36,5 @@ func HayCampoIncompleto(campos ...string) bool {
 
 	return slices.Contains(campos, "")
 }
+
+// ------------------------------------------------------------------------------------------------
