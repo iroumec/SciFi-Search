@@ -1,0 +1,62 @@
+package views
+
+// ------------------------------------------------------------------------------------------------
+// Header
+// ------------------------------------------------------------------------------------------------
+templ Header(isUserAuthenticated bool) {
+	<header class="header">
+		<a onclick="window.location.href='/'">
+			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
+		</a>
+		<div class="header-buttons">
+			if !isUserAuthenticated {
+				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
+				<button class="header-button" onclick="window.location.href='/signin'">Log-in</button>
+			} else {
+				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
+			}
+		</div>
+	</header>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Layout
+// ------------------------------------------------------------------------------------------------
+templ Layout(title string, isUserAuthenticated bool, content func() templ.Component) {
+	<!DOCTYPE html>
+	<html lang="es">
+		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+		<head>
+			<meta charset="UTF-8"/>
+			<title>{ title }</title>
+			<link rel="stylesheet" href="/static/css/styles.css"/>
+			<link rel="icon" type="image/png" href="/static/img/icono.png"/>
+		</head>
+		<body>
+			<div class="contenedor-grid">
+				@Header(isUserAuthenticated)
+				@content()
+				@Footer()
+			</div>
+		</body>
+	</html>
+}
+
+// ------------------------------------------------------------------------------------------------
+// Footer
+// ------------------------------------------------------------------------------------------------
+templ Footer() {
+	<footer class="footer">
+		<p class="footer-text">
+			powered by
+			<a href="https://www.meilisearch.com/" target="_blank">
+				<img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
+			</a>
+			<!--a href="https://supertokens.com/" target="_blank">
+				<img src="static/img/logo_supertokens.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
+			</a-->
+		</p>
+	</footer>
+}
+
+// ------------------------------------------------------------------------------------------------
