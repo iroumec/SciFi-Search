@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"scifi-search/app/utils"
 	"scifi-search/app/views"
 	"strconv"
 	"strings"
@@ -54,11 +53,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		if utils.HasGETRequestParameters(r) {
-			showUser(w, r)
-		} else {
-			listUsers(w, r)
-		}
+		listUsers(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -87,36 +82,6 @@ func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
 	log.Printf("Se eliminó al usuario de ID %d.", id)
 
 	// Por defecto, la respuesta es 200 OK.
-}
-
-// ------------------------------------------------------------------------------------------------
-// Mostrar un Usuario
-// ------------------------------------------------------------------------------------------------
-
-// Muestra los datos correspondientes a un usuario, dado un ID.
-func showUser(w http.ResponseWriter, r *http.Request) {
-
-	id, err := extractID(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	user, err := queries.GetUserByID(r.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: El usuario no existe.
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-		} else {
-			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
-			log.Printf("Error al obtener usuario por ID %d: %v", id, err)
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	component := views.LoggedProfilePage(user)
-	templ.Handler(component).ServeHTTP(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------

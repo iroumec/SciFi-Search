@@ -10,8 +10,6 @@ import (
 	"scifi-search/app/views"
 
 	_ "github.com/lib/pq"
-	"github.com/supertokens/supertokens-golang/recipe/session"
-	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -37,21 +35,17 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 func showProfile(w http.ResponseWriter, r *http.Request) {
 
-	// Si el usuario está autenticado (tiene cookies de sesión)...
-	if isUserAuthenticated(r) {
+	user := getCurrentUser(w, r)
 
-		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-			SessionRequired: boolPtr(false),
-		})
+	// Si hay un usuario autenticado (con cookies de sesión)...
+	if user != nil {
 
-		supertokensUserID := sessionContainer.GetUserID()
-
-		user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
+		searches, err := queries.ListHistoricSearchesFromUser(r.Context(), user.UserID)
 		if err != nil {
 			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		}
 
-		component := views.LoggedProfilePage(user)
+		component := views.LoggedProfilePage(*user, searches)
 		component.Render(r.Context(), w)
 
 	} else {

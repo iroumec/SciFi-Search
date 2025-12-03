@@ -12,6 +12,7 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
+	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
@@ -313,3 +314,26 @@ func boolPtr(b bool) *bool {
 }
 
 // ---------------------------------------------------------------------
+
+func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
+
+	if isUserAuthenticated(r) {
+
+		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+			SessionRequired: boolPtr(false),
+		})
+
+		supertokensUserID := sessionContainer.GetUserID()
+
+		user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
+		if err != nil {
+			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		}
+
+		return &user
+
+	} else {
+
+		return nil
+	}
+}

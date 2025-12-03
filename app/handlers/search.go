@@ -131,9 +131,13 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
-	// Guardar histórico.
-	params := sqlc.CreateHistoricSearchParams{UserID: 1, SearchString: query}
-	queries.CreateHistoricSearch(r.Context(), params)
+	// De estar autenticado el usuario, se guarda la búsqueda
+	// en su historial.
+	user := getCurrentUser(w, r)
+	if user != nil {
+		params := sqlc.CreateHistoricSearchParams{UserID: user.UserID, SearchString: query}
+		queries.CreateHistoricSearch(r.Context(), params)
+	}
 
 	// Pasar maps al templ.
 	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r))

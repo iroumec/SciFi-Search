@@ -5,19 +5,27 @@ import sqlc "scifi-search/app/database"
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
-templ loggedProfileContent(user sqlc.User) {
+templ loggedProfileContent(user sqlc.User, searches []string) {
 	<div class="profile-container">
 		<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
 		<a href="/signout" id="signout">Cerrar sesión</a>
+		<h2>Búsquedas antiguas</h2>
+		<ul id="the-user-list">
+			for _, search := range searches {
+				<li>
+					{ search }
+				</li>
+			}
+		</ul>
 	</div>
 }
 
 // ------------------------------------------------------------------------------------------------
 // Profile Page
 // ------------------------------------------------------------------------------------------------
-templ LoggedProfilePage(user sqlc.User) {
+templ LoggedProfilePage(user sqlc.User, searches []string) {
 	@Layout(user.Name, true, func() templ.Component {
-		return loggedProfileContent(user)
+		return loggedProfileContent(user, searches)
 	})
 }
 
