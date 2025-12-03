@@ -31,6 +31,13 @@ RUN apk add --no-cache git bash curl
 # Se instala Air.
 RUN go install github.com/air-verse/air@latest
 
+# Se instala SQLC y se exporta al PATH.
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+RUN export PATH="$PATH:$(go env GOPATH)/bin"
+
+# Se instala Templ.
+RUN go install github.com/a-h/templ/cmd/templ@latest
+
 # Se instala Atlas CLI.
 RUN curl -sSfL https://release.ariga.io/atlas/atlas-linux-amd64-latest -o /usr/local/bin/atlas && \
     chmod +x /usr/local/bin/atlas

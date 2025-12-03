@@ -135,3 +135,7 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 	component := views.UserListPage(users)
 	templ.Handler(component).ServeHTTP(w, r)
 }
+
+// ------------------------------------------------------------------------------------------------
+// Change Name
+// ------------------------------------------------------------------------------------------------

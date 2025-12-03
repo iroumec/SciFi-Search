@@ -55,6 +55,10 @@ services:
       DB_USER: "${DB_USER}"
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_NAME: "${DB_NAME}"
+      MINIO_HOST: "${MINIO_HOST}"
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+      MINIO_BUCKET: "${MINIO_BUCKET}"
     env_file:
       - .env
     volumes:
@@ -118,6 +122,22 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+
+  # Almacenamiento de objetos MinIO.
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000" # API S3-compatible
+      - "9001:9001" # Panel web
+    volumes:
+      - ./minio_data:/data
+      - ./logs/minio:/var/log
+    restart: always
 
 volumes:
   tpe-db-data:

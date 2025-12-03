@@ -18,6 +18,8 @@ test: up ## Levanta el entorno, ejecuta las pruebas y lo detiene.
 	@echo
 	@$(MAKE) -s down
 
+run: up ## Construye y levanta los contenedores, esperando a que el servidor avise.
+
 up: create-env ## Construye y levanta los contenedores, esperando a que el servidor avise.
 	@echo
 	@echo "Construyendo y levantando los contenedores de Docker..."

@@ -20,11 +20,21 @@ atlas migrate apply --env docker
 
 # 2. Generación de sqlc.
 echo "Generando sqlc..."
-./resources/scripts/sqlc/runSQLC.sh
+
+# Copia del archivo .yaml.
+cp database/sqlc.yaml .
+
+# Ejecución de SQLC.
+# Se puede ejecutar usando solo "sqlc"
+# ya que se exportó al PATH en el DockerFile.
+sqlc generate
+
+# Borrado del yaml.
+rm sqlc.yaml
 
 # 3. Generación de templ
 echo "Generando templ..."
-./resources/scripts/templ/runTEMPL.sh
+go run github.com/a-h/templ/cmd/templ@latest generate ./app/views
 
 # 4. Compilación de Go
 echo "Compilando aplicación Go..."

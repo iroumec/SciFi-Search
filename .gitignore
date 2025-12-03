@@ -43,3 +43,6 @@ database/migrations/atlas.sum
 
 # Los logs no se incluyen.
 logs/
+
+# Archivos de MinIO.
+minio_data
