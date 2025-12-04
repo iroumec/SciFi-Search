@@ -4,6 +4,10 @@
 
 package database
 
+import (
+	"database/sql"
+)
+
 type HistoricSearch struct {
 	HistoricSearchID int32  `json:"historic_search_id"`
 	UserID           int32  `json:"user_id"`
@@ -15,10 +19,11 @@ type Preference struct {
 }
 
 type User struct {
-	UserID  int32  `json:"user_id"`
-	Name    string `json:"name"`
-	Surname string `json:"surname"`
-	AuthID  string `json:"auth_id"`
+	UserID    int32          `json:"user_id"`
+	Name      string         `json:"name"`
+	Surname   string         `json:"surname"`
+	AuthID    string         `json:"auth_id"`
+	AvatarUrl sql.NullString `json:"avatar_url"`
 }
 
 type UserPreference struct {

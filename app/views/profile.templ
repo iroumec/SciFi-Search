@@ -8,13 +8,26 @@ import sqlc "scifi-search/app/database"
 templ loggedProfileContent(user sqlc.User, searches []string) {
 	<div class="profile-container">
 		<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
+		if user.AvatarUrl.Valid {
+			<img
+				src={ user.AvatarUrl.String }
+				alt="Avatar del usuario"
+				class="avatar-img"
+			/>
+		} else {
+			<p>No tiene avatar cargado.</p>
+		}
+		<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+			<label for="avatar">Subir nuevo avatar</label>
+			<input type="file" id="avatar" name="avatar" accept="image/*" required/>
+			<button type="submit">Actualizar avatar</button>
+		</form>
+		<p></p>
 		<a href="/signout" id="signout">Cerrar sesión</a>
 		<h2>Búsquedas antiguas</h2>
 		<ul id="the-user-list">
 			for _, search := range searches {
-				<li>
-					{ search }
-				</li>
+				<li>{ search }</li>
 			}
 		</ul>
 	</div>

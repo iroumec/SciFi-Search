@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users(
     name VARCHAR(32) NOT NULL,
     surname VARCHAR(32) NOT NULL,
     auth_id TEXT UNIQUE NOT NULL,
+    avatar_url TEXT UNIQUE,
     CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
 

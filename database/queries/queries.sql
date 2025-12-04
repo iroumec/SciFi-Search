@@ -10,6 +10,12 @@ SELECT * FROM users WHERE user_id = $1;
 -- name: GetUserByAuthID :one
 SELECT * FROM users WHERE auth_id = $1;
 
+-- name: UploadAvatar :exec
+UPDATE users SET avatar_url = $2 WHERE user_id = $1;
+
+-- name: DeleteAvatar :exec
+UPDATE users SET avatar_url = NULL WHERE user_id = $1;
+
 -- name: UpdateUser :exec
 UPDATE users SET name = $2, surname = $3 WHERE user_id = $1;
 

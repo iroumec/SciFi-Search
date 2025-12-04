@@ -43,6 +43,7 @@ func showProfile(w http.ResponseWriter, r *http.Request) {
 		searches, err := queries.ListHistoricSearchesFromUser(r.Context(), user.UserID)
 		if err != nil {
 			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+			return
 		}
 
 		component := views.LoggedProfilePage(*user, searches)

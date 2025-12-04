@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
@@ -36,7 +37,7 @@ func (q *Queries) CreatePreference(ctx context.Context, preference string) (stri
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users(name, surname, auth_id) VALUES ($1, $2, $3) RETURNING user_id, name, surname, auth_id
+INSERT INTO users(name, surname, auth_id) VALUES ($1, $2, $3) RETURNING user_id, name, surname, auth_id, avatar_url
 `
 
 type CreateUserParams struct {
@@ -53,8 +54,18 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Name,
 		&i.Surname,
 		&i.AuthID,
+		&i.AvatarUrl,
 	)
 	return i, err
+}
+
+const deleteAvatar = `-- name: DeleteAvatar :exec
+UPDATE users SET avatar_url = NULL WHERE user_id = $1
+`
+
+func (q *Queries) DeleteAvatar(ctx context.Context, userID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteAvatar, userID)
+	return err
 }
 
 const deleteHistoricSearch = `-- name: DeleteHistoricSearch :exec
@@ -85,7 +96,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 }
 
 const getUserByAuthID = `-- name: GetUserByAuthID :one
-SELECT user_id, name, surname, auth_id FROM users WHERE auth_id = $1
+SELECT user_id, name, surname, auth_id, avatar_url FROM users WHERE auth_id = $1
 `
 
 func (q *Queries) GetUserByAuthID(ctx context.Context, authID string) (User, error) {
@@ -96,12 +107,13 @@ func (q *Queries) GetUserByAuthID(ctx context.Context, authID string) (User, err
 		&i.Name,
 		&i.Surname,
 		&i.AuthID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT user_id, name, surname, auth_id FROM users WHERE user_id = $1
+SELECT user_id, name, surname, auth_id, avatar_url FROM users WHERE user_id = $1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
@@ -112,6 +124,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 		&i.Name,
 		&i.Surname,
 		&i.AuthID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }
@@ -198,7 +211,7 @@ func (q *Queries) ListPreferencesFromUser(ctx context.Context, userID int32) ([]
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT user_id, name, surname, auth_id FROM users ORDER BY user_id
+SELECT user_id, name, surname, auth_id, avatar_url FROM users ORDER BY user_id
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -215,6 +228,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Name,
 			&i.Surname,
 			&i.AuthID,
+			&i.AvatarUrl,
 		); err != nil {
 			return nil, err
 		}
@@ -271,5 +285,19 @@ type UpdateUserParams struct {
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	_, err := q.db.ExecContext(ctx, updateUser, arg.UserID, arg.Name, arg.Surname)
+	return err
+}
+
+const uploadAvatar = `-- name: UploadAvatar :exec
+UPDATE users SET avatar_url = $2 WHERE user_id = $1
+`
+
+type UploadAvatarParams struct {
+	UserID    int32          `json:"user_id"`
+	AvatarUrl sql.NullString `json:"avatar_url"`
+}
+
+func (q *Queries) UploadAvatar(ctx context.Context, arg UploadAvatarParams) error {
+	_, err := q.db.ExecContext(ctx, uploadAvatar, arg.UserID, arg.AvatarUrl)
 	return err
 }
