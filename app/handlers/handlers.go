@@ -57,8 +57,11 @@ func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes al perfil del usuario.
 	registerProfileHandlers()
 
-	// Se registrans los handlers correspondientes al manejo de avatars.
+	// Se registran los handlers correspondientes al manejo de avatars.
 	registerAvatarHandlers()
+
+	// Se registran los handlers correspondiente al manejo de tendencias.
+	registerTrendsHandler()
 
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)

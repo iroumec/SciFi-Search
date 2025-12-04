@@ -15,6 +15,7 @@ templ Header(isUserAuthenticated bool) {
 			} else {
 				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
 			}
+			<button class="header-button" onclick="window.location.href='/trends'">Trends</button>
 		</div>
 	</header>
 }
@@ -26,6 +27,8 @@ templ Layout(title string, isUserAuthenticated bool, content func() templ.Compon
 	<!DOCTYPE html>
 	<html lang="es">
 		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+		<!-- Script de ECharts -->
+		<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ title }</title>

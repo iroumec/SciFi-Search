@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS user_preferences (
 CREATE TABLE IF NOT EXISTS historic_searches (
     historic_search_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    search_string TEXT NOT NULL
+    search_string TEXT NOT NULL,
+    search_datetime TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- ASIGNACION DE CLAVES FORÁNEAS 

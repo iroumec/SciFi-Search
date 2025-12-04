@@ -47,6 +47,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.3
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.93.0
 	github.com/disintegration/imaging v1.6.2
+	github.com/go-echarts/go-echarts/v2 v2.6.7
 	github.com/lib/pq v1.10.9
 	github.com/meilisearch/meilisearch-go v0.34.0
 	github.com/nats-io/nats.go v1.47.0

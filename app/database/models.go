@@ -6,12 +6,14 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
 type HistoricSearch struct {
-	HistoricSearchID int32  `json:"historic_search_id"`
-	UserID           int32  `json:"user_id"`
-	SearchString     string `json:"search_string"`
+	HistoricSearchID int32     `json:"historic_search_id"`
+	UserID           int32     `json:"user_id"`
+	SearchString     string    `json:"search_string"`
+	SearchDatetime   time.Time `json:"search_datetime"`
 }
 
 type Preference struct {

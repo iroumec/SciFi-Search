@@ -11,7 +11,7 @@ import (
 )
 
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
-INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string
+INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string, search_datetime
 `
 
 type CreateHistoricSearchParams struct {
@@ -22,7 +22,12 @@ type CreateHistoricSearchParams struct {
 func (q *Queries) CreateHistoricSearch(ctx context.Context, arg CreateHistoricSearchParams) (HistoricSearch, error) {
 	row := q.db.QueryRowContext(ctx, createHistoricSearch, arg.UserID, arg.SearchString)
 	var i HistoricSearch
-	err := row.Scan(&i.HistoricSearchID, &i.UserID, &i.SearchString)
+	err := row.Scan(
+		&i.HistoricSearchID,
+		&i.UserID,
+		&i.SearchString,
+		&i.SearchDatetime,
+	)
 	return i, err
 }
 
@@ -93,6 +98,44 @@ DELETE FROM users WHERE user_id = $1
 func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, userID)
 	return err
+}
+
+const getTrendingSearches = `-- name: GetTrendingSearches :many
+SELECT search_string, COUNT(*) AS count
+FROM historic_searches
+WHERE search_datetime >= date_trunc('day', NOW() AT TIME ZONE 'UTC')
+    AND search_datetime <  date_trunc('day', NOW() AT TIME ZONE 'UTC') + INTERVAL '1 day'
+GROUP BY search_string
+ORDER BY count
+`
+
+type GetTrendingSearchesRow struct {
+	SearchString string `json:"search_string"`
+	Count        int64  `json:"count"`
+}
+
+// Búquedas realizadas hoy según UTC.
+func (q *Queries) GetTrendingSearches(ctx context.Context) ([]GetTrendingSearchesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getTrendingSearches)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetTrendingSearchesRow
+	for rows.Next() {
+		var i GetTrendingSearchesRow
+		if err := rows.Scan(&i.SearchString, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUserByAuthID = `-- name: GetUserByAuthID :one

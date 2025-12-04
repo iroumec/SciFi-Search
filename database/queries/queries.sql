@@ -48,3 +48,12 @@ DELETE FROM historic_searches WHERE historic_search_id = $1;
 
 -- name: ListHistoricSearchesFromUser :many
 SELECT search_string FROM historic_searches WHERE user_id = $1;
+
+-- name: GetTrendingSearches :many
+SELECT search_string, COUNT(*) AS count
+FROM historic_searches
+-- Búquedas realizadas hoy según UTC.
+WHERE search_datetime >= date_trunc('day', NOW() AT TIME ZONE 'UTC')
+    AND search_datetime <  date_trunc('day', NOW() AT TIME ZONE 'UTC') + INTERVAL '1 day'
+GROUP BY search_string
+ORDER BY count;

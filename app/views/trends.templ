@@ -1,0 +1,18 @@
+package views
+
+import "html/template"
+
+templ trendsContent(htmlChart template.HTML) {
+	<div class="trends-container">
+		<h1>Tendencias de Búsqueda</h1>
+		<div class="chart-wrapper">
+			@templ.Raw(string(htmlChart))
+		</div>
+	</div>
+}
+
+templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool) {
+	@Layout("Trending", isUserAuthenticated, func() templ.Component {
+		return trendsContent(htmlChart)
+	})
+}
