@@ -18,3 +18,8 @@ vendor/
 # Ignorar archivos de entorno y documentación.
 .env
 *.md
+
+# ----------
+node_modules
+*.log
+.git

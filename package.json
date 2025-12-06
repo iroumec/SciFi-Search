@@ -1,0 +1,12 @@
+{
+    "name": "sci-fi-search-assets",
+    "private": true,
+    "devDependencies": {
+        "autoprefixer": "^10.4.0",
+        "postcss": "^8.4.0",
+        "tailwindcss": "^3.4.0"
+    },
+    "scripts": {
+        "build:css": "npx update-browserslist-db@latest && npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify"
+    }
+}

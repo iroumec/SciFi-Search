@@ -18,7 +18,35 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -buildvcs=false -o main ./app
 
 # ============================================================
-# Stage 2: Development
+# Stage 2: Assets (Tailwind)
+# ============================================================
+
+# Instalación de Node.
+FROM node:20-alpine AS assets
+
+WORKDIR /assets
+
+# Se copian los archivos de configuración de npm.
+COPY package.json ./
+
+# Se copia el archivo de configuración de Tailwind.
+COPY tailwind.config.js ./
+
+# Copiado de templates.
+COPY static ./static
+COPY app/views ./app/views
+
+# Instalación de dependencias.
+# Si se instalan desde el lock, usar "ci".
+# Se genera el package-lock.json la primera vez que se ejecute npm install.
+# En builds posteriores, si el archivo existe, lo usará.
+RUN npm install && npm install tailwindcss postcss autoprefixer
+
+# Compilación de Tailwind.
+RUN npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify
+
+# ============================================================
+# Stage 3: Development
 # ============================================================
 
 FROM golang:1.25-alpine AS dev
@@ -27,6 +55,9 @@ WORKDIR /app
 
 # Se instalan las herramientas base: "git", "bash" y "curl".
 RUN apk add --no-cache git bash curl
+
+# Instalación de Node (para Tailwind).
+RUN apk add --no-cache nodejs npm
 
 # Se instala Air.
 RUN go install github.com/air-verse/air@latest
@@ -45,6 +76,12 @@ RUN curl -sSfL https://release.ariga.io/atlas/atlas-linux-amd64-latest -o /usr/l
 # Se verifica la instalación de Atlas.
 RUN atlas version
 
+# Copiado de las dependencias de Tailwind.
+COPY package.json tailwind.config.js ./
+
+# Instalación de dependencias.
+RUN npm install
+
 # Se expone el puerto 8080.
 EXPOSE 8080
 
@@ -52,7 +89,7 @@ EXPOSE 8080
 CMD air -c .air.toml
 
 # ============================================================
-# Stage 3: Production
+# Stage 4: Production
 # ============================================================
 
 FROM alpine:latest AS production
@@ -66,6 +103,9 @@ RUN addgroup -S sciFi-search && adduser -S sciFi-search -G sciFi-search
 COPY --from=builder /app/main .
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/resources/planillas ./resources/planillas
+
+# Se copia el CSS generado por Tailwind.
+COPY --from=assets /assets/static/css/output.css ./static/css/
 
 RUN chown -R sciFi-search:sciFi-search /app && \
     chmod +x /app/main

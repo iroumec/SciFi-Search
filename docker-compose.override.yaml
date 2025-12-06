@@ -4,6 +4,7 @@ services: # Desarrolo.
       target: dev
     volumes:
       - .:/app
+      - /app/node_modules # (Volumen anónimo)
     environment:
       GIN_MODE: debug
 

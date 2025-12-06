@@ -1,4 +1,4 @@
-package views
+/*package views
 
 // ------------------------------------------------------------------------------------------------
 templ firstQuery() {
@@ -22,6 +22,52 @@ templ firstQuery() {
             }
         });
     </script>
-}
+}*/
 
 // ------------------------------------------------------------------------------------------------
+
+package views
+
+// ------------------------------------------------------------------------------------------------
+templ firstQuery() {
+	// .inicio -> flex centrado, llenando el área
+	<div class="[grid-area:inicio] flex justify-center items-center w-full h-full">
+		// .centered-container -> grid de 2 filas (70% y 30%), ancho/alto 50%
+		<div class="h-1/2 w-1/2 grid grid-cols-1 grid-rows-[70%_30%]">
+			// .inicio-image-container -> flex centrado
+			<div class="flex justify-center items-center">
+				// #logo_scifi -> h-full (añadí object-contain para seguridad)
+				<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi" class="h-full object-contain"/>
+			</div>
+			// .inicio-query-container -> flex centrado
+			<div class="flex justify-center items-center">
+				<input
+					type="text"
+					id="first-query"
+					placeholder="Search for SCIENCE!!!"
+					class="
+                        h-[70%] w-[75%] 
+                        text-black 
+                        rounded-[32px] border-0 
+                        bg-scifi-30 
+                        pl-[40px]
+                        bg-[url('/static/img/icono_busqueda_blanco.svg')] 
+                        bg-no-repeat 
+                        bg-[10px_10px] 
+                        focus:outline-none focus:border-[0.5px] focus:border-black
+                    "
+				/>
+			</div>
+		</div>
+	</div>
+	<script>
+        const input = document.getElementById("first-query");
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const query = input.value.trim();
+                if (!query) return;
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        });
+    </script>
+}
