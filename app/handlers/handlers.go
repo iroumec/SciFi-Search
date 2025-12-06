@@ -45,9 +45,6 @@ func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registra el handler para el index.html.
 	registerIndexHTML()
 
-	// Se registran los handlers correspondientes al manejo de usuarios (registro y login).
-	registrarHandlersUsuarios()
-
 	// Se registran los handlers correspondientes a la búsqueda.
 	registerSearchHandlers()
 

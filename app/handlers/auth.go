@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -341,3 +343,23 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
+
+	err := queries.DeleteUser(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			// Error 404: El usuario no existe.
+			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
+		} else {
+			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
+			log.Printf("Error al obtener usuario por ID %d: %v", id, err)
+			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	log.Printf("Se eliminó al usuario de ID %d.", id)
+
+	// Por defecto, la respuesta es 200 OK.
+}
