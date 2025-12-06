@@ -10,41 +10,52 @@ import "scifi-search/app/utils"
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
 templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool) {
-	@searchHeader(isUserAuthenticated)
-	<main>
-		<div class="search-container-grid">
-			<div class="filter-section">
-				Filtros
-			</div>
-			<div class="results-section">
-				<div class="results">
-					if len(hits) == 0 {
-						<p>No se encontraron resultados.</p>
-					} else {
-						<h1>Resultados de búsqueda para “{ query }”</h1>
-						for _, m := range hits {
+    @searchHeader(isUserAuthenticated)
+    <main>
+        <div class="search-container-grid">
+            <div class="filter-section">
+                @Filters()
+            </div>
+            <div class="results-section">
+                <div class="results">
+                    if len(hits) == 0 {
+                        <p>No se encontraron resultados.</p>
+                    } else {
+                        <h1>Resultados de búsqueda para “{ query }”</h1>
+
+                        for _, m := range hits {
 							<div class="result">
 								<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
-								<p id="extra-info">
-									{ utils.ToString(m["Tipo"]) }
-									{ utils.ToString(m["Gran area 1"]) }
-									{ utils.ToString(m["Gran area 2"]) }
-								</p>
-								<p id="description">{ utils.ToString(m["Descripcion"]) } </p>
+
+								<div class="extra-info">
+									if utils.ToString(m["Tipo"]) != "" {
+										<span>{ utils.ToString(m["Tipo"]) }</span>
+									}
+									if utils.ToString(m["Gran area 1"]) != "" {
+										<span>{ utils.ToString(m["Gran area 1"]) }</span>
+									}
+									if utils.ToString(m["Gran area 2"]) != "" {
+										<span>{ utils.ToString(m["Gran area 2"]) }</span>
+									}
+								</div>
+
+								<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
 							</div>
 						}
-					}
-				</div>
-			</div>
-		</div>
-	</main>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
 }
+
 
 templ searchHeader(isUserAuthenticated bool){
 	<header class="search-header">
 		<div class="header-left">
 			<a onclick="window.location.href='/'">
-				<img src="static/img/logo.png" alt="icono" id="logo_scifi_header"/>
+				<img src="static/img/logo_blanco.png" alt="icono" id="logo_scifi_header"/>
 			</a>
 			<input type="text" id="query" placeholder="Search for SCIENCE!!!"/>
 		</div>
@@ -58,6 +69,16 @@ templ searchHeader(isUserAuthenticated bool){
 			}
 			</div>
 		</div>
+		<script>
+			const input = document.getElementById("query");
+			input.addEventListener("keypress", (e) => {
+				if (e.key === "Enter") {
+					const query = input.value.trim();
+					if (!query) return;
+					window.location.href = `/search?query=${encodeURIComponent(query)}`;
+				}
+			});
+		</script>
 	</header>
 }
 
@@ -65,7 +86,7 @@ templ searchHeader(isUserAuthenticated bool){
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
 templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool) {
-	@Layout("Resultados para "+query, func() templ.Component {
+	@Layout(query+" - SciFi Search", func() templ.Component {
 		return searchResultsContent(query, hits, isUserAuthenticated)
 	})
 }

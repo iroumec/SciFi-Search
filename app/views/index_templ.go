@@ -42,12 +42,12 @@ func indexHeader(isUserAuthenticated bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button class=\"header-button\" onclick=\"window.location.href='/profile'\">Perfil</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button class=\"header-button\" onclick=\"window.location.href='/profile'\">Perfil</button> <button class=\"header-button\" onclick=\"window.location.href='/funding'\">Funding</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button> <button class=\"header-button\" onclick=\"window.location.href='/funding'\">Funding</button></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -81,15 +81,17 @@ func indexContent(isUserAuthenticated bool) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"index-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"index-bottom\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = firstQuery().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if isUserAuthenticated {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><script>\n\t\t\tconst input = document.getElementById(\"first-query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

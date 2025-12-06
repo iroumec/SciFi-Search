@@ -11,9 +11,9 @@ templ indexHeader(isUserAuthenticated bool) {
 				<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
 			} else {
 				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
+				<button class="header-button" onclick="window.location.href='/funding'">Funding</button>
 			}
 			<button class="header-button" onclick="window.location.href='/trends'">Trends</button>
-			<button class="header-button" onclick="window.location.href='/funding'">Funding</button>
 		</div>
 	</header>
 }
@@ -22,7 +22,31 @@ templ indexHeader(isUserAuthenticated bool) {
 templ indexContent(isUserAuthenticated bool) {
 	@indexHeader(isUserAuthenticated)
 	<main class="index-content">
-		@firstQuery()
+		<div class="index-top">
+			<div class="centered-container">
+				<div class="inicio-image-container">
+					<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi"/>
+				</div>
+				<div class="inicio-query-container">
+					<input type="text" id="first-query" placeholder="Search for SCIENCE!!!"/>
+				</div>
+			</div>
+		</div>
+		<div class="index-bottom">
+			if isUserAuthenticated {
+				<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->
+			} 
+		</div>
+		<script>
+			const input = document.getElementById("first-query");
+			input.addEventListener("keypress", (e) => {
+				if (e.key === "Enter") {
+					const query = input.value.trim();
+					if (!query) return;
+					window.location.href = `/search?query=${encodeURIComponent(query)}`;
+				}
+			});
+		</script>
 	</main>
 }
 

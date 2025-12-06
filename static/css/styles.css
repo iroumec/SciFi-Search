@@ -88,7 +88,7 @@ body {
 /* Header de la search */
 .search-header {
     grid-area: header;
-    
+
     display: grid;
     grid-template-columns: 4fr 1fr;
     grid-template-rows: 1fr;
@@ -177,32 +177,30 @@ body {
 /* --------------- Index / First query --------------- */
 
 .index-content {
-    grid-area: content;
-
+    grid-area: content; 
+    
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas: 
-        "inicio inicio" /* Única área para ambas columnas */
-        "load-user user-list";
-    
-    /*background-color: #a56e5d;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.inicio {
-    grid-area: inicio; 
-    
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: 45% 55%;
+    grid-template-areas: "top" "bottom";
 
     /*background-color: #c2c058;
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.inicio .centered-container {
-    height: 50%;
+.index-top {
+    grid-area: top; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+    /*background-color: #c2c058;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.index-top .centered-container {
+    height: 55%;
     width: 50%;
     display: grid;
     grid-template-columns: 100%;
@@ -403,6 +401,8 @@ body {
 
 /* --------------- Search --------------- */
 .search-container-grid {
+    grid-area: content;
+
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 6% 94%;
@@ -423,12 +423,35 @@ body {
 .results-section {
     grid-area: results-section;
     padding: 35px;
+    padding-left: 10%;
+    padding-right: 10%;
 
     overflow-y: auto;       /* habilita scroll vertical si hace falta */
     max-height: 100%;       /* máximo al espacio disponible */
 
     /*background-color: #5dd859;
     border: 1px solid rgb(255, 0, 0);*/
+}
+
+.result {
+    background-color: var(--white80);
+    padding: 1rem;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+}
+
+.result .extra-info span {
+    background-color: var(--scifi30);
+    font-size: 0.65rem;
+    padding: 0.15rem;
+    border-radius: 0.5rem;
+    color: var(--scifi);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.result p {
+    font-size: 0.85rem;
 }
 
 /* Search header */
@@ -517,15 +540,7 @@ body {
     color: var(--scifi);                
 }
 
-.result {
-    background-color: white;
-    padding: 1rem;
-    border-radius: 1rem;
-}
-
-.result .extra-info {
-    font-size: small;
-}
+/*------------- Perfil --------------- */
 
 .profile-container {
     grid-area: content;
@@ -553,38 +568,37 @@ body {
     grid-area: content;
 }
 
-/* Esto se puede borrar */
-.user-list {
-    grid-area: user-list;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /*background-color: #dd8585;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.user-list .centered-container {
-    height: 80%;
-    width: 80%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: var(--white80);
-    border-radius: 20px;
-    border: 0px;
-
-    /*background-color: #18b473;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.delete-button {
-    background-color: var(--scifi);   /* color del boton */
-    color: white;             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.2rem 0.5rem;       /* espacio interno */
-    border-radius: 2px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold; /* Efecto de la letra */
-}
+/*Filtros*/
+.dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            background-color: #f1f1f1;
+            color: black;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            min-width: 160px;
+            border: 1px solid #ddd;
+            z-index: 1;
+            overflow-y: auto;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        input[type=checkbox] {
+            margin-right: 5px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .submit-btn {
+            margin-top: 10px;
+        }
