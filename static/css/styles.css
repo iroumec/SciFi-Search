@@ -6,11 +6,9 @@
     --background: white;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap');
-
 /* --------------- Generales --------------- */
 body {
-    font-family: 'IBM PLex Sans', sans-serif;
+    font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 400; /*peso regular de fuente (700 Implica Bold) */
     background-color: var(--background);
     background-image: url('../img/fondo.png');
@@ -170,8 +168,12 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.load-user {
-    grid-area: load-user;
+/*----------------- Auth forms -----------------*/
+
+.only-form-content {
+    grid-area: content;
+    height: 100%;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -180,9 +182,9 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.load-user .centered-container {
-    height: 80%;
-    width: 80%;
+.only-form-content .centered-container {
+    height: 60%;
+    width: 40%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -195,15 +197,29 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.load-user #signup-form {
+.only-form-content #signup-form {
     height: 65%;
     width: 100%;
     display: grid;
     grid-template-columns: 100%;
-    grid-template-rows: 20% 20% 20% 20% 20%;
+    grid-template-rows: 18.75% 18.75% 18.75% 18.75% 25%;
     grid-template-areas: 
         "name"
         "surname"
+        "email"
+        "password"
+        "submit";
+
+    border-radius: inherit;
+}
+
+.only-form-content #login-form {
+    height: 40%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 30% 30% 40%;
+    grid-template-areas: 
         "email"
         "password"
         "submit";
@@ -231,7 +247,7 @@ body {
 
     border-radius: inherit;
 
-    /*background-color: #b8ac10;
+    /*background-color: #d8a08a;
     border: 1px solid rgb(255, 0, 0);*/
 }
 
@@ -243,7 +259,7 @@ body {
 
     border-radius: inherit;
 
-    /*background-color: #b8ac10;
+    /*background-color: #b86110;
     border: 1px solid rgb(255, 0, 0);*/
 }
 
@@ -271,40 +287,20 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.user-list {
-    grid-area: user-list;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.only-form-content input {
+    height: 65%;
+    width: 75%;
 
-    /*background-color: #dd8585;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+    color: black;
 
-.user-list .centered-container {
-    height: 80%;
-    width: 80%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: var(--white80);
     border-radius: 20px;
     border: 0px;
 
-    /*background-color: #18b473;
-    border: 1px solid rgb(255, 0, 0);*/
+    background-color: var(--scifi30);
+
+    padding-left: 15px;
 }
 
-.delete-button {
-    background-color: var(--scifi);   /* color del boton */
-    color: white;             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.2rem 0.5rem;       /* espacio interno */
-    border-radius: 2px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold; /* Efecto de la letra */
-}
 
 #logo_scifi {
     height: 100%;
@@ -329,62 +325,6 @@ body {
 
 #first-query:focus { /* Efecto de borde al entrar al input */
     border: 0.5px black;
-}
-
-#name {
-    height: 60%;
-    width: 75%;
-
-    color: black;
-
-    border-radius: 20px;
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    padding-left: 15px;
-}
-
-#surname {
-    height: 60%;
-    width: 75%;
-
-    color: black;
-
-    border-radius: 20px; 
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    padding-left: 15px;
-}
-
-#email {
-    height: 60%;
-    width: 75%;
-
-    color: black;
-
-    border-radius: 20px;
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    padding-left: 15px;
-}
-
-#password {
-    height: 60%;
-    width: 75%;
-
-    color: black;
-
-    border-radius: 20px;
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    padding-left: 15px;
 }
 
 .submit-button {
@@ -547,4 +487,40 @@ body {
 
 .sucessful-signup-container {
     grid-area: content;
+}
+
+/* Esto se puede borrar */
+.user-list {
+    grid-area: user-list;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /*background-color: #dd8585;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.user-list .centered-container {
+    height: 80%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: var(--white80);
+    border-radius: 20px;
+    border: 0px;
+
+    /*background-color: #18b473;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.delete-button {
+    background-color: var(--scifi);   /* color del boton */
+    color: white;             /* color del texto */
+    border: none;               /* sin borde */
+    padding: 0.2rem 0.5rem;       /* espacio interno */
+    border-radius: 2px;         /* esquinas redondeadas */
+    cursor: pointer;            /* cambia el cursor al pasar */
+    font-weight: bold; /* Efecto de la letra */
 }
