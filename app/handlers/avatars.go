@@ -223,22 +223,21 @@ func DeleteAvatar(ctx context.Context, bucket, userID string) error {
 
 func ResizeImageToAvatar(file io.Reader) (io.Reader, error) {
 
-	// 1. Decode de la imagen
+	// Decode de la imagen.
 	img, err := imaging.Decode(file)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. Resize minimalista (elegí tamaño)
+	// Resize.
 	resized := imaging.Resize(img, 256, 256, imaging.Lanczos)
 
-	// 3. Codificar en JPG
+	// Codificación en JPEG.
 	buf := new(bytes.Buffer)
 	err = imaging.Encode(buf, resized, imaging.JPEG)
 	if err != nil {
 		return nil, err
 	}
 
-	// 4. Devolver buffer listo para subir
 	return buf, nil
 }

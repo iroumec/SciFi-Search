@@ -112,7 +112,7 @@ body {
     height: 20px;
 }
 
-/* --------------- Index --------------- */
+/* --------------- Index / First query --------------- */
 
 .index-content {
     grid-area: content;
