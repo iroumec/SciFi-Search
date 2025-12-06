@@ -1,8 +1,32 @@
-package views
+/*package views
 
-const (
-	flexCentrado = "flex justify-center items-center"
-)
+// ------------------------------------------------------------------------------------------------
+templ firstQuery() {
+	<div class="inicio">
+		<div class="centered-container">
+			<div class="inicio-image-container">
+				<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi"/>
+			</div>
+			<div class="inicio-query-container">
+				<input type="text" id="first-query" placeholder="Search for SCIENCE!!!"/>
+			</div>
+		</div>
+	</div>
+	<script>
+        const input = document.getElementById("first-query");
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                const query = input.value.trim();
+                if (!query) return;
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+        });
+    </script>
+}*/
+
+// ------------------------------------------------------------------------------------------------
+
+package views
 
 // ------------------------------------------------------------------------------------------------
 templ firstQuery() {
@@ -10,11 +34,13 @@ templ firstQuery() {
 	<div class="[grid-area:inicio] flex justify-center items-center w-full h-full">
 		// .centered-container -> grid de 2 filas (70% y 30%), ancho/alto 50%
 		<div class="h-1/2 w-1/2 grid grid-cols-1 grid-rows-[70%_30%]">
-			<div class={ flexCentrado }>
+			// .inicio-image-container -> flex centrado
+			<div class="flex justify-center items-center">
 				// #logo_scifi -> h-full (añadí object-contain para seguridad)
 				<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi" class="h-full object-contain"/>
 			</div>
-			<div class={ flexCentrado }>
+			// .inicio-query-container -> flex centrado
+			<div class="flex justify-center items-center">
 				<input
 					type="text"
 					id="first-query"

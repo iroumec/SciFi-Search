@@ -8,7 +8,7 @@ templ Header(isUserAuthenticated bool) {
 		<a onclick="window.location.href='/'">
 			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
 		</a>
-		<div class="flex justify-end gap-y-2.5">
+		<div class="header-buttons">
 			if !isUserAuthenticated {
 				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
 				<button class="header-button" onclick="window.location.href='/signin'">Log-in</button>
