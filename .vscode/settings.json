@@ -1,0 +1,13 @@
+// Configuración del proyecto.
+// Sugerencias de TailwindCSS junto a errores de GO en archivos templ.
+{
+  "tailwindCSS.includeLanguages": {
+    "templ": "html"
+  },
+  "files.associations": {
+    "*.templ": "templ"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+}
