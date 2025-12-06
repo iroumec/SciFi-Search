@@ -1,5 +1,7 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"bytes"
 	"html/template"
@@ -11,9 +13,13 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 )
 
+// ------------------------------------------------------------------------------------------------
+
 func registerTrendsHandler() {
 	http.HandleFunc("/trends", trendsHandler)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func trendsHandler(w http.ResponseWriter, r *http.Request) {
 	trendingSearches, err := queries.GetTrendingSearches(r.Context())
@@ -54,6 +60,8 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 	views.TrendsPage(htmlChart, isUserAuthenticated(r)).Render(r.Context(), w)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func generateLineItems(values []int) []opts.LineData {
 	items := make([]opts.LineData, len(values))
 	for i, v := range values {
@@ -62,7 +70,10 @@ func generateLineItems(values []int) []opts.LineData {
 	return items
 }
 
-// Extraer solo el contenido entre <body> y </body>
+// ------------------------------------------------------------------------------------------------
+
+// Se extrae solo el contenido entre <body> y </body>.
+// Esto debido a que el Layout ya se encarga de todo lo demás.
 func extractBodyContent(html string) template.HTML {
 	re := regexp.MustCompile(`(?s)<body[^>]*>(.*?)</body>`)
 	matches := re.FindStringSubmatch(html)
@@ -71,3 +82,5 @@ func extractBodyContent(html string) template.HTML {
 	}
 	return template.HTML(html)
 }
+
+// ------------------------------------------------------------------------------------------------
