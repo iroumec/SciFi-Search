@@ -5,8 +5,8 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "./database/queries/"
-    schema: "./database/schema/"
+    queries: "./queries/"
+    schema: "./schema/"
     gen:
       go:
         package: "database"
