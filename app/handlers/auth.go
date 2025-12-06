@@ -67,7 +67,6 @@ func registerAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
-	http.HandleFunc("/create-user", userCreationHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -130,26 +129,6 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Manejo de cualquier otro caso inesperado.
 		http.Error(w, "Error desconocido durante el registro.", http.StatusInternalServerError)
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func userCreationHandler(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method == http.MethodGet {
-		component := views.SignUpPage("")
-		templ.Handler(component).ServeHTTP(w, r)
-		return
-	}
-
-	newUser, _ := createUser(w, r)
-	if newUser != nil {
-		component := views.UserIndividual(*newUser)
-		templ.Handler(component).ServeHTTP(w, r)
-	} else {
-		// Manejo de cualquier otro caso inesperado.
-		http.Error(w, "Error desconocido durante la creación del usuario.", http.StatusInternalServerError)
 	}
 }
 
