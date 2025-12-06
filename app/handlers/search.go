@@ -12,6 +12,7 @@ import (
 	"os"
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
+	"sort"
 
 	sqlc "scifi-search/app/database"
 
@@ -107,12 +108,59 @@ func indexarDatos() {
 	}
 
 	index := client.Index(indexName)
+
+	configureSearchSettings(index)
+	configureFilterableAttributes(index)
+	configureSortableAttributes(index)
+
 	_, err = index.AddDocuments(indexDocs, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Datos indexados correctamente.")
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func configureSearchSettings(index meilisearch.IndexManager) {
+
+	// Configuración de atributos en los que se busca.
+	_, err := index.UpdateSearchableAttributes(&[]string{
+		"Nombre",
+		"Descripcion",
+		"Gran area 1",
+		"Gran area 2",
+		"Tipo",
+	})
+	if err != nil {
+		log.Println("Error configurando atributos de búsqueda:", err)
+	}
+
+	// Configuración de typo tolerance (tolerancia a errores tipográficos).
+	_, err = index.UpdateTypoTolerance(&meilisearch.TypoTolerance{
+		Enabled: true,
+		MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+			OneTypo:  4, // Palabras de 4+ letras: 1 error permitido.
+			TwoTypos: 8, // Palabras de 8+ letras: 2 errores permitidos.
+		},
+	})
+	if err != nil {
+		log.Println("Error configurando tolerancia de typos:", err)
+	}
+
+	// Configuración de sinónimos comunes.
+	_, err = index.UpdateSynonyms(&map[string][]string{
+		"engineering": {"ingenieria", "ingeniería"},
+		"ingenieria":  {"engineering", "ingeniería"},
+		"science":     {"ciencia", "ciencias"},
+		"ciencia":     {"science", "ciencias"},
+		"tech":        {"technology", "tecnologia", "tecnología"},
+		"tecnologia":  {"tech", "technology"},
+	})
+	if err != nil {
+		log.Println("Error configurando sinónimos:", err)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -126,7 +174,37 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := client.Index(indexName).Search(query, &meilisearch.SearchRequest{})
+	// Obtención de parámetros de filtro y ordenamiento.
+	filterTipo := r.URL.Query().Get("tipo")
+	filterArea := r.URL.Query().Get("area")
+	sortBy := r.URL.Query().Get("sort")
+
+	// Construcción de la búsqueda.
+	searchRequest := &meilisearch.SearchRequest{
+		Limit:            20,
+		ShowRankingScore: true, // Se muestra el score de relevancia.
+	}
+
+	// Aplicación de filtros.
+	var filters []string
+	if filterTipo != "" {
+		filters = append(filters, fmt.Sprintf("Tipo = '%s'", filterTipo))
+	}
+	if filterArea != "" {
+		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", filterArea, filterArea))
+	}
+
+	if len(filters) > 0 {
+		searchRequest.Filter = filters
+	}
+
+	// Aplicación de ordenamiento.
+	/*if sortBy != "" {
+		searchRequest.Sort = []string{sortBy}
+	}*/
+	// El anterior es un ordenamiento previo a la relevancia.
+
+	res, err := client.Index(indexName).Search(query, searchRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -148,6 +226,12 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	var hitsMaps []map[string]any
 	if err := json.Unmarshal(data, &hitsMaps); err != nil {
 		log.Println("Error unmarshal hits:", err)
+	}
+
+	// Ordenar los resultados después de obtenerlos (para mantener relevancia base).
+	// TODO: llevarlo a una opción extra.
+	if sortBy != "" {
+		sortResults(hitsMaps, sortBy)
 	}
 
 	// De estar autenticado el usuario, se guarda la búsqueda
@@ -231,3 +315,89 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func configureFilterableAttributes(index meilisearch.IndexManager) {
+
+	_, err := index.UpdateFilterableAttributes(&[]any{
+		"Tipo",
+		"Gran area 1",
+		"Gran area 2",
+	})
+	if err != nil {
+		log.Println("Error configurando filtros:", err)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func configureSortableAttributes(index meilisearch.IndexManager) {
+
+	configureRankingRules(index)
+
+	_, err := index.UpdateSortableAttributes(&[]string{
+		"Nombre",
+		"Tipo",
+	})
+	if err != nil {
+		log.Println("Error configurando ordenamiento:", err)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Configuración de las ranking rules para mantener relevancia.
+func configureRankingRules(index meilisearch.IndexManager) {
+
+	_, err := index.UpdateRankingRules(&[]string{
+		"words",
+		"typo",
+		"proximity",
+		"attribute",
+		"sort", // El sort se aplica después de la relevancia.
+		"exactness",
+	})
+	if err != nil {
+		log.Println("Error configurando ranking:", err)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Función auxiliar para ordenar resultados
+func sortResults(hits []map[string]any, sortBy string) {
+	// Parseo del sortBy (ej: "Nombre:asc" o "Tipo:desc").
+	parts := splitSort(sortBy)
+	if len(parts) != 2 {
+		return
+	}
+
+	field := parts[0]
+	order := parts[1]
+
+	// Ordenamiento.
+	sort.Slice(hits, func(i, j int) bool {
+		valI, okI := hits[i][field].(string)
+		valJ, okJ := hits[j][field].(string)
+
+		if !okI || !okJ {
+			return false
+		}
+
+		if order == "asc" {
+			return valI < valJ
+		}
+		return valI > valJ
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Función auxiliar para dividir el parámetro sort.
+func splitSort(sortBy string) []string {
+	for i, char := range sortBy {
+		if char == ':' {
+			return []string{sortBy[:i], sortBy[i+1:]}
+		}
+	}
+	return []string{sortBy}
+}
