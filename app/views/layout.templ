@@ -1,30 +1,9 @@
 package views
 
 // ------------------------------------------------------------------------------------------------
-// Header
-// ------------------------------------------------------------------------------------------------
-templ Header(isUserAuthenticated bool) {
-	<header class="header">
-		<a onclick="window.location.href='/'">
-			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
-		</a>
-		<div class="header-buttons">
-			if !isUserAuthenticated {
-				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
-				<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
-			} else {
-				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
-			}
-			<button class="header-button" onclick="window.location.href='/trends'">Trends</button>
-			<button class="header-button" onclick="window.location.href='/funding'">Funding</button>
-		</div>
-	</header>
-}
-
-// ------------------------------------------------------------------------------------------------
 // Layout
 // ------------------------------------------------------------------------------------------------
-templ Layout(title string, isUserAuthenticated bool, content func() templ.Component) {
+templ Layout(title string, content func() templ.Component) {
 	<!DOCTYPE html>
 	<html lang="es">
 		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -39,7 +18,6 @@ templ Layout(title string, isUserAuthenticated bool, content func() templ.Compon
 		</head>
 		<body>
 			<div class="contenedor-grid">
-				@Header(isUserAuthenticated)
 				@content()
 				@Footer()
 			</div>

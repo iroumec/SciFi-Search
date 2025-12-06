@@ -4,6 +4,7 @@ package views
 // Sign Up Content
 // ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string) {
+	@signupHeader()
 	<main> 
 		<div class="only-form-content">
 			<div class="centered-container">
@@ -30,10 +31,19 @@ templ signUpContent(errorMessage string) {
 }
 
 // ------------------------------------------------------------------------------------------------
+templ signupHeader() {
+	<header class="header">
+		<a onclick="window.location.href='/'">
+			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
+		</a>
+	</header>
+}
+
+// ------------------------------------------------------------------------------------------------
 // Sign Up Page
 // ------------------------------------------------------------------------------------------------
 templ SignUpPage(errorMessage string) {
-	@Layout("Sign up", false, func() templ.Component {
+	@Layout("Sign up", func() templ.Component {
 		return signUpContent(errorMessage)
 	})
 }
@@ -52,7 +62,7 @@ templ sucessfulSignUpContent() {
 // Sucessful Sign Up Page
 // ------------------------------------------------------------------------------------------------
 templ SuccessfulSignUpPage() {
-	@Layout("Successful sign-up", true, func() templ.Component {
+	@Layout("Successful sign-up", func() templ.Component {
 		return sucessfulSignUpContent()
 	})
 }

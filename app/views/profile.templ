@@ -37,7 +37,7 @@ templ loggedProfileContent(user sqlc.User, searches []string) {
 // Profile Page
 // ------------------------------------------------------------------------------------------------
 templ LoggedProfilePage(user sqlc.User, searches []string) {
-	@Layout(user.Name, true, func() templ.Component {
+	@Layout(user.Name, func() templ.Component {
 		return loggedProfileContent(user, searches)
 	})
 }

@@ -1,20 +1,35 @@
 package views
 
-import sqlc "scifi-search/app/database"
+//import sqlc "scifi-search/app/database"
 
 // ------------------------------------------------------------------------------------------------
+templ indexHeader(isUserAuthenticated bool) {
+	<header class="header">
+		<div class="header-buttons">
+			if !isUserAuthenticated {
+				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
+				<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
+			} else {
+				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
+			}
+			<button class="header-button" onclick="window.location.href='/trends'">Trends</button>
+			<button class="header-button" onclick="window.location.href='/funding'">Funding</button>
+		</div>
+	</header>
+}
 
 // ------------------------------------------------------------------------------------------------
-templ indexContent(list []sqlc.User) {
+templ indexContent(isUserAuthenticated bool) {
+	@indexHeader(isUserAuthenticated)
 	<main class="index-content">
 		@firstQuery()
 	</main>
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexPage(list []sqlc.User, isUserAuthenticated bool) {
-	@Layout("SciFi Search", isUserAuthenticated, func() templ.Component {
-		return indexContent(list)
+templ IndexPage(isUserAuthenticated bool) {
+	@Layout("SciFi Search", func() templ.Component {
+		return indexContent(isUserAuthenticated)
 	})
 }
 

@@ -85,6 +85,70 @@ body {
     /*border: 1px solid rgb(255, 0, 0);*/
 }
 
+/* Header de la search */
+.search-header {
+    grid-area: header;
+    
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "header-left header-right";
+
+    background-color: var(--scifi30);
+
+    /*background-color: #c959d8;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.header-right {
+    grid-area: header-right;
+
+    display: flex;
+    justify-content: flex-end; /* Ubicar a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    padding: 0px 10px; /* Espacios a los costados */
+
+    /*background-color: #b3e5fc;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+.header-left {
+    grid-area: header-left;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0px 10px;
+    gap: 20px;
+
+    /*background-color: #b5fcb3;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+#logo_scifi_header {
+    height: 55px;
+    width: auto;
+    cursor: pointer;
+}
+
+#query {
+    height: 40px;
+    width: 700px;
+
+    color: black;
+
+    border-radius: 32px; /* Redondeo del input de texto */
+    border: 0px;
+
+    background-color: var(--scifi30);
+
+    background-image: url('../img/icono_busqueda_blanco.svg');
+    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
+    background-position: 10px 10px; /*Ubica la imagen centrada*/
+    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
+
+}
+
 /* --------------- Footer --------------- */
 
 .footer {

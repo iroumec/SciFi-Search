@@ -68,7 +68,7 @@ func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool) templ.Compone
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Trending", isUserAuthenticated, func() templ.Component {
+		templ_7745c5c3_Err = Layout("Trending", func() templ.Component {
 			return trendsContent(htmlChart)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

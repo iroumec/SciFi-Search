@@ -12,7 +12,7 @@ templ trendsContent(htmlChart template.HTML) {
 }
 
 templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool) {
-	@Layout("Trending", isUserAuthenticated, func() templ.Component {
+	@Layout("Trending", func() templ.Component {
 		return trendsContent(htmlChart)
 	})
 }

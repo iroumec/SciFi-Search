@@ -143,7 +143,7 @@ func LoggedProfilePage(user sqlc.User, searches []string) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout(user.Name, true, func() templ.Component {
+		templ_7745c5c3_Err = Layout(user.Name, func() templ.Component {
 			return loggedProfileContent(user, searches)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
