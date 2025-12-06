@@ -32,7 +32,7 @@ func loginContent(errorMessage string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><h2>Log In</h2><form action=\"/signin\" method=\"POST\"><input type=\"email\" id=\"email\" name=\"email\" placeholder=\"Email\" required><br><input type=\"password\" id=\"password\" name=\"password\" placeholder=\"Password\" required><br><button class=\"log-in-button\" type=\"submit\">Sign in</button></form></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><h2>Iniciar Sesión</h2><form action=\"/signin\" method=\"POST\"><input type=\"email\" id=\"email\" name=\"email\" placeholder=\"Email\" required><br><input type=\"password\" id=\"password\" name=\"password\" placeholder=\"Password\" required><br><button class=\"bg-scifi text-white border-none cursor-pointer font-bold px-4 py-2\" type=\"submit\">Sign in</button></form></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
