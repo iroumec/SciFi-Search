@@ -10,6 +10,41 @@ import (
 	"database/sql"
 )
 
+const addDocument = `-- name: AddDocument :one
+INSERT INTO documents(name, description, first_area, second_area, type, link) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, description, first_area, second_area, type, link
+`
+
+type AddDocumentParams struct {
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	FirstArea   string         `json:"first_area"`
+	SecondArea  sql.NullString `json:"second_area"`
+	Type        string         `json:"type"`
+	Link        sql.NullString `json:"link"`
+}
+
+func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Document, error) {
+	row := q.db.QueryRowContext(ctx, addDocument,
+		arg.Name,
+		arg.Description,
+		arg.FirstArea,
+		arg.SecondArea,
+		arg.Type,
+		arg.Link,
+	)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.FirstArea,
+		&i.SecondArea,
+		&i.Type,
+		&i.Link,
+	)
+	return i, err
+}
+
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
 INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string, search_datetime
 `

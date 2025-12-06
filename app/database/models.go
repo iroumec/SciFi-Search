@@ -9,6 +9,16 @@ import (
 	"time"
 )
 
+type Document struct {
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	FirstArea   string         `json:"first_area"`
+	SecondArea  sql.NullString `json:"second_area"`
+	Type        string         `json:"type"`
+	Link        sql.NullString `json:"link"`
+}
+
 type HistoricSearch struct {
 	HistoricSearchID int32     `json:"historic_search_id"`
 	UserID           int32     `json:"user_id"`

@@ -1,0 +1,39 @@
+package views
+
+templ addFundingContent() {
+	<main>
+		<div class="signup-container">
+			<div class="centered-container">
+				<form id="funding-form" action="/funding" method="POST">
+					<div class="form-name-container">
+						<input type="text" id="name" placeholder="Name" name="name" required/>
+					</div>
+					<div class="form-surname-container">
+						<input type="text" id="description" placeholder="Description" name="description" required/>
+					</div>
+					<div class="form-email-container">
+						<input type="text" id="first-area" placeholder="First Area" name="first-area" required/>
+					</div>
+					<div class="form-password-container">
+						<input type="text" id="second-area" placeholder="Second Area" name="second-area" required/>
+					</div>
+					<div class="form-password-container">
+						<input type="text" id="type" placeholder="Tipo" name="type" required/>
+					</div>
+					<div class="form-password-container">
+						<input type="link" id="link" placeholder="Link" name="link"/>
+					</div>
+					<div class="form-submit-container">
+						<button class="submit-button" type="submit">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+}
+
+templ AddFundingPage(isUserAuthenticated bool) {
+	@Layout("Nueva búsqueda", isUserAuthenticated, func() templ.Component {
+		return addFundingContent()
+	})
+}

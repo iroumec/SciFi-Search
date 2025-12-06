@@ -1,0 +1,15 @@
+package views
+
+templ fundingAddedContent() {
+	<div class="sucessful-signup-container">
+		<h1>Funding added!</h1>
+		<button class="header-button" onclick="window.location.href='/'">Go to main page</button>
+		<button class="header-button" onclick="window.location.href='/funding'">Add another funding</button>
+	</div>
+}
+
+templ FundingAddedPage(isUserAuthenticated bool) {
+	@Layout("Funding added", isUserAuthenticated, func() templ.Component {
+		return fundingAddedContent()
+	})
+}

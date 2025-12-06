@@ -25,6 +25,16 @@ CREATE TABLE IF NOT EXISTS historic_searches (
     search_datetime TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS documents (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    first_area TEXT NOT NULL,
+    second_area TEXT,
+    type TEXT NOT NULL,
+    link TEXT
+);
+
 -- ASIGNACION DE CLAVES FORÁNEAS 
 ALTER TABLE user_preferences 
 ADD CONSTRAINT fk_user_preferences_users 
