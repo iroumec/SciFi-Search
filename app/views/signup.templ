@@ -4,7 +4,7 @@ package views
 // Sign Up Content
 // ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string) {
-	@signupHeader()
+	@Header()
 	<main> 
 		<div class="only-form-content">
 			<div class="centered-container">
@@ -28,15 +28,6 @@ templ signUpContent(errorMessage string) {
 			</div>
 		</div>
 	</main>
-}
-
-// ------------------------------------------------------------------------------------------------
-templ signupHeader() {
-	<header class="header">
-		<a onclick="window.location.href='/'">
-			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
-		</a>
-	</header>
 }
 
 // ------------------------------------------------------------------------------------------------

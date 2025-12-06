@@ -182,7 +182,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
 
-	component := views.AddFundingPage(isUserAuthenticated(r))
+	component := views.AddFundingPage()
 	component.Render(r.Context(), w)
 }
 
@@ -226,7 +226,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	component := views.FundingAddedPage(isUserAuthenticated(r))
+	component := views.FundingAddedPage()
 	component.Render(r.Context(), w)
 }
 

@@ -47,7 +47,7 @@ func indexHeader(isUserAuthenticated bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button> <button class=\"header-button\" onclick=\"window.location.href='/funding'\">Funding</button></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

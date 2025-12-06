@@ -29,6 +29,10 @@ func addFundingContent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = Header().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><div class=\"signup-container\"><div class=\"centered-container\"><form id=\"funding-form\" action=\"/funding\" method=\"POST\"><div class=\"form-name-container\"><input type=\"text\" id=\"name\" placeholder=\"Name\" name=\"name\" required></div><div class=\"form-surname-container\"><input type=\"text\" id=\"description\" placeholder=\"Description\" name=\"description\" required></div><div class=\"form-email-container\"><input type=\"text\" id=\"first-area\" placeholder=\"First Area\" name=\"first-area\" required></div><div class=\"form-password-container\"><input type=\"text\" id=\"second-area\" placeholder=\"Second Area\" name=\"second-area\" required></div><div class=\"form-password-container\"><input type=\"text\" id=\"type\" placeholder=\"Tipo\" name=\"type\" required></div><div class=\"form-password-container\"><input type=\"link\" id=\"link\" placeholder=\"Link\" name=\"link\"></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Submit</button></div></form></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -37,7 +41,7 @@ func addFundingContent() templ.Component {
 	})
 }
 
-func AddFundingPage(isUserAuthenticated bool) templ.Component {
+func AddFundingPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -58,7 +62,7 @@ func AddFundingPage(isUserAuthenticated bool) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Nueva búsqueda", isUserAuthenticated, func() templ.Component {
+		templ_7745c5c3_Err = Layout("Nueva búsqueda", func() templ.Component {
 			return addFundingContent()
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
