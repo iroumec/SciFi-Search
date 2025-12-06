@@ -8,8 +8,6 @@ import sqlc "scifi-search/app/database"
 templ indexContent(list []sqlc.User) {
 	<main class="index-content">
 		@firstQuery()
-		@userForm()
-		@UserList(list)
 	</main>
 }
 

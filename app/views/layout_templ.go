@@ -37,7 +37,7 @@ func Header(isUserAuthenticated bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/signin'\">Log-in</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">Log-in</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -92,7 +92,7 @@ func Layout(title string, isUserAuthenticated bool, content func() templ.Compone
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</title><link rel=\"stylesheet\" href=\"/static/css/styles.css\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/icono.png\"></head><body><div class=\"contenedor-grid\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</title><link rel=\"stylesheet\" href=\"/static/css/styles.css\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/icono.png\"></head><body><div class=\"contenedor-grid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

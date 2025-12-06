@@ -63,7 +63,7 @@ func registerAuthenticationHandlers() {
 	initializeSupertokens()
 
 	http.HandleFunc("/signup", signUpHandler)
-	http.HandleFunc("/signin", signInHandler)
+	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
 	http.HandleFunc("/create-user", userCreationHandler)
 
@@ -204,7 +204,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 // Sign In (Log In)
 // ------------------------------------------------------------------------------------------------
 
-func signInHandler(w http.ResponseWriter, r *http.Request) {
+func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		component := views.LoginPage("")
