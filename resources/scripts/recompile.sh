@@ -36,11 +36,7 @@ rm sqlc.yaml
 echo "Generando templ..."
 go run github.com/a-h/templ/cmd/templ@latest generate ./app/views
 
-# 4. Compilación de Tailwind...
-echo "Ejecutando TailwindCSS..."
-npm run build:css
-
-# 5. Compilación de Go
+# 4. Compilación de Go
 echo "Compilando aplicación Go..."
 go build -buildvcs=false -o ./tmp/main ./app
 
