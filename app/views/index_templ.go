@@ -13,7 +13,7 @@ import "scifi-search/app/utils"
 //import sqlc "scifi-search/app/database"
 
 // ------------------------------------------------------------------------------------------------
-func indexHeader(isUserAuthenticated bool) templ.Component {
+func indexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -39,17 +39,56 @@ func indexHeader(isUserAuthenticated bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">Log-in</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/index.templ`, Line: 12, Col: 102}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/index.templ`, Line: 13, Col: 100}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button class=\"header-button\" onclick=\"window.location.href='/profile'\">Perfil</button> <button class=\"header-button\" onclick=\"window.location.href='/funding'\">Funding</button> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<button class=\"header-button\" onclick=\"window.location.href='/profile'\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("profile.tag"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/index.templ`, Line: 15, Col: 103}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</button> <button class=\"header-button\" onclick=\"window.location.href='/funding'\">Funding</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button></div></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -58,7 +97,7 @@ func indexHeader(isUserAuthenticated bool) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-func indexContent(isUserAuthenticated bool) templ.Component {
+func indexContent(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -74,26 +113,26 @@ func indexContent(isUserAuthenticated bool) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = indexHeader(isUserAuthenticated).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = indexHeader(isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"index-bottom\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"index-bottom\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><script>\n\t\t\tconst input = document.getElementById(\"first-query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><script>\n\t\t\tconst input = document.getElementById(\"first-query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -118,13 +157,13 @@ func IndexPage(isUserAuthenticated bool, translator utils.Translator) templ.Comp
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("SciFi Search", func() templ.Component {
-			return indexContent(isUserAuthenticated)
+			return indexContent(isUserAuthenticated, translator)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

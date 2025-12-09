@@ -1,3 +1,8 @@
 {
+    "redirect.main_page": "Ir a la página principal",
+    "funding.added": "Financiamiento añadido",
+    "sign-up.tag": "Registrarse",
+    "log-in.tag": "Iniciar sesión",
+    "profile.tag": "Perfil",
     "profile.upload_new_avatar": "Subir un nuevo avatar"
 }

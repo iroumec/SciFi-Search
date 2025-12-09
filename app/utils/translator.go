@@ -1,5 +1,7 @@
 package utils
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"net/http"
 
@@ -7,17 +9,22 @@ import (
 	"golang.org/x/text/message"
 )
 
-type Translator func(key string, args ...interface{}) string
+// ------------------------------------------------------------------------------------------------
+
+type Translator func(key string, args ...any) string
+
+// ------------------------------------------------------------------------------------------------
 
 func detectLanguage(r *http.Request) language.Tag {
-	// 1. Intentar cookie explícita
-	if c, err := r.Cookie("lang"); err == nil {
+
+	// Primer intento: Utilización de cookie explícita.
+	if c, err := r.Cookie("language"); err == nil {
 		if tag, err := language.Parse(c.Value); err == nil {
 			return tag
 		}
 	}
 
-	// 2. Intentar Accept-Language
+	// Segundo intento: Utilización de "Accept-Language".
 	if al := r.Header.Get("Accept-Language"); al != "" {
 		tags, _, _ := language.ParseAcceptLanguage(al)
 		if len(tags) > 0 {
@@ -25,9 +32,11 @@ func detectLanguage(r *http.Request) language.Tag {
 		}
 	}
 
-	// 3. Fallback a default
+	// Tercer intento: Fallback a default.
 	return language.English
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func GetTranslatorFromRequest(r *http.Request) Translator {
 	tag := detectLanguage(r)
@@ -36,3 +45,5 @@ func GetTranslatorFromRequest(r *http.Request) Translator {
 		return p.Sprintf(key, args...)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------

@@ -60,6 +60,9 @@ func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondiente al manejo de tendencias.
 	registerTrendsHandler()
 
+	// Se registran los handlers correspondientes al manejo de idiomas.
+	registerLanguageHandlers()
+
 	// Se registra un handler que informe el estado del servidor.
 	http.HandleFunc("/health", healthCheckHandler)
 }

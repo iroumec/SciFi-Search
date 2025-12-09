@@ -66,6 +66,7 @@ RUN addgroup -S sciFi-search && adduser -S sciFi-search -G sciFi-search
 COPY --from=builder /app/main .
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/resources/planillas ./resources/planillas
+COPY --from=builder /app/resources/languages ./resources/languages
 
 RUN chown -R sciFi-search:sciFi-search /app && \
     chmod +x /app/main

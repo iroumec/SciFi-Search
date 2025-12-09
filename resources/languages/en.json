@@ -1,3 +1,8 @@
 {
+    "redirect.main_page": "Go to main page",
+    "funding.added": "Funding added",
+    "sign-up.tag": "Sign-Up",
+    "log-in.tag": "Log-In",
+    "profile.tag": "Profile",
     "profile.upload_new_avatar": "Upload a new avatar"
 }

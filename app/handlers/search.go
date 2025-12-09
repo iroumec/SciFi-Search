@@ -24,7 +24,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	client meilisearch.ServiceManager
+	client        meilisearch.ServiceManager
 	documentTypes = list.New()
 )
 
@@ -111,7 +111,7 @@ func indexarDatos() {
 
 			indexDocs = append(indexDocs, filtered)
 
-			utils.AddIfNotExists(documentTypes,tipo)
+			utils.AddIfNotExists(documentTypes, tipo)
 		}
 	}
 
@@ -319,7 +319,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	component := views.FundingAddedPage()
+	component := views.FundingAddedPage(utils.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
