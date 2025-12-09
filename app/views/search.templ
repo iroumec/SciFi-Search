@@ -79,7 +79,7 @@ templ searchResults(hits []map[string]any) {
 
 			<div class="extra-info">
 				if utils.ToString(m["Tipo"]) != "" {
-					<span>{ utils.ToString(m["Tipo"]) }</span>
+					<span class="gray">{ utils.ToString(m["Tipo"]) }</span>
 				}
 				if utils.ToString(m["Gran area 1"]) != "" {
 					<span>{ utils.ToString(m["Gran area 1"]) }</span>
@@ -90,6 +90,7 @@ templ searchResults(hits []map[string]any) {
 			</div>
 
 			<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
+			<p> { len(hits) } </p>
 		</div>
 	}
 
@@ -106,7 +107,14 @@ templ searchFilters(documentTypes *list.List) {
         </div>
     </div>
 	<script>
-		
+		function toggleDropdown(e) {
+			e.stopPropagation();
+			document.getElementById("typeDropdown").classList.toggle("show");
+		}
+
+		document.addEventListener("click", () => {
+			document.getElementById("typeDropdown").classList.remove("show");
+		});
 	</script>
 }
 
