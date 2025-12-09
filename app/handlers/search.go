@@ -3,6 +3,7 @@ package handlers
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"container/list"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -22,7 +23,10 @@ import (
 
 // ------------------------------------------------------------------------------------------------
 
-var client meilisearch.ServiceManager
+var (
+	client meilisearch.ServiceManager
+	documentTypes = list.New()
+)
 
 // ------------------------------------------------------------------------------------------------
 
@@ -104,7 +108,10 @@ func indexarDatos() {
 				"Tipo":        tipo,
 				"Link":        link,
 			}
+
 			indexDocs = append(indexDocs, filtered)
+
+			utils.AddIfNotExists(documentTypes,tipo)
 		}
 	}
 
@@ -245,7 +252,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r))
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), documentTypes)
 	component.Render(r.Context(), w)
 
 }

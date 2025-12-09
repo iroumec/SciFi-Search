@@ -1,6 +1,9 @@
 package views
 
-import "scifi-search/app/utils"
+import (
+	"container/list"
+	"scifi-search/app/utils"
+)
 
 // ------------------------------------------------------------------------------------------------
 // Imports
@@ -9,47 +12,33 @@ import "scifi-search/app/utils"
 // ------------------------------------------------------------------------------------------------
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool) {
+templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List) {
     @searchHeader(isUserAuthenticated)
     <main>
         <div class="search-container-grid">
-            <div class="filter-section">
-                @Filters()
+			<div class="top"></div>
+			<div class="left"></div>
+            <div class="search-content">
+				if len(hits) == 0 {
+					<div class="message">
+                    	<p>No results found for "{ query }".</p>
+					</div>
+                } else {
+					<div class="message">
+                    	<p>Search results for “{ query }”</p>
+					</div>
+					<div class="filters">
+						@searchFilters(documentTypes)
+					</div>
+					<div class="results">
+						@searchResults(hits)
+					</div>
+				}
             </div>
-            <div class="results-section">
-                <div class="results">
-                    if len(hits) == 0 {
-                        <p>No se encontraron resultados.</p>
-                    } else {
-                        <h1>Resultados de búsqueda para “{ query }”</h1>
-
-                        for _, m := range hits {
-							<div class="result">
-								<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
-
-								<div class="extra-info">
-									if utils.ToString(m["Tipo"]) != "" {
-										<span>{ utils.ToString(m["Tipo"]) }</span>
-									}
-									if utils.ToString(m["Gran area 1"]) != "" {
-										<span>{ utils.ToString(m["Gran area 1"]) }</span>
-									}
-									if utils.ToString(m["Gran area 2"]) != "" {
-										<span>{ utils.ToString(m["Gran area 2"]) }</span>
-									}
-								</div>
-
-								<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
-							</div>
-						}
-
-                    }
-                </div>
-            </div>
+			<div class="right"></div>
         </div>
     </main>
 }
-
 
 templ searchHeader(isUserAuthenticated bool){
 	<header class="search-header">
@@ -82,12 +71,62 @@ templ searchHeader(isUserAuthenticated bool){
 	</header>
 }
 
+templ searchResults(hits []map[string]any) {
+
+    for _, m := range hits {
+		<div class="result">
+			<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
+
+			<div class="extra-info">
+				if utils.ToString(m["Tipo"]) != "" {
+					<span>{ utils.ToString(m["Tipo"]) }</span>
+				}
+				if utils.ToString(m["Gran area 1"]) != "" {
+					<span>{ utils.ToString(m["Gran area 1"]) }</span>
+				}
+				if utils.ToString(m["Gran area 2"]) != "" {
+					<span>{ utils.ToString(m["Gran area 2"]) }</span>
+				}
+			</div>
+
+			<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
+		</div>
+	}
+
+}
+
+templ searchFilters(documentTypes *list.List) {
+	<button class="dropbtn">SORT BY</button>
+	<button class="dropbtn">AREA</button>
+	<div class="dropdown">
+        <button class="dropbtn" onclick="toggleDropdown(event)">TYPE</button>
+
+        <div class="dropdown-content" id="typeDropdown">
+            @documentTypeCheckboxes(documentTypes)
+        </div>
+    </div>
+	<script>
+		
+	</script>
+}
+
+templ documentTypeCheckboxes(documentTypes *list.List) {
+    for e := documentTypes.Front(); e != nil; e = e.Next() {
+        <label class="checkbox-item">
+            <input type="checkbox"
+                   name="doctype"
+                   value={ e.Value.(string) } />
+            { e.Value.(string) }
+        </label>
+    }
+}
+
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool) {
+templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List) {
 	@Layout(query+" - SciFi Search", func() templ.Component {
-		return searchResultsContent(query, hits, isUserAuthenticated)
+		return searchResultsContent(query, hits, isUserAuthenticated, documentTypes)
 	})
 }
 
