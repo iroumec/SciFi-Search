@@ -4,5 +4,18 @@
     "sign-up.tag": "Registrarse",
     "log-in.tag": "Iniciar sesión",
     "profile.tag": "Perfil",
-    "profile.upload_new_avatar": "Subir un nuevo avatar"
+    "profile.upload_new_avatar": "Subir un nuevo avatar",
+    "funding.add_another": "Añadir otro financiamiento",
+    "name": "Nombre",
+    "surname": "Apellido",
+    "email": "Email",
+    "password": "Contraseña",
+    "sign-up": "Registrarse",
+    "sign-up.successful": "¡Registro completado con éxito!",
+    "profile.searches": "Búsquedas recientes",
+    "sign-out": "Cerrar sesión",
+    "profile.update_avatar": "Actualizar avatar",
+    "welcome": "Bienvenido",
+    "profile.no_avatar": "Sin avatar",
+    "log-in": "Iniciar sesión"
 }
