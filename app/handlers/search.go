@@ -79,7 +79,7 @@ func indexarDatos() {
 
 		// Si el documento tiene un nombre válido.
 		if ok {
-			descripcion, _ := doc["Descripción"].(string)
+			descripcion, _ := doc["Descripcion"].(string)
 			granArea1, _ := doc["Gran area 1"].(string)
 			granArea2, _ := doc["Gran area 2"].(string)
 			tipo, _ := doc["Tipo"].(string)

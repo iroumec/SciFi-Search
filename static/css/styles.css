@@ -533,6 +533,16 @@ body {
     padding-right: 0.5rem;
 }
 
+.result .extra-info .gray {
+    color: gray;
+    background-color: lightgrey;
+}
+
+/*.result .extra-info .green {
+    color: green;
+    background-color: lightgreen;
+} esto va si ponemos presupuesto*/
+
 .result p {
     font-size: 0.85rem;
 }
