@@ -9,7 +9,7 @@ import sqlc "scifi-search/app/database"
 // ------------------------------------------------------------------------------------------------
 templ loggedProfileContent(user sqlc.User, searches []string, translator utils.Translator) {
 	<div class="profile-container">
-		<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
+		<h1>{ translator("welcome") }, { user.Name } { user.Surname }!</h1>
 		if user.AvatarUrl.Valid {
 			<img
 				src={ user.AvatarUrl.String }
@@ -17,16 +17,16 @@ templ loggedProfileContent(user sqlc.User, searches []string, translator utils.T
 				class="avatar-img"
 			/>
 		} else {
-			<p>No tiene avatar cargado.</p>
+			<p>{ translator("profile.no_avatar") }</p>
 		}
 		<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
 			<label for="avatar">{ translator("profile.upload_new_avatar") } </label>
 			<input type="file" id="avatar" name="avatar" accept="image/*" required/>
-			<button type="submit">Actualizar avatar</button>
+			<button type="submit">{ translator("profile.update_avatar") }</button>
 		</form>
 		<p></p>
-		<a href="/signout" id="signout">Cerrar sesión</a>
-		<h2>Búsquedas antiguas</h2>
+		<a href="/signout" id="signout">{ translator("sign-out") }</a>
+		<h2>{ translator("profile.searches") }</h2>
 		<ul id="the-user-list">
 			for _, search := range searches {
 				<li>{ search }</li>
@@ -39,7 +39,7 @@ templ loggedProfileContent(user sqlc.User, searches []string, translator utils.T
 // Profile Page
 // ------------------------------------------------------------------------------------------------
 templ LoggedProfilePage(user sqlc.User, searches []string, translator utils.Translator) {
-	@Layout(user.Name, func() templ.Component {
+	@Layout(user.Name, translator, func() templ.Component {
 		return loggedProfileContent(user, searches, translator)
 	})
 }

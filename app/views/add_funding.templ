@@ -1,5 +1,7 @@
 package views
 
+import "scifi-search/app/utils"
+
 templ addFundingContent() {
 	@Header()
 	<main>
@@ -33,8 +35,8 @@ templ addFundingContent() {
 	</main>
 }
 
-templ AddFundingPage() {
-	@Layout("Nueva búsqueda", func() templ.Component {
+templ AddFundingPage(translator utils.Translator) {
+	@Layout("Nueva búsqueda", translator, func() templ.Component {
 		return addFundingContent()
 	})
 }

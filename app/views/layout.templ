@@ -1,9 +1,11 @@
 package views
 
+import "scifi-search/app/utils"
+
 // ------------------------------------------------------------------------------------------------
 // Layout
 // ------------------------------------------------------------------------------------------------
-templ Layout(title string, content func() templ.Component) {
+templ Layout(title string, translator utils.Translator, content func() templ.Component) {
 	<!DOCTYPE html>
 	<html lang="es">
 		<script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -19,7 +21,7 @@ templ Layout(title string, content func() templ.Component) {
 		<body>
 			<div class="contenedor-grid">
 				@content()
-				@Footer()
+				@Footer(translator)
 			</div>
 		</body>
 	</html>
@@ -28,10 +30,10 @@ templ Layout(title string, content func() templ.Component) {
 // ------------------------------------------------------------------------------------------------
 // Footer
 // ------------------------------------------------------------------------------------------------
-templ Footer() {
+templ Footer(translator utils.Translator) {
 	<footer class="footer">
 		<p class="footer-text">
-			Powered by:
+			{ translator("powered-by") }:
 			<a href="https://www.meilisearch.com/" target="_blank">
 				<img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
 			</a>

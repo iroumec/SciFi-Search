@@ -54,7 +54,7 @@ templ indexContent(isUserAuthenticated bool, translator utils.Translator) {
 
 // ------------------------------------------------------------------------------------------------
 templ IndexPage(isUserAuthenticated bool, translator utils.Translator) {
-	@Layout("SciFi Search", func() templ.Component {
+	@Layout("SciFi Search", translator, func() templ.Component {
 		return indexContent(isUserAuthenticated, translator)
 	})
 }

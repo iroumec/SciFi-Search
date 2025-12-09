@@ -1,8 +1,21 @@
 {
     "redirect.main_page": "Go to main page",
     "funding.added": "Funding added",
-    "sign-up.tag": "Sign-Up",
-    "log-in.tag": "Log-In",
+    "sign-up.tag": "Sign Up",
+    "log-in.tag": "Log In",
     "profile.tag": "Profile",
-    "profile.upload_new_avatar": "Upload a new avatar"
+    "profile.upload_new_avatar": "Upload a new avatar",
+    "funding.add_another": "Add another funding",
+    "name": "Name",
+    "surname": "Surname",
+    "email": "Email",
+    "password": "Password",
+    "sign-up": "Sign Up",
+    "sign-up.successful": "Sign-up completed with success!",
+    "profile.searches": "Recent searches",
+    "sign-out": "Sign Out",
+    "profile.update_avatar": "Update avatar",
+    "welcome": "Welcome",
+    "profile.no_avatar": "No avatar",
+    "log-in": "Log In"
 }

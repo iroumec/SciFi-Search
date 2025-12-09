@@ -8,10 +8,12 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "scifi-search/app/utils"
+
 // ------------------------------------------------------------------------------------------------
 // Layout
 // ------------------------------------------------------------------------------------------------
-func Layout(title string, content func() templ.Component) templ.Component {
+func Layout(title string, translator utils.Translator, content func() templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -39,7 +41,7 @@ func Layout(title string, content func() templ.Component) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 14, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 16, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -53,7 +55,7 @@ func Layout(title string, content func() templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Footer().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Footer(translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -68,7 +70,7 @@ func Layout(title string, content func() templ.Component) templ.Component {
 // ------------------------------------------------------------------------------------------------
 // Footer
 // ------------------------------------------------------------------------------------------------
-func Footer() templ.Component {
+func Footer(translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -89,7 +91,20 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><p class=\"footer-text\">Powered by: <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo_supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo_minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\"></a></p></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><p class=\"footer-text\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("powered-by"))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 36, Col: 29}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, ": <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo_supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo_minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\"></a></p></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

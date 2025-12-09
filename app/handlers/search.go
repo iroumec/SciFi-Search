@@ -276,7 +276,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), documentTypes)
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r), documentTypes)
 	component.Render(r.Context(), w)
 
 }
@@ -299,7 +299,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
 
-	component := views.AddFundingPage()
+	component := views.AddFundingPage(utils.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

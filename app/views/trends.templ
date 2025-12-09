@@ -1,6 +1,7 @@
 package views
 
 import "html/template"
+import "scifi-search/app/utils"
 
 templ trendsContent(htmlChart template.HTML) {
 	<div class="trends-container">
@@ -11,8 +12,8 @@ templ trendsContent(htmlChart template.HTML) {
 	</div>
 }
 
-templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool) {
-	@Layout("Trending", func() templ.Component {
+templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator utils.Translator) {
+	@Layout("Trending", translator, func() templ.Component {
 		return trendsContent(htmlChart)
 	})
 }

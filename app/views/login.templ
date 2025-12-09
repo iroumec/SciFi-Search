@@ -1,22 +1,24 @@
 package views
 
+import "scifi-search/app/utils"
+
 // ------------------------------------------------------------------------------------------------
 // LogIn Content
 // ------------------------------------------------------------------------------------------------
-templ loginContent(errorMessage string) {
+templ loginContent(errorMessage string, translator utils.Translator) {
 	@Header()
 	<main>
 		<div class="only-form-content">
 			<div class="centered-container">
 				<form id="login-form" action="/login" method="POST">
 					<div class="form-email-container">
-						<input id="email" type="email" name="email" placeholder="Email" required/>
+						<input id="email" type="email" name="email" placeholder={ translator("email") } required/>
 					</div>
 					<div class="form-password-container">
-						<input id="password" type="password" name="password" placeholder="Password" required/>
+						<input id="password" type="password" name="password" placeholder={ translator("password") } required/>
 					</div>
 					<div class="form-submit-container">
-						<button class="submit-button" type="submit">Log in</button>
+						<button class="submit-button" type="submit">{ translator("log-in") }</button>
 					</div>
 				</form>
 			</div>
@@ -32,9 +34,9 @@ templ loginContent(errorMessage string) {
 // ------------------------------------------------------------------------------------------------
 // LogIn Page
 // ------------------------------------------------------------------------------------------------
-templ LoginPage(errorMessage string) {
-	@Layout("Log-In", func() templ.Component {
-		return loginContent(errorMessage)
+templ LoginPage(errorMessage string, translator utils.Translator) {
+	@Layout(translator("log-in"), translator, func() templ.Component {
+		return loginContent(errorMessage, translator)
 	})
 }
 

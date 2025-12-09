@@ -91,9 +91,10 @@ func newMinioClient() (*s3.Client, error) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Creación del Bucket y configuración de este como público para lectura de avatares.
+// Creación del bucket y configuración de este como público para lectura de avatares.
 func ensureBucket(ctx context.Context, bucket string) error {
-	// Crea el bucket si no existe.
+
+	// Se crea el bucket si no existe.
 	_, err := S3Client.CreateBucket(ctx, &s3.CreateBucketInput{
 		Bucket: aws.String(bucket),
 	})
@@ -211,7 +212,7 @@ func UploadAvatar(ctx context.Context, bucket string, userID int32, file io.Read
 
 // Se elimina el avatar de un usuario.
 func DeleteAvatar(ctx context.Context, bucket, userID string) error {
-	key := "avatars/" + userID + ".jpg"
+	key := userID + ".jpg"
 	_, err := S3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),

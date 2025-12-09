@@ -129,8 +129,8 @@ templ documentTypeCheckboxes(documentTypes *list.List) {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List) {
-	@Layout(query+" - SciFi Search", func() templ.Component {
+templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List) {
+	@Layout(query+" - SciFi Search", translator, func() templ.Component {
 		return searchResultsContent(query, hits, isUserAuthenticated, documentTypes)
 	})
 }

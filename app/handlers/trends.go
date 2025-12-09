@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+	"scifi-search/app/utils"
 	"scifi-search/app/views"
 
 	"github.com/go-echarts/go-echarts/v2/charts"
@@ -57,7 +58,7 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
 	htmlChart := extractBodyContent(buf.String())
 
-	views.TrendsPage(htmlChart, isUserAuthenticated(r)).Render(r.Context(), w)
+	views.TrendsPage(htmlChart, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 }
 
 // ------------------------------------------------------------------------------------------------

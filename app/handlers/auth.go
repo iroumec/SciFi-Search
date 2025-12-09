@@ -107,7 +107,7 @@ func registerAuthenticationHandlers() {
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.SignUpPage("")
+		component := views.SignUpPage("", utils.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}
@@ -123,7 +123,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		component := views.SuccessfulSignUpPage()
+		component := views.SuccessfulSignUpPage(utils.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 	} else {
 
@@ -188,7 +188,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.LoginPage("")
+		component := views.LoginPage("", utils.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}

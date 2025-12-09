@@ -1,28 +1,30 @@
 package views 
 
+import "scifi-search/app/utils"
+
 // ------------------------------------------------------------------------------------------------
 // Sign Up Content
 // ------------------------------------------------------------------------------------------------
-templ signUpContent(errorMessage string) {
+templ signUpContent(errorMessage string, translator utils.Translator) {
 	@Header()
-	<main> 
+	<main>
 		<div class="only-form-content">
 			<div class="centered-container">
 				<form id="signup-form" action="/signup" method="POST">
 					<div class="form-name-container">
-						<input type="text" id="name" placeholder="Name" name="name" required/>
+						<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
 					</div>
 					<div class="form-surname-container">
-						<input type="text" id="surname" placeholder="Surname" name="surname" required/>
+						<input type="text" id="surname" placeholder={ translator("surname") } name="surname" required/>
 					</div>
 					<div class="form-email-container">
-						<input type="email" id="email" placeholder="Email" name="email" required/>
+						<input type="email" id="email" placeholder={ translator("email") } name="email" required/>
 					</div>
 					<div class="form-password-container">
-						<input type="password" id="password" placeholder="Password" name="password" required/>
+						<input type="password" id="password" placeholder={ translator("password") } name="password" required/>
 					</div>
 					<div class="form-submit-container">
-						<button class="submit-button" type="submit">Sign up</button>
+						<button class="submit-button" type="submit">{ translator("sign-up") }</button>
 					</div>
 				</form>
 			</div>
@@ -33,28 +35,28 @@ templ signUpContent(errorMessage string) {
 // ------------------------------------------------------------------------------------------------
 // Sign Up Page
 // ------------------------------------------------------------------------------------------------
-templ SignUpPage(errorMessage string) {
-	@Layout("Sign up", func() templ.Component {
-		return signUpContent(errorMessage)
+templ SignUpPage(errorMessage string, translator utils.Translator) {
+	@Layout(translator("sign-up"), translator, func() templ.Component {
+		return signUpContent(errorMessage, translator)
 	})
 }
 
 // ------------------------------------------------------------------------------------------------
 // Successful Sign Up Content
 // ------------------------------------------------------------------------------------------------
-templ sucessfulSignUpContent() {
+templ sucessfulSignUpContent(translator utils.Translator) {
 	<div class="sucessful-signup-container">
-		<h1>Sign-up completed with success!</h1>
-		<button class="header-button" onclick="window.location.href='/'">Go to main page</button>
+		<h1>{ translator("sign-up.successful") }</h1>
+		<button class="header-button" onclick="window.location.href='/'">{ translator("redirect.main_page") }</button>
 	</div>
 }
 
 // ------------------------------------------------------------------------------------------------
 // Sucessful Sign Up Page
 // ------------------------------------------------------------------------------------------------
-templ SuccessfulSignUpPage() {
-	@Layout("Successful sign-up", func() templ.Component {
-		return sucessfulSignUpContent()
+templ SuccessfulSignUpPage(translator utils.Translator) {
+	@Layout("Successful sign-up", translator, func() templ.Component {
+		return sucessfulSignUpContent(translator)
 	})
 }
 
