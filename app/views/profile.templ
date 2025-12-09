@@ -1,11 +1,13 @@
 package views
 
+import "scifi-search/app/utils"
+
 import sqlc "scifi-search/app/database"
 
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
-templ loggedProfileContent(user sqlc.User, searches []string) {
+templ loggedProfileContent(user sqlc.User, searches []string, translator utils.Translator) {
 	<div class="profile-container">
 		<h1>Bienvenido, { user.Name } { user.Surname }!</h1>
 		if user.AvatarUrl.Valid {
@@ -18,7 +20,7 @@ templ loggedProfileContent(user sqlc.User, searches []string) {
 			<p>No tiene avatar cargado.</p>
 		}
 		<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
-			<label for="avatar">Subir nuevo avatar</label>
+			<label for="avatar">{ translator("profile.upload_new_avatar") } </label>
 			<input type="file" id="avatar" name="avatar" accept="image/*" required/>
 			<button type="submit">Actualizar avatar</button>
 		</form>
@@ -36,9 +38,9 @@ templ loggedProfileContent(user sqlc.User, searches []string) {
 // ------------------------------------------------------------------------------------------------
 // Profile Page
 // ------------------------------------------------------------------------------------------------
-templ LoggedProfilePage(user sqlc.User, searches []string) {
+templ LoggedProfilePage(user sqlc.User, searches []string, translator utils.Translator) {
 	@Layout(user.Name, func() templ.Component {
-		return loggedProfileContent(user, searches)
+		return loggedProfileContent(user, searches, translator)
 	})
 }
 

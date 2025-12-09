@@ -7,6 +7,7 @@ package handlers
 import (
 	"net/http"
 
+	"scifi-search/app/utils"
 	"scifi-search/app/views"
 
 	_ "github.com/lib/pq"
@@ -46,7 +47,7 @@ func showProfile(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		component := views.LoggedProfilePage(*user, searches)
+		component := views.LoggedProfilePage(*user, searches, utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	} else {

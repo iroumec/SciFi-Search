@@ -43,6 +43,8 @@ services:
         condition: service_started
       supertokens:
         condition: service_started
+      minio:
+        condition: service_started
     environment:
       DATABASE_URL: "postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
       MEILI_URL: "${MEILI_URL}"

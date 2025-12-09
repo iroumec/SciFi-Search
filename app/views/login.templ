@@ -10,7 +10,7 @@ templ loginContent(errorMessage string) {
 			<div class="centered-container">
 				<form id="login-form" action="/login" method="POST">
 					<div class="form-email-container">
-						<input id="email" type="email" placeholder="Email" required/> 
+						<input id="email" type="email" name="email" placeholder="Email" required/>
 					</div>
 					<div class="form-password-container">
 						<input id="password" type="password" name="password" placeholder="Password" required/>
@@ -22,7 +22,6 @@ templ loginContent(errorMessage string) {
 			</div>
 		</div>
 	</main>
-	/*tira STRING en rojo, nose xq*/
 	if errorMessage != "" {
 		<div id="mensaje" style="color:red;">
 			{ errorMessage }

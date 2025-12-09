@@ -1,5 +1,7 @@
 package views
 
+import "scifi-search/app/utils"
+
 //import sqlc "scifi-search/app/database"
 
 // ------------------------------------------------------------------------------------------------
@@ -35,7 +37,7 @@ templ indexContent(isUserAuthenticated bool) {
 		<div class="index-bottom">
 			if isUserAuthenticated {
 				<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->
-			} 
+			}
 		</div>
 		<script>
 			const input = document.getElementById("first-query");
@@ -51,7 +53,7 @@ templ indexContent(isUserAuthenticated bool) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexPage(isUserAuthenticated bool) {
+templ IndexPage(isUserAuthenticated bool, translator utils.Translator) {
 	@Layout("SciFi Search", func() templ.Component {
 		return indexContent(isUserAuthenticated)
 	})

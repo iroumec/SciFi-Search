@@ -13,6 +13,7 @@ import (
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
 	"sort"
+	"strings"
 
 	sqlc "scifi-search/app/database"
 
@@ -175,9 +176,10 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Obtención de parámetros de filtro y ordenamiento.
-	filterTipo := r.URL.Query().Get("tipo")
-	filterArea := r.URL.Query().Get("area")
-	sortBy := r.URL.Query().Get("sort")
+	// Se eliminan las comillas consecutivas al inicio y al final del parámetro.
+	filterTipo := strings.Trim(r.URL.Query().Get("tipo"), `"`)
+	filterArea := strings.Trim(r.URL.Query().Get("area"), `"`)
+	sortBy := strings.Trim(r.URL.Query().Get("sort"), `"`)
 
 	// Construcción de la búsqueda.
 	searchRequest := &meilisearch.SearchRequest{

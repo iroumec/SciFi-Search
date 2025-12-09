@@ -36,7 +36,7 @@ func loginContent(errorMessage string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><div class=\"only-form-content\"><div class=\"centered-container\"><form id=\"login-form\" action=\"/login\" method=\"POST\"><div class=\"form-email-container\"><input id=\"email\" type=\"email\" placeholder=\"Email\" required></div><div class=\"form-password-container\"><input id=\"password\" type=\"password\" name=\"password\" placeholder=\"Password\" required></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Log in</button></div></form></div></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main><div class=\"only-form-content\"><div class=\"centered-container\"><form id=\"login-form\" action=\"/login\" method=\"POST\"><div class=\"form-email-container\"><input id=\"email\" type=\"email\" name=\"email\" placeholder=\"Email\" required></div><div class=\"form-password-container\"><input id=\"password\" type=\"password\" name=\"password\" placeholder=\"Password\" required></div><div class=\"form-submit-container\"><button class=\"submit-button\" type=\"submit\">Log in</button></div></form></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -48,7 +48,7 @@ func loginContent(errorMessage string) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/login.templ`, Line: 28, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/login.templ`, Line: 27, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
