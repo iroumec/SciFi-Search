@@ -13,7 +13,7 @@ templ Layout(title string, content func() templ.Component) {
 			<meta charset="UTF-8"/>
 			<title>{ title }</title>
 			<link rel="stylesheet" href="/static/css/styles.css"/>
-			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap">
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap"/>
 			<link rel="icon" type="image/png" href="/static/img/icono.png"/>
 		</head>
 		<body>
@@ -31,13 +31,16 @@ templ Layout(title string, content func() templ.Component) {
 templ Footer() {
 	<footer class="footer">
 		<p class="footer-text">
-			powered by
+			Powered by:
 			<a href="https://www.meilisearch.com/" target="_blank">
 				<img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
 			</a>
-			<!--a href="https://supertokens.com/" target="_blank">
-				<img src="static/img/logo_supertokens.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
-			</a-->
+			<a href="https://supertokens.com/" target="_blank">
+				<img src="static/img/logo_supertokens.png" alt="Logo Supertokens" id="logo-supertokens"/>
+			</a>
+			<a href="https://github.com/minio/minio" target="_blank">
+				<img src="static/img/logo_minio.svg" alt="Logo MinIO" id="logo-minio"/>
+			</a>
 		</p>
 	</footer>
 }

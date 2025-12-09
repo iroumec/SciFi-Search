@@ -89,7 +89,7 @@ func Footer() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><p class=\"footer-text\">powered by <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a><!--a href=\"https://supertokens.com/\" target=\"_blank\">\n\t\t\t\t<img src=\"static/img/logo_supertokens.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"/>\n\t\t\t</a--></p></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><p class=\"footer-text\">Powered by: <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo_supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo_minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\"></a></p></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
