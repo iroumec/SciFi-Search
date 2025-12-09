@@ -62,6 +62,12 @@ func registerSearchHandlers() {
 // ------------------------------------------------------------------------------------------------
 
 func indexarDatos() {
+
+	// Si los datos ya fueron indexados, se retorna...
+	if indexContainsDocuments(indexName) {
+		return
+	}
+
 	data, err := os.ReadFile(dataPath)
 	if err != nil {
 		log.Fatal(err)
@@ -127,6 +133,24 @@ func indexarDatos() {
 	}
 
 	fmt.Println("Datos indexados correctamente.")
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func indexContainsDocuments(indexName string) bool {
+
+	index := client.Index(indexName)
+
+	stats, err := index.GetStats()
+	if err != nil {
+		// Si el índice no existe...
+		if strings.Contains(err.Error(), "index_not_found") {
+			return false
+		}
+		log.Fatal(err)
+	}
+
+	return stats.NumberOfDocuments > 0
 }
 
 // ------------------------------------------------------------------------------------------------

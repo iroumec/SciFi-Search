@@ -13,19 +13,19 @@ import (
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
 templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List) {
-    @searchHeader(isUserAuthenticated)
-    <main>
-        <div class="search-container-grid">
+	@searchHeader(isUserAuthenticated)
+	<main>
+		<div class="search-container-grid">
 			<div class="top"></div>
 			<div class="left"></div>
-            <div class="search-content">
+			<div class="search-content">
 				if len(hits) == 0 {
 					<div class="message">
-                    	<p>No results found for "{ query }".</p>
+						<p>No results found for "{ query }".</p>
 					</div>
-                } else {
+				} else {
 					<div class="message">
-                    	<p>Search results for “{ query }”</p>
+						<p>Search results for “{ query }”</p>
 					</div>
 					<div class="filters">
 						@searchFilters(documentTypes)
@@ -34,13 +34,13 @@ templ searchResultsContent(query string, hits []map[string]any, isUserAuthentica
 						@searchResults(hits)
 					</div>
 				}
-            </div>
+			</div>
 			<div class="right"></div>
-        </div>
-    </main>
+		</div>
+	</main>
 }
 
-templ searchHeader(isUserAuthenticated bool){
+templ searchHeader(isUserAuthenticated bool) {
 	<header class="search-header">
 		<div class="header-left">
 			<a onclick="window.location.href='/'">
@@ -50,12 +50,12 @@ templ searchHeader(isUserAuthenticated bool){
 		</div>
 		<div class="header-right">
 			<div class="header-buttons">
-			if !isUserAuthenticated {
-				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
-				<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
-			} else {
-				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
-			}
+				if !isUserAuthenticated {
+					<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
+					<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
+				} else {
+					<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
+				}
 			</div>
 		</div>
 		<script>
@@ -72,11 +72,9 @@ templ searchHeader(isUserAuthenticated bool){
 }
 
 templ searchResults(hits []map[string]any) {
-
-    for _, m := range hits {
+	for _, m := range hits {
 		<div class="result">
 			<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
-
 			<div class="extra-info">
 				if utils.ToString(m["Tipo"]) != "" {
 					<span class="gray">{ utils.ToString(m["Tipo"]) }</span>
@@ -88,24 +86,21 @@ templ searchResults(hits []map[string]any) {
 					<span>{ utils.ToString(m["Gran area 2"]) }</span>
 				}
 			</div>
-
 			<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
-			<p> { len(hits) } </p>
+			<p>{ len(hits) } </p>
 		</div>
 	}
-
 }
 
 templ searchFilters(documentTypes *list.List) {
 	<button class="dropbtn">SORT BY</button>
 	<button class="dropbtn">AREA</button>
 	<div class="dropdown">
-        <button class="dropbtn" onclick="toggleDropdown(event)">TYPE</button>
-
-        <div class="dropdown-content" id="typeDropdown">
-            @documentTypeCheckboxes(documentTypes)
-        </div>
-    </div>
+		<button class="dropbtn" onclick="toggleDropdown(event)">TYPE</button>
+		<div class="dropdown-content" id="typeDropdown">
+			@documentTypeCheckboxes(documentTypes)
+		</div>
+	</div>
 	<script>
 		function toggleDropdown(e) {
 			e.stopPropagation();
@@ -119,14 +114,16 @@ templ searchFilters(documentTypes *list.List) {
 }
 
 templ documentTypeCheckboxes(documentTypes *list.List) {
-    for e := documentTypes.Front(); e != nil; e = e.Next() {
-        <label class="checkbox-item">
-            <input type="checkbox"
-                   name="doctype"
-                   value={ e.Value.(string) } />
-            { e.Value.(string) }
-        </label>
-    }
+	for e := documentTypes.Front(); e != nil; e = e.Next() {
+		<label class="checkbox-item">
+			<input
+				type="checkbox"
+				name="doctype"
+				value={ e.Value.(string) }
+			/>
+			{ e.Value.(string) }
+		</label>
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
