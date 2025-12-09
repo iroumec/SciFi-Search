@@ -12,7 +12,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List) {
+templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List, documentAreas *list.List) {
 	@searchHeader(isUserAuthenticated)
 	<main>
 		<div class="search-container-grid">
@@ -28,10 +28,10 @@ templ searchResultsContent(query string, hits []map[string]any, isUserAuthentica
 						<p>Search results for “{ query }”</p>
 					</div>
 					<div class="filters">
-						@searchFilters(documentTypes)
+						@searchFilters(query, documentTypes, documentAreas)
 					</div>
-					<div class="results">
-						@searchResults(hits)
+					<div id="results">
+						@SearchResults(hits)
 					</div>
 				}
 			</div>
@@ -71,7 +71,7 @@ templ searchHeader(isUserAuthenticated bool) {
 	</header>
 }
 
-templ searchResults(hits []map[string]any) {
+templ SearchResults(hits []map[string]any) {
 	for _, m := range hits {
 		<div class="result">
 			<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
@@ -87,39 +87,95 @@ templ searchResults(hits []map[string]any) {
 				}
 			</div>
 			<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
-			<p>{ len(hits) } </p>
 		</div>
 	}
 }
 
-templ searchFilters(documentTypes *list.List) {
+templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List) {
 	<button class="dropbtn">SORT BY</button>
-	<button class="dropbtn">AREA</button>
-	<div class="dropdown">
-		<button class="dropbtn" onclick="toggleDropdown(event)">TYPE</button>
-		<div class="dropdown-content" id="typeDropdown">
-			@documentTypeCheckboxes(documentTypes)
+	<div id="all-filters">
+		<div class="dropdown">
+
+			<button class="dropbtn" name="area" onclick="toggleDropdown(event)">
+				AREA
+			</button>
+			<div id="document-area-menu" class="dropdown-content hidden">
+				@valuesCheckboxes("area", documentAreas)
+			</div>
+
 		</div>
+		<div class="dropdown">
+
+			<button class="dropbtn" name="tipo" onclick="toggleDropdown(event)">
+				TYPE
+			</button>
+			<div id="document-type-menu" class="dropdown-content hidden">
+				@valuesCheckboxes("tipo", documentTypes)
+			</div>
+
+		</div>
+		<input type="hidden" name="query" value={ query }>
 	</div>
 	<script>
-		function toggleDropdown(e) {
+
+		document.addEventListener("click", () => { // Para cerrar el dropdown menu al cliquear afuera
+			document.getElementById("document-type-menu").classList.add("hidden");
+			document.getElementById("document-area-menu").classList.add("hidden");
+		});
+
+		function toggleDropdown(e) {// Para abrir el dropdown menú que está oculto y ocultar el otro si estaba abierto.
 			e.stopPropagation();
-			document.getElementById("typeDropdown").classList.toggle("show");
+
+			const typeMenu = document.getElementById("document-type-menu");
+			const areaMenu = document.getElementById("document-area-menu");
+
+			let menu;
+
+			if (e.currentTarget.name === "tipo") {
+				menu = typeMenu;
+				areaMenu.classList.add("hidden");  
+			} else {
+				menu = areaMenu;
+				typeMenu.classList.add("hidden");  
+			}
+
+			menu.classList.toggle("hidden");
 		}
 
-		document.addEventListener("click", () => {
-			document.getElementById("typeDropdown").classList.remove("show");
+		document.querySelectorAll(".dropdown-content").forEach(menu => {
+			menu.addEventListener("click", (e) => {
+				if (e.target.tagName === "INPUT") {
+					e.stopPropagation();
+				}
+			});
+		});
+
+		document.getElementById("document-type-menu").addEventListener("change", (e) => { // Para permitir una sola box marcada.
+			if (e.target.type !== "checkbox") 
+				return;
+
+			const checkboxes = document.querySelectorAll("#document-type-menu input[type=checkbox]");
+			checkboxes.forEach(cb => {
+				if (cb !== e.target)
+					cb.checked = false; 
+			});
+			
+			htmx.trigger(e.target, "change");
 		});
 	</script>
 }
 
-templ documentTypeCheckboxes(documentTypes *list.List) {
-	for e := documentTypes.Front(); e != nil; e = e.Next() {
+templ valuesCheckboxes(name string, values *list.List) {
+	for e := values.Front(); e != nil; e = e.Next() {
 		<label class="checkbox-item">
 			<input
 				type="checkbox"
-				name="doctype"
+				name={ name }
 				value={ e.Value.(string) }
+				hx-get="/search/update-filter"
+				hx-target="#results"
+				hx-swap="innerHTML"
+				hx-include="#all-filters"
 			/>
 			{ e.Value.(string) }
 		</label>
@@ -129,9 +185,9 @@ templ documentTypeCheckboxes(documentTypes *list.List) {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List) {
+templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) {
 	@Layout(query+" - SciFi Search", translator, func() templ.Component {
-		return searchResultsContent(query, hits, isUserAuthenticated, documentTypes)
+		return searchResultsContent(query, hits, isUserAuthenticated, documentTypes, documentAreas)
 	})
 }
 

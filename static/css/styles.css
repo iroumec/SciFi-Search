@@ -469,7 +469,7 @@ body {
     background-position: right; 
 
     color: var(--scifi);      
-    border: none;              
+    border: solid 3px transparent;              
     padding: 0.25rem 0.5rem;
     padding-right: 1.5rem;       
     cursor: pointer;            
@@ -481,19 +481,20 @@ body {
 }
 
 .dropdown-content {
-    display: none;
     position: absolute;
-    right: 0;
+    left: 0;
     background-color: var(--scifi);
     min-width: 160px;
     border: none;
-    padding: 0.5rem;
+    padding: 0.25rem;
     z-index: 1000;
-    border-radius: 0.2rem;
+
+    overflow-y: auto;       /* habilita scroll vertical si hace falta */
+    max-height: 25rem;       /* máximo al espacio disponible */
 }
 
-.dropdown-content.show {
-    display: block;
+.hidden {
+    display: none;
 }
 
 .checkbox-item {
@@ -509,7 +510,7 @@ body {
     accent-color: var(--scifi);
 }
 
-.results {
+#results {
     grid-area: results;
     overflow-y: auto;       /* habilita scroll vertical si hace falta */
     max-height: 100%;       /* máximo al espacio disponible */

@@ -12,7 +12,7 @@ func ListContains(l *list.List, value any) bool {
 }
 
 func AddIfNotExists(l *list.List, value any) {
-	if !ListContains(l,value) {
+	if !ListContains(l,value) && ToString(value) != "" {
 		l.PushFront(value)
 	}
 }

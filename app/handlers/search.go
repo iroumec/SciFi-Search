@@ -26,6 +26,7 @@ import (
 var (
 	client        meilisearch.ServiceManager
 	documentTypes = list.New()
+	documentAreas = list.New()
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -57,6 +58,7 @@ func registerSearchHandlers() {
 	// Se registra el handler.
 	http.HandleFunc("/search", handleSearch)
 	http.HandleFunc("/funding", addFundingHandler)
+	http.HandleFunc("/search/update-filter", updateFilterHandler)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -118,6 +120,9 @@ func indexarDatos() {
 			indexDocs = append(indexDocs, filtered)
 
 			utils.AddIfNotExists(documentTypes, tipo)
+
+			utils.AddIfNotExists(documentAreas, granArea1)
+			utils.AddIfNotExists(documentAreas, granArea2)
 		}
 	}
 
@@ -208,8 +213,6 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	// Obtención de parámetros de filtro y ordenamiento.
 	// Se eliminan las comillas consecutivas al inicio y al final del parámetro.
-	filterTipo := strings.Trim(r.URL.Query().Get("tipo"), `"`)
-	filterArea := strings.Trim(r.URL.Query().Get("area"), `"`)
 	sortBy := strings.Trim(r.URL.Query().Get("sort"), `"`)
 
 	// Construcción de la búsqueda.
@@ -218,23 +221,10 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		ShowRankingScore: true, // Se muestra el score de relevancia.
 	}
 
-	// Aplicación de filtros.
-	var filters []string
-	if filterTipo != "" {
-		filters = append(filters, fmt.Sprintf("Tipo = '%s'", filterTipo))
-	}
-	if filterArea != "" {
-		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", filterArea, filterArea))
-	}
-
-	if len(filters) > 0 {
-		searchRequest.Filter = filters
-	}
-
 	// Aplicación de ordenamiento.
-	/*if sortBy != "" {
+	if sortBy != "" {
 		searchRequest.Sort = []string{sortBy}
-	}*/
+	}
 	// El anterior es un ordenamiento previo a la relevancia.
 
 	res, err := client.Index(indexName).Search(query, searchRequest)
@@ -345,6 +335,62 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	component := views.FundingAddedPage(utils.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
+}
+
+//
+
+func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
+
+	log.Println("RAW QUERY:", r.URL.RawQuery)
+	log.Println("VALUES:", r.URL.Query())
+
+	query := r.URL.Query().Get("query")
+	filterTipo := r.URL.Query()["tipo"]
+	filterArea := r.URL.Query()["area"]
+
+	var filters []string
+	for _, t := range filterTipo {
+		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
+	}
+	log.Println(filters)
+	for _, t := range filterArea {
+		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t))
+	}
+	log.Println(filters)
+
+	searchRequest := &meilisearch.SearchRequest{
+		Limit: 20,
+	}
+
+	if len(filters) > 0 {
+		searchRequest.Filter = filters
+	}
+
+	res, err := client.Index(indexName).Search(query, searchRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return 
+	}
+
+	hits := make([]any, len(res.Hits))
+	for i, h := range res.Hits {
+		hits[i] = h
+	}
+
+	// Convertir a []map[string]any de forma segura
+	data, err := json.Marshal(hits)
+	if err != nil {
+		log.Println("Error marshal hits:", err)
+	}
+
+	var hitsMaps []map[string]any
+	if err := json.Unmarshal(data, &hitsMaps); err != nil {
+		log.Println("Error unmarshal hits:", err)
+	}
+
+	component := views.SearchResults(hitsMaps)
+	component.Render(r.Context(),w)
+
 }
 
 // ------------------------------------------------------------------------------------------------
