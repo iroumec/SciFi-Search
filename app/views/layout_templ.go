@@ -91,20 +91,20 @@ func Footer(translator utils.Translator) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><p class=\"footer-text\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><div class=\"clear-top\"></div><div class=\"clear-left\"></div><div id=\"powered-section\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("powered-by"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 36, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 39, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, ": <a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo_meilisearch_negro.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo_supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo_minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\"></a></p></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo-meilisearch.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo-supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo-minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logo-unicen.png\" alt=\"Logo Supertokens\" id=\"logo-unicen\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">Trends</button> <button class=\"footer-button\">Language: EN</button> <button class=\"footer-button\">Help</button></div><div class=\"clear-right\"></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,4 +113,9 @@ func Footer(translator utils.Translator) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
+/*
+background: #368ac2;
+background: linear-gradient(180deg, rgba(54, 138, 194, 0) 0%, rgba(0, 87, 133, 1) 44%, rgba(15, 32, 59, 1) 87%);
+*/
+
 var _ = templruntime.GeneratedTemplate
