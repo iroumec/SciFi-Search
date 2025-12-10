@@ -39,7 +39,7 @@ func Header() templ.Component {
 	})
 }
 
-func indexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -64,57 +64,11 @@ func indexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 16, Col: 101}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 17, Col: 99}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</button>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"index-menu\"><button id=\"header-menu\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header_menu\"></button><div id=\"menu\" class=\"menu-content hidden\"><button class=\"menu-button\" onclick=\"window.location.href='/profile'\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("profile.tag"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 24, Col: 102}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Funding</button></div></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		templ_7745c5c3_Err = userOptions(isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<!--button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button--></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!--button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button--></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,7 +76,7 @@ func indexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Co
 	})
 }
 
-func searchHeader(isUserAuthenticated bool) templ.Component {
+func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -138,27 +92,86 @@ func searchHeader(isUserAuthenticated bool) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var6 == nil {
-			templ_7745c5c3_Var6 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<header class=\"search-header\"><div class=\"header-left\"><a onclick=\"window.location.href='/'\"><img src=\"static/img/logo_blanco.png\" alt=\"icono\" id=\"logo_scifi_header\"></a> <input type=\"text\" id=\"query\" placeholder=\"Search for SCIENCE!!!\"></div><div class=\"header-right\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<header class=\"search-header\"><div class=\"header-left\"><a onclick=\"window.location.href='/'\"><img src=\"static/img/logo_blanco.png\" alt=\"icono\" id=\"logo_scifi_header\"></a> <input type=\"text\" id=\"query\" placeholder=\"Search for SCIENCE!!!\"></div><div class=\"header-right\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = userOptions(isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><script>\n\t\t\tconst input = document.getElementById(\"query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></header>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
 		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">Sign-up</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">Log-in</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 46, Col: 101}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 47, Col: 99}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<button class=\"header-button\" onclick=\"window.location.href='/profile'\">Perfil</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU </div><!--button class=\"menu-button\" onclick=\"window.location.href='/profile'\">{ translator(\"profile.tag\") }</button--><!--button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Funding</button--><button class=\"menu-button\" onclick=\"window.location.href='/profile'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\">Cerrar sesión </button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div><script>\n\t\t\tconst input = document.getElementById(\"query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n        function toggleSlidemenu(e) {\n            e.stopPropagation();\n            document.getElementById(\"menu\").classList.toggle(\"hidden\");\n            document.getElementById(\"header-menu-img\").classList.add(\"hidden\");\n        }\n\n        document.addEventListener(\"click\", () => { // Para cerrar el dropdown menu al cliquear afuera\n\t\t\tdocument.getElementById(\"menu\").classList.add(\"hidden\");\n            document.getElementById(\"header-menu-img\").classList.toggle(\"hidden\");\n\t\t});\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

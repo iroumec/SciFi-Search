@@ -12,8 +12,8 @@ import (
 // ------------------------------------------------------------------------------------------------
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, documentTypes *list.List, documentAreas *list.List) {
-	@searchHeader(isUserAuthenticated)
+templ searchResultsContent(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) {
+	@SearchHeader(isUserAuthenticated, translator)
 	<main>
 		<div class="search-container-grid">
 			<div class="top"></div>
@@ -234,7 +234,7 @@ templ sortingCheckboxes() {
 // ------------------------------------------------------------------------------------------------
 templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) {
 	@Layout(query+" - SciFi Search", translator, func() templ.Component {
-		return searchResultsContent(query, hits, isUserAuthenticated, documentTypes, documentAreas)
+		return searchResultsContent(query, hits, isUserAuthenticated, translator, documentTypes, documentAreas)
 	})
 }
 

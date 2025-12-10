@@ -10,27 +10,14 @@ templ Header() {
 	</header>
 }
 
-templ indexHeader(isUserAuthenticated bool, translator utils.Translator) {
+templ IndexHeader(isUserAuthenticated bool, translator utils.Translator) {
 	<header class="index-header">
-		if !isUserAuthenticated {
-			<button class="header-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
-			<button class="header-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
-		} else {
-			<div class="index-menu">
-				<button id="header-menu">
-					<img src="static/img/menu.svg" alt="header-menu-img" id="header_menu"/>
-				</button>
-				<div id="menu" class="menu-content hidden">
-					<button class="menu-button" onclick="window.location.href='/profile'">{ translator("profile.tag") }</button>
-					<button class="menu-button" onclick="window.location.href='/funding'">Funding</button>
-				</div>
-			</div>
-		}
+		@userOptions(isUserAuthenticated, translator)
 		<!--button class="header-button" onclick="window.location.href='/trends'">Trends</button-->
 	</header>
 }
 
-templ searchHeader(isUserAuthenticated bool) {
+templ SearchHeader(isUserAuthenticated bool, translator utils.Translator) {
 	<header class="search-header">
 		<div class="header-left">
 			<a onclick="window.location.href='/'">
@@ -39,12 +26,7 @@ templ searchHeader(isUserAuthenticated bool) {
 			<input type="text" id="query" placeholder="Search for SCIENCE!!!"/>
 		</div>
 		<div class="header-right">
-			if !isUserAuthenticated {
-				<button class="header-button" onclick="window.location.href='/signup'">Sign-up</button>
-				<button class="header-button" onclick="window.location.href='/login'">Log-in</button>
-			} else {
-				<button class="header-button" onclick="window.location.href='/profile'">Perfil</button>
-			}
+			@userOptions(isUserAuthenticated, translator)
 		</div>
 		<script>
 			const input = document.getElementById("query");
@@ -57,4 +39,38 @@ templ searchHeader(isUserAuthenticated bool) {
 			});
 		</script>
 	</header>
+}
+
+templ userOptions(isUserAuthenticated bool, translator utils.Translator) {
+    if !isUserAuthenticated {
+			<button class="header-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
+			<button class="header-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
+		} else {
+			<div class="index-menu">
+				<button id="header-menu" onclick="toggleSlidemenu(event)">
+					<img src="static/img/menu.svg" alt="header-menu-img" id="header-menu-img"/>
+				</button>
+				<div id="menu" class="menu-content hidden">
+                    <div id="close-menu"> MENU </div>
+					<!--button class="menu-button" onclick="window.location.href='/profile'">{ translator("profile.tag") }</button-->
+					<!--button class="menu-button" onclick="window.location.href='/funding'">Funding</button-->
+                    <button class="menu-button" onclick="window.location.href='/profile'">Configuración</button>
+                    <button class="menu-button">Historial</button>
+					<button class="menu-button" onclick="window.location.href='/funding'">Subir un proyecto</button>
+                    <button class="menu-button">Cerrar sesión </button>
+				</div>
+			</div>
+		}
+    <script>
+        function toggleSlidemenu(e) {
+            e.stopPropagation();
+            document.getElementById("menu").classList.toggle("hidden");
+            document.getElementById("header-menu-img").classList.add("hidden");
+        }
+
+        document.addEventListener("click", () => { // Para cerrar el dropdown menu al cliquear afuera
+			document.getElementById("menu").classList.add("hidden");
+            document.getElementById("header-menu-img").classList.toggle("hidden");
+		});
+    </script>
 }

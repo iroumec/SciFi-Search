@@ -4,7 +4,9 @@
 :root {
     --scifi: rgba(0, 87, 133);
     --scifi30: rgba(0, 87, 133, 0.3);
+    --scifi50: rgba(0, 87, 133, 0.5);
     --white80: rgba(255,255,255,0.8);
+    --white50: rgba(255,255,255,0.5);
     --background: white;
 }
 
@@ -85,6 +87,46 @@ body {
 
         /*border: 1px solid rgb(255, 0, 0);*/
     }
+
+    .index-menu {
+        position: relative;
+        display: inline-block;
+    }
+
+        .menu-content {
+            position: fixed;
+            right: 0;
+            background-color: var(--scifi50);
+            min-width: 300px;
+            z-index: 1000;
+            top: 0;
+            min-height: 100%;
+        }
+
+            #close-menu {
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                color: white;
+                padding: 1.5rem;
+                font-size: 0.8rem;
+                padding-bottom: 3rem;
+            }
+
+            .menu-button {
+                display: flex;
+                align-items: center;
+                color: white;
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 1rem 1rem 1rem 1rem;
+                font-size: 1.2rem;
+                width: 100%;
+            }
+            .menu-button:hover {
+                background-color: var(--white50);
+            }
 
 /* --------------- Index header --------------- */
 .index-header {
