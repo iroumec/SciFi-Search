@@ -123,7 +123,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		utils.AddFlashCookie(w, "Successful signup!")
+		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("sign-up.successful"))
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {

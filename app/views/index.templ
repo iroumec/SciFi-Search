@@ -80,11 +80,16 @@ templ showPopUp() {
                     }
                 });
             }
+
+			function b64DecodeUnicode(str) {
+				const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0));
+				return new TextDecoder("utf-8").decode(bytes);
+			}
             
             // Se verifica la cookie y se muestra el popup.
             const flash = getCookie("flash");
             if (flash) {
-				const decoded = atob(flash);
+				const decoded = b64DecodeUnicode(flash);
 				showFlashPopup(decoded);
                 deleteCookie("flash");
             }
