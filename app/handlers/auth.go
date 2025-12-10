@@ -239,6 +239,8 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		utils.AddFlashCookie(w, "Welcome back!")
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -269,6 +271,8 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
 		return
 	}
+
+	utils.AddFlashCookie(w, "Successful signout!")
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
