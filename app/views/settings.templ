@@ -1,0 +1,31 @@
+package views 
+
+import "scifi-search/app/utils"
+
+templ settingsContent(isUserAuthenticated bool) {
+    @Header()
+    <div class="settings-content">
+        <div id="left"></div>
+        <div id="settings-section">
+            <div class="profile-settings">
+            </div>
+            <div class="avatar-settings">
+            </div>
+            <div class="preferences-settings">
+            </div>
+            <div class="save-changes-section">
+            </div>
+        </div>
+        <div id="right"></div>
+    </div>
+}
+
+templ SettingsPage(isUserAuthenticated bool, translator utils.Translator) {
+    @Layout("Settings", translator, func() templ.Component {
+		return settingsContent(isUserAuthenticated)
+	})
+}
+
+templ SettingsPageError() {
+    <h1>NO HAY SESIÓN</h1>
+}

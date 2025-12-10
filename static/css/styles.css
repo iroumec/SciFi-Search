@@ -673,6 +673,59 @@ body {
                         font-size: 0.85rem;
                     }
 
+/*------------- Settings --------------- */
+.settings-content {
+    grid-area: content;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 100%;
+    grid-template-areas: "settings-left settings settings-right";
+}
+    .settings-content #left {
+        grid-area: settings-left;
+    }
+
+    #settings-section {
+        grid-area: settings;
+        height: 85%;
+
+        display: grid;
+        grid-template-columns: 66% 34%;
+        grid-template-rows: 62% 31% 7%;
+        grid-template-areas: 
+            "profile avatar"
+            "preferences preferences"
+            "svchg svchg";
+        padding: 2rem;
+        background-color: var(--scifi30);
+    }
+
+        .profile-settings {
+            grid-area: profile;
+            border: 1px red solid;
+        }
+
+        .avatar-settings {
+            grid-area: avatar;
+            border: 1px red solid;
+        }
+
+        .preferences-settings {
+            grid-area: preferences;
+            border: 1px red solid;
+        }
+
+        .save-changes-section {
+            grid-area: svchg;
+            border: 1px red solid;
+        }
+
+    .settings-content #right {
+        grid-area: settings-right;
+    }
+
 /*------------- Perfil --------------- */
 
 .profile-container {
