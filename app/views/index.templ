@@ -2,25 +2,8 @@ package views
 
 import "scifi-search/app/utils"
 
-//import sqlc "scifi-search/app/database"
-
 // ------------------------------------------------------------------------------------------------
-templ indexHeader(isUserAuthenticated bool, translator utils.Translator) {
-	<header class="header">
-		<div class="header-buttons">
-			if !isUserAuthenticated {
-				<button class="header-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
-				<button class="header-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
-			} else {
-				<button class="header-button" onclick="window.location.href='/profile'">{ translator("profile.tag") }</button>
-				<button class="header-button" onclick="window.location.href='/funding'">Funding</button>
-			}
-			<button class="header-button" onclick="window.location.href='/trends'">Trends</button>
-		</div>
-	</header>
-}
 
-// ------------------------------------------------------------------------------------------------
 templ indexContent(isUserAuthenticated bool, translator utils.Translator) {
 	@indexHeader(isUserAuthenticated, translator)
 	<main class="index-content">
@@ -53,10 +36,9 @@ templ indexContent(isUserAuthenticated bool, translator utils.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
+
 templ IndexPage(isUserAuthenticated bool, translator utils.Translator) {
 	@Layout("SciFi Search", translator, func() templ.Component {
 		return indexContent(isUserAuthenticated, translator)
 	})
 }
-
-// ------------------------------------------------------------------------------------------------

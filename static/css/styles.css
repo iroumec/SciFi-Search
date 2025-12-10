@@ -1,4 +1,6 @@
-/* --------------- Constantes --------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+/* --------------------------------------------------------- Constants --------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------- */
 :root {
     --scifi: rgba(0, 87, 133);
     --scifi30: rgba(0, 87, 133, 0.3);
@@ -6,7 +8,13 @@
     --background: white;
 }
 
-/* --------------- Generales --------------- */
+.hidden {
+    display: none;
+}
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------- General ---------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------- */
 body {
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 400; /*peso regular de fuente (700 Implica Bold) */
@@ -29,63 +37,91 @@ body {
         "footer";
 }
 
-/* --------------- Header --------------- */
-/*header para el index */
+.footer {
+    grid-area: footer;
+
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+
+    /*background-color: #c49b5d;
+    border: 1px solid rgb(255, 0, 0);*/
+}
+
+    .footer-text {
+        display: flex;
+        gap: 8px;
+        color: black;
+        font-size: 14px;
+        align-items: center;
+    }
+
+        /* Regla unificada para todos los logos */
+        .footer-text img {
+            height: 20px;
+            width: auto;
+            object-fit: contain;
+        }
+
+
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------- Headers ---------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+
 .header {
     grid-area: header;
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-        "logo buttons";
+    display: flex;
     align-items: center;
-    /* Centrar verticalmente */
-    padding: 0px 10px;
-    /* Espacios a los costados */
+    padding: 0px 0px 0px 5px;
+}
+
+    #header-logo {
+
+        cursor: pointer;
+
+        display: flex;
+        justify-content: flex-start;
+
+        /*border: 1px solid rgb(255, 0, 0);*/
+    }
+
+/* --------------- Index header --------------- */
+.index-header {
+    grid-area: header;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; /* Centrar verticalmente */
+    padding: 0px 25px 0px 25px; /* Espacios a los costados */
+    gap: 10px; /* Espacio entre botones */
 
     /*background-color: #fccab3;
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.header-buttons {
+    .header-button {
+        background-color: var(--scifi);   /* color del boton */
+        color: white;             /* color del texto */
+        border: none;               /* sin borde */
+        padding: 0.5rem 1rem;       /* espacio interno */
+        border-radius: 5px;         /* esquinas redondeadas */
+        cursor: pointer;            /* cambia el cursor al pasar */
+        font-weight: bold; /* Efecto de la letra */
+        transition: background 0.2s; /* Efecto */
+    }
+    .header-button:hover {
+        background-color: white;   
+        color: var(--scifi);                
+    }
 
-    grid-area: buttons;
+    #header-menu {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
 
-    display: flex;
-    justify-content: flex-end; /* Ubicar a la derecha */
-    gap: 10px; /* Espacio entre botones */
-
-    /*border: 1px solid rgb(255, 0, 0);*/
-}
-
-.header-button {
-    background-color: var(--scifi);   /* color del boton */
-    color: white;             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.5rem 1rem;       /* espacio interno */
-    border-radius: 5px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold; /* Efecto de la letra */
-    transition: background 0.2s; /* Efecto */
-}
-
-.header-button:hover {
-    background-color: white;   
-    color: var(--scifi);                
-}
-
-#header-logo {
-
-    grid-area: logo;
-    cursor: pointer;
-
-    display: flex;
-    justify-content: flex-start;
-
-    /*border: 1px solid rgb(255, 0, 0);*/
-}
-
-/* Header de la search */
+/* --------------- Search header --------------- */
 .search-header {
     grid-area: header;
 
@@ -100,85 +136,60 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.header-right {
-    grid-area: header-right;
+    .header-left {
+        grid-area: header-left;
 
-    display: flex;
-    justify-content: flex-end; /* Ubicar a la derecha */
-    align-items: center; /* Centrar verticalmente */
-    padding: 0px 10px; /* Espacios a los costados */
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0px 10px;
+        gap: 20px;
 
-    /*background-color: #b3e5fc;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        /*background-color: #b5fcb3;
+        border: 1px solid rgb(255, 0, 0);*/
+    }
 
-.header-left {
-    grid-area: header-left;
+        #logo_scifi_header {
+            height: 55px;
+            width: auto;
+            cursor: pointer;
+        }
 
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0px 10px;
-    gap: 20px;
+        #query {
+            height: 40px;
+            width: 700px;
 
-    /*background-color: #b5fcb3;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+            color: black;
 
-#logo_scifi_header {
-    height: 55px;
-    width: auto;
-    cursor: pointer;
-}
+            border-radius: 32px; /* Redondeo del input de texto */
+            border: 0px;
 
-#query {
-    height: 40px;
-    width: 700px;
+            background-color: var(--scifi30);
 
-    color: black;
+            background-image: url('../img/icono_busqueda_blanco.svg');
+            background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
+            background-position: 10px 10px; /*Ubica la imagen centrada*/
+            padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
 
-    border-radius: 32px; /* Redondeo del input de texto */
-    border: 0px;
+        }
 
-    background-color: var(--scifi30);
+    .header-right {
+        grid-area: header-right;
 
-    background-image: url('../img/icono_busqueda_blanco.svg');
-    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
-    background-position: 10px 10px; /*Ubica la imagen centrada*/
-    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
+        display: flex;
+        justify-content: flex-end; /* Ubicar a la derecha */
+        align-items: center; /* Centrar verticalmente */
+        padding: 0px 10px; /* Espacios a los costados */
 
-}
+        /*background-color: #b3e5fc;
+        border: 1px solid rgb(255, 0, 0);*/
+    }
 
-/* --------------- Footer --------------- */
-
-.footer {
-    grid-area: footer;
-
-    display: flex;
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-
-    /*background-color: #c49b5d;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.footer-text {
-    display: flex;
-    gap: 8px;
-    color: black;
-    font-size: 14px;
-    align-items: center;
-}
-
-/* Regla unificada para todos los logos */
-.footer-text img {
-    height: 20px;
-    width: auto;
-    object-fit: contain;
-}
+/* ----------------------------------------------------------------------------------------------------------------------------- */
+/* --------------------------------------------------------- Contents ---------------------------------------------------------- */
+/* ----------------------------------------------------------------------------------------------------------------------------- */
 
 /* --------------- Index / First query --------------- */
-
 .index-content {
     grid-area: content; 
     
@@ -191,50 +202,73 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.index-top {
-    grid-area: top; 
-    
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    .index-top {
+        grid-area: top; 
+        
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
 
-    /*background-color: #c2c058;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        /*background-color: #c2c058;
+        border: 1px solid rgb(255, 0, 0);*/
+    }
 
-.index-top .centered-container {
-    height: 55%;
-    width: 50%;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 70% 30%;
-    grid-template-areas: 
-        "centered-container-up70"
-        "centered-container-down30";
-}
+        .index-top .centered-container {
+            height: 55%;
+            width: 50%;
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: 70% 30%;
+            grid-template-areas: 
+                "centered-container-up70"
+                "centered-container-down30";
+        }
 
-.inicio-image-container {
-    grid-area: centered-container-up70;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+            .inicio-image-container {
+                grid-area: centered-container-up70;
+                display: flex;
+                justify-content: center;
+                align-items: center;
 
-    /*background-color: #33aada;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+                /*background-color: #33aada;
+                border: 1px solid rgb(255, 0, 0);*/
+            }
 
-.inicio-query-container {
-    grid-area: centered-container-down30;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+                #logo_scifi {
+                    height: 100%;
+                }
 
-    /*background-color: #e96ea8;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+            .inicio-query-container {
+                grid-area: centered-container-down30;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                /*background-color: #e96ea8;
+                border: 1px solid rgb(255, 0, 0);*/
+            }
+
+                #first-query {
+                    height: 70%;
+                    width: 75%;
+
+                    color: black;
+
+                    border-radius: 32px; /* Redondeo del input de texto */
+                    border: 0px;
+
+                    background-color: var(--scifi30);
+
+                    background-image: url('../img/icono_busqueda_blanco.svg');
+                    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
+                    background-position: 10px 10px; /*Ubica la imagen centrada*/
+                    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
+                }
+                #first-query:focus { /* Efecto de borde al entrar al input */
+                    border: 0.5px black;
+                }
 
 /*----------------- Auth forms -----------------*/
-
 .only-form-content {
     grid-area: content;
     height: 100%;
@@ -247,160 +281,134 @@ body {
     border: 1px solid rgb(255, 0, 0);*/
 }
 
-.only-form-content .centered-container {
-    height: 60%;
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    .only-form-content .centered-container {
+        height: 60%;
+        width: 40%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-    background-color: var(--scifi30);
-    border: 20px solid var(--white80);
-    border-radius: 15px;
+        background-color: var(--scifi30);
+        border: 20px solid var(--white80);
+        border-radius: 15px;
 
-    /*background-color: #18b473;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        /*background-color: #18b473;
+        border: 1px solid rgb(255, 0, 0);*/
+    }
 
-.only-form-content #signup-form {
-    height: 65%;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 18.75% 18.75% 18.75% 18.75% 25%;
-    grid-template-areas: 
-        "name"
-        "surname"
-        "email"
-        "password"
-        "submit";
+    .only-form-content input {
+        height: 65%;
+        width: 75%;
 
-    border-radius: inherit;
-}
+        color: black;
 
-.only-form-content #login-form {
-    height: 40%;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 30% 30% 40%;
-    grid-template-areas: 
-        "email"
-        "password"
-        "submit";
+        border-radius: 20px;
+        border: 0px;
 
-    border-radius: inherit;
-}
+        background-color: var(--scifi30);
 
-.form-name-container {
-    grid-area: name;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        padding-left: 15px;
+    }
 
-    border-radius: inherit;
+    .only-form-content #signup-form {
+        height: 65%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 18.75% 18.75% 18.75% 18.75% 25%;
+        grid-template-areas: 
+            "name"
+            "surname"
+            "email"
+            "password"
+            "submit";
 
-    /*background-color: #b41818;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        border-radius: inherit;
+    }
 
-.form-surname-container {
-    grid-area: surname;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        .form-name-container {
+            grid-area: name;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    border-radius: inherit;
+            border-radius: inherit;
 
-    /*background-color: #d8a08a;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+            /*background-color: #b41818;
+            border: 1px solid rgb(255, 0, 0);*/
+        }
 
-.form-email-container {
-    grid-area: email;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        .form-surname-container {
+            grid-area: surname;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    border-radius: inherit;
+            border-radius: inherit;
 
-    /*background-color: #b86110;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+            /*background-color: #d8a08a;
+            border: 1px solid rgb(255, 0, 0);*/
+        }
 
-.form-password-container {
-    grid-area: password;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    .only-form-content #login-form {
+        height: 40%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 30% 30% 40%;
+        grid-template-areas: 
+            "email"
+            "password"
+            "submit";
 
-    border-radius: inherit;
+        border-radius: inherit;
+    }
 
-    /*background-color: #b8ac10;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        .form-email-container {
+            grid-area: email;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-.form-submit-container {
-    grid-area: submit;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+            border-radius: inherit;
 
-    border-radius: inherit;
+            /*background-color: #b86110;
+            border: 1px solid rgb(255, 0, 0);*/
+        }
 
-    /*background-color: #5eb418;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        .form-password-container {
+            grid-area: password;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-.only-form-content input {
-    height: 65%;
-    width: 75%;
+            border-radius: inherit;
 
-    color: black;
+            /*background-color: #b8ac10;
+            border: 1px solid rgb(255, 0, 0);*/
+        }
 
-    border-radius: 20px;
-    border: 0px;
+        .form-submit-container {
+            grid-area: submit;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    background-color: var(--scifi30);
+            border-radius: inherit;
 
-    padding-left: 15px;
-}
+            /*background-color: #5eb418;
+            border: 1px solid rgb(255, 0, 0);*/
+        }
 
-
-#logo_scifi {
-    height: 100%;
-}
-
-#first-query {
-    height: 70%;
-    width: 75%;
-
-    color: black;
-
-    border-radius: 32px; /* Redondeo del input de texto */
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    background-image: url('../img/icono_busqueda_blanco.svg');
-    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
-    background-position: 10px 10px; /*Ubica la imagen centrada*/
-    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
-}
-
-#first-query:focus { /* Efecto de borde al entrar al input */
-    border: 0.5px black;
-}
-
-.submit-button {
-    background-color: var(--scifi);   /* color del boton */
-    color: white;             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.5rem 1rem;       /* espacio interno */
-    border-radius: 5px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold; /* Efecto de la letra */
-}
+            .submit-button {
+                background-color: var(--scifi);   /* color del boton */
+                color: white;             /* color del texto */
+                border: none;               /* sin borde */
+                padding: 0.5rem 1rem;       /* espacio interno */
+                border-radius: 5px;         /* esquinas redondeadas */
+                cursor: pointer;            /* cambia el cursor al pasar */
+                font-weight: bold; /* Efecto de la letra */
+            }
 
 /* --------------- Search --------------- */
 .search-container-grid {
@@ -415,224 +423,133 @@ body {
     height: 100%;
 }
 
-.top {
-    grid-area: top;
-}
-.left {
-    grid-area: left;
-}
-.right {
-    grid-area: right;
-}
+    .top {
+        grid-area: top;
+    }
+    .left {
+        grid-area: left;
+    }
+    .right {
+        grid-area: right;
+    }
 
-.search-content {
-    grid-area: search-content;
+    .search-content {
+        grid-area: search-content;
 
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 4.25% 4.25% 91.5%;
-    grid-template-areas: 
-        "message"
-        "filters"
-        "results";
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows: 4.25% 4.25% 91.5%;
+        grid-template-areas: 
+            "message"
+            "filters"
+            "results";
 
-    /*background-color: #5dd859;
-    border: 1px solid rgb(255, 0, 0);*/
-}
+        /*background-color: #5dd859;
+        border: 1px solid rgb(255, 0, 0);*/
+    }
 
-.message {
-    grid-area: message;
+        .message {
+            grid-area: message;
 
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
 
-    color: var(--scifi);
-}
+            color: var(--scifi);
+        }
 
-.filters {
-    grid-area: filters;
+        .filters {
+            grid-area: filters;
 
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.2rem;
 
-    border-top: solid 1px var(--scifi);
-    border-bottom: solid 1px var(--scifi);
-}
+            border-top: solid 1px var(--scifi);
+            border-bottom: solid 1px var(--scifi);
+        }
 
-.filters .dropbtn {
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-image: url('../img/icono_desplegar.svg');
-    background-position: right; 
+            .dropdown {
+                position: relative;
+                display: inline-block;
+            }
 
-    color: var(--scifi);      
-    border: solid 3px transparent;              
-    padding: 0.25rem 0.5rem;
-    padding-right: 1.5rem;       
-    cursor: pointer;            
-}
+                .filters .dropbtn {
+                    background-color: transparent;
+                    background-repeat: no-repeat;
+                    background-image: url('../img/icono_desplegar.svg');
+                    background-position: right; 
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
+                    color: var(--scifi);      
+                    border: solid 3px transparent;              
+                    padding: 0.25rem 0.5rem;
+                    padding-right: 1.5rem;       
+                    cursor: pointer;            
+                }
 
-.dropdown-content {
-    position: absolute;
-    left: 0;
-    background-color: var(--scifi);
-    min-width: 160px;
-    border: none;
-    padding: 0.25rem;
-    z-index: 1000;
+                .dropdown-content {
+                    position: absolute;
+                    left: 0;
+                    background-color: var(--scifi);
+                    min-width: 160px;
+                    border: none;
+                    padding: 0.25rem;
+                    z-index: 1000;
 
-    overflow-y: auto;       /* habilita scroll vertical si hace falta */
-    max-height: 25rem;       /* máximo al espacio disponible */
-}
+                    overflow-y: auto;       /* habilita scroll vertical si hace falta */
+                    max-height: 25rem;       /* máximo al espacio disponible */
+                }
 
-.hidden {
-    display: none;
-}
+                    .checkbox-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                        padding: 0.2rem 0;
+                        font-size: 0.8rem;
+                        color: white;
+                    }
+                    .checkbox-item input[type="checkbox"] {
+                        accent-color: var(--scifi);
+                    }
 
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.2rem 0;
-    font-size: 0.8rem;
-    color: white;
-}
+        #results {
+            grid-area: results;
+            overflow-y: auto;       /* habilita scroll vertical si hace falta */
+            max-height: 100%;       /* máximo al espacio disponible */
+        }
 
-.checkbox-item input[type="checkbox"] {
-    accent-color: var(--scifi);
-}
+            .result {
+                background-color: var(--white80);
+                padding: 1rem;
+                border-radius: 1rem;
+                margin-top: 0.5rem;
+                margin-right: 1rem;
+            }
 
-#results {
-    grid-area: results;
-    overflow-y: auto;       /* habilita scroll vertical si hace falta */
-    max-height: 100%;       /* máximo al espacio disponible */
-}
+                .result .extra-info span {
+                    background-color: var(--scifi30);
+                    font-size: 0.65rem;
+                    padding: 0.15rem;
+                    border-radius: 0.5rem;
+                    color: var(--scifi);
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                }
 
-.result {
-    background-color: var(--white80);
-    padding: 1rem;
-    border-radius: 1rem;
-    margin-top: 0.5rem;
-    margin-right: 1rem;
-}
+                    .result .extra-info .gray {
+                        color: gray;
+                        background-color: lightgrey;
+                    }
 
-.result .extra-info span {
-    background-color: var(--scifi30);
-    font-size: 0.65rem;
-    padding: 0.15rem;
-    border-radius: 0.5rem;
-    color: var(--scifi);
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-}
+                    /*.result .extra-info .green {
+                        color: green;
+                        background-color: lightgreen;
+                    } esto va si ponemos presupuesto*/
 
-.result .extra-info .gray {
-    color: gray;
-    background-color: lightgrey;
-}
-
-/*.result .extra-info .green {
-    color: green;
-    background-color: lightgreen;
-} esto va si ponemos presupuesto*/
-
-.result p {
-    font-size: 0.85rem;
-}
-
-/* Search header */
-.search-header {
-    grid-area: header;
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    grid-template-rows: 1fr;
-    grid-template-areas: "header-left header-right";
-
-    background-color: var(--scifi30);
-
-    /*background-color: #c959d8;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.search-header .header-right {
-    grid-area: header-right;
-
-    display: flex;
-    justify-content: flex-end; /* Ubicar a la derecha */
-    align-items: center; /* Centrar verticalmente */
-    padding: 0px 10px; /* Espacios a los costados */
-
-    /*background-color: #b3e5fc;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.search-header .header-left {
-    grid-area: header-left;
-
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0px 10px;
-    gap: 20px;
-
-    /*background-color: #b5fcb3;
-    border: 1px solid rgb(255, 0, 0);*/
-}
-
-.search-header #logo_scifi_header {
-    height: 55px;
-    width: auto;
-    cursor: pointer;
-}
-
-.search-header #query {
-    height: 40px;
-    width: 700px;
-
-    color: black;
-
-    border-radius: 32px; /* Redondeo del input de texto */
-    border: 0px;
-
-    background-color: var(--scifi30);
-
-    background-image: url('../img/icono_busqueda_blanco.svg');
-    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
-    background-position: 10px 10px; /*Ubica la imagen centrada*/
-    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
-
-}
-
-.search-header .header-buttons {
-    display: flex;
-    gap: 10px; /* Espacio entre botones */
-
-    /*border: 1px solid rgb(255, 0, 0);*/
-}
-
-.search-header .header-button {
-    background-color: var(--scifi);   /* color del boton */
-    color: white;             /* color del texto */
-    border: none;               /* sin borde */
-    padding: 0.5rem 1rem;       /* espacio interno */
-    border-radius: 5px;         /* esquinas redondeadas */
-    cursor: pointer;            /* cambia el cursor al pasar */
-    font-weight: bold; /* Efecto de la letra */
-    transition: background 0.2s; /* Efecto */
-}
-
-.search-header .header-button:hover {
-    background-color: white;   
-    color: var(--scifi);                
-}
+                    .result p {
+                        font-size: 0.85rem;
+                    }
 
 /*------------- Perfil --------------- */
 
@@ -661,38 +578,3 @@ body {
 .sucessful-signup-container {
     grid-area: content;
 }
-
-/*Filtros
-.dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        .dropbtn {
-            background-color: #f1f1f1;
-            color: black;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            min-width: 160px;
-            border: 1px solid #ddd;
-            z-index: 1;
-            overflow-y: auto;
-        }
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-        input[type=checkbox] {
-            margin-right: 5px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .submit-btn {
-            margin-top: 10px;
-        }*/

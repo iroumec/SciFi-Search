@@ -123,8 +123,9 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		component := views.SuccessfulSignUpPage(utils.GetTranslatorFromRequest(r))
-		templ.Handler(component).ServeHTTP(w, r)
+		/*component := views.SuccessfulSignUpPage(utils.GetTranslatorFromRequest(r))
+		templ.Handler(component).ServeHTTP(w, r)*/
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 
 		// Manejo de cualquier otro caso inesperado.
