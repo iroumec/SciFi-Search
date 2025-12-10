@@ -32,19 +32,42 @@ templ Layout(title string, translator utils.Translator, content func() templ.Com
 // ------------------------------------------------------------------------------------------------
 templ Footer(translator utils.Translator) {
 	<footer class="footer">
-		<p class="footer-text">
-			{ translator("powered-by") }:
-			<a href="https://www.meilisearch.com/" target="_blank">
-				<img src="static/img/logo_meilisearch_negro.png" alt="Logo Meilisearch" id="logo-meilisearch"/>
+		<div class="clear-top"></div>
+		<div class="clear-left"></div>
+
+		<div id="powered-section">
+			<p> { translator("powered-by") } </p>
+			<div id="images">
+				<a href="https://www.meilisearch.com/" target="_blank">
+					<img src="static/img/logo-meilisearch.png" alt="Logo Meilisearch" id="logo-meilisearch" class="logo"/>
+				</a>
+				<a href="https://supertokens.com/" target="_blank">
+					<img src="static/img/logo-supertokens.png" alt="Logo Supertokens" id="logo-supertokens" class="logo"/>
+				</a>
+				<a href="https://github.com/minio/minio" target="_blank">
+					<img src="static/img/logo-minio.svg" alt="Logo MinIO" id="logo-minio" class="logo"/>
+				</a>
+			</div>
+		</div>
+
+		<div id="unicen-logo">
+			<a href="https://www.unicen.edu.ar/" target="_blank">
+				<img src="static/img/logo-unicen.png" alt="Logo Supertokens" id="logo-unicen"/>
 			</a>
-			<a href="https://supertokens.com/" target="_blank">
-				<img src="static/img/logo_supertokens.png" alt="Logo Supertokens" id="logo-supertokens"/>
-			</a>
-			<a href="https://github.com/minio/minio" target="_blank">
-				<img src="static/img/logo_minio.svg" alt="Logo MinIO" id="logo-minio"/>
-			</a>
-		</p>
+		</div>
+
+		<div id="options-section">
+			<button class="footer-button" onclick="window.location.href='/trends'">Trends</button>
+			<button class="footer-button">Language: EN</button>
+			<button class="footer-button">Help</button>
+		</div>
+
+		<div class="clear-right"></div>
 	</footer>
 }
 
 // ------------------------------------------------------------------------------------------------
+/*
+background: #368ac2;
+background: linear-gradient(180deg, rgba(54, 138, 194, 0) 0%, rgba(0, 87, 133, 1) 44%, rgba(15, 32, 59, 1) 87%);
+*/

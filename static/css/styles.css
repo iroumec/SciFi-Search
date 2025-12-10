@@ -32,7 +32,7 @@ body {
     height: 100vh;
     
     grid-template-columns: 1fr; /* Una única columna */
-    grid-template-rows: 9% 85% 6%; /* Tres filas por columna */
+    grid-template-rows: 9% 87% 21%; /* Tres filas por columna */
     grid-template-areas: /* Cantidad de áreas, definida en base a filas y columnas */
         "header"
         "content"
@@ -42,15 +42,71 @@ body {
 .footer {
     grid-area: footer;
 
-    display: flex;
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
+    display: grid;
+    grid-template-columns: 27% 18% 10% 9% 36%;
+    grid-template-rows: 19% 81%;
+    grid-template-areas: 
+        "clear-top clear-top clear-top clear-top clear-top"
+        "clear-left powered-by unicen-logo options clear-right";
 
+    background-color: rgb(41, 41, 41);
+    width: 100vw;
+    /*background: linear-gradient(180deg,rgba(255, 255, 255, 0) 0%, rgba(0, 87, 133, 0.3) 18%, rgba(33, 74, 100, 0.4) 32%, rgba(58, 63, 74, 0.5) 44%, rgba(58, 63, 74, 0.6) 59%, rgba(58, 63, 74, 0.7) 67%, rgba(58, 63, 74, 0.8) 76%, rgba(58, 63, 74, 0.9) 85%, rgba(58, 63, 74, 1) 93%);
     /*background-color: #c49b5d;
     border: 1px solid rgb(255, 0, 0);*/
 }
+    .clear-top {
+        grid-area: clear-top;
+    }
 
-    .footer-text {
+    .clear-left {
+        grid-area: clear-left;
+        border: 1px solid red;
+    }
+
+    #powered-section {
+        grid-area: powered-by;
+        display: flex;
+        border: 1px solid red;
+    }
+
+        #powered-section #images {
+            border: 1px solid red;
+        }
+
+        .logo {
+            height: 20%;
+        }
+
+    #unicen-logo {
+        grid-area: unicen-logo;
+        border: 1px solid red;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        #logo-unicen {
+            height: 7.5rem;
+            border-right: solid 3px white;
+            border-left: solid 3px white;
+            border-radius: 0.1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+    #options-section {
+        grid-area: options;
+        border: 1px solid red;
+    }
+
+    .clear-right {
+        grid-area: clear-right;
+        border: 1px solid red;
+    }
+
+    /*.footer-text {
         display: flex;
         gap: 8px;
         color: black;
@@ -58,12 +114,12 @@ body {
         align-items: center;
     }
 
-        /* Regla unificada para todos los logos */
+        /* Regla unificada para todos los logos 
         .footer-text img {
             height: 20px;
             width: auto;
             object-fit: contain;
-        }
+        }*/
 
 
 /* ----------------------------------------------------------------------------------------------------------------------------- */
