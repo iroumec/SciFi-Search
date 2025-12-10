@@ -123,8 +123,8 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		/*component := views.SuccessfulSignUpPage(utils.GetTranslatorFromRequest(r))
-		templ.Handler(component).ServeHTTP(w, r)*/
+		utils.AddFlashCookie(w, "Successful signup!")
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 

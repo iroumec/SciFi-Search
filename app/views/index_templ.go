@@ -36,17 +36,55 @@ func indexContent(isUserAuthenticated bool, translator utils.Translator) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"index-bottom\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = showPopUp().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><div class=\"index-bottom\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><script>\n\t\t\tconst input = document.getElementById(\"first-query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><script>\n            const input = document.getElementById(\"first-query\");\n            input.addEventListener(\"keypress\", (e) => {\n                if (e.key === \"Enter\") {\n                    const query = input.value.trim();\n                    if (!query) return;\n                    window.location.href = `/search?query=${encodeURIComponent(query)}`;\n                }\n            });\n        </script></main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+func showPopUp() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div id=\"flash-popup\" style=\"display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:15px 20px; background:#3f4646; color:white; border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.2); z-index:9999;\"><span id=\"flash-popup-text\"></span> <button id=\"close-flash-popup\" type=\"button\" style=\"margin-left:15px; background:transparent; border:none; color:white; font-size:20px; cursor:pointer; padding:0 5px;\">x</button></div><script>\n        (function() {\n            function getCookie(name) {\n                const m = document.cookie.match('(^|;)\\\\s*' + name + '\\\\s*=\\\\s*([^;]+)');\n                return m ? m.pop() : \"\";\n            }\n            \n            function deleteCookie(name) {\n                document.cookie = name + '=; Max-Age=0; path=/;';\n            }\n            \n            function showFlashPopup(msg) {\n                const el = document.getElementById(\"flash-popup\");\n                const textEl = document.getElementById(\"flash-popup-text\");\n                if (el && textEl) {\n                    textEl.textContent = msg;\n                    el.style.display = \"block\";\n                    setTimeout(function() {\n                        el.style.display = \"none\";\n                    }, 5000);\n                }\n            }\n            \n            // Event listener para el botón de cerrar.\n            const closeBtn = document.getElementById(\"close-flash-popup\");\n            if (closeBtn) {\n                closeBtn.addEventListener(\"click\", function(e) {\n                    e.stopPropagation();\n                    e.preventDefault();\n                    const el = document.getElementById(\"flash-popup\");\n                    if (el) {\n                        el.style.display = \"none\";\n                    }\n                });\n            }\n            \n            // Se verifica la cookie y se muestra el popup.\n            const flash = getCookie(\"flash\");\n            if (flash) {\n\t\t\t\tconst decoded = atob(flash);\n\t\t\t\tshowFlashPopup(decoded);\n                deleteCookie(\"flash\");\n            }\n        })();\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,9 +109,9 @@ func IndexPage(isUserAuthenticated bool, translator utils.Translator) templ.Comp
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var2 == nil {
-			templ_7745c5c3_Var2 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("SciFi Search", translator, func() templ.Component {

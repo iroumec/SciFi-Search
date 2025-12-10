@@ -10,6 +10,9 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import "scifi-search/app/utils"
 
+// ------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------
 func Header() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -39,6 +42,7 @@ func Header() templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -76,6 +80,7 @@ func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Co
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -113,6 +118,7 @@ func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.C
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -142,7 +148,7 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 46, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 52, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -155,7 +161,7 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 47, Col: 99}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 53, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -166,12 +172,12 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU </div><!--button class=\"menu-button\" onclick=\"window.location.href='/profile'\">{ translator(\"profile.tag\") }</button--><!--button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Funding</button--><button class=\"menu-button\" onclick=\"window.location.href='/profile'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\">Cerrar sesión </button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" onclick=\"window.location.href='/profile'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\" onclick=\"window.location.href='/signout'\">Cerrar sesión</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n        function toggleSlidemenu(e) {\n            e.stopPropagation();\n            document.getElementById(\"menu\").classList.toggle(\"hidden\");\n            document.getElementById(\"header-menu-img\").classList.add(\"hidden\");\n        }\n\n        document.addEventListener(\"click\", () => { // Para cerrar el dropdown menu al cliquear afuera\n\t\t\tdocument.getElementById(\"menu\").classList.add(\"hidden\");\n            document.getElementById(\"header-menu-img\").classList.toggle(\"hidden\");\n\t\t});\n    </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n        (function() {\n            function toggleSlidemenu(e) {\n                e.stopPropagation();\n                const menu = document.getElementById(\"menu\");\n                const menuImg = document.getElementById(\"header-menu-img\");\n                if (menu) menu.classList.toggle(\"hidden\");\n                if (menuImg) menuImg.classList.toggle(\"hidden\");\n            }\n            \n            // Se hace la función global para que onclick pueda accederla.\n            window.toggleSlidemenu = toggleSlidemenu;\n            \n            // Se cierra el menú si se hace click fuera del menú.\n            document.addEventListener(\"click\", function(e) {\n                const menu = document.getElementById(\"menu\");\n                const menuButton = document.getElementById(\"header-menu\");\n                const flashPopup = document.getElementById(\"flash-popup\");\n                \n                // No cerrar si se clickea el menú mismo, el botón del menú, o el popup.\n                if (menu && menuButton && \n                    !menu.contains(e.target) && \n                    !menuButton.contains(e.target) &&\n                    (!flashPopup || !flashPopup.contains(e.target))) {\n                    menu.classList.add(\"hidden\");\n                    const menuImg = document.getElementById(\"header-menu-img\");\n                    if (menuImg && menuImg.classList.contains(\"hidden\")) {\n                        menuImg.classList.remove(\"hidden\");\n                    }\n                }\n            });\n        })();\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -179,4 +185,5 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 var _ = templruntime.GeneratedTemplate
