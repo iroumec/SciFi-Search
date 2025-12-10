@@ -306,36 +306,44 @@ func searchFilters(query string, documentTypes *list.List, documentAreas *list.L
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<button class=\"dropbtn\">SORT BY</button><div id=\"all-filters\"><div class=\"dropdown\"><button class=\"dropbtn\" name=\"area\" onclick=\"toggleDropdown(event)\">AREA</button><div id=\"document-area-menu\" class=\"dropdown-content hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div id=\"all-filters\"><div class=\"dropdown\"><button class=\"dropbtn\" name=\"sortby\" onclick=\"toggleDropdown(event)\">SORT BY</button><div id=\"sortby-menu\" class=\"dropdown-content onlyone hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = valuesCheckboxes("area", documentAreas).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = sortingCheckboxes().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></div><div class=\"dropdown\"><button class=\"dropbtn\" name=\"tipo\" onclick=\"toggleDropdown(event)\">TYPE</button><div id=\"document-type-menu\" class=\"dropdown-content hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></div><div class=\"dropdown\"><button class=\"dropbtn\" name=\"area\" onclick=\"toggleDropdown(event)\">AREA</button><div id=\"document-area-menu\" class=\"dropdown-content hidden\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = valuesCheckboxes("tipo", documentTypes).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = valuesCheckboxes("area", false, documentAreas).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div><input type=\"hidden\" name=\"query\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div><div class=\"dropdown\"><button class=\"dropbtn\" name=\"tipo\" onclick=\"toggleDropdown(event)\">TYPE</button><div id=\"document-type-menu\" class=\"dropdown-content onlyone hidden\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = valuesCheckboxes("tipo", true, documentTypes).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div><input type=\"hidden\" name=\"query\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(query)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 117, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 126, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\"></div><script>\n\n\t\tdocument.addEventListener(\"click\", () => { // Para cerrar el dropdown menu al cliquear afuera\n\t\t\tdocument.getElementById(\"document-type-menu\").classList.add(\"hidden\");\n\t\t\tdocument.getElementById(\"document-area-menu\").classList.add(\"hidden\");\n\t\t});\n\n\t\tfunction toggleDropdown(e) {// Para abrir el dropdown menú que está oculto y ocultar el otro si estaba abierto.\n\t\t\te.stopPropagation();\n\n\t\t\tconst typeMenu = document.getElementById(\"document-type-menu\");\n\t\t\tconst areaMenu = document.getElementById(\"document-area-menu\");\n\n\t\t\tlet menu;\n\n\t\t\tif (e.currentTarget.name === \"tipo\") {\n\t\t\t\tmenu = typeMenu;\n\t\t\t\tareaMenu.classList.add(\"hidden\");  \n\t\t\t} else {\n\t\t\t\tmenu = areaMenu;\n\t\t\t\ttypeMenu.classList.add(\"hidden\");  \n\t\t\t}\n\n\t\t\tmenu.classList.toggle(\"hidden\");\n\t\t}\n\n\t\tdocument.querySelectorAll(\".dropdown-content\").forEach(menu => {\n\t\t\tmenu.addEventListener(\"click\", (e) => {\n\t\t\t\tif (e.target.tagName === \"INPUT\") {\n\t\t\t\t\te.stopPropagation();\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\n\t\tdocument.getElementById(\"document-type-menu\").addEventListener(\"change\", (e) => { // Para permitir una sola box marcada.\n\t\t\tif (e.target.type !== \"checkbox\") \n\t\t\t\treturn;\n\n\t\t\tconst checkboxes = document.querySelectorAll(\"#document-type-menu input[type=checkbox]\");\n\t\t\tcheckboxes.forEach(cb => {\n\t\t\t\tif (cb !== e.target)\n\t\t\t\t\tcb.checked = false; \n\t\t\t});\n\t\t\t\n\t\t\thtmx.trigger(e.target, \"change\");\n\t\t});\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\"></div><script>\n\n\t\tdocument.addEventListener(\"click\", () => { // Para cerrar el dropdown menu al cliquear afuera\n\t\t\tdocument.getElementById(\"document-type-menu\").classList.add(\"hidden\");\n\t\t\tdocument.getElementById(\"document-area-menu\").classList.add(\"hidden\");\n\t\t\tdocument.getElementById(\"sortby-menu\").classList.add(\"hidden\");\n\t\t});\n\n\t\tfunction toggleDropdown(e) {// Para abrir el dropdown menú que está oculto y ocultar otro si está abierto.\n\t\t\te.stopPropagation();\n\n\t\t\tconst typeMenu = document.getElementById(\"document-type-menu\");\n\t\t\tconst areaMenu = document.getElementById(\"document-area-menu\");\n\t\t\tconst sortbyMenu = document.getElementById(\"sortby-menu\");\n\n\t\t\tlet menu;\n\n\t\t\tif (e.currentTarget.name === \"tipo\") {\n\t\t\t\tmenu = typeMenu;\n\t\t\t\tareaMenu.classList.add(\"hidden\");\n\t\t\t\tsortbyMenu.classList.add(\"hidden\");  \n\t\t\t} else if (e.currentTarget.name === \"area\") {\n\t\t\t\tmenu = areaMenu;\n\t\t\t\ttypeMenu.classList.add(\"hidden\");\n\t\t\t\tsortbyMenu.classList.add(\"hidden\");\n\t\t\t} else {\n\t\t\t\tmenu = sortbyMenu;\n\t\t\t\tareaMenu.classList.add(\"hidden\");\n\t\t\t\ttypeMenu.classList.add(\"hidden\");\n\t\t\t}\n\n\t\t\tmenu.classList.toggle(\"hidden\");\n\t\t}\n\n\t\tdocument.querySelectorAll(\".dropdown-content\").forEach(menu => { //Para evitar que se cierre luego de seleccionar una checkbox\n\t\t\tmenu.addEventListener(\"click\", (e) => {\n\t\t\t\tif (e.target.tagName === \"INPUT\") {\n\t\t\t\t\te.stopPropagation();\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\n\t\tdocument.querySelectorAll(\".dropdown-content.onlyone\").forEach(menu => { // Para permitir una sola box marcada.\n\t\t\tmenu.addEventListener(\"change\", (e) => {\n\t\t\t\tif (e.target.type !== \"checkbox\")\n\t\t\t\t\treturn;\n\t\t\t\t\n\t\t\t\tconst checkboxes = menu.querySelectorAll(\"input[type=checkbox]\");\n\t\t\t\tcheckboxes.forEach(cb => {\n\t\t\t\t\tif (cb !== e.target)\n\t\t\t\t\t\tcb.checked = false;\n\t\t\t\t});\n\n\t\t\t\thtmx.trigger(e.target, \"mychange\");\n\t\t\t});\n\t\t});\n\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -343,7 +351,7 @@ func searchFilters(query string, documentTypes *list.List, documentAreas *list.L
 	})
 }
 
-func valuesCheckboxes(name string, values *list.List) templ.Component {
+func valuesCheckboxes(name string, onlyone bool, values *list.List) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -365,46 +373,56 @@ func valuesCheckboxes(name string, values *list.List) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		for e := values.Front(); e != nil; e = e.Next() {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<label class=\"checkbox-item\"><input type=\"checkbox\" name=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<label class=\"checkbox-item\"><input type=\"checkbox\" name=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 173, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 193, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(e.Value.(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 174, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 194, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" hx-get=\"/search/update-filter\" hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "\" hx-get=\"/search/update-filter\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if onlyone {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " hx-trigger=\"mychange\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(e.Value.(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 180, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 203, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</label>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</label>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -413,10 +431,7 @@ func valuesCheckboxes(name string, values *list.List) templ.Component {
 	})
 }
 
-// ------------------------------------------------------------------------------------------------
-// Search Results Page
-// ------------------------------------------------------------------------------------------------
-func SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List) templ.Component {
+func sortingCheckboxes() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -435,6 +450,38 @@ func SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated 
 		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
 		if templ_7745c5c3_Var18 == nil {
 			templ_7745c5c3_Var18 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<label class=\"checkbox-item\"><input type=\"checkbox\" name=\"sortby\" value=\"Nombre:asc\" hx-get=\"/search/update-filter\" hx-trigger=\"mychange\" hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> Nombre ascendente</label> <label class=\"checkbox-item\"><input type=\"checkbox\" name=\"sortby\" value=\"Nombre:desc\" hx-get=\"/search/update-filter\" hx-trigger=\"mychange\" hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> Nombre descendente</label> <label class=\"checkbox-item\"><input type=\"checkbox\" name=\"sortby\" value=\"Tipo:asc\" hx-get=\"/search/update-filter\" hx-trigger=\"mychange\" hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> Tipo ascendente</label> <label class=\"checkbox-item\"><input type=\"checkbox\" name=\"sortby\" value=\"Tipo:desc\" hx-get=\"/search/update-filter\" hx-trigger=\"mychange\" hx-target=\"#results\" hx-swap=\"innerHTML\" hx-include=\"#all-filters\"> Tipo descendente</label>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// Search Results Page
+// ------------------------------------------------------------------------------------------------
+func SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var19 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var19 == nil {
+			templ_7745c5c3_Var19 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(query+" - SciFi Search", translator, func() templ.Component {

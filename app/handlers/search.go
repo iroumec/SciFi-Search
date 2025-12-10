@@ -211,21 +211,11 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Obtención de parámetros de filtro y ordenamiento.
-	// Se eliminan las comillas consecutivas al inicio y al final del parámetro.
-	sortBy := strings.Trim(r.URL.Query().Get("sort"), `"`)
-
 	// Construcción de la búsqueda.
 	searchRequest := &meilisearch.SearchRequest{
 		Limit:            20,
 		ShowRankingScore: true, // Se muestra el score de relevancia.
 	}
-
-	// Aplicación de ordenamiento.
-	if sortBy != "" {
-		searchRequest.Sort = []string{sortBy}
-	}
-	// El anterior es un ordenamiento previo a la relevancia.
 
 	res, err := client.Index(indexName).Search(query, searchRequest)
 	if err != nil {
@@ -251,12 +241,6 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
-	// Ordenar los resultados después de obtenerlos (para mantener relevancia base).
-	// TODO: llevarlo a una opción extra.
-	if sortBy != "" {
-		sortResults(hitsMaps, sortBy)
-	}
-
 	// De estar autenticado el usuario, se guarda la búsqueda
 	// en su historial.
 	user := getCurrentUser(w, r)
@@ -266,7 +250,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r), documentTypes)
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
 
 }
@@ -347,24 +331,31 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	filterTipo := r.URL.Query()["tipo"]
 	filterArea := r.URL.Query()["area"]
+	sortBy := r.URL.Query()["sortby"]
 
 	var filters []string
 	for _, t := range filterTipo {
 		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
 	}
-	log.Println(filters)
+	
 	for _, t := range filterArea {
 		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t))
 	}
-	log.Println(filters)
 
 	searchRequest := &meilisearch.SearchRequest{
 		Limit: 20,
+		ShowRankingScore: true,
 	}
 
 	if len(filters) > 0 {
 		searchRequest.Filter = filters
 	}
+
+	// Aplicación de ordenamiento.
+	if len(sortBy) > 0 {
+		searchRequest.Sort = sortBy
+	}
+	// El anterior es un ordenamiento previo a la relevancia.
 
 	res, err := client.Index(indexName).Search(query, searchRequest)
 	if err != nil {
@@ -386,6 +377,12 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 	var hitsMaps []map[string]any
 	if err := json.Unmarshal(data, &hitsMaps); err != nil {
 		log.Println("Error unmarshal hits:", err)
+	}
+
+	// Ordenar los resultados después de obtenerlos (para mantener relevancia base).
+	// TODO: llevarlo a una opción extra.
+	if len(sortBy) > 0 {
+		sortResults(hitsMaps, sortBy)
 	}
 
 	component := views.SearchResults(hitsMaps)
@@ -443,7 +440,9 @@ func configureRankingRules(index meilisearch.IndexManager) {
 // ------------------------------------------------------------------------------------------------
 
 // Función auxiliar para ordenar resultados
-func sortResults(hits []map[string]any, sortBy string) {
+func sortResults(hits []map[string]any, sortByArray []string) {
+	sortBy := sortByArray[0] //el array siempre tiene un solo elemento
+
 	// Parseo del sortBy (ej: "Nombre:asc" o "Tipo:desc").
 	parts := splitSort(sortBy)
 	if len(parts) != 2 {
