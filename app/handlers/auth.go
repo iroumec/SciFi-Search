@@ -15,8 +15,6 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/emailverification/evmodels"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
-	"github.com/supertokens/supertokens-golang/recipe/thirdparty"
-	"github.com/supertokens/supertokens-golang/recipe/thirdparty/tpmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
 	"scifi-search/app/database"
@@ -55,25 +53,6 @@ func initializeSupertokens() {
 
 			// Se permite inicio de sesión mediante email/password.
 			emailpassword.Init(nil),
-
-			// Se permite inicio de sesión mediante cuenta de terceros.
-			thirdparty.Init(&tpmodels.TypeInput{
-				SignInAndUpFeature: tpmodels.TypeInputSignInAndUp{
-					Providers: []tpmodels.ProviderInput{
-						{
-							Config: tpmodels.ProviderConfig{
-								ThirdPartyId: "google",
-								Clients: []tpmodels.ProviderClientConfig{
-									{
-										ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-										ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-									},
-								},
-							},
-						},
-					},
-				},
-			}),
 
 			// Email verification configuration.
 			emailverification.Init(evmodels.TypeInput{
@@ -117,9 +96,6 @@ func registerAuthenticationHandlers() {
 
 	// Handler de verificación de email.
 	http.HandleFunc("/auth/verify-email", verifyEmailHandler)
-
-	// Handler para Google OAuth callback.
-	http.HandleFunc("/auth/callback/google", googleCallbackHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -471,33 +447,6 @@ func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
 	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
 
 	return isVerified
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func protectedHandler(w http.ResponseWriter, r *http.Request) {
-	verified := isEmailVerified(w, r)
-	if !verified {
-		http.Error(w, "Debes verificar tu email para acceder a esta funcionalidad", http.StatusForbidden)
-		return
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
-
-	// SuperTokens maneja esto automáticamente si se usa su frontend.
-	// Si se implementa un frontend propio, se necesita procesar el callback aquí.
-
-	code := r.URL.Query().Get("code")
-	if code == "" {
-		http.Error(w, "Código no proporcionado", http.StatusBadRequest)
-		return
-	}
-
-	// Redirigir a la página principal.
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func getUserEmail(userID string) *string {

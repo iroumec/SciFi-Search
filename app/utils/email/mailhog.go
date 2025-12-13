@@ -1,5 +1,9 @@
 package email
 
+// ------------------------------------------------------------------------------------------------
+// Impors
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"net/smtp"
 	"os"
@@ -8,13 +12,28 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Constants
+// ------------------------------------------------------------------------------------------------
+
+const (
+	fromEmail = "noreply@scifi-search.com"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Structures
+// ------------------------------------------------------------------------------------------------
+
 type MailHogService struct{}
 
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+
 func Send(to, subject, body string) error {
-	from := "noreply@local.test"
 
 	msg := []byte(
-		"From: " + from + "\r\n" +
+		"From: " + fromEmail + "\r\n" +
 			"To: " + to + "\r\n" +
 			"Subject: " + subject + "\r\n" +
 			"MIME-Version: 1.0\r\n" +
@@ -28,11 +47,13 @@ func Send(to, subject, body string) error {
 	return smtp.SendMail(
 		smtpHost+":"+smtpPort, // MailHog SMTP
 		nil,                   // Sin autorización.
-		from,
+		fromEmail,
 		[]string{to},
 		msg,
 	)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 // El SDK de MailHog pide la función de está forma.
 func NewMailHogService() *emaildelivery.EmailDeliveryInterface {
