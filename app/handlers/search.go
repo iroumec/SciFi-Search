@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"scifi-search/app/utils"
+	"scifi-search/app/utils/email"
 	"scifi-search/app/views"
 	"sort"
 	"strings"
@@ -324,8 +325,37 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	notifyFundingAddition(w, r, name)
+
 	component := views.FundingAddedPage(utils.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
+}
+
+func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName string) {
+
+	// Acá sería mejor que el email solo se enviara a los usuarios
+	// que están verificados.
+	// TODO: agregar un campo a la base de datos que indique si
+	// el usuario está verificado.
+	// TODO: tampoco debería (creo) notificarse al usuario que añadió
+	// el financiamiento.
+	users, err := queries.ListUsers(r.Context())
+	if err != nil {
+		log.Fatal("Error en la notificación de nuevo financiamiento")
+		return
+	}
+
+	for _, user := range users {
+
+		userEmail := getUserEmail(user.AuthID)
+
+		if userEmail == nil {
+			log.Printf("Usuario %d no encontrado", user.UserID)
+			continue
+		}
+
+		email.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
+	}
 }
 
 //

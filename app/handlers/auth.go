@@ -22,6 +22,7 @@ import (
 	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
+	"scifi-search/app/utils/email"
 	"scifi-search/app/views"
 
 	"github.com/a-h/templ"
@@ -84,6 +85,10 @@ func initializeSupertokens() {
 				// El siguiente estado inhabilita la sesión a menos de que el email se
 				// encuentre verificado. Es el más estricto.
 				// Mode: evmodels.ModeRequired,
+
+				EmailDelivery: &emaildelivery.TypeInput{
+					Service: email.NewMailHogService(),
+				},
 			}),
 
 			// Session configuration.
@@ -214,7 +219,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 
 	// Verificación de email ya registrado.
 	if resp.EmailAlreadyExistsError != nil {
-		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema."))
+		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema. Inicie sesión."))
 		return &newUser, nil
 	}
 
@@ -493,4 +498,14 @@ func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Redirigir a la página principal.
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func getUserEmail(userID string) *string {
+
+	user, err := emailpassword.GetUserByID(userID)
+	if err != nil || user == nil {
+		return nil
+	}
+
+	return &user.Email
 }

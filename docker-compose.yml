@@ -134,12 +134,25 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
-      - "9000:9000" # API S3-compatible
-      - "9001:9001" # Panel web
+      - "9000:9000" # API S3-compatible.
+      - "9001:9001" # Panel web.
     volumes:
       - ./minio_data:/data
       - ./logs/minio:/var/log
     restart: always
+
+  # Simulación de emails.
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI.
+    logging:
+      driver: local
+      options:
+        max-size: "5m"
+        max-file: "2"
 
 volumes:
   tpe-db-data:
