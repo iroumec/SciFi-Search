@@ -273,6 +273,13 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
 
+	if !isEmailVerified(w, r) {
+
+		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad."))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
 	component := views.AddFundingPage(utils.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }

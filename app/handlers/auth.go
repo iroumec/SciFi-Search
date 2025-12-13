@@ -76,7 +76,14 @@ func initializeSupertokens() {
 
 			// Email verification configuration.
 			emailverification.Init(evmodels.TypeInput{
-				Mode: evmodels.ModeRequired, // Se requiere email verification para todos los usuarios.
+				// El siguiente modo permite que el usuario use la página normalmente
+				// aunque no haya verificado su email, aunque se le pueden prohibir ciertas
+				// accioens manualmente.
+				Mode: evmodels.ModeOptional,
+
+				// El siguiente estado inhabilita la sesión a menos de que el email se
+				// encuentre verificado. Es el más estricto.
+				// Mode: evmodels.ModeRequired,
 			}),
 
 			// Session configuration.
@@ -443,29 +450,29 @@ func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
 // ------------------------------------------------------------------------------------------------
 
 // Función auxiliar para verificar si el email está verificado.
-func isEmailVerified(r *http.Request) (bool, error) {
-	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 		SessionRequired: boolPtr(true),
 	})
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	if sessionContainer == nil {
-		return false, nil
+		return false
 	}
 
 	userID := sessionContainer.GetUserID()
 	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
 
-	return isVerified, err
+	return isVerified
 }
 
 // ------------------------------------------------------------------------------------------------
 
 func protectedHandler(w http.ResponseWriter, r *http.Request) {
-	verified, err := isEmailVerified(r)
-	if err != nil || !verified {
+	verified := isEmailVerified(w, r)
+	if !verified {
 		http.Error(w, "Debes verificar tu email para acceder a esta funcionalidad", http.StatusForbidden)
 		return
 	}
