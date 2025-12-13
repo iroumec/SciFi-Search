@@ -250,7 +250,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r), documentTypes, documentAreas)
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
 
 }
@@ -337,13 +337,13 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 	for _, t := range filterTipo {
 		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
 	}
-	
+
 	for _, t := range filterArea {
 		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t))
 	}
 
 	searchRequest := &meilisearch.SearchRequest{
-		Limit: 20,
+		Limit:            20,
 		ShowRankingScore: true,
 	}
 
@@ -360,7 +360,7 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 	res, err := client.Index(indexName).Search(query, searchRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return 
+		return
 	}
 
 	hits := make([]any, len(res.Hits))
@@ -386,7 +386,7 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	component := views.SearchResults(hitsMaps)
-	component.Render(r.Context(),w)
+	component.Render(r.Context(), w)
 
 }
 

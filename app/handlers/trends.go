@@ -58,7 +58,7 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
 	htmlChart := extractBodyContent(buf.String())
 
-	views.TrendsPage(htmlChart, isUserAuthenticated(r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+	views.TrendsPage(htmlChart, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 }
 
 // ------------------------------------------------------------------------------------------------

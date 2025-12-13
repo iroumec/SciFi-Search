@@ -17,5 +17,6 @@
     "profile.update_avatar": "Update avatar",
     "welcome": "Welcome",
     "profile.no_avatar": "No avatar",
-    "log-in": "Log In"
+    "log-in": "Log In",
+    "email-verification.sent": "Email verification sent!"
 }

@@ -89,7 +89,7 @@ func registerIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se crea una instancia de la componente de página.
-		component := views.IndexPage(isUserAuthenticated(r), utils.GetTranslatorFromRequest(r))
+		component := views.IndexPage(isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r))
 
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)

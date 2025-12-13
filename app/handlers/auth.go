@@ -8,10 +8,15 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
+	"github.com/supertokens/supertokens-golang/recipe/emailverification"
+	"github.com/supertokens/supertokens-golang/recipe/emailverification/evmodels"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
+	"github.com/supertokens/supertokens-golang/recipe/thirdparty"
+	"github.com/supertokens/supertokens-golang/recipe/thirdparty/tpmodels"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
 	"scifi-search/app/database"
@@ -22,11 +27,13 @@ import (
 	"github.com/a-h/templ"
 )
 
+const (
+	websiteDomain = "http://localhost:8080"
+)
+
 // ---------------------------------------------------------------------
 
 func initializeSupertokens() {
-
-	websiteDomain := "http://localhost:8080"
 
 	err := supertokens.Init(supertokens.TypeInput{
 		Supertokens: &supertokens.ConnectionInfo{
@@ -44,7 +51,35 @@ func initializeSupertokens() {
 		},
 
 		RecipeList: []supertokens.Recipe{
+
+			// Se permite inicio de sesión mediante email/password.
 			emailpassword.Init(nil),
+
+			// Se permite inicio de sesión mediante cuenta de terceros.
+			thirdparty.Init(&tpmodels.TypeInput{
+				SignInAndUpFeature: tpmodels.TypeInputSignInAndUp{
+					Providers: []tpmodels.ProviderInput{
+						{
+							Config: tpmodels.ProviderConfig{
+								ThirdPartyId: "google",
+								Clients: []tpmodels.ProviderClientConfig{
+									{
+										ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+										ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+									},
+								},
+							},
+						},
+					},
+				},
+			}),
+
+			// Email verification configuration.
+			emailverification.Init(evmodels.TypeInput{
+				Mode: evmodels.ModeRequired, // Se requiere email verification para todos los usuarios.
+			}),
+
+			// Session configuration.
 			session.Init(&sessmodels.TypeInput{
 				GetTokenTransferMethod: func(req *http.Request, forCreateNewSession bool, userContext supertokens.UserContext) sessmodels.TokenTransferMethod {
 					return sessmodels.CookieTransferMethod
@@ -67,6 +102,12 @@ func registerAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
+
+	// Handler de verificación de email.
+	http.HandleFunc("/auth/verify-email", verifyEmailHandler)
+
+	// Handler para Google OAuth callback.
+	http.HandleFunc("/auth/callback/google", googleCallbackHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
@@ -123,14 +164,10 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("sign-up.successful"))
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	} else {
-
-		// Manejo de cualquier otro caso inesperado.
-		http.Error(w, "Error desconocido durante el registro.", http.StatusInternalServerError)
+		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("email-verification.sent"))
 	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -168,6 +205,12 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 		return &newUser, nil
 	}
 
+	// Verificación de email ya registrado.
+	if resp.EmailAlreadyExistsError != nil {
+		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema."))
+		return &newUser, nil
+	}
+
 	if resp.OK != nil {
 		newUser, err = queries.CreateUser(r.Context(), sqlc.CreateUserParams{
 			Name:    name,
@@ -177,9 +220,58 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 		if err != nil {
 			log.Println("Error creando usuario interno:", err)
 		}
+
+		// Se crea token de verificación.
+		tokenResponse, err := emailverification.CreateEmailVerificationToken("", resp.OK.User.ID, &email, nil)
+		if err != nil {
+			log.Println("Error creando token de verificación:", err)
+		} else if tokenResponse.OK != nil {
+			// Se envía email de verificación.
+			err = emailverification.SendEmail(emaildelivery.EmailType{
+				EmailVerification: &emaildelivery.EmailVerificationType{
+					User: emaildelivery.User{
+						ID:    resp.OK.User.ID,
+						Email: email,
+					},
+					EmailVerifyLink: websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token,
+				},
+			}, nil)
+
+			if err != nil {
+				log.Println("Error enviando email de verificación:", err)
+			}
+		}
 	}
 
 	return &newUser, &resp
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+
+	if token == "" {
+		http.Error(w, "Token no proporcionado", http.StatusBadRequest)
+		return
+	}
+
+	// Se verifica el token.
+	response, err := emailverification.VerifyEmailUsingToken("", token, nil)
+	if err != nil {
+		log.Println("Error verificando email:", err)
+		http.Error(w, "Error verificando email", http.StatusInternalServerError)
+		return
+	}
+
+	if response.OK != nil {
+		utils.AddFlashCookie(w, "¡Email verificado exitosamente!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	} else if response.EmailVerificationInvalidTokenError != nil {
+		http.Error(w, "Token inválido o expirado", http.StatusBadRequest)
+	} else {
+		http.Error(w, "Error desconocido al verificar email", http.StatusInternalServerError)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -282,9 +374,9 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 // Retorna si el usuario está autenticado.
-func isUserAuthenticated(r *http.Request) bool {
+func isUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 	// Intentar obtener la sesión sin requerirla
-	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 		SessionRequired: boolPtr(false),
 	})
 
@@ -305,7 +397,7 @@ func boolPtr(b bool) *bool {
 
 func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
 
-	if isUserAuthenticated(r) {
+	if isUserAuthenticated(w, r) {
 
 		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
 			SessionRequired: boolPtr(false),
@@ -346,4 +438,52 @@ func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
 	log.Printf("Se eliminó al usuario de ID %d.", id)
 
 	// Por defecto, la respuesta es 200 OK.
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Función auxiliar para verificar si el email está verificado.
+func isEmailVerified(r *http.Request) (bool, error) {
+	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+		SessionRequired: boolPtr(true),
+	})
+	if err != nil {
+		return false, err
+	}
+
+	if sessionContainer == nil {
+		return false, nil
+	}
+
+	userID := sessionContainer.GetUserID()
+	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
+
+	return isVerified, err
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func protectedHandler(w http.ResponseWriter, r *http.Request) {
+	verified, err := isEmailVerified(r)
+	if err != nil || !verified {
+		http.Error(w, "Debes verificar tu email para acceder a esta funcionalidad", http.StatusForbidden)
+		return
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+
+	// SuperTokens maneja esto automáticamente si se usa su frontend.
+	// Si se implementa un frontend propio, se necesita procesar el callback aquí.
+
+	code := r.URL.Query().Get("code")
+	if code == "" {
+		http.Error(w, "Código no proporcionado", http.StatusBadRequest)
+		return
+	}
+
+	// Redirigir a la página principal.
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

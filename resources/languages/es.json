@@ -17,5 +17,6 @@
     "profile.update_avatar": "Actualizar avatar",
     "welcome": "Bienvenido",
     "profile.no_avatar": "Sin avatar",
-    "log-in": "Iniciar sesión"
+    "log-in": "Iniciar sesión",
+    "email-verification.sent": "¡Correo electrónico de verificación enviado!"
 }
