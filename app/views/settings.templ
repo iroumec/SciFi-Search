@@ -1,31 +1,78 @@
 package views 
 
-import "scifi-search/app/utils"
+import (
+	sqlc "scifi-search/app/database"
+	"scifi-search/app/utils"
+)
 
-templ settingsContent(isUserAuthenticated bool) {
-    @Header()
-    <div class="settings-content">
-        <div id="left"></div>
-        <div id="settings-section">
-            <div class="profile-settings">
-            </div>
-            <div class="avatar-settings">
-            </div>
-            <div class="preferences-settings">
-            </div>
-            <div class="save-changes-section">
-            </div>
-        </div>
-        <div id="right"></div>
-    </div>
+templ settingsContent(user sqlc.User) {
+	@Header()
+	<div class="settings-content">
+		<div id="left"></div>
+        @SettingsForm(user)
+		
+		<div id="right"></div>
+	</div>
 }
 
-templ SettingsPage(isUserAuthenticated bool, translator utils.Translator) {
-    @Layout("Settings", translator, func() templ.Component {
-		return settingsContent(isUserAuthenticated)
+templ SettingsForm(user sqlc.User) {
+    <form
+		id="settings-section"
+		hx-post="/settings/save"
+		hx-target="#settings-section"
+		hx-swap="outerHTML" 
+	>
+		<div class="profile-settings">
+			<p id="myprofile">Profile</p>
+			<p id="fullname">{ user.Name } { user.Surname } </p>
+			<div class="info-section">
+				@infoField("name", "text", user.Name)
+				@infoField("surname", "text", user.Surname)
+			</div>
+		</div>
+		<div class="avatar-settings"></div>
+		<div class="preferences-settings"></div>
+		<div class="nav-section">
+			<button type="submit">Save changes </button>
+		</div>
+	</form>
+}
+
+templ infoField(name string, typeStr string, value string) {
+	<div id={ "field-" + name }>
+		<input
+			type={ typeStr }
+			name={ name }
+			value={ value }
+			disabled="true"
+		/>
+		<button
+			type="button"
+			hx-get={ "/settings/edit/" + name }
+			hx-target={ "#field-" + name }
+			hx-swap="outerHTML"
+		>
+			Edit    
+		</button>
+	</div>
+}
+
+templ EditableInfoField(name string, typeStr string, value string) {
+	<div id={ "field-" + name }>
+		<input
+			type={ typeStr }
+			name={ name }
+			value={ value }
+		/>
+	</div>
+}
+
+templ SettingsPage(user sqlc.User, translator utils.Translator) {
+	@Layout("Settings", translator, func() templ.Component {
+		return settingsContent(user)
 	})
 }
 
 templ SettingsPageError() {
-    <h1>NO HAY SESIÓN</h1>
+	<h1>NO HAY SESIÓN</h1>
 }

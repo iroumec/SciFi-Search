@@ -63,36 +63,30 @@ templ SearchResults(hits []map[string]any) {
 templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List) {
 	<div id="all-filters">
 		<div class="dropdown">
-		
 			<button class="dropbtn" name="sortby" onclick="toggleDropdown(event)">
 				SORT BY
 			</button>
 			<div id="sortby-menu" class="dropdown-content onlyone hidden">
 				@sortingCheckboxes()
 			</div>
-
 		</div>
 		<div class="dropdown">
-
 			<button class="dropbtn" name="area" onclick="toggleDropdown(event)">
 				AREA
 			</button>
 			<div id="document-area-menu" class="dropdown-content hidden">
 				@valuesCheckboxes("area", false, documentAreas)
 			</div>
-
 		</div>
 		<div class="dropdown">
-
 			<button class="dropbtn" name="tipo" onclick="toggleDropdown(event)">
 				TYPE
 			</button>
 			<div id="document-type-menu" class="dropdown-content onlyone hidden">
 				@valuesCheckboxes("tipo", true, documentTypes)
 			</div>
-
 		</div>
-		<input type="hidden" name="query" value={ query }>
+		<input type="hidden" name="query" value={ query }/>
 	</div>
 	<script>
 
@@ -163,9 +157,9 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 				value={ e.Value.(string) }
 				hx-get="/search/update-filter"
 				if onlyone {
-					hx-trigger="mychange" 
-				} 
-				hx-target="#results" 
+					hx-trigger="mychange"
+				}
+				hx-target="#results"
 				hx-swap="innerHTML"
 				hx-include="#all-filters"
 			/>

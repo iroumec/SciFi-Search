@@ -172,7 +172,7 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" onclick=\"window.location.href='/profile'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\" onclick=\"window.location.href='/signout'\">Cerrar sesión</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" onclick=\"window.location.href='/settings'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\" onclick=\"window.location.href='/signout'\">Cerrar sesión</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

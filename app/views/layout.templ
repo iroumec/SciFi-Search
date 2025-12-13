@@ -34,9 +34,8 @@ templ Footer(translator utils.Translator) {
 	<footer class="footer">
 		<div class="clear-top"></div>
 		<div class="clear-left"></div>
-
 		<div id="powered-section">
-			<p> { translator("powered-by") } </p>
+			<p>{ translator("powered-by") } </p>
 			<div id="images">
 				<a href="https://www.meilisearch.com/" target="_blank">
 					<img src="static/img/logo-meilisearch.png" alt="Logo Meilisearch" id="logo-meilisearch" class="logo"/>
@@ -49,19 +48,16 @@ templ Footer(translator utils.Translator) {
 				</a>
 			</div>
 		</div>
-
 		<div id="unicen-logo">
 			<a href="https://www.unicen.edu.ar/" target="_blank">
 				<img src="static/img/logo-unicen.png" alt="Logo Supertokens" id="logo-unicen"/>
 			</a>
 		</div>
-
 		<div id="options-section">
 			<button class="footer-button" onclick="window.location.href='/trends'">Trends</button>
 			<button class="footer-button">Language: EN</button>
 			<button class="footer-button">Help</button>
 		</div>
-
 		<div class="clear-right"></div>
 	</footer>
 }

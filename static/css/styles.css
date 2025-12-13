@@ -704,8 +704,52 @@ body {
 
         .profile-settings {
             grid-area: profile;
+
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: 10% 5% 85%;
+            grid-template-areas: 
+                "profile"
+                "fullname"
+                "info-section";
+
+            height: 100%;
+            color: var(--scifi);
+
             border: 1px red solid;
         }
+
+            #myprofile {
+                grid-area: profile;
+
+                height: 100%;
+                margin: 0px;
+                padding-left: 0.5rem;
+
+                display: flex;
+                align-items: center;
+                font-size: 1.5rem;
+                
+                border: 1px yellow solid;
+            }
+
+            #fullname {
+                grid-area: fullname;
+                height: 100%;
+                font-size: 1rem;
+                display: flex;
+                align-items: center;
+                padding-left: 0.5rem;
+                margin: 0px;
+                
+                border: 1px yellow solid;
+            }
+
+            .info-section {
+                grid-area: info-section;
+                height: 100%;
+                border: 1px yellow solid;
+            }
 
         .avatar-settings {
             grid-area: avatar;
@@ -717,7 +761,7 @@ body {
             border: 1px red solid;
         }
 
-        .save-changes-section {
+        .nav-section {
             grid-area: svchg;
             border: 1px red solid;
         }

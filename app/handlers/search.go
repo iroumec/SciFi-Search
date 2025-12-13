@@ -362,9 +362,6 @@ func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName s
 
 func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("RAW QUERY:", r.URL.RawQuery)
-	log.Println("VALUES:", r.URL.Query())
-
 	query := r.URL.Query().Get("query")
 	filterTipo := r.URL.Query()["tipo"]
 	filterArea := r.URL.Query()["area"]
