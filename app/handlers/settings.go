@@ -150,24 +150,36 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, _, err := r.FormFile("avatar")
-	if err != nil {
+	if err != nil && err != http.ErrMissingFile {
 		http.Error(w, "No se pudo leer el archivo", 400)
 		return
 	}
-	defer file.Close()
 
-	// Se cambia el tamaño de la imagen.
-	resizedFile, err := ResizeImageToAvatar(file)
-	if err != nil {
-		http.Error(w, "Error procesando imagen", 500)
-		return
-	}
-	// Se sube el archivo al almacenamiento de objetos.
-	url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
-	if err != nil {
-		http.Error(w, "Error subiendo avatar", 500)
-		log.Printf("%s", err)
-		return
+	if err == nil {
+		defer file.Close()
+
+		// Se cambia el tamaño de la imagen.
+		resizedFile, err := ResizeImageToAvatar(file)
+		if err != nil {
+			http.Error(w, "Error procesando imagen", 500)
+			return
+		}
+		// Se sube el archivo al almacenamiento de objetos.
+		url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
+		if err != nil {
+			http.Error(w, "Error subiendo avatar", 500)
+			log.Printf("%s", err)
+			return
+		}
+
+		// Guardado de la URL en la Base de Datos.
+		err = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
+			UserID: user.UserID,
+			AvatarUrl: sql.NullString{
+				String: url,
+				Valid:  true,
+			},
+		})
 	}
 
 	//Actualizacion de datos que se guardan en nuestra BD
@@ -175,15 +187,6 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		UserID:  user.UserID,
 		Name:    name,
 		Surname: surname,
-	})
-
-	// Guardado de la URL en la Base de Datos.
-	err = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
-		UserID: user.UserID,
-		AvatarUrl: sql.NullString{
-			String: url,
-			Valid:  true,
-		},
 	})
 
 	log.Println(r.Form["preferences[]"])

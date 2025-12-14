@@ -154,7 +154,7 @@ func uploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se cambia el tamaño de la imagen.
-	resizedFile, err := resizeImageToAvatar(file)
+	resizedFile, err := ResizeImageToAvatar(file)
 	if err != nil {
 		http.Error(w, "Error procesando imagen", 500)
 		return
@@ -222,7 +222,7 @@ func deleteAvatar(ctx context.Context, userID int32) error {
 
 // ------------------------------------------------------------------------------------------------
 
-func resizeImageToAvatar(file io.Reader) (io.Reader, error) {
+func ResizeImageToAvatar(file io.Reader) (io.Reader, error) {
 
 	// Decode de la imagen.
 	img, err := imaging.Decode(file)
