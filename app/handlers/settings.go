@@ -170,9 +170,28 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	//Obtención y actualizacion de datos que se guardan en Supertokens
+	// Actualización del email.
 	if v := r.Form.Get("email"); v != "" {
-		updateEmail(user, v)
+		err := updateEmail(user, v)
+		if err == nil {
+			utils.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
+		} else {
+			utils.AddFlashCookie(w, "Error interno del servidor.")
+			return
+		}
+	}
+
+	// Actualización de la contrasñea.
+	currentPassword := r.Form.Get("current-password")
+	newPassword := r.Form.Get("new-password")
+	log.Printf("Current %s", currentPassword)
+	log.Printf("New %s", newPassword)
+	if currentPassword != "" && newPassword != "" {
+		err := updatePassword(user, currentPassword, newPassword)
+		if err != nil {
+			utils.AddFlashCookie(w, "Error interno del servidor.")
+			return
+		}
 	}
 
 	//Renderización final
@@ -181,10 +200,6 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 
 	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
 	component.Render(r.Context(), w)
-
-}
-
-func updateEmail(user *sqlc.User, newEmail string) {
 
 }
 

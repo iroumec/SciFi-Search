@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
@@ -52,7 +53,24 @@ func initializeSupertokens() {
 		RecipeList: []supertokens.Recipe{
 
 			// Se permite inicio de sesión mediante email/password.
-			emailpassword.Init(nil),
+			emailpassword.Init(&epmodels.TypeInput{
+				SignUpFeature: &epmodels.TypeInputSignUp{
+					FormFields: []epmodels.TypeInputFormField{
+						{
+							ID: "password",
+							// Validación muy permisiva para probar rápido.
+							Validate: func(value interface{}, tenantId string) *string {
+								password := value.(string)
+								if len(password) < 1 {
+									err := "La contraseña no puede estar vacía"
+									return &err
+								}
+								return nil // Se acepta todo lo demás.
+							},
+						},
+					},
+				},
+			}),
 
 			// Email verification configuration.
 			emailverification.Init(evmodels.TypeInput{
@@ -211,15 +229,15 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 		}
 
 		// Se crea token de verificación.
-		sendVerificationEmail(resp.OK, email)
+		sendVerificationEmail(resp.OK.User.ID, email)
 	}
 
 	return &newUser, &resp
 }
 
-func sendVerificationEmail(user *struct{ User epmodels.User }, email string) {
+func sendVerificationEmail(userID, email string) {
 
-	tokenResponse, err := emailverification.CreateEmailVerificationToken("", user.User.ID, &email, nil)
+	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
 	if err != nil {
 		log.Println("Error creando token de verificación:", err)
 	} else if tokenResponse.OK != nil {
@@ -227,7 +245,7 @@ func sendVerificationEmail(user *struct{ User epmodels.User }, email string) {
 		err = emailverification.SendEmail(emaildelivery.EmailType{
 			EmailVerification: &emaildelivery.EmailVerificationType{
 				User: emaildelivery.User{
-					ID:    user.User.ID,
+					ID:    userID,
 					Email: email,
 				},
 				EmailVerifyLink: websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token,
@@ -545,4 +563,132 @@ func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 
 		return nil
 	}
+}
+
+// Actualiza el email del usuario y solicita re-verificación si el email cambió.
+func updateEmail(user *database.User, newEmail string) error {
+	newEmail = strings.TrimSpace(newEmail)
+
+	// Obtención del email actual del usuario.
+	currentUser, err := emailpassword.GetUserByID(user.AuthID)
+	if err != nil || currentUser == nil {
+		log.Println("Error al obtener usuario actual:", err)
+		return err
+	}
+
+	currentEmail := currentUser.Email
+
+	// Si el email es el mismo, no se hace nada.
+	if strings.EqualFold(currentEmail, newEmail) {
+		log.Println("El email no cambió, omitiendo actualización")
+		return nil
+	}
+
+	// Se verifica si el nuevo emaul ya está en uso por otro usuario.
+	existingUser, err := emailpassword.GetUserByEmail("", newEmail)
+	if err != nil {
+		log.Println("Error al verificar email existente:", err)
+		return err
+	}
+
+	if existingUser != nil && existingUser.ID != user.AuthID {
+		log.Println("El email ya está en uso por otro usuario")
+		return err
+	}
+
+	// Se actualiza el email en SuperTokens.
+	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, &newEmail, nil, nil, nil)
+	if err != nil {
+		log.Println("Error actualizando email:", err)
+		return err
+	}
+
+	if updateResp.OK == nil {
+		if updateResp.EmailAlreadyExistsError != nil {
+			log.Println("Email ya existe")
+		} else if updateResp.UnknownUserIdError != nil {
+			log.Println("Usuario no encontrado")
+		}
+		return err
+	}
+
+	// Se desverifica el email (forzando re-verificación).
+	_, err = emailverification.UnverifyEmail(user.AuthID, &newEmail, nil)
+	if err != nil {
+		log.Println("Error al desverificar email:", err)
+	}
+
+	// Se envía un email de verificación con un nuevo token al nuevo email.
+	sendVerificationEmail(user.AuthID, newEmail)
+
+	log.Println("Email actualizado exitosamente, se envió verificación")
+	return nil
+}
+
+// Actualiza la contraseña del usuario.
+func updatePassword(user *database.User, currentPassword, newPassword string) error {
+	// Se valida que se proporcionaron ambas contraseñas.
+	if currentPassword == "" || newPassword == "" {
+		log.Println("Contraseñas no proporcionadas")
+		return nil
+	}
+
+	// Se obtiene el email actual para verificar la contraseña.
+	currentUser, err := emailpassword.GetUserByID(user.AuthID)
+	if err != nil || currentUser == nil {
+		log.Println("Error al obtener usuario actual:", err)
+		return err
+	}
+
+	// Se verifica la contraseña actual.
+	signInResp, err := emailpassword.SignIn("", currentUser.Email, currentPassword)
+	if err != nil {
+		log.Println("Error al verificar contraseña:", err)
+		return err
+	}
+
+	if signInResp.WrongCredentialsError != nil {
+		log.Println("Contraseña actual incorrecta")
+		return err
+	}
+
+	// Se actualiza la contraseña.
+	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, nil, &newPassword, nil, nil)
+	if err != nil {
+		log.Println("Error actualizando contraseña:", err)
+		return err
+	}
+
+	log.Printf(currentPassword)
+	log.Printf(newPassword)
+
+	// DEBUG: Ver qué contiene la respuesta.
+	log.Printf("UpdateEmailOrPassword response - OK: %v, UnknownUser: %v, EmailExists: %v, PasswordPolicy: %v",
+		updateResp.OK != nil,
+		updateResp.UnknownUserIdError != nil,
+		updateResp.EmailAlreadyExistsError != nil,
+		updateResp.PasswordPolicyViolatedError != nil)
+
+	if updateResp.PasswordPolicyViolatedError != nil {
+		log.Printf("DETALLE del error de política: %+v", updateResp.PasswordPolicyViolatedError)
+	}
+
+	if updateResp.OK == nil {
+		if updateResp.UnknownUserIdError != nil {
+			log.Println("Usuario no encontrado")
+			return fmt.Errorf("usuario no encontrado")
+		} else if updateResp.EmailAlreadyExistsError != nil {
+			log.Println("Email ya existe (esto no debería ocurrir al cambiar solo contraseña)")
+			return fmt.Errorf("email ya existe")
+		} else if updateResp.PasswordPolicyViolatedError != nil {
+			log.Println("La contraseña no cumple con la política de seguridad")
+			return fmt.Errorf("contraseña no cumple con los requisitos de seguridad")
+		} else {
+			log.Println("Error desconocido al actualizar contraseña")
+			return fmt.Errorf("error desconocido al actualizar contraseña")
+		}
+	}
+
+	log.Println("Contraseña actualizada")
+	return nil
 }
