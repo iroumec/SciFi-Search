@@ -12,6 +12,8 @@ echo
 # 1. Generaración y aplicación migraciones con Atlas.
 echo "Verificando migraciones de base de datos..."
 
+atlas migrate hash --dir file://database/migrations
+
 # Generación de migraciones.
 atlas migrate diff --env docker
 

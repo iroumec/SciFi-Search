@@ -8,6 +8,7 @@ import "scifi-search/app/utils"
 templ loginContent(errorMessage string, translator utils.Translator) {
 	@Header()
 	<main>
+		@showPopUp()
 		<div class="only-form-content">
 			<div class="centered-container">
 				<form id="login-form" action="/login" method="POST">

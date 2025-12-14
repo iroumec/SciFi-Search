@@ -309,7 +309,9 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Abarca tanto la comprovación del email como de la constraseña.
 	if resp.WrongCredentialsError != nil {
-		http.Error(w, "Credenciales incorrectas", http.StatusUnauthorized)
+		// TODO: no recargar toda la página.
+		utils.AddFlashCookie(w, "Email o contraseña incorrectos.")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
