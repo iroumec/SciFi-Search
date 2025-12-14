@@ -22,20 +22,14 @@ UPDATE users SET name = $2, surname = $3 WHERE user_id = $1;
 -- name: DeleteUser :exec
 DELETE FROM users WHERE user_id = $1;
 
--- name: CreatePreference :one
-INSERT INTO preferences(preference) VALUES ($1) RETURNING *;
-
--- name: ListPreferences :many
-SELECT preference FROM preferences ORDER BY preference;
-
--- name: DeletePreference :exec
-DELETE FROM preferences WHERE preference = $1;
-
--- name: SetPreference :one
+-- name: AddPreference :one
 INSERT INTO user_preferences(user_id,preference) VALUES ($1,$2) RETURNING *;
 
 -- name: RemovePreference :exec
 DELETE FROM user_preferences WHERE user_id = $1 AND preference = $2;
+
+-- name: RemoveAllPreferenceFromUser :exec
+DELETE FROM user_preferences WHERE user_id = $1;
 
 -- name: ListPreferencesFromUser :many
 SELECT preference FROM user_preferences WHERE user_id = $1;

@@ -17,6 +17,9 @@ templ settingsContent(user sqlc.User, email string, preferences []string) {
 templ SettingsForm(user sqlc.User, email string, preferences []string) {
 	<form
 		id="settings-section"
+		method="POST"
+		action="/settings/save"
+		enctype="multipart/form-data"
 		hx-post="/settings/save"
 		hx-target="#settings-section"
 		hx-swap="outerHTML"
@@ -32,7 +35,7 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 			</div>
 		</div>
 		<div class="avatar-settings">
-			//@avatarSettings(user)
+			@avatarSettings(user)
 		</div>
 		<div class="preferences-settings">
 			<p class="subtitle" id="preference">Preferences</p>

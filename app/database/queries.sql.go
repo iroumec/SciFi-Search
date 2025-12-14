@@ -45,6 +45,22 @@ func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Docum
 	return i, err
 }
 
+const addPreference = `-- name: AddPreference :one
+INSERT INTO user_preferences(user_id,preference) VALUES ($1,$2) RETURNING user_id, preference
+`
+
+type AddPreferenceParams struct {
+	UserID     int32  `json:"user_id"`
+	Preference string `json:"preference"`
+}
+
+func (q *Queries) AddPreference(ctx context.Context, arg AddPreferenceParams) (UserPreference, error) {
+	row := q.db.QueryRowContext(ctx, addPreference, arg.UserID, arg.Preference)
+	var i UserPreference
+	err := row.Scan(&i.UserID, &i.Preference)
+	return i, err
+}
+
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
 INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string, search_datetime
 `
@@ -64,16 +80,6 @@ func (q *Queries) CreateHistoricSearch(ctx context.Context, arg CreateHistoricSe
 		&i.SearchDatetime,
 	)
 	return i, err
-}
-
-const createPreference = `-- name: CreatePreference :one
-INSERT INTO preferences(preference) VALUES ($1) RETURNING preference
-`
-
-func (q *Queries) CreatePreference(ctx context.Context, preference string) (string, error) {
-	row := q.db.QueryRowContext(ctx, createPreference, preference)
-	err := row.Scan(&preference)
-	return preference, err
 }
 
 const createUser = `-- name: CreateUser :one
@@ -114,15 +120,6 @@ DELETE FROM historic_searches WHERE historic_search_id = $1
 
 func (q *Queries) DeleteHistoricSearch(ctx context.Context, historicSearchID int32) error {
 	_, err := q.db.ExecContext(ctx, deleteHistoricSearch, historicSearchID)
-	return err
-}
-
-const deletePreference = `-- name: DeletePreference :exec
-DELETE FROM preferences WHERE preference = $1
-`
-
-func (q *Queries) DeletePreference(ctx context.Context, preference string) error {
-	_, err := q.db.ExecContext(ctx, deletePreference, preference)
 	return err
 }
 
@@ -234,33 +231,6 @@ func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, userID int32
 	return items, nil
 }
 
-const listPreferences = `-- name: ListPreferences :many
-SELECT preference FROM preferences ORDER BY preference
-`
-
-func (q *Queries) ListPreferences(ctx context.Context) ([]string, error) {
-	rows, err := q.db.QueryContext(ctx, listPreferences)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []string
-	for rows.Next() {
-		var preference string
-		if err := rows.Scan(&preference); err != nil {
-			return nil, err
-		}
-		items = append(items, preference)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listPreferencesFromUser = `-- name: ListPreferencesFromUser :many
 SELECT preference FROM user_preferences WHERE user_id = $1
 `
@@ -321,6 +291,15 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const removeAllPreferenceFromUser = `-- name: RemoveAllPreferenceFromUser :exec
+DELETE FROM user_preferences WHERE user_id = $1
+`
+
+func (q *Queries) RemoveAllPreferenceFromUser(ctx context.Context, userID int32) error {
+	_, err := q.db.ExecContext(ctx, removeAllPreferenceFromUser, userID)
+	return err
+}
+
 const removePreference = `-- name: RemovePreference :exec
 DELETE FROM user_preferences WHERE user_id = $1 AND preference = $2
 `
@@ -333,22 +312,6 @@ type RemovePreferenceParams struct {
 func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferenceParams) error {
 	_, err := q.db.ExecContext(ctx, removePreference, arg.UserID, arg.Preference)
 	return err
-}
-
-const setPreference = `-- name: SetPreference :one
-INSERT INTO user_preferences(user_id,preference) VALUES ($1,$2) RETURNING user_id, preference
-`
-
-type SetPreferenceParams struct {
-	UserID     int32  `json:"user_id"`
-	Preference string `json:"preference"`
-}
-
-func (q *Queries) SetPreference(ctx context.Context, arg SetPreferenceParams) (UserPreference, error) {
-	row := q.db.QueryRowContext(ctx, setPreference, arg.UserID, arg.Preference)
-	var i UserPreference
-	err := row.Scan(&i.UserID, &i.Preference)
-	return i, err
 }
 
 const updateUser = `-- name: UpdateUser :exec
