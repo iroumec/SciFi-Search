@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
+	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
 	"strings"
-	sqlc "scifi-search/app/database"
 	//emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
 )
 
@@ -25,7 +26,7 @@ func handleSettings(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		showSettings(w, r)
-	default: 
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 
@@ -36,7 +37,7 @@ func handleEditField(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		editField(w, r)
-	default: 
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 
@@ -47,7 +48,7 @@ func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		views.EditPasswordSection().Render(r.Context(), w)
-	default: 
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 
@@ -66,7 +67,7 @@ func handlePreferences(w http.ResponseWriter, r *http.Request) {
 		}
 
 		views.PreferenceItem(prefs[0]).Render(r.Context(), w)
-	default: 
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 
@@ -78,11 +79,13 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	if user != nil {
 
-		preferences, err := queries.ListPreferencesFromUser(context.Background(),user.UserID)
-		if err != nil {//TODO: ver si esta bien este rror
-			http.Error(w, "Unknown error", http.StatusInternalServerError)
-        	return
+		preferences, err := queries.ListPreferencesFromUser(r.Context(), user.UserID)
+		if err != nil {
+			log.Println("ListPreferencesFromUser:", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
 		}
+
 		component := views.SettingsPage(*user, *getCurrentUserEmail(w, r), preferences, utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
@@ -101,70 +104,95 @@ func editField(w http.ResponseWriter, r *http.Request) {
 	email := getCurrentUserEmail(w, r)
 	fieldStr := strings.TrimPrefix(r.URL.Path, "/settings/edit/")
 
-	var value,typeStr string
-    switch fieldStr {
-    case "name":
-        value = user.Name
+	var value, typeStr string
+	switch fieldStr {
+	case "name":
+		value = user.Name
 		typeStr = "text"
-    case "surname":
-        value = user.Surname
+	case "surname":
+		value = user.Surname
 		typeStr = "text"
-    case "email":
-        value = *email
+	case "email":
+		value = *email
 		typeStr = "email"
-    default:
-        http.Error(w, "invalid field", http.StatusBadRequest)
-        return
-    }
+	default:
+		http.Error(w, "invalid field", http.StatusBadRequest)
+		return
+	}
 
-	component := views.EditableInfoField(fieldStr,typeStr,value)
+	component := views.EditableInfoField(fieldStr, typeStr, value)
 	component.Render(r.Context(), w)
 
 }
 
 func saveSettings(w http.ResponseWriter, r *http.Request) {
 
-    r.ParseForm()
+	//Parseo del formulario
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	//Obtengo el usuario
 	user := getCurrentUser(w, r)
 
+	//Obtencion de los valores guardados en nuestra BD que cambian
 	name := user.Name
 	if v := r.Form.Get("name"); v != "" {
-        name = v
-    }
+		name = v
+	}
 
-	surname:= user.Surname
-    if v := r.Form.Get("surname"); v != "" {
-        surname = v
-    }
+	surname := user.Surname
+	if v := r.Form.Get("surname"); v != "" {
+		surname = v
+	}
 
-	queries.UpdateUser(context.Background(),sqlc.UpdateUserParams{
-		UserID: 	user.UserID,
-		Name:		name,
-		Surname:	surname,
+	//Actualizacion de datos que se guardan en nuestra BD
+	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
+		UserID:  user.UserID,
+		Name:    name,
+		Surname: surname,
 	})
 
-	if v := r.Form.Get("email"); v != "" {
-        updateEmail(user, v)
-    }
+	log.Println(r.Form["preferences[]"])
+	queries.RemoveAllPreferenceFromUser(r.Context(), user.UserID)
+	var updatedPreferences []string
+	if preferences := r.Form["preferences[]"]; len(preferences) != 0 {
+		for _, p := range preferences {
+			if p != "" && !utils.Exists(updatedPreferences, p) {
+				queries.AddPreference(r.Context(), sqlc.AddPreferenceParams{
+					UserID:     user.UserID,
+					Preference: strings.ToLower(p),
+				})
+				updatedPreferences = append(updatedPreferences, p)
+			}
+		}
+	}
 
+	//Obtención y actualizacion de datos que se guardan en Supertokens
+	if v := r.Form.Get("email"); v != "" {
+		updateEmail(user, v)
+	}
+
+	//Renderización final
 	updatedUser := getCurrentUser(w, r)
 	updatedEmail := getCurrentUserEmail(w, r)
-	preferences, _ := queries.ListPreferencesFromUser(context.Background(),updatedUser.UserID)
 
-	component := views.SettingsForm(*updatedUser, *updatedEmail, preferences)
+	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
 	component.Render(r.Context(), w)
 
 }
 
 func updateEmail(user *sqlc.User, newEmail string) {
-	
+
 }
 
 func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		views.InfoField("password", "password", "********").Render(r.Context(),w)
-	default: 
+		views.InfoField("password", "password", "********").Render(r.Context(), w)
+	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 }

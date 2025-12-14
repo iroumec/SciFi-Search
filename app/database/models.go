@@ -26,10 +26,6 @@ type HistoricSearch struct {
 	SearchDatetime   time.Time `json:"search_datetime"`
 }
 
-type Preference struct {
-	Preference string `json:"preference"`
-}
-
 type User struct {
 	UserID    int32          `json:"user_id"`
 	Name      string         `json:"name"`

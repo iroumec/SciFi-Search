@@ -8,10 +8,6 @@ CREATE TABLE IF NOT EXISTS users(
     CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS preferences (
-    preference TEXT PRIMARY KEY
-);
-
 CREATE TABLE IF NOT EXISTS user_preferences (
     user_id INT,
     preference TEXT,
@@ -40,14 +36,6 @@ ALTER TABLE user_preferences
 ADD CONSTRAINT fk_user_preferences_users 
 FOREIGN KEY (user_id) 
 REFERENCES users(user_id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE 
-;
-
-ALTER TABLE user_preferences 
-ADD CONSTRAINT fk_user_preferences_preferences
-FOREIGN KEY (preference)
-REFERENCES preferences(preference)
     ON UPDATE CASCADE
     ON DELETE CASCADE 
 ;
