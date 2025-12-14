@@ -93,6 +93,7 @@ func registerAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
+	http.HandleFunc("/delete-account", deleteUserHandler)
 
 	// Handler de verificación de email.
 	http.HandleFunc("/auth/verify-email", verifyEmailHandler)
@@ -216,7 +217,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 	return &newUser, &resp
 }
 
-func sendVerificationEmail(user *struct{User epmodels.User}, email string) {
+func sendVerificationEmail(user *struct{ User epmodels.User }, email string) {
 
 	tokenResponse, err := emailverification.CreateEmailVerificationToken("", user.User.ID, &email, nil)
 	if err != nil {
@@ -339,23 +340,8 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func signOutHandler(w http.ResponseWriter, r *http.Request) {
-	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: boolPtr(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
 
-	if sessionContainer == nil {
-		http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
-		return
-	}
-
-	if err := sessionContainer.RevokeSession(); err != nil {
-		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
-		return
-	}
+	revokeSession(w, r)
 
 	utils.AddFlashCookie(w, "Successful signout!")
 
@@ -413,24 +399,98 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
 
 // ------------------------------------------------------------------------------------------------
 
-func deleteUser(w http.ResponseWriter, r *http.Request, id int32) {
+func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
-	err := queries.DeleteUser(r.Context(), id)
+	if r.Method != http.MethodDelete {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	deleteUser(w, r)
+}
+
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+
+	user := getCurrentUser(w, r)
+	if user == nil {
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	userEmail := getCurrentUserEmail(w, r)
+	if userEmail == nil {
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	// Se elimina el usuario de supertokens.
+	err := deleteSupertokensUser(user.AuthID)
+	if err != nil {
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	// Se elimina el avatar del usuario (si tiene).
+	err = deleteAvatar(r.Context(), user.UserID)
+	if err != nil {
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	// Se elimina el usuario de la base de datos.
+	err = queries.DeleteUser(r.Context(), user.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// Error 404: El usuario no existe.
 			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
 		} else {
 			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
-			log.Printf("Error al obtener usuario por ID %d: %v", id, err)
+			log.Printf("Error al obtener usuario por ID %d: %v", user.UserID, err)
 			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		}
 		return
 	}
 
-	log.Printf("Se eliminó al usuario de ID %d.", id)
+	// Se cierra la sesión del usuario.
+	revokeSession(w, r)
 
-	// Por defecto, la respuesta es 200 OK.
+	utils.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
+
+	email.Send(*userEmail, "¡Lamentamos que te vayas!", "Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!")
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func revokeSession(w http.ResponseWriter, r *http.Request) {
+
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
+		SessionRequired: boolPtr(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if sessionContainer == nil {
+		http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
+		return
+	}
+
+	if err := sessionContainer.RevokeSession(); err != nil {
+		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
+		return
+	}
+}
+
+func deleteSupertokensUser(authID string) error {
+	err := supertokens.DeleteUser(authID)
+
+	if err != nil {
+		return err
+	}
+
+	// Usuario eliminado exitosamente.
+	return nil
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -471,7 +531,7 @@ func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
 			SessionRequired: boolPtr(false),
 		})
-		
+
 		user, err := emailpassword.GetUserByID(sessionContainer.GetUserID())
 		if err != nil || user == nil {
 			return nil

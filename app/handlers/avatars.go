@@ -154,7 +154,7 @@ func uploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se cambia el tamaño de la imagen.
-	resizedFile, err := ResizeImageToAvatar(file)
+	resizedFile, err := resizeImageToAvatar(file)
 	if err != nil {
 		http.Error(w, "Error procesando imagen", 500)
 		return
@@ -211,10 +211,10 @@ func UploadAvatar(ctx context.Context, bucket string, userID int32, file io.Read
 // ------------------------------------------------------------------------------------------------
 
 // Se elimina el avatar de un usuario.
-func DeleteAvatar(ctx context.Context, bucket, userID string) error {
-	key := userID + ".jpg"
+func deleteAvatar(ctx context.Context, userID int32) error {
+	key := fmt.Sprintf("%d.jpg", userID)
 	_, err := S3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(bucketName),
 		Key:    aws.String(key),
 	})
 	return err
@@ -222,7 +222,7 @@ func DeleteAvatar(ctx context.Context, bucket, userID string) error {
 
 // ------------------------------------------------------------------------------------------------
 
-func ResizeImageToAvatar(file io.Reader) (io.Reader, error) {
+func resizeImageToAvatar(file io.Reader) (io.Reader, error) {
 
 	// Decode de la imagen.
 	img, err := imaging.Decode(file)

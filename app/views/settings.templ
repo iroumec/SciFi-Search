@@ -9,17 +9,17 @@ templ settingsContent(user sqlc.User, email string, preferences []string) {
 	@Header()
 	<div class="settings-content">
 		<div id="left"></div>
-        @SettingsForm(user, email, preferences)
+		@SettingsForm(user, email, preferences)
 		<div id="right"></div>
 	</div>
 }
 
 templ SettingsForm(user sqlc.User, email string, preferences []string) {
-    <form
+	<form
 		id="settings-section"
 		hx-post="/settings/save"
 		hx-target="#settings-section"
-		hx-swap="outerHTML" 
+		hx-swap="outerHTML"
 	>
 		<div class="profile-settings">
 			<p class="subtitle" id="profile">Profile</p>
@@ -43,8 +43,8 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 			</div>
 			<div id="add-preference">
 				<input id="preference-field" type="text" name="preferences[]"/>
-				<button 
-					type="button" 
+				<button
+					type="button"
 					hx-get="/settings/add-preference"
 					hx-include="#preference-field"
 					hx-target="#preferences-list"
@@ -56,6 +56,13 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 			</div>
 		</div>
 		<div class="nav-section">
+			<button
+				hx-delete="/delete-account"
+				hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
+				hx-target="body"
+			>
+				Delete account
+			</button>
 			<button type="submit">Save changes </button>
 		</div>
 	</form>
@@ -95,8 +102,8 @@ templ EditPasswordSection() {
 		<input type="password" name="current-password" placeholder="Current password"/>
 		<input type="password" name="new-password" placeholder="New password"/>
 		<input type="password" name="repeat-password" placeholder="Repeat new password"/>
-		<button 
-			type="button" 
+		<button
+			type="button"
 			hx-get="/settings/edit/password/cancel"
 			hx-target="#edit-password-section"
 			hx-swap="outerHTML"
@@ -116,24 +123,24 @@ templ avatarSettings(user sqlc.User) {
 	} else {
 		<img class="avatar-img" src="static/img/default-avatar.jpg" alt="default avatar"/>
 	}
-		//<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
-			<label for="avatar"> Upload new avatar </label>
-			<input type="file" id="avatar" name="avatar" accept="image/*" required/>
-		//</form>
+	//<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+	<label for="avatar">Upload new avatar </label>
+	<input type="file" id="avatar" name="avatar" accept="image/*" required/>
+	//</form>
 }
 
 templ PreferenceItem(preference string) {
-    <div class="preference">
-        <input
-            type="text"
-            name="preferences[]"
-            value={ preference }
+	<div class="preference">
+		<input
+			type="text"
+			name="preferences[]"
+			value={ preference }
 			readonly
-        />
-        <button type="button" onclick="this.parentElement.remove()">
-            Remove
-        </button>
-    </div>
+		/>
+		<button type="button" onclick="this.parentElement.remove()">
+			Remove
+		</button>
+	</div>
 }
 
 templ SettingsPage(user sqlc.User, email string, preferences []string, translator utils.Translator) {
