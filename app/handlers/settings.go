@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	sqlc "scifi-search/app/database"
@@ -148,11 +149,41 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		surname = v
 	}
 
+	file, _, err := r.FormFile("avatar")
+	if err != nil {
+		http.Error(w, "No se pudo leer el archivo", 400)
+		return
+	}
+	defer file.Close()
+
+	// Se cambia el tamaño de la imagen.
+	resizedFile, err := ResizeImageToAvatar(file)
+	if err != nil {
+		http.Error(w, "Error procesando imagen", 500)
+		return
+	}
+	// Se sube el archivo al almacenamiento de objetos.
+	url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
+	if err != nil {
+		http.Error(w, "Error subiendo avatar", 500)
+		log.Printf("%s", err)
+		return
+	}
+
 	//Actualizacion de datos que se guardan en nuestra BD
 	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
 		UserID:  user.UserID,
 		Name:    name,
 		Surname: surname,
+	})
+
+	// Guardado de la URL en la Base de Datos.
+	err = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
+		UserID: user.UserID,
+		AvatarUrl: sql.NullString{
+			String: url,
+			Valid:  true,
+		},
 	})
 
 	log.Println(r.Form["preferences[]"])
