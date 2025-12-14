@@ -5,17 +5,16 @@ import (
 	"scifi-search/app/utils"
 )
 
-templ settingsContent(user sqlc.User) {
+templ settingsContent(user sqlc.User, email string, preferences []string) {
 	@Header()
 	<div class="settings-content">
 		<div id="left"></div>
-        @SettingsForm(user)
-		
+        @SettingsForm(user, email, preferences)
 		<div id="right"></div>
 	</div>
 }
 
-templ SettingsForm(user sqlc.User) {
+templ SettingsForm(user sqlc.User, email string, preferences []string) {
     <form
 		id="settings-section"
 		hx-post="/settings/save"
@@ -23,22 +22,46 @@ templ SettingsForm(user sqlc.User) {
 		hx-swap="outerHTML" 
 	>
 		<div class="profile-settings">
-			<p id="myprofile">Profile</p>
+			<p class="subtitle" id="profile">Profile</p>
 			<p id="fullname">{ user.Name } { user.Surname } </p>
 			<div class="info-section">
-				@infoField("name", "text", user.Name)
-				@infoField("surname", "text", user.Surname)
+				@InfoField("name", "text", user.Name)
+				@InfoField("surname", "text", user.Surname)
+				@InfoField("email", "email", email)
+				@InfoField("password", "password", "********")
 			</div>
 		</div>
-		<div class="avatar-settings"></div>
-		<div class="preferences-settings"></div>
+		<div class="avatar-settings">
+			//@avatarSettings(user)
+		</div>
+		<div class="preferences-settings">
+			<p class="subtitle" id="preference">Preferences</p>
+			<div id="preferences-list">
+				for _, p := range preferences {
+					@PreferenceItem(p)
+				}
+			</div>
+			<div id="add-preference">
+				<input id="preference-field" type="text" name="preferences[]"/>
+				<button 
+					type="button" 
+					hx-get="/settings/add-preference"
+					hx-include="#preference-field"
+					hx-target="#preferences-list"
+					hx-swap="beforeend"
+					hx-on="htmx:afterRequest: document.getElementById('preference-field').value=''"
+				>
+					Submit
+				</button>
+			</div>
+		</div>
 		<div class="nav-section">
 			<button type="submit">Save changes </button>
 		</div>
 	</form>
 }
 
-templ infoField(name string, typeStr string, value string) {
+templ InfoField(name string, typeStr string, value string) {
 	<div id={ "field-" + name }>
 		<input
 			type={ typeStr }
@@ -67,9 +90,55 @@ templ EditableInfoField(name string, typeStr string, value string) {
 	</div>
 }
 
-templ SettingsPage(user sqlc.User, translator utils.Translator) {
+templ EditPasswordSection() {
+	<div id="edit-password-section">
+		<input type="password" name="current-password" placeholder="Current password"/>
+		<input type="password" name="new-password" placeholder="New password"/>
+		<input type="password" name="repeat-password" placeholder="Repeat new password"/>
+		<button 
+			type="button" 
+			hx-get="/settings/edit/password/cancel"
+			hx-target="#edit-password-section"
+			hx-swap="outerHTML"
+		>
+			Cancel    
+		</button>
+	</div>
+}
+
+templ avatarSettings(user sqlc.User) {
+	if user.AvatarUrl.Valid {
+		<img
+			src={ user.AvatarUrl.String }
+			alt="User avatar"
+			class="avatar-img"
+		/>
+	} else {
+		<img class="avatar-img" src="static/img/default-avatar.jpg" alt="default avatar"/>
+	}
+		//<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
+			<label for="avatar"> Upload new avatar </label>
+			<input type="file" id="avatar" name="avatar" accept="image/*" required/>
+		//</form>
+}
+
+templ PreferenceItem(preference string) {
+    <div class="preference">
+        <input
+            type="text"
+            name="preferences[]"
+            value={ preference }
+			readonly
+        />
+        <button type="button" onclick="this.parentElement.remove()">
+            Remove
+        </button>
+    </div>
+}
+
+templ SettingsPage(user sqlc.User, email string, preferences []string, translator utils.Translator) {
 	@Layout("Settings", translator, func() templ.Component {
-		return settingsContent(user)
+		return settingsContent(user, email, preferences)
 	})
 }
 

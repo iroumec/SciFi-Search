@@ -210,28 +210,33 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 		}
 
 		// Se crea token de verificación.
-		tokenResponse, err := emailverification.CreateEmailVerificationToken("", resp.OK.User.ID, &email, nil)
-		if err != nil {
-			log.Println("Error creando token de verificación:", err)
-		} else if tokenResponse.OK != nil {
-			// Se envía email de verificación.
-			err = emailverification.SendEmail(emaildelivery.EmailType{
-				EmailVerification: &emaildelivery.EmailVerificationType{
-					User: emaildelivery.User{
-						ID:    resp.OK.User.ID,
-						Email: email,
-					},
-					EmailVerifyLink: websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token,
-				},
-			}, nil)
-
-			if err != nil {
-				log.Println("Error enviando email de verificación:", err)
-			}
-		}
+		sendVerificationEmail(resp.OK, email)
 	}
 
 	return &newUser, &resp
+}
+
+func sendVerificationEmail(user *struct{User epmodels.User}, email string) {
+
+	tokenResponse, err := emailverification.CreateEmailVerificationToken("", user.User.ID, &email, nil)
+	if err != nil {
+		log.Println("Error creando token de verificación:", err)
+	} else if tokenResponse.OK != nil {
+		// Se envía email de verificación.
+		err = emailverification.SendEmail(emaildelivery.EmailType{
+			EmailVerification: &emaildelivery.EmailVerificationType{
+				User: emaildelivery.User{
+					ID:    user.User.ID,
+					Email: email,
+				},
+				EmailVerifyLink: websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token,
+			},
+		}, nil)
+
+		if err != nil {
+			log.Println("Error enviando email de verificación:", err)
+		}
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -457,4 +462,25 @@ func getUserEmail(userID string) *string {
 	}
 
 	return &user.Email
+}
+
+func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
+
+	if isUserAuthenticated(w, r) {
+
+		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+			SessionRequired: boolPtr(false),
+		})
+		
+		user, err := emailpassword.GetUserByID(sessionContainer.GetUserID())
+		if err != nil || user == nil {
+			return nil
+		}
+
+		return &user.Email
+
+	} else {
+
+		return nil
+	}
 }

@@ -693,7 +693,7 @@ body {
 
         display: grid;
         grid-template-columns: 66% 34%;
-        grid-template-rows: 62% 31% 7%;
+        grid-template-rows: 55% 38% 7%;
         grid-template-areas: 
             "profile avatar"
             "preferences preferences"
@@ -719,9 +719,7 @@ body {
             border: 1px red solid;
         }
 
-            #myprofile {
-                grid-area: profile;
-
+            .subtitle {
                 height: 100%;
                 margin: 0px;
                 padding-left: 0.5rem;
@@ -729,8 +727,13 @@ body {
                 display: flex;
                 align-items: center;
                 font-size: 1.5rem;
+                color: var(--scifi);
                 
                 border: 1px yellow solid;
+            }
+
+            #profile {
+                grid-area: profile;
             }
 
             #fullname {
@@ -755,14 +758,45 @@ body {
             grid-area: avatar;
             border: 1px red solid;
         }
+            .avatar-img {
+                width: 100%;
+            }
 
         .preferences-settings {
             grid-area: preferences;
+            height: 100%;
+
+            display: grid;
+            grid-template-columns: 100%;
+            grid-template-rows: 20% 70% 10%;
+            grid-template-areas: 
+                "preferences"
+                "preferences-list"
+                "adder";
+            
             border: 1px red solid;
         }
 
+            #preference {
+                grid-area: preferences;
+            }
+
+            #preferences-list {
+                grid-area: preferences-list;
+                overflow-y: auto;       
+                max-height: 100%;
+
+                border: yellow solid 1px;
+            }
+
+
         .nav-section {
             grid-area: svchg;
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 1rem;
             border: 1px red solid;
         }
 

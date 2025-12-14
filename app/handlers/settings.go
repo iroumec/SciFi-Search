@@ -7,6 +7,7 @@ import (
 	"scifi-search/app/views"
 	"strings"
 	sqlc "scifi-search/app/database"
+	//emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
 )
 
 func registerSettingsHandlers() {
@@ -14,7 +15,9 @@ func registerSettingsHandlers() {
 	http.HandleFunc("/settings", handleSettings)
 	http.HandleFunc("/settings/edit/", handleEditField)
 	http.HandleFunc("/settings/save", saveSettings)
-
+	http.HandleFunc("/settings/edit/password", handlePasswordEdit)
+	http.HandleFunc("/settings/edit/password/cancel", cancelPasswordEdit)
+	http.HandleFunc("/settings/add-preference", handlePreferences)
 }
 
 func handleSettings(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +42,48 @@ func handleEditField(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		views.EditPasswordSection().Render(r.Context(), w)
+	default: 
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+
+}
+
+func handlePreferences(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		r.ParseForm()
+
+		prefs := r.Form["preferences[]"]
+		if len(prefs) == 0 {
+			http.Error(w, "Missing preference", http.StatusBadRequest)
+			return
+		}
+
+		views.PreferenceItem(prefs[0]).Render(r.Context(), w)
+	default: 
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+
+}
+
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
 
 	if user != nil {
 
-		component := views.SettingsPage(*user, utils.GetTranslatorFromRequest(r))
+		preferences, err := queries.ListPreferencesFromUser(context.Background(),user.UserID)
+		if err != nil {//TODO: ver si esta bien este rror
+			http.Error(w, "Unknown error", http.StatusInternalServerError)
+        	return
+		}
+		component := views.SettingsPage(*user, *getCurrentUserEmail(w, r), preferences, utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	} else {
@@ -60,6 +98,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 func editField(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
+	email := getCurrentUserEmail(w, r)
 	fieldStr := strings.TrimPrefix(r.URL.Path, "/settings/edit/")
 
 	var value,typeStr string
@@ -70,12 +109,9 @@ func editField(w http.ResponseWriter, r *http.Request) {
     case "surname":
         value = user.Surname
 		typeStr = "text"
-    /*case "email":
-        value = 
+    case "email":
+        value = *email
 		typeStr = "email"
-	case "password":
-		value =
-		typeStr = "password"*/
     default:
         http.Error(w, "invalid field", http.StatusBadRequest)
         return
@@ -107,8 +143,28 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		Surname:	surname,
 	})
 
-	updatedUser := getCurrentUser(w, r)
+	if v := r.Form.Get("email"); v != "" {
+        updateEmail(user, v)
+    }
 
-	component := views.SettingsForm(*updatedUser)
+	updatedUser := getCurrentUser(w, r)
+	updatedEmail := getCurrentUserEmail(w, r)
+	preferences, _ := queries.ListPreferencesFromUser(context.Background(),updatedUser.UserID)
+
+	component := views.SettingsForm(*updatedUser, *updatedEmail, preferences)
 	component.Render(r.Context(), w)
+
+}
+
+func updateEmail(user *sqlc.User, newEmail string) {
+	
+}
+
+func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		views.InfoField("password", "password", "********").Render(r.Context(),w)
+	default: 
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
 }
