@@ -9,8 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
+	"time"
 )
 
 func settingsContent(user sqlc.User, email string, preferences []string) templ.Component {
@@ -75,14 +77,14 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<form id=\"settings-section\" method=\"POST\" action=\"/settings/save\" enctype=\"multipart/form-data\" hx-post=\"/settings/save\" hx-target=\"#settings-section\" hx-swap=\"outerHTML\"><div class=\"profile-settings\"><p class=\"subtitle\" id=\"profile\">Profile</p><p id=\"fullname\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<form id=\"settings-section\" enctype=\"multipart/form-data\"><div class=\"profile-settings\"><p class=\"subtitle\" id=\"profile\">Profile</p><p id=\"fullname\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 29, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -95,13 +97,13 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Surname)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 29, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div class=\"info-section\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div class=\"info-section\"><div class=\"centered-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -121,11 +123,11 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div><div class=\"avatar-settings\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div></div><div id=\"avatar-settings\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = avatarSettings(user).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = AvatarSettings(user).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -139,7 +141,7 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div id=\"add-preference\"><input id=\"preference-field\" type=\"text\" name=\"preferences[]\"> <button type=\"button\" hx-get=\"/settings/add-preference\" hx-include=\"#preference-field\" hx-target=\"#preferences-list\" hx-swap=\"beforeend\" hx-on=\"htmx:afterRequest: document.getElementById('preference-field').value=''\">Submit</button></div></div><div class=\"nav-section\"><button hx-delete=\"/delete-account\" hx-confirm=\"¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.\" hx-target=\"body\">Delete account</button> <button type=\"submit\">Save changes </button></div></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div id=\"add-preference\"><input id=\"preference-field\" type=\"text\" name=\"preferences[]\"> <button type=\"button\" hx-get=\"/settings/add-preference\" hx-include=\"#preference-field\" hx-target=\"#preferences-list\" hx-swap=\"beforeend\" hx-on=\"htmx:afterRequest: document.getElementById('preference-field').value=''\">Submit</button></div></div><div class=\"nav-section\"><div id=\"left\"><button type=\"button\" hx-delete=\"/delete-account\" hx-confirm=\"¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.\" hx-target=\"body\">Delete account</button></div><div id=\"right\"><button type=\"button\" hx-get=\"/settings/cancel\" hx-confirm=\"Are you sure you want to cancel the changes? This action is irreversible.\" hx-target=\"#settings-section\" hx-swap=\"outerHTML\">Cancel </button> <button type=\"button\" hx-post=\"/settings/save\" hx-encoding=\"multipart/form-data\" hx-target=\"#settings-section\" hx-swap=\"outerHTML\">Save changes </button></div></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -175,7 +177,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 75, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 96, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -188,7 +190,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 77, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 98, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -201,7 +203,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 78, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 99, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -214,7 +216,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 79, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 100, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -227,7 +229,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/settings/edit/" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 84, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 105, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -240,7 +242,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs("#field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 85, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 106, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -282,7 +284,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 94, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 115, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -295,7 +297,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 96, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 117, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -308,7 +310,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 97, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 118, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -321,7 +323,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 98, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 119, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -364,7 +366,7 @@ func EditPasswordSection() templ.Component {
 	})
 }
 
-func avatarSettings(user sqlc.User) templ.Component {
+func AvatarSettings(user sqlc.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -386,14 +388,14 @@ func avatarSettings(user sqlc.User) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if user.AvatarUrl.Valid {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<img src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<img id=\"avatar-preview\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(user.AvatarUrl.String)
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 122, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 144, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -409,7 +411,36 @@ func avatarSettings(user sqlc.User) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<label for=\"avatar\">Upload new avatar </label> <input type=\"file\" id=\"avatar\" name=\"avatar\" accept=\"image/*\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div id=\"edit-avatar\"><button type=\"button\" hx-get=\"/settings/modify-avatar\" hx-target=\"#edit-avatar\" hx-swap=\"innerHTML\">Modify </button></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func AvatarOptions() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var20 == nil {
+			templ_7745c5c3_Var20 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<input type=\"file\" id=\"avatar\" name=\"avatar\" accept=\"image/*\" hidden> <label for=\"avatar\" id=\"upload-avatar\">Upload new avatar </label> <input type=\"hidden\" id=\"delete-avatar-flag\" name=\"delete-avatar\" value=\"false\"> <button type=\"button\" hx-on=\"click:\n\t\t\tdocument.getElementById('delete-avatar-flag').value='true';\n\t\t\tdocument.getElementById('avatar-preview').src='static/img/default-avatar.jpg';\">Delete avatar </button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -433,25 +464,25 @@ func PreferenceItem(preference string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var20 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var20 == nil {
-			templ_7745c5c3_Var20 = templ.NopComponent
+		templ_7745c5c3_Var21 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var21 == nil {
+			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"preference\"><input type=\"text\" name=\"preferences[]\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div class=\"preference\"><input type=\"text\" name=\"preferences[]\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var21 string
-		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(preference)
+		var templ_7745c5c3_Var22 string
+		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(preference)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 140, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 187, Col: 21}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "\" readonly> <button type=\"button\" onclick=\"this.parentElement.remove()\">Remove</button></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\" readonly> <button type=\"button\" onclick=\"this.parentElement.remove()\">Remove</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -475,9 +506,9 @@ func SettingsPage(user sqlc.User, email string, preferences []string, translator
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var22 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var22 == nil {
-			templ_7745c5c3_Var22 = templ.NopComponent
+		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var23 == nil {
+			templ_7745c5c3_Var23 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("Settings", translator, func() templ.Component {
@@ -506,12 +537,12 @@ func SettingsPageError() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var23 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var23 == nil {
-			templ_7745c5c3_Var23 = templ.NopComponent
+		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var24 == nil {
+			templ_7745c5c3_Var24 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<h1>NO HAY SESIÓN</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<h1>NO HAY SESIÓN</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

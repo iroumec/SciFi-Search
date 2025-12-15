@@ -3,6 +3,8 @@ package views
 import (
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
+	"fmt"
+	"time"
 )
 
 templ settingsContent(user sqlc.User, email string, preferences []string) {
@@ -17,25 +19,22 @@ templ settingsContent(user sqlc.User, email string, preferences []string) {
 templ SettingsForm(user sqlc.User, email string, preferences []string) {
 	<form
 		id="settings-section"
-		method="POST"
-		action="/settings/save"
 		enctype="multipart/form-data"
-		hx-post="/settings/save"
-		hx-target="#settings-section"
-		hx-swap="outerHTML"
 	>
 		<div class="profile-settings">
 			<p class="subtitle" id="profile">Profile</p>
 			<p id="fullname">{ user.Name } { user.Surname } </p>
 			<div class="info-section">
-				@InfoField("name", "text", user.Name)
-				@InfoField("surname", "text", user.Surname)
-				@InfoField("email", "email", email)
-				@InfoField("password", "password", "********")
+				<div class="centered-container">
+					@InfoField("name", "text", user.Name)
+					@InfoField("surname", "text", user.Surname)
+					@InfoField("email", "email", email)
+					@InfoField("password", "password", "********")
+				</div>
 			</div>
 		</div>
-		<div class="avatar-settings">
-			@avatarSettings(user)
+		<div id="avatar-settings">
+			@AvatarSettings(user)
 		</div>
 		<div class="preferences-settings">
 			<p class="subtitle" id="preference">Preferences</p>
@@ -59,14 +58,36 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 			</div>
 		</div>
 		<div class="nav-section">
-			<button
-				hx-delete="/delete-account"
-				hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
-				hx-target="body"
-			>
-				Delete account
-			</button>
-			<button type="submit">Save changes </button>
+			<div id="left">
+				<button
+					type="button"
+					hx-delete="/delete-account"
+					hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
+					hx-target="body"
+				>
+					Delete account
+				</button>
+			</div>
+			<div id="right">
+				<button 
+					type="button"
+					hx-get="/settings/cancel"
+					hx-confirm="Are you sure you want to cancel the changes? This action is irreversible."
+					hx-target="#settings-section"
+					hx-swap="outerHTML"
+				> Cancel 
+				</button>
+
+				<button 
+					type="button"
+					hx-post="/settings/save"
+					hx-encoding="multipart/form-data"
+					hx-target="#settings-section"
+					hx-swap="outerHTML"
+				>
+					Save changes 
+				</button>
+			</div>
 		</div>
 	</form>
 }
@@ -116,20 +137,46 @@ templ EditPasswordSection() {
 	</div>
 }
 
-templ avatarSettings(user sqlc.User) {
+templ AvatarSettings(user sqlc.User) {
 	if user.AvatarUrl.Valid {
 		<img
-			src={ user.AvatarUrl.String }
+			id="avatar-preview"
+			src={ user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()) }
 			alt="User avatar"
 			class="avatar-img"
 		/>
 	} else {
 		<img class="avatar-img" src="static/img/default-avatar.jpg" alt="default avatar"/>
 	}
-	//<form action="/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
-	<label for="avatar">Upload new avatar </label>
-	<input type="file" id="avatar" name="avatar" accept="image/*"/>
-	//</form>
+	<div id="edit-avatar">
+		<button type="button" hx-get="/settings/modify-avatar" hx-target="#edit-avatar" hx-swap="innerHTML"> Modify </button>
+	</div>
+}
+
+templ AvatarOptions() {
+	<input 
+		type="file" 
+		id="avatar" 
+		name="avatar" 
+		accept="image/*" 
+		hidden/>
+	<label for="avatar" id="upload-avatar"> Upload new avatar </label>
+
+	<input 
+		type="hidden"
+		id="delete-avatar-flag"
+		name="delete-avatar"
+		value="false"
+	/>
+	<button 
+		type="button" 
+		hx-on="click:
+			document.getElementById('delete-avatar-flag').value='true';
+			document.getElementById('avatar-preview').src='static/img/default-avatar.jpg';"
+	> 
+		Delete avatar 
+	</button>
+	
 }
 
 templ PreferenceItem(preference string) {

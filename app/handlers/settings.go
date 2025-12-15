@@ -25,6 +25,8 @@ func registerSettingsHandlers() {
 	http.HandleFunc("/settings/edit/password", handlePasswordEdit)
 	http.HandleFunc("/settings/edit/password/cancel", cancelPasswordEdit)
 	http.HandleFunc("/settings/add-preference", handlePreferences)
+	http.HandleFunc("/settings/modify-avatar", handleAvatarModification)
+	http.HandleFunc("/settings/cancel", handleSettingsCancel)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -83,6 +85,41 @@ func handlePreferences(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func handleAvatarModification(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		views.AvatarOptions().Render(r.Context(), w)
+	default:
+		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
+	}
+
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		user := getCurrentUser(w, r)
+		email := getCurrentUserEmail(w, r)
+		preferences, err := queries.ListPreferencesFromUser(r.Context(), user.UserID)
+		if err != nil {
+			log.Println("ListPreferencesFromUser:", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		views.SettingsForm(*user, *email, preferences).Render(r.Context(), w)
+	default:
+		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
+	}
+
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -148,13 +185,17 @@ func editField(w http.ResponseWriter, r *http.Request) {
 // Guarda la nueva configuración.
 func saveSettings(w http.ResponseWriter, r *http.Request) {
 
+	log.Println(r)
 	//Parseo del formulario
 	err := r.ParseMultipartForm(10 << 20)
 	if err != nil {
+		log.Println("d2sadsad")
+		log.Println(err)
 		http.Error(w, "Invalid form", http.StatusBadRequest)
+
 		return
 	}
-
+	log.Println("195")
 	//Obtengo el usuario
 	user := getCurrentUser(w, r)
 
@@ -168,8 +209,15 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if v := r.Form.Get("surname"); v != "" {
 		surname = v
 	}
-
+	log.Println("209")
 	saveAvatar(user, w, r)
+	if r.Form.Get("delete-avatar") == "true" { //En caso de Upload + Delete, gana Delete
+		err := deleteAvatar(r.Context(), user.UserID)
+		if err != nil {
+			http.Error(w, "Error deleting avatar", 500)
+			return
+		}
+	}
 
 	//Actualizacion de datos que se guardan en nuestra BD
 	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
@@ -190,7 +238,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
+	log.Println("238")
 	// Actualización de la contrasñea.
 	currentPassword := r.Form.Get("current-password")
 	newPassword := r.Form.Get("new-password")
@@ -205,7 +253,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	//Renderización final
 	updatedUser := getCurrentUser(w, r)
 	updatedEmail := getCurrentUserEmail(w, r)
-
+	log.Println("253")
 	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
 	component.Render(r.Context(), w)
 }

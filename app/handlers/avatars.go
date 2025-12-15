@@ -212,11 +212,21 @@ func UploadAvatar(ctx context.Context, bucket string, userID int32, file io.Read
 
 // Se elimina el avatar de un usuario.
 func deleteAvatar(ctx context.Context, userID int32) error {
+
 	key := fmt.Sprintf("%d.jpg", userID)
 	_, err := S3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(key),
 	})
+
+	_ = queries.UploadAvatar(ctx, database.UploadAvatarParams{
+		UserID: userID,
+		AvatarUrl: sql.NullString{
+			String: "",
+			Valid:  false,
+		},
+	})
+
 	return err
 }
 
