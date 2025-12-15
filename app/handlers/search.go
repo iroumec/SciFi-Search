@@ -331,6 +331,8 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName string) {
 
 	// Acá sería mejor que el email solo se enviara a los usuarios
@@ -358,7 +360,7 @@ func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName s
 	}
 }
 
-//
+// ------------------------------------------------------------------------------------------------
 
 func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 

@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+	"scifi-search/app/database"
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
 
@@ -29,6 +30,21 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	buffer, err := generateGraph(trendingSearches)
+	if err != nil {
+		http.Error(w, "Error al generar gráfico", 500)
+		return
+	}
+
+	htmlChart := extractBodyContent(buffer.String())
+
+	views.TrendsPage(htmlChart, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func generateGraph(trendingSearches []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+
 	xValues := make([]string, len(trendingSearches))
 	yValues := make([]int, len(trendingSearches))
 	for i, row := range trendingSearches {
@@ -38,7 +54,7 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
 	line := charts.NewLine()
 	line.SetGlobalOptions(
-		charts.WithTitleOpts(opts.Title{Title: "Tendencias de búsquedas"}),
+		//charts.WithTitleOpts(opts.Title{Title: "Tendencias de búsquedas"}),
 		charts.WithInitializationOpts(opts.Initialization{
 			Width:  "100%",
 			Height: "400px",
@@ -50,15 +66,11 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 	line.SetXAxis(xValues).
 		AddSeries("Búsquedas", generateLineItems(yValues))
 
-	var buf bytes.Buffer
-	if err := line.Render(&buf); err != nil {
-		http.Error(w, "Error al generar gráfico", 500)
-		return
-	}
+	var buffer bytes.Buffer
 
-	htmlChart := extractBodyContent(buf.String())
+	err := line.Render(&buffer)
 
-	views.TrendsPage(htmlChart, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+	return buffer, err
 }
 
 // ------------------------------------------------------------------------------------------------

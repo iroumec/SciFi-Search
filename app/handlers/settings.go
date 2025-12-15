@@ -1,5 +1,7 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"context"
 	"database/sql"
@@ -9,8 +11,11 @@ import (
 	"scifi-search/app/utils"
 	"scifi-search/app/views"
 	"strings"
-	//emailpassword "github.com/supertokens/supertokens-golang/recipe/emailpassword"
 )
+
+// ------------------------------------------------------------------------------------------------
+// Registro de endpoints.
+// ------------------------------------------------------------------------------------------------
 
 func registerSettingsHandlers() {
 
@@ -22,6 +27,10 @@ func registerSettingsHandlers() {
 	http.HandleFunc("/settings/add-preference", handlePreferences)
 }
 
+// ------------------------------------------------------------------------------------------------
+// Definición de handlers.
+// ------------------------------------------------------------------------------------------------
+
 func handleSettings(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
@@ -30,8 +39,9 @@ func handleSettings(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func handleEditField(w http.ResponseWriter, r *http.Request) {
 
@@ -41,8 +51,9 @@ func handleEditField(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 
@@ -52,8 +63,9 @@ func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func handlePreferences(w http.ResponseWriter, r *http.Request) {
 
@@ -71,9 +83,13 @@ func handlePreferences(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
 
+// ------------------------------------------------------------------------------------------------
+// Function definitions.
+// ------------------------------------------------------------------------------------------------
+
+// Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
@@ -96,9 +112,11 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	}
-
 }
 
+// ------------------------------------------------------------------------------------------------
+
+// Renderiza el campo que está siendo editado.
 func editField(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
@@ -123,9 +141,11 @@ func editField(w http.ResponseWriter, r *http.Request) {
 
 	component := views.EditableInfoField(fieldStr, typeStr, value)
 	component.Render(r.Context(), w)
-
 }
 
+// ------------------------------------------------------------------------------------------------
+
+// Guarda la nueva configuración.
 func saveSettings(w http.ResponseWriter, r *http.Request) {
 
 	//Parseo del formulario
@@ -149,13 +169,57 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		surname = v
 	}
 
+	saveAvatar(user, w, r)
+
+	//Actualizacion de datos que se guardan en nuestra BD
+	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
+		UserID:  user.UserID,
+		Name:    name,
+		Surname: surname,
+	})
+
+	updatedPreferences := updatePreferences(user, r)
+
+	// Actualización del email.
+	if v := r.Form.Get("email"); v != "" {
+		err := updateEmail(user, v)
+		if err == nil {
+			utils.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
+		} else {
+			utils.AddFlashCookie(w, "Error interno del servidor.")
+			return
+		}
+	}
+
+	// Actualización de la contrasñea.
+	currentPassword := r.Form.Get("current-password")
+	newPassword := r.Form.Get("new-password")
+	if currentPassword != "" && newPassword != "" {
+		err := updatePassword(user, currentPassword, newPassword)
+		if err != nil {
+			utils.AddFlashCookie(w, "Error interno del servidor.")
+			return
+		}
+	}
+
+	//Renderización final
+	updatedUser := getCurrentUser(w, r)
+	updatedEmail := getCurrentUserEmail(w, r)
+
+	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
+	component.Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
+
 	file, _, err := r.FormFile("avatar")
 	if err != nil && err != http.ErrMissingFile {
 		http.Error(w, "No se pudo leer el archivo", 400)
 		return
-	}
+	} else if err == nil {
 
-	if err == nil {
 		defer file.Close()
 
 		// Se cambia el tamaño de la imagen.
@@ -181,13 +245,11 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 			},
 		})
 	}
+}
 
-	//Actualizacion de datos que se guardan en nuestra BD
-	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
-		UserID:  user.UserID,
-		Name:    name,
-		Surname: surname,
-	})
+// ------------------------------------------------------------------------------------------------
+
+func updatePreferences(user *sqlc.User, r *http.Request) []string {
 
 	log.Println(r.Form["preferences[]"])
 	queries.RemoveAllPreferenceFromUser(r.Context(), user.UserID)
@@ -204,39 +266,12 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Actualización del email.
-	if v := r.Form.Get("email"); v != "" {
-		err := updateEmail(user, v)
-		if err == nil {
-			utils.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
-		} else {
-			utils.AddFlashCookie(w, "Error interno del servidor.")
-			return
-		}
-	}
-
-	// Actualización de la contrasñea.
-	currentPassword := r.Form.Get("current-password")
-	newPassword := r.Form.Get("new-password")
-	log.Printf("Current %s", currentPassword)
-	log.Printf("New %s", newPassword)
-	if currentPassword != "" && newPassword != "" {
-		err := updatePassword(user, currentPassword, newPassword)
-		if err != nil {
-			utils.AddFlashCookie(w, "Error interno del servidor.")
-			return
-		}
-	}
-
-	//Renderización final
-	updatedUser := getCurrentUser(w, r)
-	updatedEmail := getCurrentUserEmail(w, r)
-
-	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
-	component.Render(r.Context(), w)
-
+	return updatedPreferences
 }
 
+// ------------------------------------------------------------------------------------------------
+
+// Cancela la edición del campo de la contraseña.
 func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
@@ -245,3 +280,5 @@ func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
