@@ -76,13 +76,33 @@ func indexarDatos() {
 		log.Fatal(err)
 	}
 
-	var docs []map[string]any
-	if err := json.Unmarshal(data, &docs); err != nil {
+	var documents []map[string]any
+	if err := json.Unmarshal(data, &documents); err != nil {
 		log.Fatal(err)
 	}
 
+	indexDocs := indexDocuments(indexName, documents)
+
+	index := client.Index(indexName)
+
+	configureSearchSettings(index)
+	configureFilterableAttributes(index)
+	configureSortableAttributes(index)
+
+	_, err = index.AddDocuments(indexDocs, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Datos indexados correctamente.")
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func indexDocuments(indexName string, documents []map[string]any) []map[string]any {
+
 	var indexDocs []map[string]any
-	for _, doc := range docs {
+	for _, doc := range documents {
 
 		nombre, ok := doc["Nombre"].(string)
 
@@ -127,18 +147,7 @@ func indexarDatos() {
 		}
 	}
 
-	index := client.Index(indexName)
-
-	configureSearchSettings(index)
-	configureFilterableAttributes(index)
-	configureSortableAttributes(index)
-
-	_, err = index.AddDocuments(indexDocs, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Datos indexados correctamente.")
+	return indexDocs
 }
 
 // ------------------------------------------------------------------------------------------------
