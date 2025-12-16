@@ -14,6 +14,28 @@
     display: none;
 }
 
+.scifi-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--scifi);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+
+    line-height: 1; /* important */
+}
+
+.scifi-button:hover {
+    background-color: white;   
+    color: var(--scifi);                
+}
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 /* ---------------------------------------------------------- General ---------------------------------------------------------- */
 /* ----------------------------------------------------------------------------------------------------------------------------- */
@@ -221,21 +243,6 @@ body {
     /*background-color: #fccab3;
     border: 1px solid rgb(255, 0, 0);*/
 }
-
-    .header-button {
-        background-color: var(--scifi);   /* color del boton */
-        color: white;             /* color del texto */
-        border: none;               /* sin borde */
-        padding: 0.5rem 1rem;       /* espacio interno */
-        border-radius: 5px;         /* esquinas redondeadas */
-        cursor: pointer;            /* cambia el cursor al pasar */
-        font-weight: bold; /* Efecto de la letra */
-        transition: background 0.2s; /* Efecto */
-    }
-    .header-button:hover {
-        background-color: white;   
-        color: var(--scifi);                
-    }
 
     #header-menu {
         background-color: transparent;
@@ -716,7 +723,7 @@ body {
             height: 100%;
             color: var(--scifi);
 
-            border: 1px red solid;
+            /*border: 1px red solid;*/
         }
 
             .subtitle {
@@ -729,7 +736,7 @@ body {
                 font-size: 1.5rem;
                 color: var(--scifi);
                 
-                border: 1px yellow solid;
+                /*border: 1px yellow solid;*/
             }
 
             #profile {
@@ -745,7 +752,7 @@ body {
                 padding-left: 0.5rem;
                 margin: 0px;
                 
-                border: 1px yellow solid;
+                /*border: 1px yellow solid;*/
             }
 
             .info-section {
@@ -755,11 +762,11 @@ body {
                 align-items: center;
                 padding: 1.5rem;
 
-                border: 1px yellow solid;
+                /*border: 1px yellow solid;*/
             }
 
                 .info-section .centered-container {
-                    border: 1px solid green;
+                    /*border: 1px solid green;*/
                     width: 100%;
                     height: 100%;
                     display: flex;
@@ -768,19 +775,61 @@ body {
                 }
 
                     .info-section input {
-                        background-color: white;
+                        background-color: var(--scifi30);
                         border: none;
                         height: 2rem;
                         width: 80%;
                         padding-left: 0.5rem;
                     }
+                
+                #edit-password-section {
+                    display: grid;
+                    grid-template-columns: 80% 20%;
+                    grid-template-rows: 100%;
+                    grid-template-areas:
+                    "inputs button";
+                }
 
-        .avatar-settings {
+                    #password-inputs {
+                        grid-area: inputs;
+                        display: flex;
+                        flex-direction: column;
+                    }
+
+                    #password-button {
+                        grid-area: button;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+        #avatar-settings {
             grid-area: avatar;
-            border: 1px red solid;
+
+            display: grid;
+            grid-template-rows: 84% 16%;
+            grid-template-areas:
+                "picture       " 
+                "avatar-buttons";
+            /*border: 1px red solid;*/
         }
-            .avatar-img {
-                width: 100%;
+
+            #avatar-section {
+                grid-area: picture;
+                padding: 1.5rem;
+            }
+
+                .avatar-img {
+                    width: 100%;
+                }
+
+            #edit-avatar {
+                grid-area: avatar-buttons;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 1.5rem;
+                font-size: 0.84rem;
             }
 
         .preferences-settings {
@@ -795,7 +844,7 @@ body {
                 "preferences-list"
                 "adder";
             
-            border: 1px red solid;
+           /* border: 1px red solid;*/
         }
 
             #preference {
@@ -807,19 +856,106 @@ body {
                 overflow-y: auto;       
                 max-height: 100%;
 
-                border: yellow solid 1px;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;;
+
+                /*border: yellow solid 1px;*/
             }
+
+                .preference {
+                    display: flex;
+                    border-bottom: 1px solid var(--scifi);
+                }
+
+                    .remove-preference {
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: var(--scifi);
+                    }
+                    .remove-preference::after {
+                        content: "\0445";
+                        line-height: 1;
+                    }
+                    .remove-preference:hover {
+                        color: red;
+                    }
+
+                    .preference input {
+                        background: none;
+                        border: none;
+                        outline: none;
+                        cursor: default;
+                        user-select: none;
+                        width: 100%;
+                        height: 1.5rem;
+                    }
+
+                    .preference input:focus {
+                        border: none;
+                        outline: none;
+                        box-shadow: none;
+                    }
+
+            #add-preference {
+                grid-area: adder;
+                gap: 0.5rem;
+                display: flex;
+                padding-left: 0.5rem;
+            }
+
+                #add-preference input {
+                    background-color: var(--scifi30);
+                    border: none;
+                    width: 60%;
+                    padding-left: 1rem;
+                    height: 1.5rem;
+                }
+
+                #add-preference .scifi-button {
+                    height: 1.5rem;
+                }
+
+
 
 
         .nav-section {
             grid-area: svchg;
 
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding-right: 1rem;
-            border: 1px red solid;
+            display: grid;
+            grid-template-columns: 50% 50%;
+            grid-template-areas: "set-left set-right";
+            /*border: 1px red solid;*/
         }
+
+            .nav-section #set-left {
+                grid-area: set-left;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                padding-left: 0.5rem;
+            }
+
+                #delete-account-btn {
+                    background-color: darkred;
+                    transition: background 0.2s;
+                }
+                #delete-account-btn:hover {
+                    color: red;
+                    background-color: white;
+                }
+
+            .nav-section #set-right {
+                grid-area: set-right;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.5rem;
+                padding-right: 0.5rem;
+            }
 
     .settings-content #right {
         grid-area: settings-right;

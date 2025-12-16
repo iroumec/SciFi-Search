@@ -49,8 +49,8 @@ templ SearchHeader(isUserAuthenticated bool, translator utils.Translator) {
 // ------------------------------------------------------------------------------------------------
 templ userOptions(isUserAuthenticated bool, translator utils.Translator) {
 	if !isUserAuthenticated {
-		<button class="header-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
-		<button class="header-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
+		<button class="scifi-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
+		<button class="scifi-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
 	} else {
 		<div class="index-menu">
 			<button id="header-menu" onclick="toggleSlidemenu(event)">

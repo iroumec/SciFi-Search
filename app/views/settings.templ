@@ -47,6 +47,7 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 				<input id="preference-field" type="text" name="preferences[]"/>
 				<button
 					type="button"
+					class="scifi-button"
 					hx-get="/settings/add-preference"
 					hx-include="#preference-field"
 					hx-target="#preferences-list"
@@ -58,9 +59,11 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 			</div>
 		</div>
 		<div class="nav-section">
-			<div id="left">
+			<div id="set-left">
 				<button
 					type="button"
+					class="scifi-button"
+					id="delete-account-btn"
 					hx-delete="/delete-account"
 					hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
 					hx-target="body"
@@ -68,9 +71,10 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 					Delete account
 				</button>
 			</div>
-			<div id="right">
+			<div id="set-right">
 				<button 
 					type="button"
+					class="scifi-button"
 					hx-get="/settings/cancel"
 					hx-confirm="Are you sure you want to cancel the changes? This action is irreversible."
 					hx-target="#settings-section"
@@ -80,6 +84,7 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 
 				<button 
 					type="button"
+					class="scifi-button"
 					hx-post="/settings/save"
 					hx-encoding="multipart/form-data"
 					hx-target="#settings-section"
@@ -102,6 +107,7 @@ templ InfoField(name string, typeStr string, value string) {
 		/>
 		<button
 			type="button"
+			class="scifi-button"
 			hx-get={ "/settings/edit/" + name }
 			hx-target={ "#field-" + name }
 			hx-swap="outerHTML"
@@ -117,39 +123,60 @@ templ EditableInfoField(name string, typeStr string, value string) {
 			type={ typeStr }
 			name={ name }
 			value={ value }
+			style="background-color: var(--white80);"
 		/>
 	</div>
 }
 
 templ EditPasswordSection() {
 	<div id="edit-password-section">
-		<input type="password" name="current-password" placeholder="Current password"/>
-		<input type="password" name="new-password" placeholder="New password"/>
-		<input type="password" name="repeat-password" placeholder="Repeat new password"/>
-		<button
-			type="button"
-			hx-get="/settings/edit/password/cancel"
-			hx-target="#edit-password-section"
-			hx-swap="outerHTML"
-		>
-			Cancel    
-		</button>
+		<div id="password-inputs">
+			<input type="password" name="current-password" placeholder="Current password" style="width: 100%;"/>
+			<input type="password" name="new-password" placeholder="New password" style="width: 100%;"/>
+			<input type="password" name="repeat-password" placeholder="Repeat new password" style="width: 100%;"/>
+		</div>
+		<div id="password-button">
+			<button
+				type="button"
+				class="scifi-button"
+				hx-get="/settings/edit/password/cancel"
+				hx-target="#edit-password-section"
+				hx-swap="outerHTML"
+			>
+				Cancel    
+			</button>
+		</div>
 	</div>
 }
 
 templ AvatarSettings(user sqlc.User) {
-	if user.AvatarUrl.Valid {
-		<img
-			id="avatar-preview"
-			src={ user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()) }
-			alt="User avatar"
-			class="avatar-img"
-		/>
-	} else {
-		<img class="avatar-img" src="static/img/default-avatar.jpg" alt="default avatar"/>
-	}
+	<div id="avatar-section">
+		if user.AvatarUrl.Valid {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src={ user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()) }
+				alt="User avatar"
+			/>
+		} else {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src="static/img/default-avatar.jpg"
+				alt="User avatar"
+			/>
+		}
+	</div>
 	<div id="edit-avatar">
-		<button type="button" hx-get="/settings/modify-avatar" hx-target="#edit-avatar" hx-swap="innerHTML"> Modify </button>
+		<button 
+			type="button" 
+			class="scifi-button" 
+			hx-get="/settings/modify-avatar" 
+			hx-target="#edit-avatar" 
+			hx-swap="innerHTML"
+		>
+			Modify 
+		</button>
 	</div>
 }
 
@@ -159,8 +186,14 @@ templ AvatarOptions() {
 		id="avatar" 
 		name="avatar" 
 		accept="image/*" 
-		hidden/>
-	<label for="avatar" id="upload-avatar"> Upload new avatar </label>
+		hidden
+		hx-on="change:
+			const file = this.files[0];
+			if (file) {
+				document.getElementById('avatar-preview').src = URL.createObjectURL(file);
+			}"
+	/>
+	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;"> Upload new avatar </label>
 
 	<input 
 		type="hidden"
@@ -169,7 +202,8 @@ templ AvatarOptions() {
 		value="false"
 	/>
 	<button 
-		type="button" 
+		type="button"
+		class="scifi-button" 
 		hx-on="click:
 			document.getElementById('delete-avatar-flag').value='true';
 			document.getElementById('avatar-preview').src='static/img/default-avatar.jpg';"
@@ -181,15 +215,14 @@ templ AvatarOptions() {
 
 templ PreferenceItem(preference string) {
 	<div class="preference">
+		<button type="button" class="remove-preference" onclick="this.parentElement.remove()" />
 		<input
 			type="text"
 			name="preferences[]"
 			value={ preference }
 			readonly
+			tabindex="-1"
 		/>
-		<button type="button" onclick="this.parentElement.remove()">
-			Remove
-		</button>
 	</div>
 }
 

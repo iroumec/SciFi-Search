@@ -141,27 +141,27 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 		}
 		ctx = templ.ClearChildren(ctx)
 		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button class=\"header-button\" onclick=\"window.location.href='/signup'\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button class=\"scifi-button\" onclick=\"window.location.href='/signup'\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 52, Col: 100}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 52, Col: 99}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"header-button\" onclick=\"window.location.href='/login'\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"scifi-button\" onclick=\"window.location.href='/login'\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 53, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 53, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
