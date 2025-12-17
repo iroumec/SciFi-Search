@@ -12,6 +12,7 @@ echo
 # 1. Generaración y aplicación migraciones con Atlas.
 echo "Verificando migraciones de base de datos..."
 
+# Migración de hashes.
 atlas migrate hash --dir file://database/migrations
 
 # Generación de migraciones.

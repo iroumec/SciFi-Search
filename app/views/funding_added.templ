@@ -2,6 +2,7 @@ package views
 
 import "scifi-search/app/utils"
 
+// ------------------------------------------------------------------------------------------------
 templ fundingAddedContent(translator utils.Translator) {
 	@Header()
 	<main>
@@ -13,8 +14,11 @@ templ fundingAddedContent(translator utils.Translator) {
 	</main>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ FundingAddedPage(translator utils.Translator) {
 	@Layout(translator("funding.added"), translator, func() templ.Component {
 		return fundingAddedContent(translator)
 	})
 }
+
+// ------------------------------------------------------------------------------------------------

@@ -25,16 +25,10 @@ func registerTrendsHandler() {
 // ------------------------------------------------------------------------------------------------
 
 func trendsHandler(w http.ResponseWriter, r *http.Request) {
-	trendingSearches, err := queries.GetTrendingSearches(r.Context())
+	trendingSearches, err := queries.GetTrendingSearches(r.Context(), maxResultsShown)
 	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
-	}
-
-	// Se limitan los resultados a los N más relevantes.
-	limit := maxResultsShown
-	if len(trendingSearches) > limit {
-		trendingSearches = trendingSearches[:limit]
 	}
 
 	buffer, err := graphs.GenerateBarChart(trendingSearches)

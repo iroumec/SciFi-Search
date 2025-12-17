@@ -72,7 +72,7 @@ func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Co
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!--button class=\"header-button\" onclick=\"window.location.href='/trends'\">Trends</button--></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -102,7 +102,7 @@ func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.C
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<header class=\"search-header\"><div class=\"header-left\"><a onclick=\"window.location.href='/'\"><img src=\"static/img/logo_blanco.png\" alt=\"icono\" id=\"logo_scifi_header\"></a> <input type=\"text\" id=\"query\" placeholder=\"Search for SCIENCE!!!\"></div><div class=\"header-right\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<header class=\"search-header\"><div class=\"header-left\"><a href=\"/\"><img src=\"static/img/logo_blanco.png\" alt=\"icono\" id=\"logo_scifi_header\"></a><form hx-get=\"/search\" hx-target=\"body\" hx-push-url=\"true\"><input type=\"text\" name=\"query\" id=\"query\" placeholder=\"Search for SCIENCE!!!\" hx-trigger=\"keyup[key=='Enter']\" hx-get=\"/search\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></form></div><div class=\"header-right\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,7 +110,7 @@ func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><script>\n\t\t\tconst input = document.getElementById(\"query\");\n\t\t\tinput.addEventListener(\"keypress\", (e) => {\n\t\t\t\tif (e.key === \"Enter\") {\n\t\t\t\t\tconst query = input.value.trim();\n\t\t\t\t\tif (!query) return;\n\t\t\t\t\twindow.location.href = `/search?query=${encodeURIComponent(query)}`;\n\t\t\t\t}\n\t\t\t});\n\t\t</script></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -141,27 +141,27 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 		}
 		ctx = templ.ClearChildren(ctx)
 		if !isUserAuthenticated {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button class=\"scifi-button\" onclick=\"window.location.href='/signup'\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<button class=\"scifi-button\" hx-get=\"/signup\" hx-target=\"body\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 52, Col: 99}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 59, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"scifi-button\" onclick=\"window.location.href='/login'\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"scifi-button\" hx-get=\"/login\" hx-target=\"body\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 53, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 67, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -172,14 +172,10 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\"><button id=\"header-menu\" onclick=\"toggleSlidemenu(event)\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content hidden\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" onclick=\"window.location.href='/settings'\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" onclick=\"window.location.href='/funding'\">Subir un proyecto</button> <button class=\"menu-button\" onclick=\"window.location.href='/trends'\">Tendencias</button> <button class=\"menu-button\" onclick=\"window.location.href='/signout'\">Cerrar sesión</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\" x-data=\"{ open: false }\" @click.outside=\"open = false\"><button id=\"header-menu\" @click.stop=\"open = !open\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\" x-show=\"!open\"></button><div id=\"menu\" class=\"menu-content\" x-show=\"open\" style=\"display: none;\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" hx-get=\"/settings\" hx-target=\"body\" hx-push-url=\"true\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" hx-get=\"/funding\" hx-target=\"body\" hx-push-url=\"true\">Subir un proyecto</button> <button class=\"menu-button\" hx-get=\"/trends\" hx-target=\"body\" hx-push-url=\"true\">Tendencias</button> <button class=\"menu-button\" hx-get=\"/signout\" hx-target=\"body\" hx-push-url=\"true\">Cerrar sesión</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<script>\n        (function() {\n            function toggleSlidemenu(e) {\n                e.stopPropagation();\n                const menu = document.getElementById(\"menu\");\n                const menuImg = document.getElementById(\"header-menu-img\");\n                if (menu) menu.classList.toggle(\"hidden\");\n                if (menuImg) menuImg.classList.toggle(\"hidden\");\n            }\n            \n            // Se hace la función global para que onclick pueda accederla.\n            window.toggleSlidemenu = toggleSlidemenu;\n            \n            // Se cierra el menú si se hace click fuera del menú.\n            document.addEventListener(\"click\", function(e) {\n                const menu = document.getElementById(\"menu\");\n                const menuButton = document.getElementById(\"header-menu\");\n                const flashPopup = document.getElementById(\"flash-popup\");\n                \n                // No cerrar si se clickea el menú mismo, el botón del menú, o el popup.\n                if (menu && menuButton && \n                    !menu.contains(e.target) && \n                    !menuButton.contains(e.target) &&\n                    (!flashPopup || !flashPopup.contains(e.target))) {\n                    menu.classList.add(\"hidden\");\n                    const menuImg = document.getElementById(\"header-menu-img\");\n                    if (menuImg && menuImg.classList.contains(\"hidden\")) {\n                        menuImg.classList.remove(\"hidden\");\n                    }\n                }\n            });\n        })();\n    </script>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
 		}
 		return nil
 	})

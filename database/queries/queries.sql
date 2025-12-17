@@ -50,7 +50,8 @@ FROM historic_searches
 WHERE search_datetime >= date_trunc('day', NOW() AT TIME ZONE 'UTC')
     AND search_datetime <  date_trunc('day', NOW() AT TIME ZONE 'UTC') + INTERVAL '1 day'
 GROUP BY search_string
-ORDER BY count DESC;
+ORDER BY count DESC
+LIMIT $1;
 
 -- name: AddDocument :one
 INSERT INTO documents(name, description, first_area, second_area, type, link) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;

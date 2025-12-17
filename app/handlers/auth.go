@@ -28,6 +28,7 @@ import (
 )
 
 const (
+	debug         = false
 	websiteDomain = "http://localhost:8080"
 )
 
@@ -478,7 +479,8 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	email.Send(*userEmail, "¡Lamentamos que te vayas!", "Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!")
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	w.Header().Set("HX-Redirect", "/")
+	w.WriteHeader(http.StatusOK)
 }
 
 func revokeSession(w http.ResponseWriter, r *http.Request) {
@@ -659,18 +661,19 @@ func updatePassword(user *database.User, currentPassword, newPassword string) er
 		return err
 	}
 
-	log.Printf(currentPassword)
-	log.Printf(newPassword)
+	if debug {
 
-	// DEBUG: Ver qué contiene la respuesta.
-	log.Printf("UpdateEmailOrPassword response - OK: %v, UnknownUser: %v, EmailExists: %v, PasswordPolicy: %v",
-		updateResp.OK != nil,
-		updateResp.UnknownUserIdError != nil,
-		updateResp.EmailAlreadyExistsError != nil,
-		updateResp.PasswordPolicyViolatedError != nil)
+		// Ver qué tiene la respuesta.
+		log.Printf("UpdateEmailOrPassword response - OK: %v, UnknownUser: %v, EmailExists: %v, PasswordPolicy: %v",
+			updateResp.OK != nil,
+			updateResp.UnknownUserIdError != nil,
+			updateResp.EmailAlreadyExistsError != nil,
+			updateResp.PasswordPolicyViolatedError != nil)
 
-	if updateResp.PasswordPolicyViolatedError != nil {
-		log.Printf("DETALLE del error de política: %+v", updateResp.PasswordPolicyViolatedError)
+		if updateResp.PasswordPolicyViolatedError != nil {
+			log.Printf("DETALLE del error de política: %+v", updateResp.PasswordPolicyViolatedError)
+		}
+
 	}
 
 	if updateResp.OK == nil {

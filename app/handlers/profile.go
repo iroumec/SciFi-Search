@@ -52,3 +52,5 @@ func showProfile(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------

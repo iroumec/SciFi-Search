@@ -18,5 +18,12 @@
     "welcome": "Bienvenido",
     "profile.no_avatar": "Sin avatar",
     "log-in": "Iniciar sesión",
-    "email-verification.sent": "¡Correo electrónico de verificación enviado!"
+    "email-verification.sent": "¡Correo electrónico de verificación enviado!",
+    "first-area": "Primera área",
+    "second-area": "Segunda área",
+    "description": "Descripción",
+    "funding.new": "Nuevo financiamiento",
+    "type": "Tipo",
+    "link": "Enlace",
+    "submit": "Subir"
 }

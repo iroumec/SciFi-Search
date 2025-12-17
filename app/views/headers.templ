@@ -17,7 +17,6 @@ templ Header() {
 templ IndexHeader(isUserAuthenticated bool, translator utils.Translator) {
 	<header class="index-header">
 		@userOptions(isUserAuthenticated, translator)
-		<!--button class="header-button" onclick="window.location.href='/trends'">Trends</button-->
 	</header>
 }
 
@@ -25,80 +24,72 @@ templ IndexHeader(isUserAuthenticated bool, translator utils.Translator) {
 templ SearchHeader(isUserAuthenticated bool, translator utils.Translator) {
 	<header class="search-header">
 		<div class="header-left">
-			<a onclick="window.location.href='/'">
+			<a href="/">
 				<img src="static/img/logo_blanco.png" alt="icono" id="logo_scifi_header"/>
 			</a>
-			<input type="text" id="query" placeholder="Search for SCIENCE!!!"/>
+			<form hx-get="/search" hx-target="body" hx-push-url="true">
+				<input
+					type="text"
+					name="query"
+					id="query"
+					placeholder="Search for SCIENCE!!!"
+					hx-trigger="keyup[key=='Enter']"
+					hx-get="/search"
+					hx-target="body"
+					hx-push-url="true"
+					hx-include="this"
+				/>
+			</form>
 		</div>
 		<div class="header-right">
 			@userOptions(isUserAuthenticated, translator)
 		</div>
-		<script>
-			const input = document.getElementById("query");
-			input.addEventListener("keypress", (e) => {
-				if (e.key === "Enter") {
-					const query = input.value.trim();
-					if (!query) return;
-					window.location.href = `/search?query=${encodeURIComponent(query)}`;
-				}
-			});
-		</script>
 	</header>
 }
 
 // ------------------------------------------------------------------------------------------------
 templ userOptions(isUserAuthenticated bool, translator utils.Translator) {
 	if !isUserAuthenticated {
-		<button class="scifi-button" onclick="window.location.href='/signup'">{ translator("sign-up.tag") }</button>
-		<button class="scifi-button" onclick="window.location.href='/login'">{ translator("log-in.tag") }</button>
+		<button
+			class="scifi-button"
+			hx-get="/signup"
+			hx-target="body"
+			hx-push-url="true"
+		>
+			{ translator("sign-up.tag") }
+		</button>
+		<button
+			class="scifi-button"
+			hx-get="/login"
+			hx-target="body"
+			hx-push-url="true"
+		>
+			{ translator("log-in.tag") }
+		</button>
 	} else {
-		<div class="index-menu">
-			<button id="header-menu" onclick="toggleSlidemenu(event)">
-				<img src="static/img/menu.svg" alt="header-menu-img" id="header-menu-img"/>
+		<div
+			class="index-menu"
+			x-data="{ open: false }"
+			@click.outside="open = false"
+		>
+			<button id="header-menu" @click.stop="open = !open">
+				<img
+					src="static/img/menu.svg"
+					alt="header-menu-img"
+					id="header-menu-img"
+					x-show="!open"
+				/>
 			</button>
-			<div id="menu" class="menu-content hidden">
+			<div id="menu" class="menu-content" x-show="open" style="display: none;">
 				<div id="close-menu">MENU</div>
-				<button class="menu-button" onclick="window.location.href='/settings'">Configuración</button>
+				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">Configuración</button>
 				<button class="menu-button">Historial</button>
-				<button class="menu-button" onclick="window.location.href='/funding'">Subir un proyecto</button>
-				<button class="menu-button" onclick="window.location.href='/trends'">Tendencias</button>
-				<button class="menu-button" onclick="window.location.href='/signout'">Cerrar sesión</button>
+				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">Subir un proyecto</button>
+				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">Tendencias</button>
+				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">Cerrar sesión</button>
 			</div>
 		</div>
 	}
-	<script>
-        (function() {
-            function toggleSlidemenu(e) {
-                e.stopPropagation();
-                const menu = document.getElementById("menu");
-                const menuImg = document.getElementById("header-menu-img");
-                if (menu) menu.classList.toggle("hidden");
-                if (menuImg) menuImg.classList.toggle("hidden");
-            }
-            
-            // Se hace la función global para que onclick pueda accederla.
-            window.toggleSlidemenu = toggleSlidemenu;
-            
-            // Se cierra el menú si se hace click fuera del menú.
-            document.addEventListener("click", function(e) {
-                const menu = document.getElementById("menu");
-                const menuButton = document.getElementById("header-menu");
-                const flashPopup = document.getElementById("flash-popup");
-                
-                // No cerrar si se clickea el menú mismo, el botón del menú, o el popup.
-                if (menu && menuButton && 
-                    !menu.contains(e.target) && 
-                    !menuButton.contains(e.target) &&
-                    (!flashPopup || !flashPopup.contains(e.target))) {
-                    menu.classList.add("hidden");
-                    const menuImg = document.getElementById("header-menu-img");
-                    if (menuImg && menuImg.classList.contains("hidden")) {
-                        menuImg.classList.remove("hidden");
-                    }
-                }
-            });
-        })();
-    </script>
 }
 
 // ------------------------------------------------------------------------------------------------

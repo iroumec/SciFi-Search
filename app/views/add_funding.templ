@@ -2,32 +2,33 @@ package views
 
 import "scifi-search/app/utils"
 
-templ addFundingContent() {
+// ------------------------------------------------------------------------------------------------
+templ addFundingContent(translator utils.Translator) {
 	@Header()
 	<main>
 		<div class="signup-container">
 			<div class="centered-container">
 				<form id="funding-form" action="/funding" method="POST">
 					<div class="form-name-container">
-						<input type="text" id="name" placeholder="Name" name="name" required/>
+						<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
 					</div>
 					<div class="form-surname-container">
-						<input type="text" id="description" placeholder="Description" name="description" required/>
+						<input type="text" id="description" placeholder={ translator("description") } name="description" required/>
 					</div>
 					<div class="form-email-container">
-						<input type="text" id="first-area" placeholder="First Area" name="first-area" required/>
+						<input type="text" id="first-area" placeholder={ translator("first-area") } name="first-area" required/>
 					</div>
 					<div class="form-password-container">
-						<input type="text" id="second-area" placeholder="Second Area" name="second-area" required/>
+						<input type="text" id="second-area" placeholder={ translator("second-area") } name="second-area" required/>
 					</div>
 					<div class="form-password-container">
-						<input type="text" id="type" placeholder="Tipo" name="type" required/>
+						<input type="text" id="type" placeholder={ translator("type") } name="type" required/>
 					</div>
 					<div class="form-password-container">
-						<input type="link" id="link" placeholder="Link" name="link"/>
+						<input type="link" id="link" placeholder={ translator("link") } name="link"/>
 					</div>
 					<div class="form-submit-container">
-						<button class="submit-button" type="submit">Submit</button>
+						<button class="submit-button" type="submit">{ translator("submit") }</button>
 					</div>
 				</form>
 			</div>
@@ -35,8 +36,11 @@ templ addFundingContent() {
 	</main>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ AddFundingPage(translator utils.Translator) {
-	@Layout("Nueva búsqueda", translator, func() templ.Component {
-		return addFundingContent()
+	@Layout(translator("funding.new"), translator, func() templ.Component {
+		return addFundingContent(translator)
 	})
 }
+
+// ------------------------------------------------------------------------------------------------

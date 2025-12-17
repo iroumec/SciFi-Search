@@ -139,6 +139,7 @@ WHERE search_datetime >= date_trunc('day', NOW() AT TIME ZONE 'UTC')
     AND search_datetime <  date_trunc('day', NOW() AT TIME ZONE 'UTC') + INTERVAL '1 day'
 GROUP BY search_string
 ORDER BY count DESC
+LIMIT $1
 `
 
 type GetTrendingSearchesRow struct {
@@ -147,8 +148,8 @@ type GetTrendingSearchesRow struct {
 }
 
 // Búquedas realizadas hoy según UTC.
-func (q *Queries) GetTrendingSearches(ctx context.Context) ([]GetTrendingSearchesRow, error) {
-	rows, err := q.db.QueryContext(ctx, getTrendingSearches)
+func (q *Queries) GetTrendingSearches(ctx context.Context, limit int32) ([]GetTrendingSearchesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getTrendingSearches, limit)
 	if err != nil {
 		return nil, err
 	}
