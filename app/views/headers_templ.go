@@ -172,7 +172,7 @@ func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Co
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\" x-data=\"{ open: false }\" @click.outside=\"open = false\"><button id=\"header-menu\" @click.stop=\"open = !open\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\" x-show=\"!open\"></button><div id=\"menu\" class=\"menu-content\" x-show=\"open\" style=\"display: none;\"><div id=\"close-menu\">MENU</div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"index-menu\" x-data=\"{ open: false }\" @click.outside=\"open = false\"><button id=\"header-menu\" @click.stop=\"open = !open\"><img src=\"static/img/menu.svg\" alt=\"header-menu-img\" id=\"header-menu-img\" x-show=\"!open\"></button><div id=\"menu\" class=\"menu-content\" x-show=\"open\" style=\"display: none;\"><div id=\"close-menu\">MENU</div><button class=\"menu-button\" hx-get=\"/settings\" hx-target=\"body\" hx-push-url=\"true\">Configuración</button> <button class=\"menu-button\">Historial</button> <button class=\"menu-button\" hx-get=\"/funding\" hx-target=\"body\" hx-push-url=\"true\">Subir un proyecto</button> <button class=\"menu-button\" hx-get=\"/trends\" hx-target=\"body\" hx-push-url=\"true\">Tendencias</button> <button class=\"menu-button\" hx-get=\"/signout\" hx-target=\"body\" hx-push-url=\"true\">Cerrar sesión</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
