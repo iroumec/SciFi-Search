@@ -1,11 +1,10 @@
 package views 
 
 import (
-    sqlc "scifi-search/app/database"
     "scifi-search/app/utils"
 )
 
-templ historyContent(user sqlc.User, searches []utils.HistoricSearchView, translator utils.Translator) {
+templ historyContent(searches []utils.HistoricSearchView, translator utils.Translator) {
     @Header()
 	<div class="centered-box-content">
 		<div id="left"></div>
@@ -27,8 +26,8 @@ templ historyContent(user sqlc.User, searches []utils.HistoricSearchView, transl
 	</div>
 }
 
-templ HistoryPage(user sqlc.User, searches []utils.HistoricSearchView, translator utils.Translator) {
+templ HistoryPage(searches []utils.HistoricSearchView, translator utils.Translator) {
 	@Layout("History", translator, func() templ.Component {
-		return historyContent(user, searches, translator)
+		return historyContent(searches, translator)
 	})
 }

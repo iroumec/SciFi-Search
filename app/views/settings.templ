@@ -1,22 +1,21 @@
 package views 
 
 import (
-	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
 	"fmt"
 	"time"
 )
 
-templ settingsContent(user sqlc.User, email string, preferences []string) {
+templ settingsContent(user utils.User, preferences []string) {
 	@Header()
 	<div class="centered-box-content">
 		<div id="left"></div>
-		@SettingsForm(user, email, preferences)
+		@SettingsForm(user, preferences)
 		<div id="right"></div>
 	</div>
 }
 
-templ SettingsForm(user sqlc.User, email string, preferences []string) {
+templ SettingsForm(user utils.User, preferences []string) {
 	<form
 		id="settings-section"
 		enctype="multipart/form-data"
@@ -28,7 +27,7 @@ templ SettingsForm(user sqlc.User, email string, preferences []string) {
 				<div class="centered-container">
 					@InfoField("name", "text", user.Name)
 					@InfoField("surname", "text", user.Surname)
-					@InfoField("email", "email", email)
+					@InfoField("email", "email", user.Email)
 					@InfoField("password", "password", "********")
 				</div>
 			</div>
@@ -149,13 +148,13 @@ templ EditPasswordSection() {
 	</div>
 }
 
-templ AvatarSettings(user sqlc.User) {
+templ AvatarSettings(user utils.User) {
 	<div id="avatar-section">
-		if user.AvatarUrl.Valid {
+		if user.AvatarURLValid {
 			<img
 				id="avatar-preview"
 				class="avatar-img"
-				src={ user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()) }
+				src={ user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()) }
 				alt="User avatar"
 			/>
 		} else {
@@ -226,8 +225,8 @@ templ PreferenceItem(preference string) {
 	</div>
 }
 
-templ SettingsPage(user sqlc.User, email string, preferences []string, translator utils.Translator) {
+templ SettingsPage(user utils.User, preferences []string, translator utils.Translator) {
 	@Layout("Settings", translator, func() templ.Component {
-		return settingsContent(user, email, preferences)
+		return settingsContent(user, preferences)
 	})
 }

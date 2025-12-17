@@ -43,7 +43,7 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		component := views.HistoryPage(*user, searches, utils.GetTranslatorFromRequest(r))
+		component := views.HistoryPage(searches, utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	} else {

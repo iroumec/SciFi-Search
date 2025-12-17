@@ -106,16 +106,24 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		user := getCurrentUser(w, r)
-		email := getCurrentUserEmail(w, r)
-		preferences, err := queries.ListPreferencesFromUser(r.Context(), user.UserID)
+		currentUser := getCurrentUser(w, r)
+
+		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
 			log.Println("ListPreferencesFromUser:", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
-		views.SettingsForm(*user, *email, preferences).Render(r.Context(), w)
+		user := utils.User{
+			Name:            currentUser.Name,
+			Surname:         currentUser.Surname,
+			AvatarURLString: currentUser.AvatarUrl.String,
+			AvatarURLValid:  currentUser.AvatarUrl.Valid,
+			Email:           *getCurrentUserEmail(w, r),
+		}
+
+		views.SettingsForm(user, preferences).Render(r.Context(), w)
 	default:
 		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
 	}
@@ -129,18 +137,26 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 // Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
-	user := getCurrentUser(w, r)
+	currentUser := getCurrentUser(w, r)
 
-	if user != nil {
+	if currentUser != nil {
 
-		preferences, err := queries.ListPreferencesFromUser(r.Context(), user.UserID)
+		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
 			log.Println("ListPreferencesFromUser:", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
-		component := views.SettingsPage(*user, *getCurrentUserEmail(w, r), preferences, utils.GetTranslatorFromRequest(r))
+		user := utils.User{
+			Name:            currentUser.Name,
+			Surname:         currentUser.Surname,
+			AvatarURLString: currentUser.AvatarUrl.String,
+			AvatarURLValid:  currentUser.AvatarUrl.Valid,
+			Email:           *getCurrentUserEmail(w, r),
+		}
+
+		component := views.SettingsPage(user, preferences, utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	} else {
@@ -195,7 +211,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	log.Println("195")
+
 	//Obtengo el usuario
 	user := getCurrentUser(w, r)
 
@@ -209,7 +225,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if v := r.Form.Get("surname"); v != "" {
 		surname = v
 	}
-	log.Println("209")
+
 	saveAvatar(user, w, r)
 	if r.Form.Get("delete-avatar") == "true" { //En caso de Upload + Delete, gana Delete
 		err := deleteAvatar(r.Context(), user.UserID)
@@ -238,7 +254,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	log.Println("238")
+
 	// Actualización de la contrasñea.
 	currentPassword := r.Form.Get("current-password")
 	newPassword := r.Form.Get("new-password")
@@ -251,10 +267,17 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Renderización final
-	updatedUser := getCurrentUser(w, r)
-	updatedEmail := getCurrentUserEmail(w, r)
-	log.Println("253")
-	component := views.SettingsForm(*updatedUser, *updatedEmail, updatedPreferences)
+	currentUpdatedUser := getCurrentUser(w, r)
+
+	updatedUser := utils.User{
+		Name:            currentUpdatedUser.Name,
+		Surname:         currentUpdatedUser.Surname,
+		AvatarURLString: currentUpdatedUser.AvatarUrl.String,
+		AvatarURLValid:  currentUpdatedUser.AvatarUrl.Valid,
+		Email:           *getCurrentUserEmail(w, r),
+	}
+
+	component := views.SettingsForm(updatedUser, updatedPreferences)
 	component.Render(r.Context(), w)
 }
 

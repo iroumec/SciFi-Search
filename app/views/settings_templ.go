@@ -10,12 +10,11 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	sqlc "scifi-search/app/database"
 	"scifi-search/app/utils"
 	"time"
 )
 
-func settingsContent(user sqlc.User, email string, preferences []string) templ.Component {
+func settingsContent(user utils.User, preferences []string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -44,7 +43,7 @@ func settingsContent(user sqlc.User, email string, preferences []string) templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = SettingsForm(user, email, preferences).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = SettingsForm(user, preferences).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -56,7 +55,7 @@ func settingsContent(user sqlc.User, email string, preferences []string) templ.C
 	})
 }
 
-func SettingsForm(user sqlc.User, email string, preferences []string) templ.Component {
+func SettingsForm(user utils.User, preferences []string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -84,7 +83,7 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 25, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -97,7 +96,7 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Surname)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 25, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -115,7 +114,7 @@ func SettingsForm(user sqlc.User, email string, preferences []string) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = InfoField("email", "email", email).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = InfoField("email", "email", user.Email).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -177,7 +176,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 101, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 100, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -190,7 +189,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 103, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 102, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -203,7 +202,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 104, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 103, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -216,7 +215,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 105, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 104, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -229,7 +228,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs("/settings/edit/" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 111, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 110, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -242,7 +241,7 @@ func InfoField(name string, typeStr string, value string) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs("#field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 112, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 111, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -284,7 +283,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 121, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 120, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -297,7 +296,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 123, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 122, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -310,7 +309,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 124, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 123, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -323,7 +322,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 125, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 124, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -366,7 +365,7 @@ func EditPasswordSection() templ.Component {
 	})
 }
 
-func AvatarSettings(user sqlc.User) templ.Component {
+func AvatarSettings(user utils.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -391,15 +390,15 @@ func AvatarSettings(user sqlc.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if user.AvatarUrl.Valid {
+		if user.AvatarURLValid {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<img id=\"avatar-preview\" class=\"avatar-img\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var19 string
-			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(user.AvatarUrl.String + "?v=" + fmt.Sprint(time.Now().Unix()))
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 158, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 157, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -480,7 +479,7 @@ func PreferenceItem(preference string) templ.Component {
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(preference)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 222, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 221, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -494,7 +493,7 @@ func PreferenceItem(preference string) templ.Component {
 	})
 }
 
-func SettingsPage(user sqlc.User, email string, preferences []string, translator utils.Translator) templ.Component {
+func SettingsPage(user utils.User, preferences []string, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -516,7 +515,7 @@ func SettingsPage(user sqlc.User, email string, preferences []string, translator
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("Settings", translator, func() templ.Component {
-			return settingsContent(user, email, preferences)
+			return settingsContent(user, preferences)
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

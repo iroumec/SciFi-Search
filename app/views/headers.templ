@@ -83,7 +83,7 @@ templ userOptions(isUserAuthenticated bool, translator utils.Translator) {
 			<div id="menu" class="menu-content" x-show="open" style="display: none;">
 				<div id="close-menu">MENU</div>
 				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">Configuración</button>
-				<button class="menu-button">Historial</button>
+				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">Historial</button>
 				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">Subir un proyecto</button>
 				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">Tendencias</button>
 				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">Cerrar sesión</button>
