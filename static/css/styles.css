@@ -36,6 +36,23 @@
     color: var(--scifi);                
 }
 
+.centered-box-content {
+    grid-area: content;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 100%;
+    grid-template-areas: "display-left display-center display-right";
+}
+    .centered-box-content #left {
+        grid-area: display-left;
+    }
+
+    .centered-box-content #right {
+        grid-area: display-right;
+    }
+
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 /* ---------------------------------------------------------- General ---------------------------------------------------------- */
 /* ----------------------------------------------------------------------------------------------------------------------------- */
@@ -160,6 +177,13 @@ body {
         .footer-button:hover {
             text-decoration: underline white;
             cursor: pointer;
+        }
+
+        #github-btn {
+            text-decoration: none;
+        }
+        #github-btn:hover {
+            text-decoration: underline white;
         }
 
     .clear-right {
@@ -681,21 +705,9 @@ body {
                     }
 
 /*------------- Settings --------------- */
-.settings-content {
-    grid-area: content;
-    height: 100%;
-
-    display: grid;
-    grid-template-columns: 25% 50% 25%;
-    grid-template-rows: 100%;
-    grid-template-areas: "settings-left settings settings-right";
-}
-    .settings-content #left {
-        grid-area: settings-left;
-    }
 
     #settings-section {
-        grid-area: settings;
+        grid-area: display-center;
         height: 85%;
 
         display: grid;
@@ -957,10 +969,36 @@ body {
                 padding-right: 0.5rem;
             }
 
-    .settings-content #right {
-        grid-area: settings-right;
+
+/*------------- History --------------- */
+#history-content { 
+    grid-area: display-center;
+    height: 85%;
+
+    background-color: var(--scifi30);
+    padding: 2.5rem;
+}
+
+    #history-list {
+        overflow-y: auto;
+        max-height: 100%;
     }
 
+        .historic-query {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            border-bottom: 1px var(--scifi) solid;
+            padding-top: 0.2rem;
+            padding-bottom: 0.2rem;
+            padding-left: 0.3rem;
+        }
+
+            .historic-query p {
+                margin: 0;
+                padding-right: 1rem;
+                padding-left: 0.25rem;
+            }
 /*------------- Perfil --------------- */
 
 .profile-container {

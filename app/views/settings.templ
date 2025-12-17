@@ -9,7 +9,7 @@ import (
 
 templ settingsContent(user sqlc.User, email string, preferences []string) {
 	@Header()
-	<div class="settings-content">
+	<div class="centered-box-content">
 		<div id="left"></div>
 		@SettingsForm(user, email, preferences)
 		<div id="right"></div>
@@ -230,8 +230,4 @@ templ SettingsPage(user sqlc.User, email string, preferences []string, translato
 	@Layout("Settings", translator, func() templ.Component {
 		return settingsContent(user, email, preferences)
 	})
-}
-
-templ SettingsPageError() {
-	<h1>NO HAY SESIÓN</h1>
 }

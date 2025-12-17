@@ -145,7 +145,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 
-		component := views.SettingsPageError()
+		component := views.UnloggedPage()
 		component.Render(r.Context(), w)
 
 	}

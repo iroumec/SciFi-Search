@@ -8,6 +8,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 const addDocument = `-- name: AddDocument :one
@@ -206,22 +207,27 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
-SELECT search_string FROM historic_searches WHERE user_id = $1
+SELECT search_string,search_datetime FROM historic_searches WHERE user_id = $1
 `
 
-func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, userID int32) ([]string, error) {
+type ListHistoricSearchesFromUserRow struct {
+	SearchString   string    `json:"search_string"`
+	SearchDatetime time.Time `json:"search_datetime"`
+}
+
+func (q *Queries) ListHistoricSearchesFromUser(ctx context.Context, userID int32) ([]ListHistoricSearchesFromUserRow, error) {
 	rows, err := q.db.QueryContext(ctx, listHistoricSearchesFromUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []ListHistoricSearchesFromUserRow
 	for rows.Next() {
-		var search_string string
-		if err := rows.Scan(&search_string); err != nil {
+		var i ListHistoricSearchesFromUserRow
+		if err := rows.Scan(&i.SearchString, &i.SearchDatetime); err != nil {
 			return nil, err
 		}
-		items = append(items, search_string)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

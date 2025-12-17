@@ -104,7 +104,7 @@ func Footer(translator utils.Translator) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo-meilisearch.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo-supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo-minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logo-unicen.png\" alt=\"Logo Supertokens\" id=\"logo-unicen\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">Trends</button> <button class=\"footer-button\">Language: EN</button> <button class=\"footer-button\">Help</button></div><div class=\"clear-right\"></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo-meilisearch.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo-supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo-minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logo-unicen.png\" alt=\"Logo Supertokens\" id=\"logo-unicen\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">Trends</button> <button class=\"footer-button\">Language: EN</button> <a id=\"github-btn\" class=\"footer-button\" href=\"https://github.com/iroumec/SciFi-Search\" target=\"_blank\">GitHub Repository</a></div><div class=\"clear-right\"></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,9 +113,4 @@ func Footer(translator utils.Translator) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-/*
-background: #368ac2;
-background: linear-gradient(180deg, rgba(54, 138, 194, 0) 0%, rgba(0, 87, 133, 1) 44%, rgba(15, 32, 59, 1) 87%);
-*/
-
 var _ = templruntime.GeneratedTemplate
