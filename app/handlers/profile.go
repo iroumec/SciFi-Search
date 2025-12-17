@@ -3,9 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"scifi-search/app/utils"
-	"scifi-search/app/views"
-
 	_ "github.com/lib/pq"
 )
 
@@ -22,7 +19,7 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		showProfile(w, r)
+		//showProfile(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -30,7 +27,7 @@ func handleProfile(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func showProfile(w http.ResponseWriter, r *http.Request) {
+/*func showProfile(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
 
@@ -51,4 +48,4 @@ func showProfile(w http.ResponseWriter, r *http.Request) {
 		component := views.UnloggedProfilePage()
 		component.Render(r.Context(), w)
 	}
-}
+}*/

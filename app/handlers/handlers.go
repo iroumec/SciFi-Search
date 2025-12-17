@@ -54,8 +54,8 @@ func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
 	// Se registran los handlers correspondientes a la configuración (EN PROCESO).
 	registerSettingsHandlers()
 
-	// Se registran los handlers correspondientes al perfil del usuario.
-	registerProfileHandlers()
+	// Se registran los handlers correspondientes al historial del usuario.
+	registerHistoryHandlers()
 
 	// Se registran los handlers correspondientes al manejo de avatars.
 	registerAvatarHandlers()
