@@ -5,7 +5,6 @@ import (
 )
 
 templ historyContent(searches []utils.HistoricSearchView, translator utils.Translator) {
-    @Header()
 	<div class="centered-box-content">
 		<div id="left"></div>
         <div id="history-content">
@@ -27,7 +26,8 @@ templ historyContent(searches []utils.HistoricSearchView, translator utils.Trans
 }
 
 templ HistoryPage(searches []utils.HistoricSearchView, translator utils.Translator) {
-	@Layout("History", translator, func() templ.Component {
-		return historyContent(searches, translator)
-	})
+	@Layout("History", translator, 
+        func() templ.Component { return Header() },
+		func() templ.Component { return historyContent(searches, translator) },
+    )
 }

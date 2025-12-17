@@ -1,5 +1,82 @@
 package views 
 
+import "scifi-search/app/utils"
+
+// ------------------------------------------------------------------------------------------------
+// ----------------------------------------- Sign Up ----------------------------------------------
+// ------------------------------------------------------------------------------------------------
+templ signUpContent(errorMessage string, translator utils.Translator) {
+	<main>
+		<div class="only-form-content">
+			<div class="centered-container">
+				<form id="signup-form" action="/signup" method="POST">
+					<div class="form-name-container">
+						<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
+					</div>
+					<div class="form-surname-container">
+						<input type="text" id="surname" placeholder={ translator("surname") } name="surname" required/>
+					</div>
+					<div class="form-email-container">
+						<input type="email" id="email" placeholder={ translator("email") } name="email" required/>
+					</div>
+					<div class="form-password-container">
+						<input type="password" id="password" placeholder={ translator("password") } name="password" required/>
+					</div>
+					<div class="form-submit-container">
+						<button class="submit-button" type="submit">{ translator("sign-up") }</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+}
+
+templ SignUpPage(errorMessage string, translator utils.Translator) {
+	@Layout(translator("sign-up"), translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return signUpContent(errorMessage, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// ----------------------------------------- Log In -----------------------------------------------
+// ------------------------------------------------------------------------------------------------
+templ loginContent(errorMessage string, translator utils.Translator) {
+	<main>
+		@showPopUp()
+		<div class="only-form-content">
+			<div class="centered-container">
+				<form id="login-form" action="/login" method="POST">
+					<div class="form-email-container">
+						<input id="email" type="email" name="email" placeholder={ translator("email") } required/>
+					</div>
+					<div class="form-password-container">
+						<input id="password" type="password" name="password" placeholder={ translator("password") } required/>
+					</div>
+					<div class="form-submit-container">
+						<button class="submit-button" type="submit">{ translator("log-in") }</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+	if errorMessage != "" {
+		<div id="mensaje" style="color:red;">
+			{ errorMessage }
+		</div>
+	}
+}
+
+templ LoginPage(errorMessage string, translator utils.Translator) {
+	@Layout(translator("log-in"), translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return loginContent(errorMessage, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// --------------------------------------- No session ---------------------------------------------
+// ------------------------------------------------------------------------------------------------
 templ UnloggedPage() {
 	<h1>NO HAY SESIÓN</h1>
 }

@@ -7,7 +7,6 @@ import (
 )
 
 templ settingsContent(user utils.User, preferences []string) {
-	@Header()
 	<div class="centered-box-content">
 		<div id="left"></div>
 		@SettingsForm(user, preferences)
@@ -226,7 +225,8 @@ templ PreferenceItem(preference string) {
 }
 
 templ SettingsPage(user utils.User, preferences []string, translator utils.Translator) {
-	@Layout("Settings", translator, func() templ.Component {
-		return settingsContent(user, preferences)
-	})
+	@Layout("Settings", translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return settingsContent(user, preferences) },
+	)
 }

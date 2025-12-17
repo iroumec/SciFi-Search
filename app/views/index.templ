@@ -3,8 +3,7 @@ package views
 import "scifi-search/app/utils"
 
 // ------------------------------------------------------------------------------------------------
-templ indexContent(isUserAuthenticated bool, translator utils.Translator) {
-	@IndexHeader(isUserAuthenticated, translator)
+templ indexContent(translator utils.Translator) {
 	<main class="index-content">
 		@showPopUp()
 		<div class="index-top">
@@ -16,11 +15,6 @@ templ indexContent(isUserAuthenticated bool, translator utils.Translator) {
 					<input type="text" id="first-query" placeholder="Search for SCIENCE!!!"/>
 				</div>
 			</div>
-		</div>
-		<div class="index-bottom">
-			if isUserAuthenticated {
-				<!-- Aca irían 4 proyectos que le podrían interesar con shadow-box  -->
-			}
 		</div>
 		<script>
             const input = document.getElementById("first-query");
@@ -99,7 +93,8 @@ templ showPopUp() {
 
 // ------------------------------------------------------------------------------------------------
 templ IndexPage(isUserAuthenticated bool, translator utils.Translator) {
-	@Layout("SciFi Search", translator, func() templ.Component {
-		return indexContent(isUserAuthenticated, translator)
-	})
+	@Layout("SciFi Search", translator, 
+        func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+        func() templ.Component { return indexContent(translator) },
+    )
 }

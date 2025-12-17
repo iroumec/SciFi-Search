@@ -4,7 +4,6 @@ import "scifi-search/app/utils"
 
 // ------------------------------------------------------------------------------------------------
 templ addFundingContent(translator utils.Translator) {
-	@Header()
 	<main>
 		<div class="signup-container">
 			<div class="centered-container">
@@ -38,9 +37,10 @@ templ addFundingContent(translator utils.Translator) {
 
 // ------------------------------------------------------------------------------------------------
 templ AddFundingPage(translator utils.Translator) {
-	@Layout(translator("funding.new"), translator, func() templ.Component {
-		return addFundingContent(translator)
-	})
+	@Layout(translator("funding.new"), translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return addFundingContent(translator) },
+	)
 }
 
 // ------------------------------------------------------------------------------------------------

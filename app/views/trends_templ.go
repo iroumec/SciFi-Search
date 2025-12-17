@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "html/template"
 import "scifi-search/app/utils"
 
-func trendsContent(htmlChart template.HTML, isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func trendsContent(htmlChart template.HTML, translator utils.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -32,14 +32,6 @@ func trendsContent(htmlChart template.HTML, isUserAuthenticated bool, translator
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = IndexHeader(isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = Header().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"trends-container\"><h1>Tendencias de Búsqueda</h1><div class=\"chart-wrapper\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -77,9 +69,10 @@ func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator ut
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Trending", translator, func() templ.Component {
-			return trendsContent(htmlChart, isUserAuthenticated, translator)
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Trending", translator,
+			func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+			func() templ.Component { return trendsContent(htmlChart, translator) },
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

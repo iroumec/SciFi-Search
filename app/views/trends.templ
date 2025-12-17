@@ -3,9 +3,7 @@ package views
 import "html/template"
 import "scifi-search/app/utils"
 
-templ trendsContent(htmlChart template.HTML, isUserAuthenticated bool, translator utils.Translator) {
-	@IndexHeader(isUserAuthenticated, translator)
-	@Header()
+templ trendsContent(htmlChart template.HTML, translator utils.Translator) {
 	<div class="trends-container">
 		<h1>Tendencias de Búsqueda</h1>
 		<div class="chart-wrapper">
@@ -15,7 +13,8 @@ templ trendsContent(htmlChart template.HTML, isUserAuthenticated bool, translato
 }
 
 templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator utils.Translator) {
-	@Layout("Trending", translator, func() templ.Component {
-		return trendsContent(htmlChart, isUserAuthenticated, translator)
-	})
+	@Layout("Trending", translator, 
+		func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+		func() templ.Component { return trendsContent(htmlChart, translator) },
+	)
 }

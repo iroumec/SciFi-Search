@@ -3,9 +3,9 @@ package views
 import "scifi-search/app/utils"
 
 // ------------------------------------------------------------------------------------------------
-// Layout
+// ----------------------------------------- Layout -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ Layout(title string, translator utils.Translator, content func() templ.Component) {
+templ Layout(title string, translator utils.Translator, header func() templ.Component, content func() templ.Component) {
 	<!DOCTYPE html>
 	<html lang="es">
 		<!-- Script de HTMX -->
@@ -23,6 +23,7 @@ templ Layout(title string, translator utils.Translator, content func() templ.Com
 		</head>
 		<body>
 			<div class="contenedor-grid">
+				@header()
 				@content()
 				@Footer(translator)
 			</div>
@@ -31,7 +32,7 @@ templ Layout(title string, translator utils.Translator, content func() templ.Com
 }
 
 // ------------------------------------------------------------------------------------------------
-// Footer
+// ----------------------------------------- Footer -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ Footer(translator utils.Translator) {
 	<footer class="footer">
@@ -64,5 +65,3 @@ templ Footer(translator utils.Translator) {
 		<div class="clear-right"></div>
 	</footer>
 }
-
-// ------------------------------------------------------------------------------------------------
