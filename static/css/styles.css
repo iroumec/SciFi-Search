@@ -28,9 +28,8 @@
     font-weight: bold;
     transition: background 0.2s;
 
-    line-height: 1; /* important */
+    line-height: 1; 
 }
-
 .scifi-button:hover {
     background-color: white;   
     color: var(--scifi);                
@@ -196,6 +195,9 @@ body {
 /* ---------------------------------------------------------- Headers ---------------------------------------------------------- */
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
+/* ------------------------------------------------------------------------------------------------ */
+/* ----------------------------------------- General ---------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .header {
     grid-area: header;
 
@@ -254,7 +256,9 @@ body {
                 background-color: var(--white50);
             }
 
-/* --------------- Index header --------------- */
+/* ------------------------------------------------------------------------------------------------ */
+/* -------------------------------------- Index header -------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .index-header {
     grid-area: header;
 
@@ -274,7 +278,9 @@ body {
         cursor: pointer;
     }
 
-/* --------------- Search header --------------- */
+/* ------------------------------------------------------------------------------------------------ */
+/* -------------------------------------- Search header ------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .search-header {
     grid-area: header;
 
@@ -342,7 +348,9 @@ body {
 /* --------------------------------------------------------- Contents ---------------------------------------------------------- */
 /* ----------------------------------------------------------------------------------------------------------------------------- */
 
-/* --------------- Index / First query --------------- */
+/* ------------------------------------------------------------------------------------------------ */
+/* ----------------------------------- Index / First query ---------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .index-content {
     grid-area: content; 
     
@@ -421,7 +429,9 @@ body {
                     border: 0.5px black;
                 }
 
-/*----------------- Auth forms -----------------*/
+/* ------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------ Forms ----------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .only-form-content {
     grid-area: content;
     height: 100%;
@@ -444,126 +454,53 @@ body {
         background-color: var(--scifi30);
         border: 20px solid var(--white80);
         border-radius: 15px;
-
-        /*background-color: #18b473;
-        border: 1px solid rgb(255, 0, 0);*/
     }
-
-    .only-form-content input {
-        height: 65%;
-        width: 75%;
-
-        color: black;
-
-        border-radius: 20px;
-        border: 0px;
-
-        background-color: var(--scifi30);
-
-        padding-left: 15px;
-    }
-
-    .only-form-content #signup-form {
-        height: 65%;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 100%;
-        grid-template-rows: 18.75% 18.75% 18.75% 18.75% 25%;
-        grid-template-areas: 
-            "name"
-            "surname"
-            "email"
-            "password"
-            "submit";
-
-        border-radius: inherit;
-    }
-
-        .form-name-container {
-            grid-area: name;
+        .only-form-content form {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-
-            border-radius: inherit;
-
-            /*background-color: #b41818;
-            border: 1px solid rgb(255, 0, 0);*/
+            width: 100%;
         }
 
-        .form-surname-container {
-            grid-area: surname;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: inherit;
-
-            /*background-color: #d8a08a;
-            border: 1px solid rgb(255, 0, 0);*/
-        }
-
-    .only-form-content #login-form {
-        height: 40%;
-        width: 100%;
-        display: grid;
-        grid-template-columns: 100%;
-        grid-template-rows: 30% 30% 40%;
-        grid-template-areas: 
-            "email"
-            "password"
-            "submit";
-
-        border-radius: inherit;
-    }
-
-        .form-email-container {
-            grid-area: email;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: inherit;
-
-            /*background-color: #b86110;
-            border: 1px solid rgb(255, 0, 0);*/
-        }
-
-        .form-password-container {
-            grid-area: password;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: inherit;
-
-            /*background-color: #b8ac10;
-            border: 1px solid rgb(255, 0, 0);*/
-        }
-
-        .form-submit-container {
-            grid-area: submit;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            border-radius: inherit;
-
-            /*background-color: #5eb418;
-            border: 1px solid rgb(255, 0, 0);*/
-        }
-
-            .submit-button {
-                background-color: var(--scifi);   /* color del boton */
-                color: white;             /* color del texto */
-                border: none;               /* sin borde */
-                padding: 0.5rem 1rem;       /* espacio interno */
-                border-radius: 5px;         /* esquinas redondeadas */
-                cursor: pointer;            /* cambia el cursor al pasar */
-                font-weight: bold; /* Efecto de la letra */
+            #form-inputs {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 2rem;
+                margin-bottom: 2rem;
+                width: 100%;
             }
 
-/* --------------- Search --------------- */
+                .only-form-content input {
+                    height: 2.1rem;
+                    width: 75%;
+
+                    color: black;
+
+                    border-radius: 20px;
+                    border: 0px;
+
+                    background-color: var(--scifi30);
+
+                    padding-left: 15px;
+                }
+
+#no-session {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+    #no-session p {
+        font-size: 2rem;
+    }
+
+/* ------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------ Search ---------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 .search-container-grid {
     grid-area: content;
 
@@ -704,7 +641,9 @@ body {
                         font-size: 0.85rem;
                     }
 
-/*------------- Settings --------------- */
+/* ------------------------------------------------------------------------------------------------ */
+/* ---------------------------------------- Settings ---------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 
     #settings-section {
         grid-area: display-center;
@@ -970,7 +909,10 @@ body {
             }
 
 
-/*------------- History --------------- */
+
+/* ------------------------------------------------------------------------------------------------ */
+/* ----------------------------------------- History ---------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
 #history-content { 
     grid-area: display-center;
     height: 85%;
@@ -999,30 +941,3 @@ body {
                 padding-right: 1rem;
                 padding-left: 0.25rem;
             }
-/*------------- Perfil --------------- */
-
-.profile-container {
-    grid-area: content;
-}
-
-#signout {
-    
-    background-color: var(--scifi);
-    /* color del boton */
-    color: white;
-    /* color del texto */
-    border: none;
-    /* sin borde */
-    padding: 0.5rem 1rem;
-    /* espacio interno */
-    border-radius: 5px;
-    /* esquinas redondeadas */
-    cursor: pointer;
-    /* cambia el cursor al pasar */
-    font-weight: bold;
-    /* Efecto de la letra */
-}
-
-.sucessful-signup-container {
-    grid-area: content;
-}

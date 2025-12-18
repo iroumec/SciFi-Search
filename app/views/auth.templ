@@ -6,29 +6,21 @@ import "scifi-search/app/utils"
 // ----------------------------------------- Sign Up ----------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string, translator utils.Translator) {
-	<main>
-		<div class="only-form-content">
-			<div class="centered-container">
-				<form id="signup-form" action="/signup" method="POST">
-					<div class="form-name-container">
-						<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
-					</div>
-					<div class="form-surname-container">
-						<input type="text" id="surname" placeholder={ translator("surname") } name="surname" required/>
-					</div>
-					<div class="form-email-container">
-						<input type="email" id="email" placeholder={ translator("email") } name="email" required/>
-					</div>
-					<div class="form-password-container">
-						<input type="password" id="password" placeholder={ translator("password") } name="password" required/>
-					</div>
-					<div class="form-submit-container">
-						<button class="submit-button" type="submit">{ translator("sign-up") }</button>
-					</div>
-				</form>
-			</div>
+
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form id="signup-form" action="/signup" method="POST">
+				<div id="form-inputs">
+					<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
+					<input type="text" id="surname" placeholder={ translator("surname") } name="surname" required/>
+					<input type="email" id="email" placeholder={ translator("email") } name="email" required/>
+					<input type="password" id="password" placeholder={ translator("password") } name="password" required/>
+				</div>
+				<button class="scifi-button" type="submit">{ translator("sign-up") }</button>
+			</form>
 		</div>
-	</main>
+	</div>
+
 }
 
 templ SignUpPage(errorMessage string, translator utils.Translator) {
@@ -42,24 +34,18 @@ templ SignUpPage(errorMessage string, translator utils.Translator) {
 // ----------------------------------------- Log In -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ loginContent(errorMessage string, translator utils.Translator) {
-	<main>
-		@showPopUp()
-		<div class="only-form-content">
-			<div class="centered-container">
-				<form id="login-form" action="/login" method="POST">
-					<div class="form-email-container">
-						<input id="email" type="email" name="email" placeholder={ translator("email") } required/>
-					</div>
-					<div class="form-password-container">
-						<input id="password" type="password" name="password" placeholder={ translator("password") } required/>
-					</div>
-					<div class="form-submit-container">
-						<button class="submit-button" type="submit">{ translator("log-in") }</button>
-					</div>
-				</form>
-			</div>
+	@showPopUp()
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form id="login-form" action="/login" method="POST">
+				<div id="form-inputs">
+					<input id="email" type="email" name="email" placeholder={ translator("email") } required/>
+					<input id="password" type="password" name="password" placeholder={ translator("password") } required/>
+				</div>
+				<button class="scifi-button" type="submit">{ translator("log-in") }</button>
+			</form>
 		</div>
-	</main>
+	</div>
 	if errorMessage != "" {
 		<div id="mensaje" style="color:red;">
 			{ errorMessage }
@@ -77,6 +63,56 @@ templ LoginPage(errorMessage string, translator utils.Translator) {
 // ------------------------------------------------------------------------------------------------
 // --------------------------------------- No session ---------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ UnloggedPage() {
-	<h1>NO HAY SESIÓN</h1>
+templ UnloggedContent(translator utils.Translator) {
+	<div id="no-session">
+		<p> The session doesn't exists or it's expired. Please sign up or log in again. </p>
+		<div id="buttons">
+			<button
+				class="scifi-button"
+				hx-get="/signup"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				{ translator("sign-up.tag") }
+			</button>
+			<button
+				class="scifi-button"
+				hx-get="/login"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				{ translator("log-in.tag") }
+			</button>
+		</div>
+	</div>
+}
+
+templ UnloggedPage(translator utils.Translator) {
+	@Layout("No session",translator,
+		func() templ.Component { return Header() },
+		func() templ.Component { return UnloggedContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// -------------------------------------- Session info --------------------------------------------
+// ------------------------------------------------------------------------------------------------
+templ SessionInfo(userID string, payload map[string]string) {
+	<html>
+		<head>
+			<title>Session Info</title>
+		</head>
+		<body>
+			<h1>Session activa</h1>
+			<p><strong>User ID:</strong> { userID }</p>
+			<h2>Datos de sesión</h2>
+			<ul>
+				for key, value := range payload {
+					<li>
+						<strong>{ key }:</strong> { value }
+					</li>
+				}
+			</ul>
+		</body>
+	</html>
 }

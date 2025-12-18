@@ -1,0 +1,55 @@
+package views
+
+import "scifi-search/app/utils"
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------------ Upload ----------------------------------------------
+// ------------------------------------------------------------------------------------------------
+templ addFundingContent(translator utils.Translator) {
+
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form id="funding-form" action="/funding" method="POST">
+				<div class="form-inputs">
+					<input type="text" placeholder={ translator("name") } name="name" required/>
+					<input type="text" placeholder={ translator("description") } name="description" required/>
+					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
+					<input type="text" placeholder={ translator("second-area") } name="second-area" required/>
+					<input type="text" placeholder={ translator("type") } name="type" required/>
+					<input type="link" placeholder={ translator("link") } name="link"/>
+				</div>
+				<button class="scifi-button" type="submit">{ translator("submit") }</button>
+			</form>
+		</div>
+	</div>
+
+}
+
+templ AddFundingPage(translator utils.Translator) {
+	@Layout(translator("funding.new"), translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return addFundingContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------ Successful Upload -----------------------------------------
+// ------------------------------------------------------------------------------------------------
+
+//TODO: esto tal vez dejarlo como un pop-up?
+templ fundingAddedContent(translator utils.Translator) {
+	<main>
+		<div class="sucessful-signup-container">
+			<h1>{ translator("funding.added") }</h1>
+			<button class="header-button" onclick="window.location.href='/'">{ translator("redirect.main_page") }</button>
+			<button class="header-button" onclick="window.location.href='/funding'">{ translator("funding.add_another") }</button>
+		</div>
+	</main>
+}
+
+templ FundingAddedPage(translator utils.Translator) {
+	@Layout(translator("funding.added"), translator, 
+		func() templ.Component { return Header() },
+		func() templ.Component { return fundingAddedContent(translator) },
+	)
+}

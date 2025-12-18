@@ -47,7 +47,7 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	} else {
-		component := views.UnloggedPage()
+		component := views.UnloggedPage(utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	}
 }

@@ -161,7 +161,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	} else {
 
-		component := views.UnloggedPage()
+		component := views.UnloggedPage(utils.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	}
