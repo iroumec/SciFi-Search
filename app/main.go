@@ -9,7 +9,6 @@ import (
 	"scifi-search/app/handlers"
 	"scifi-search/app/utils"
 
-	"github.com/nats-io/nats.go"
 	"github.com/supertokens/supertokens-golang/supertokens"
 
 	sqlc "scifi-search/app/database"
@@ -34,11 +33,8 @@ func main() {
 	// Se obtiene un objeto que nos permita realizar las queries.
 	queries := sqlc.New(db)
 
-	nat := openNATConnection()
-	defer nat.Close() // Independientemente de lo que ocurra, se cierra el NAT al final.
-
 	// Se registran los handlers.
-	handlers.Init(queries, nat)
+	handlers.Init(queries)
 
 	// Se informa que el servidor está corriendo.
 	log.Printf("Server running...")
@@ -69,17 +65,6 @@ func openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName string)
 	}
 
 	return db
-}
-
-// -----------------------------------------------------------------------------------------------
-
-func openNATConnection() *nats.Conn {
-	nat, err := nats.Connect("nats://nats:4222")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return nat
 }
 
 // -----------------------------------------------------------------------------------------------

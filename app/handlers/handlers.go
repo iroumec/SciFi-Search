@@ -9,8 +9,6 @@ import (
 	"scifi-search/app/views"
 
 	sqlc "scifi-search/app/database"
-
-	"github.com/nats-io/nats.go"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -27,16 +25,14 @@ const (
 // ------------------------------------------------------------------------------------------------
 
 var queries *sqlc.Queries
-var nat *nats.Conn
 
 // ------------------------------------------------------------------------------------------------
 
 // registerHandlers registra todos los endpoints
-func Init(queryObject *sqlc.Queries, natObject *nats.Conn) {
+func Init(queryObject *sqlc.Queries) {
 
-	// Se guarda el NAT y el objeto de consultas para que puedan ser utilizados
+	// Se guarda el objeto de consultas para que pueda ser utilizado
 	// en todos los handlers que lo requierean.
-	nat = natObject
 	queries = queryObject
 
 	// Se registra el hander para los archivos estáticos.
