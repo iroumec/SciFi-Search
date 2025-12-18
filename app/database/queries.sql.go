@@ -207,7 +207,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
-SELECT search_string,search_datetime FROM historic_searches WHERE user_id = $1
+SELECT search_string, search_datetime FROM historic_searches WHERE user_id = $1 ORDER BY search_datetime DESC
 `
 
 type ListHistoricSearchesFromUserRow struct {

@@ -41,7 +41,7 @@ INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING *;
 DELETE FROM historic_searches WHERE historic_search_id = $1;
 
 -- name: ListHistoricSearchesFromUser :many
-SELECT search_string,search_datetime FROM historic_searches WHERE user_id = $1;
+SELECT search_string, search_datetime FROM historic_searches WHERE user_id = $1 ORDER BY search_datetime DESC;
 
 -- name: GetTrendingSearches :many
 SELECT search_string, COUNT(*) AS count
