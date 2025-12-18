@@ -12,11 +12,10 @@ import (
 	"net/http"
 	"os"
 	"scifi-search/app/database"
+	"scifi-search/app/infra/files"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/disintegration/imaging"
 )
@@ -36,7 +35,7 @@ var S3Client *s3.Client
 func registerAvatarHandlers() {
 
 	// Inicialización del cliente.
-	client, err := newMinioClient()
+	client, err := files.NewMinIoClient()
 	if err != nil {
 		return
 	}
@@ -61,32 +60,6 @@ func avatarHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-// Creación del cliente MinIO.
-func newMinioClient() (*s3.Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(
-			credentials.NewStaticCredentialsProvider(
-				os.Getenv("MINIO_ROOT_USER"),
-				os.Getenv("MINIO_ROOT_PASSWORD"),
-				"",
-			),
-		),
-		config.WithRegion("us-east-1"),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
-		o.BaseEndpoint = aws.String(os.Getenv("MINIO_HOST"))
-		o.UsePathStyle = true
-	})
-
-	return client, nil
 }
 
 // ------------------------------------------------------------------------------------------------

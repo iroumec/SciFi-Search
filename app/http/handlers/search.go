@@ -84,7 +84,7 @@ func indexarDatos() {
 		log.Fatal(err)
 	}
 
-	indexDocs := indexDocuments(indexName, documents)
+	indexDocs := indexDocuments(documents)
 
 	index := client.Index(indexName)
 
@@ -102,7 +102,7 @@ func indexarDatos() {
 
 // ------------------------------------------------------------------------------------------------
 
-func indexDocuments(indexName string, documents []map[string]any) []map[string]any {
+func indexDocuments(documents []map[string]any) []map[string]any {
 
 	var indexDocs []map[string]any
 	for _, doc := range documents {
