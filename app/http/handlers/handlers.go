@@ -5,14 +5,15 @@
 import (
 	"net/http"
 
-	"scifi-search/app/utils"
+	"scifi-search/app/http/middlewares"
+	"scifi-search/app/languages"
 	"scifi-search/app/views"
 
 	sqlc "scifi-search/app/database"
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constantes del Paquete
+// Constantes del paquete
 // ------------------------------------------------------------------------------------------------
 
 // Ruta a partir de la cual se servirán los archivos estáticos.
@@ -21,14 +22,14 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
-// variables Globales al Paquete
+// Variables del paquete
 // ------------------------------------------------------------------------------------------------
 
 var queries *sqlc.Queries
 
 // ------------------------------------------------------------------------------------------------
 
-// registerHandlers registra todos los endpoints
+// Registra todos los endpoints.
 func Init(queryObject *sqlc.Queries) {
 
 	// Se guarda el objeto de consultas para que pueda ser utilizado
@@ -68,13 +69,14 @@ func Init(queryObject *sqlc.Queries) {
 
 // ------------------------------------------------------------------------------------------------
 
+// Registra la ruta que sirve los archivos estáticos.
 func registrarHandlerStatic() {
 
 	// Se crea un manejador (handler) de servidor de archivos.
 	fileServer := http.FileServer(http.Dir(fileDir))
 
 	// Se sirven archivos estáticos en /static/, comprimidos en gzip si el navegador así lo acepta.
-	http.Handle("/static/", http.StripPrefix("/static/", utils.GzipMiddleware(fileDir, fileServer)))
+	http.Handle("/static/", http.StripPrefix("/static/", middlewares.GzipMiddleware(fileDir, fileServer)))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -86,11 +88,10 @@ func registerIndexHTML() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		// Se crea una instancia de la componente de página.
-		component := views.IndexPage(isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r))
+		component := views.IndexPage(isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r))
 
 		// Se renderiza la componente.
 		component.Render(r.Context(), w)
-
 	})
 }
 

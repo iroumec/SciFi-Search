@@ -1,26 +1,16 @@
-package utils
+package converters
 
 // ------------------------------------------------------------------------------------------------
 
-import (
-	"encoding/json"
-	"os"
-)
+import "fmt"
 
 // ------------------------------------------------------------------------------------------------
 
-func LoadJSON(path string) (map[string]string, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
+func ToString(v any) string {
+	if v == nil {
+		return ""
 	}
-
-	var result map[string]string
-	if err := json.Unmarshal(data, &result); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return fmt.Sprintf("%v", v)
 }
 
 // ------------------------------------------------------------------------------------------------

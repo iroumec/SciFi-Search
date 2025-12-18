@@ -1,8 +1,10 @@
-package utils
+package languages
 
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"scifi-search/app/utils/loaders"
+
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -16,12 +18,12 @@ const (
 // ------------------------------------------------------------------------------------------------
 
 func LoadAllMessages() error {
-	es, err := LoadJSON(languagesDirectory + "es.json")
+	es, err := loaders.LoadJSON(languagesDirectory + "es.json")
 	if err != nil {
 		return err
 	}
 
-	en, err := LoadJSON(languagesDirectory + "en.json")
+	en, err := loaders.LoadJSON(languagesDirectory + "en.json")
 	if err != nil {
 		return err
 	}

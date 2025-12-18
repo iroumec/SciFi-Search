@@ -5,20 +5,22 @@ package handlers
 import (
 	"net/http"
 
-	"scifi-search/app/utils"
+	"scifi-search/app/languages"
 )
 
 // ------------------------------------------------------------------------------------------------
 
+// Carga los mensajes y registra los handlers correspondientes al lenguaje.
 func registerLanguageHandlers() {
 
-	utils.LoadAllMessages()
+	languages.LoadAllMessages()
 
 	http.HandleFunc("/language", setLanguageHandler)
 }
 
 // ------------------------------------------------------------------------------------------------
 
+// Establece el lenguaje de la aplicación.
 func setLanguageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Obtención del lenguaje de la URL.

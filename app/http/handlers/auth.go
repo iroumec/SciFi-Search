@@ -20,8 +20,10 @@ import (
 
 	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
-	"scifi-search/app/utils"
-	"scifi-search/app/utils/email"
+	"scifi-search/app/http/cookies"
+	"scifi-search/app/infra/email"
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/checkers"
 	"scifi-search/app/views"
 	"scifi-search/app/workers"
 
@@ -157,7 +159,7 @@ func registerAuthenticationHandlers() {
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.SignUpPage("", utils.GetTranslatorFromRequest(r))
+		component := views.SignUpPage("", languages.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}
@@ -173,7 +175,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("email-verification.sent"))
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("email-verification.sent"))
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -203,7 +205,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 	password := r.Form.Get("password")
 
 	// Validación.
-	if utils.HayCampoIncompleto(name, surname, email, password) {
+	if checkers.HayCampoIncompleto(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return &newUser, nil
 	}
@@ -216,7 +218,7 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 
 	// Verificación de email ya registrado.
 	if resp.EmailAlreadyExistsError != nil {
-		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema. Inicie sesión."))
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema. Inicie sesión."))
 		return &newUser, nil
 	}
 
@@ -275,7 +277,7 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if response.OK != nil {
-		utils.AddFlashCookie(w, "¡Email verificado exitosamente!")
+		cookies.AddFlashCookie(w, "¡Email verificado exitosamente!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else if response.EmailVerificationInvalidTokenError != nil {
 		http.Error(w, "Token inválido o expirado", http.StatusBadRequest)
@@ -291,7 +293,7 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.LoginPage("", utils.GetTranslatorFromRequest(r))
+		component := views.LoginPage("", languages.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}
@@ -326,7 +328,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	// Abarca tanto la comprovación del email como de la constraseña.
 	if resp.WrongCredentialsError != nil {
 		// TODO: no recargar toda la página.
-		utils.AddFlashCookie(w, "Email o contraseña incorrectos.")
+		cookies.AddFlashCookie(w, "Email o contraseña incorrectos.")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
@@ -343,7 +345,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		utils.AddFlashCookie(w, "Welcome back!")
+		cookies.AddFlashCookie(w, "Welcome back!")
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -361,7 +363,7 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 
 	revokeSession(w, r)
 
-	utils.AddFlashCookie(w, "Successful signout!")
+	cookies.AddFlashCookie(w, "Successful signout!")
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
@@ -474,7 +476,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	// Se cierra la sesión del usuario.
 	revokeSession(w, r)
 
-	utils.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
+	cookies.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
 
 	workers.SendEmailAsync(
 		*userEmail,

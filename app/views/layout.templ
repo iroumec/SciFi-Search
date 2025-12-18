@@ -1,11 +1,11 @@
 package views
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
 // ----------------------------------------- Layout -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ Layout(title string, translator utils.Translator, header func() templ.Component, content func() templ.Component) {
+templ Layout(title string, translator languages.Translator, header func() templ.Component, content func() templ.Component) {
 	<!DOCTYPE html>
 	<html lang="es">
 		<!-- Script de HTMX -->
@@ -34,7 +34,7 @@ templ Layout(title string, translator utils.Translator, header func() templ.Comp
 // ------------------------------------------------------------------------------------------------
 // ----------------------------------------- Footer -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ Footer(translator utils.Translator) {
+templ Footer(translator languages.Translator) {
 	<footer class="footer">
 		<div class="clear-top"></div>
 		<div class="clear-left"></div>

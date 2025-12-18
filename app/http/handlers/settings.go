@@ -8,7 +8,9 @@ import (
 	"log"
 	"net/http"
 	sqlc "scifi-search/app/database"
-	"scifi-search/app/utils"
+	"scifi-search/app/http/cookies"
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
 	"strings"
 )
@@ -115,7 +117,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user := utils.User{
+		user := structures.User{
 			Name:            currentUser.Name,
 			Surname:         currentUser.Surname,
 			AvatarURLString: currentUser.AvatarUrl.String,
@@ -148,7 +150,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user := utils.User{
+		user := structures.User{
 			Name:            currentUser.Name,
 			Surname:         currentUser.Surname,
 			AvatarURLString: currentUser.AvatarUrl.String,
@@ -156,12 +158,12 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 			Email:           *getCurrentUserEmail(w, r),
 		}
 
-		component := views.SettingsPage(user, preferences, utils.GetTranslatorFromRequest(r))
+		component := views.SettingsPage(user, preferences, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	} else {
 
-		component := views.UnloggedPage(utils.GetTranslatorFromRequest(r))
+		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 
 	}
@@ -248,9 +250,9 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if v := r.Form.Get("email"); v != "" {
 		err := updateEmail(user, v)
 		if err == nil {
-			utils.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
+			cookies.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
 		} else {
-			utils.AddFlashCookie(w, "Error interno del servidor.")
+			cookies.AddFlashCookie(w, "Error interno del servidor.")
 			return
 		}
 	}
@@ -261,7 +263,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if currentPassword != "" && newPassword != "" {
 		err := updatePassword(user, currentPassword, newPassword)
 		if err != nil {
-			utils.AddFlashCookie(w, "Error interno del servidor.")
+			cookies.AddFlashCookie(w, "Error interno del servidor.")
 			return
 		}
 	}
@@ -269,7 +271,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	//Renderización final
 	currentUpdatedUser := getCurrentUser(w, r)
 
-	updatedUser := utils.User{
+	updatedUser := structures.User{
 		Name:            currentUpdatedUser.Name,
 		Surname:         currentUpdatedUser.Surname,
 		AvatarURLString: currentUpdatedUser.AvatarUrl.String,
@@ -327,7 +329,7 @@ func updatePreferences(user *sqlc.User, r *http.Request) []string {
 	var updatedPreferences []string
 	if preferences := r.Form["preferences[]"]; len(preferences) != 0 {
 		for _, p := range preferences {
-			if p != "" && !utils.Exists(updatedPreferences, p) {
+			if p != "" && !structures.Exists(updatedPreferences, p) {
 				queries.AddPreference(r.Context(), sqlc.AddPreferenceParams{
 					UserID:     user.UserID,
 					Preference: strings.ToLower(p),

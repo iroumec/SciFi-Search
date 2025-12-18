@@ -8,7 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ func Header() templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func IndexHeader(isUserAuthenticated bool, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -81,7 +81,7 @@ func IndexHeader(isUserAuthenticated bool, translator utils.Translator) templ.Co
 }
 
 // ------------------------------------------------------------------------------------------------
-func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func SearchHeader(isUserAuthenticated bool, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -119,7 +119,7 @@ func SearchHeader(isUserAuthenticated bool, translator utils.Translator) templ.C
 }
 
 // ------------------------------------------------------------------------------------------------
-func userOptions(isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func userOptions(isUserAuthenticated bool, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

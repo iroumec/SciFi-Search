@@ -2,13 +2,14 @@ package views
 
 import (
 	"container/list"
-	"scifi-search/app/utils"
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/converters"
 )
 
 // ------------------------------------------------------------------------------------------------
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) {
+templ searchResultsContent(query string, hits []map[string]any, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
 	<main>
 		<div class="search-container-grid">
 			<div class="top"></div>
@@ -38,19 +39,19 @@ templ searchResultsContent(query string, hits []map[string]any, translator utils
 templ SearchResults(hits []map[string]any) {
 	for _, m := range hits {
 		<div class="result">
-			<a id="title" href={ utils.ToString(m["Link"]) }>{ utils.ToString(m["Nombre"]) }</a>
+			<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
 			<div class="extra-info">
-				if utils.ToString(m["Tipo"]) != "" {
-					<span class="gray">{ utils.ToString(m["Tipo"]) }</span>
+				if converters.ToString(m["Tipo"]) != "" {
+					<span class="gray">{ converters.ToString(m["Tipo"]) }</span>
 				}
-				if utils.ToString(m["Gran area 1"]) != "" {
-					<span>{ utils.ToString(m["Gran area 1"]) }</span>
+				if converters.ToString(m["Gran area 1"]) != "" {
+					<span>{ converters.ToString(m["Gran area 1"]) }</span>
 				}
-				if utils.ToString(m["Gran area 2"]) != "" {
-					<span>{ utils.ToString(m["Gran area 2"]) }</span>
+				if converters.ToString(m["Gran area 2"]) != "" {
+					<span>{ converters.ToString(m["Gran area 2"]) }</span>
 				}
 			</div>
-			<p id="description">{ utils.ToString(m["Descripcion"]) }</p>
+			<p id="description">{ converters.ToString(m["Descripcion"]) }</p>
 		</div>
 	}
 }
@@ -221,10 +222,12 @@ templ sortingCheckboxes() {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator utils.Translator, documentTypes *list.List, documentAreas *list.List) {
-	@Layout(query+" - SciFi Search", translator, 
+templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
+	@Layout(query+" - SciFi Search", translator,
 		func() templ.Component { return SearchHeader(isUserAuthenticated, translator) },
-		func() templ.Component { return searchResultsContent(query, hits, translator, documentTypes, documentAreas) },
+		func() templ.Component {
+			return searchResultsContent(query, hits, translator, documentTypes, documentAreas)
+		},
 	)
 }
 

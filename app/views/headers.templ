@@ -1,6 +1,6 @@
 package views 
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
 
@@ -14,14 +14,14 @@ templ Header() {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexHeader(isUserAuthenticated bool, translator utils.Translator) {
+templ IndexHeader(isUserAuthenticated bool, translator languages.Translator) {
 	<header class="index-header">
 		@userOptions(isUserAuthenticated, translator)
 	</header>
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SearchHeader(isUserAuthenticated bool, translator utils.Translator) {
+templ SearchHeader(isUserAuthenticated bool, translator languages.Translator) {
 	<header class="search-header">
 		<div class="header-left">
 			<a href="/">
@@ -48,7 +48,7 @@ templ SearchHeader(isUserAuthenticated bool, translator utils.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ userOptions(isUserAuthenticated bool, translator utils.Translator) {
+templ userOptions(isUserAuthenticated bool, translator languages.Translator) {
 	if !isUserAuthenticated {
 		<button
 			class="scifi-button"

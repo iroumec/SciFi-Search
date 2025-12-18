@@ -1,12 +1,11 @@
 package views
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------------ Upload ----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ addFundingContent(translator utils.Translator) {
-
+templ addFundingContent(translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
 			<form id="funding-form" action="/funding" method="POST">
@@ -22,11 +21,10 @@ templ addFundingContent(translator utils.Translator) {
 			</form>
 		</div>
 	</div>
-
 }
 
-templ AddFundingPage(translator utils.Translator) {
-	@Layout(translator("funding.new"), translator, 
+templ AddFundingPage(translator languages.Translator) {
+	@Layout(translator("funding.new"), translator,
 		func() templ.Component { return Header() },
 		func() templ.Component { return addFundingContent(translator) },
 	)
@@ -37,7 +35,7 @@ templ AddFundingPage(translator utils.Translator) {
 // ------------------------------------------------------------------------------------------------
 
 //TODO: esto tal vez dejarlo como un pop-up?
-templ fundingAddedContent(translator utils.Translator) {
+templ fundingAddedContent(translator languages.Translator) {
 	<main>
 		<div class="sucessful-signup-container">
 			<h1>{ translator("funding.added") }</h1>
@@ -47,8 +45,8 @@ templ fundingAddedContent(translator utils.Translator) {
 	</main>
 }
 
-templ FundingAddedPage(translator utils.Translator) {
-	@Layout(translator("funding.added"), translator, 
+templ FundingAddedPage(translator languages.Translator) {
+	@Layout(translator("funding.added"), translator,
 		func() templ.Component { return Header() },
 		func() templ.Component { return fundingAddedContent(translator) },
 	)

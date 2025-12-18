@@ -4,9 +4,9 @@ package handlers
 
 import (
 	"net/http"
-	"scifi-search/app/utils"
+	"scifi-search/app/languages"
+	"scifi-search/app/reporting/graphs"
 	"scifi-search/app/utils/extractors"
-	"scifi-search/app/utils/graphs"
 	"scifi-search/app/views"
 )
 
@@ -39,7 +39,7 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
 	htmlChart := extractors.ExtractBodyContent(buffer.String())
 
-	views.TrendsPage(htmlChart, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+	views.TrendsPage(htmlChart, isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 }
 
 // ------------------------------------------------------------------------------------------------

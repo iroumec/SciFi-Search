@@ -1,9 +1,9 @@
 package views
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
-templ indexContent(translator utils.Translator) {
+templ indexContent(translator languages.Translator) {
 	<main class="index-content">
 		@showPopUp()
 		<div class="index-top">
@@ -92,9 +92,9 @@ templ showPopUp() {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexPage(isUserAuthenticated bool, translator utils.Translator) {
-	@Layout("SciFi Search", translator, 
-        func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
-        func() templ.Component { return indexContent(translator) },
-    )
+templ IndexPage(isUserAuthenticated bool, translator languages.Translator) {
+	@Layout("SciFi Search", translator,
+		func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+		func() templ.Component { return indexContent(translator) },
+	)
 }

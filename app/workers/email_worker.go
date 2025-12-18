@@ -4,7 +4,7 @@ package workers
 
 import (
 	"log"
-	"scifi-search/app/utils/email"
+	"scifi-search/app/infra/email"
 )
 
 // ------------------------------------------------------------------------------------------------

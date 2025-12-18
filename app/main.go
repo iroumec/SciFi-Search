@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"scifi-search/app/handlers"
+	"scifi-search/app/http/handlers"
+	"scifi-search/app/http/middlewares"
 	"scifi-search/app/utils"
 	"scifi-search/app/workers"
 
@@ -47,7 +48,7 @@ func main() {
 	log.Printf("Server listening in http://localhost:%s\n", appPort)
 
 	// El servidor queda a la espera de solicitudes, trabajando en conjunto con un LoggingMiddleware.
-	if err := http.ListenAndServe(":"+appPort, supertokens.Middleware(utils.LoggingMiddleware(http.DefaultServeMux))); err != nil {
+	if err := http.ListenAndServe(":"+appPort, supertokens.Middleware(middlewares.LoggingMiddleware(http.DefaultServeMux))); err != nil {
 		log.Printf("Error al iniciar el servidor: %s\n", err)
 	}
 

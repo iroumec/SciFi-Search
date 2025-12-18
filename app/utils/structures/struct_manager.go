@@ -1,6 +1,9 @@
-package utils
+package structures
 
-import "container/list"
+import (
+	"container/list"
+	"scifi-search/app/utils/converters"
+)
 
 // List
 func ListContains(l *list.List, value any) bool {
@@ -13,7 +16,7 @@ func ListContains(l *list.List, value any) bool {
 }
 
 func AddIfNotExists(l *list.List, value any) {
-	if !ListContains(l, value) && ToString(value) != "" {
+	if !ListContains(l, value) && converters.ToString(value) != "" {
 		l.PushFront(value)
 	}
 }

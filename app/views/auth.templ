@@ -1,12 +1,11 @@
 package views 
 
-import "scifi-search/app/utils"
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
 // ----------------------------------------- Sign Up ----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ signUpContent(errorMessage string, translator utils.Translator) {
-
+templ signUpContent(errorMessage string, translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
 			<form id="signup-form" action="/signup" method="POST">
@@ -20,11 +19,10 @@ templ signUpContent(errorMessage string, translator utils.Translator) {
 			</form>
 		</div>
 	</div>
-
 }
 
-templ SignUpPage(errorMessage string, translator utils.Translator) {
-	@Layout(translator("sign-up"), translator, 
+templ SignUpPage(errorMessage string, translator languages.Translator) {
+	@Layout(translator("sign-up"), translator,
 		func() templ.Component { return Header() },
 		func() templ.Component { return signUpContent(errorMessage, translator) },
 	)
@@ -33,7 +31,7 @@ templ SignUpPage(errorMessage string, translator utils.Translator) {
 // ------------------------------------------------------------------------------------------------
 // ----------------------------------------- Log In -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ loginContent(errorMessage string, translator utils.Translator) {
+templ loginContent(errorMessage string, translator languages.Translator) {
 	@showPopUp()
 	<div class="only-form-content">
 		<div class="centered-container">
@@ -53,8 +51,8 @@ templ loginContent(errorMessage string, translator utils.Translator) {
 	}
 }
 
-templ LoginPage(errorMessage string, translator utils.Translator) {
-	@Layout(translator("log-in"), translator, 
+templ LoginPage(errorMessage string, translator languages.Translator) {
+	@Layout(translator("log-in"), translator,
 		func() templ.Component { return Header() },
 		func() templ.Component { return loginContent(errorMessage, translator) },
 	)
@@ -63,9 +61,9 @@ templ LoginPage(errorMessage string, translator utils.Translator) {
 // ------------------------------------------------------------------------------------------------
 // --------------------------------------- No session ---------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ UnloggedContent(translator utils.Translator) {
+templ UnloggedContent(translator languages.Translator) {
 	<div id="no-session">
-		<p> The session doesn't exists or it's expired. Please sign up or log in again. </p>
+		<p>The session doesn't exists or it's expired. Please sign up or log in again. </p>
 		<div id="buttons">
 			<button
 				class="scifi-button"
@@ -87,8 +85,8 @@ templ UnloggedContent(translator utils.Translator) {
 	</div>
 }
 
-templ UnloggedPage(translator utils.Translator) {
-	@Layout("No session",translator,
+templ UnloggedPage(translator languages.Translator) {
+	@Layout("No session", translator,
 		func() templ.Component { return Header() },
 		func() templ.Component { return UnloggedContent(translator) },
 	)

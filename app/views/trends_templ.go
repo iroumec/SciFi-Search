@@ -9,9 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "html/template"
-import "scifi-search/app/utils"
 
-func trendsContent(htmlChart template.HTML, translator utils.Translator) templ.Component {
+import "scifi-search/app/languages"
+
+func trendsContent(htmlChart template.HTML, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -48,7 +49,7 @@ func trendsContent(htmlChart template.HTML, translator utils.Translator) templ.C
 	})
 }
 
-func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator utils.Translator) templ.Component {
+func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

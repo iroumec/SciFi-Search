@@ -11,8 +11,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"scifi-search/app/http/cookies"
+	"scifi-search/app/infra/email"
+	"scifi-search/app/languages"
 	"scifi-search/app/utils"
-	"scifi-search/app/utils/email"
+	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
 	"sort"
 	"strings"
@@ -140,10 +143,10 @@ func indexDocuments(indexName string, documents []map[string]any) []map[string]a
 
 			indexDocs = append(indexDocs, filtered)
 
-			utils.AddIfNotExists(documentTypes, tipo)
+			structures.AddIfNotExists(documentTypes, tipo)
 
-			utils.AddIfNotExists(documentAreas, granArea1)
-			utils.AddIfNotExists(documentAreas, granArea2)
+			structures.AddIfNotExists(documentAreas, granArea1)
+			structures.AddIfNotExists(documentAreas, granArea2)
 		}
 	}
 
@@ -260,7 +263,7 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(w, r), utils.GetTranslatorFromRequest(r), documentTypes, documentAreas)
+	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
 
 }
@@ -285,12 +288,12 @@ func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
 
 	if !isEmailVerified(w, r) {
 
-		utils.AddFlashCookie(w, utils.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad."))
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad."))
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	component := views.AddFundingPage(utils.GetTranslatorFromRequest(r))
+	component := views.AddFundingPage(languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -336,7 +339,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(w, r, name)
 
-	component := views.FundingAddedPage(utils.GetTranslatorFromRequest(r))
+	component := views.FundingAddedPage(languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
