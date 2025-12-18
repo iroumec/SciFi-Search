@@ -23,6 +23,7 @@ import (
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/email"
 	"scifi-search/app/views"
+	"scifi-search/app/workers"
 
 	"github.com/a-h/templ"
 )
@@ -236,26 +237,22 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 	return &newUser, &resp
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func sendVerificationEmail(userID, email string) {
 
 	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
 	if err != nil {
 		log.Println("Error creando token de verificación:", err)
 	} else if tokenResponse.OK != nil {
-		// Se envía email de verificación.
-		err = emailverification.SendEmail(emaildelivery.EmailType{
-			EmailVerification: &emaildelivery.EmailVerificationType{
-				User: emaildelivery.User{
-					ID:    userID,
-					Email: email,
-				},
-				EmailVerifyLink: websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token,
-			},
-		}, nil)
+		verificationLink := websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token
 
-		if err != nil {
-			log.Println("Error enviando email de verificación:", err)
-		}
+		// Se construye el cuerpo del email.
+		subject := "Verifica tu email"
+		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n %s.", verificationLink)
+
+		// Envío asíncrono del email (no bloquea la respuesta HTTP).
+		workers.SendEmailAsync(email, subject, body)
 	}
 }
 
@@ -430,6 +427,8 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	deleteUser(w, r)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	user := getCurrentUser(w, r)
@@ -477,11 +476,17 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
 
-	email.Send(*userEmail, "¡Lamentamos que te vayas!", "Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!")
+	workers.SendEmailAsync(
+		*userEmail,
+		"¡Lamentamos que te vayas!",
+		"Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!",
+	)
 
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func revokeSession(w http.ResponseWriter, r *http.Request) {
 
@@ -503,6 +508,8 @@ func revokeSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func deleteSupertokensUser(authID string) error {
 	err := supertokens.DeleteUser(authID)

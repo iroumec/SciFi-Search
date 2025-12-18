@@ -8,8 +8,11 @@ import (
 
 	"scifi-search/app/handlers"
 	"scifi-search/app/utils"
+	"scifi-search/app/workers"
 
 	"github.com/supertokens/supertokens-golang/supertokens"
+
+	_ "github.com/lib/pq"
 
 	sqlc "scifi-search/app/database"
 )
@@ -32,6 +35,9 @@ func main() {
 
 	// Se obtiene un objeto que nos permita realizar las queries.
 	queries := sqlc.New(db)
+
+	// Se inicializa el worker de envíos asíncronos de emails.
+	workers.StartEmailWorker()
 
 	// Se registran los handlers.
 	handlers.Init(queries)

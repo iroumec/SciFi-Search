@@ -39,8 +39,6 @@ services:
         condition: service_healthy
       meilisearch:
         condition: service_started
-      nats:
-        condition: service_started
       supertokens:
         condition: service_started
       minio:
@@ -50,8 +48,6 @@ services:
       MEILI_URL: "${MEILI_URL}"
       MEILI_MASTER_KEY: "${MEILI_KEY}"
       SUPERTOKENS_URL: "${SUPERTOKENS_URL}"
-      NATS_HOST: "nats"
-      NATS_PORT: "4222"
       DB_HOST: "${DB_HOST}"
       DB_PORT: "${DB_PORT}"
       DB_USER: "${DB_USER}"
@@ -89,20 +85,6 @@ services:
     environment:
       MEILI_MASTER_KEY: "${MEILI_KEY}"
     restart: always
-
-  nats:
-    image: nats:latest
-    command:
-      - "-DV=false"
-    ports:
-      - "4222:4222"
-    volumes:
-      - ./logs/nats:/var/log
-    logging:
-      driver: local
-      options:
-        max-size: "10m"
-        max-file: "5"
 
   # Servicio de autenticación SuperTokens
   supertokens:
