@@ -1,6 +1,8 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"container/list"
@@ -26,6 +28,8 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Variables
+// ------------------------------------------------------------------------------------------------
 
 var (
 	client        meilisearch.ServiceManager
@@ -34,6 +38,8 @@ var (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Constantes
+// ------------------------------------------------------------------------------------------------
 
 const (
 	indexName = "funding"
@@ -41,11 +47,15 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
 
 type SearchResponse struct {
 	Hits []any `json:"hits"`
 }
 
+// ------------------------------------------------------------------------------------------------
+// Registro de endpoints
 // ------------------------------------------------------------------------------------------------
 
 func registerSearchHandlers() {
@@ -60,9 +70,49 @@ func registerSearchHandlers() {
 	indexarDatos()
 
 	// Se registra el handler.
-	http.HandleFunc("/search", handleSearch)
+	http.HandleFunc("/search", searchHandler)
 	http.HandleFunc("/funding", addFundingHandler)
-	http.HandleFunc("/search/update-filter", updateFilterHandler)
+	http.HandleFunc("/search/update-filter", filtersHandler)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Definición de handlers
+// ------------------------------------------------------------------------------------------------
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		showSearchResults(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func addFundingHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		showAddFundingPage(w, r)
+	case http.MethodPost:
+		addFunding(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func filtersHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodGet:
+		updateFilters(w, r)
+	default:
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -215,7 +265,7 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 
 // ------------------------------------------------------------------------------------------------
 
-func handleSearch(w http.ResponseWriter, r *http.Request) {
+func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// Obtención de la query
 	query := r.URL.Query().Get("query")
@@ -265,21 +315,6 @@ func handleSearch(w http.ResponseWriter, r *http.Request) {
 	// Pasar maps al templ.
 	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
-
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func addFundingHandler(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-	case http.MethodGet:
-		showAddFundingPage(w, r)
-	case http.MethodPost:
-		addFunding(w, r)
-	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -374,7 +409,7 @@ func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName s
 
 // ------------------------------------------------------------------------------------------------
 
-func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
+func updateFilters(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
 	filterTipo := r.URL.Query()["tipo"]
@@ -435,7 +470,6 @@ func updateFilterHandler(w http.ResponseWriter, r *http.Request) {
 
 	component := views.SearchResults(hitsMaps)
 	component.Render(r.Context(), w)
-
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -1,6 +1,8 @@
 ﻿package middlewares
 
 // ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"compress/gzip"
@@ -10,6 +12,24 @@ import (
 	"strings"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
+
+// Se envuelve ResponseWriter para comprimir la salida.
+type gzipResponseWriter struct {
+	http.ResponseWriter
+	writer *gzip.Writer
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.writer.Write(b)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
 // ------------------------------------------------------------------------------------------------
 
 // Comprime la respuesta si el cliente acepta gzip y el archivo existe.
@@ -44,20 +64,6 @@ func GzipMiddleware(fileDir string, next http.Handler) http.Handler {
 		gzw := gzipResponseWriter{ResponseWriter: w, writer: gz}
 		next.ServeHTTP(&gzw, r)
 	})
-}
-
-// ------------------------------------------------------------------------------------------------
-
-// Se envuelve ResponseWriter para comprimir la salida.
-type gzipResponseWriter struct {
-	http.ResponseWriter
-	writer *gzip.Writer
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func (w *gzipResponseWriter) Write(b []byte) (int, error) {
-	return w.writer.Write(b)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -1,5 +1,9 @@
 package handlers
 
+// ---------------------------------------------------------------------
+// Importaciones
+// ---------------------------------------------------------------------
+
 import (
 	"database/sql"
 	"errors"
@@ -26,12 +30,13 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+// ---------------------------------------------------------------------
+// Constantes
+// ---------------------------------------------------------------------
+
 const (
-	debug         = false
 	websiteDomain = "http://localhost:8080"
 )
-
-// ---------------------------------------------------------------------
 
 // ---------------------------------------------------------------------
 
@@ -472,6 +477,8 @@ func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
 	return isVerified
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func getUserEmail(userID string) *string {
 
 	user, err := emailpassword.GetUserByID(userID)
@@ -482,6 +489,8 @@ func getUserEmail(userID string) *string {
 	return &user.Email
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 
 	if isUserAuthenticated(w, r) {
@@ -490,18 +499,15 @@ func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 			SessionRequired: boolPtr(false),
 		})
 
-		user, err := emailpassword.GetUserByID(sessionContainer.GetUserID())
-		if err != nil || user == nil {
-			return nil
-		}
-
-		return &user.Email
+		return getUserEmail(sessionContainer.GetUserID())
 
 	} else {
 
 		return nil
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
 
 // Actualiza el email del usuario y solicita re-verificación si el email cambió.
 func updateEmail(user *database.User, newEmail string) error {
@@ -562,6 +568,8 @@ func updateEmail(user *database.User, newEmail string) error {
 	log.Println("Email actualizado exitosamente, se envió verificación")
 	return nil
 }
+
+// ------------------------------------------------------------------------------------------------
 
 // Actualiza la contraseña del usuario.
 func updatePassword(user *database.User, currentPassword, newPassword string) error {
@@ -631,3 +639,5 @@ func updatePassword(user *database.User, currentPassword, newPassword string) er
 	log.Println("Contraseña actualizada")
 	return nil
 }
+
+// ------------------------------------------------------------------------------------------------

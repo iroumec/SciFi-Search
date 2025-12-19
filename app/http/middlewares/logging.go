@@ -1,6 +1,8 @@
 package middlewares
 
 // ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"log"
@@ -8,6 +10,8 @@ import (
 	"time"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Estructuras
 // ------------------------------------------------------------------------------------------------
 
 type LoggingResponseWriter struct {
@@ -17,17 +21,19 @@ type LoggingResponseWriter struct {
 
 // ------------------------------------------------------------------------------------------------
 
-func NewLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
-	// Inicializa el status code por defecto como HTTP 200 OK.
-	return &LoggingResponseWriter{w, http.StatusOK}
-}
-
-// ------------------------------------------------------------------------------------------------
-
 // WriteHeader implementa la interfaz http.ResponseWriter.
 func (lrw *LoggingResponseWriter) WriteHeader(code int) {
 	lrw.statusCode = code
 	lrw.ResponseWriter.WriteHeader(code)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func newLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
+	// Inicializa el status code por defecto como HTTP 200 OK.
+	return &LoggingResponseWriter{w, http.StatusOK}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -41,7 +47,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		// Se envuelve el Response Writer para no modificar las acciones
 		// de los middlewares exteriores.
-		wrappedResponseWriter := NewLoggingResponseWriter(w)
+		wrappedResponseWriter := newLoggingResponseWriter(w)
 
 		// Se imprime la información de la petición en la consola.
 		// r.Method es el método HTTP (GET, POST, etc.).

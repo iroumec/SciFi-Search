@@ -28,7 +28,6 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -61,3 +60,5 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------

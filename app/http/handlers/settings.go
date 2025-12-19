@@ -1,6 +1,8 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"context"
@@ -16,7 +18,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Registro de endpoints.
+// Registro de endpoints
 // ------------------------------------------------------------------------------------------------
 
 func registerSettingsHandlers() {
@@ -32,7 +34,7 @@ func registerSettingsHandlers() {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Definición de handlers.
+// Definición de handlers
 // ------------------------------------------------------------------------------------------------
 
 func handleSettings(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +135,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Function definitions.
+// Definición de funciones
 // ------------------------------------------------------------------------------------------------
 
 // Muestra la página de configuración.
@@ -232,7 +234,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if r.Form.Get("delete-avatar") == "true" { //En caso de Upload + Delete, gana Delete
 		err := deleteAvatar(r.Context(), user.UserID)
 		if err != nil {
-			http.Error(w, "Error deleting avatar", 500)
+			http.Error(w, "Error deleting avatar", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -289,7 +291,7 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("avatar")
 	if err != nil && err != http.ErrMissingFile {
-		http.Error(w, "No se pudo leer el archivo", 400)
+		http.Error(w, "No se pudo leer el archivo", http.StatusBadRequest)
 		return
 	} else if err == nil {
 
@@ -298,13 +300,13 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 		// Se cambia el tamaño de la imagen.
 		resizedFile, err := ResizeImageToAvatar(file)
 		if err != nil {
-			http.Error(w, "Error procesando imagen", 500)
+			http.Error(w, "Error procesando imagen", http.StatusInternalServerError)
 			return
 		}
 		// Se sube el archivo al almacenamiento de objetos.
 		url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
 		if err != nil {
-			http.Error(w, "Error subiendo avatar", 500)
+			http.Error(w, "Error subiendo avatar", http.StatusInternalServerError)
 			log.Printf("%s", err)
 			return
 		}
@@ -322,9 +324,12 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
+// Actualiza las preferencias.
 func updatePreferences(user *sqlc.User, r *http.Request) []string {
 
-	log.Println(r.Form["preferences[]"])
+	if debug {
+		log.Println(r.Form["preferences[]"])
+	}
 	queries.RemoveAllPreferenceFromUser(r.Context(), user.UserID)
 	var updatedPreferences []string
 	if preferences := r.Form["preferences[]"]; len(preferences) != 0 {

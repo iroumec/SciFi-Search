@@ -1,6 +1,8 @@
 ﻿package handlers
 
 // ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"net/http"
@@ -18,6 +20,7 @@ import (
 
 // Ruta a partir de la cual se servirán los archivos estáticos.
 const (
+	debug   = false
 	fileDir = "./static"
 )
 
@@ -100,7 +103,7 @@ func registerIndexHTML() {
 // Responde con un simple 200 OK. Se utiliza para saber si la aplicación ya se levantó.
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Solo responde a peticiones GET.
+	// Solo se responde a peticiones GET.
 	if r.Method != http.MethodGet {
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		return

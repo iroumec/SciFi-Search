@@ -105,14 +105,14 @@ func uploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	// Parseo del formulario.
 	err := r.ParseMultipartForm(10 << 20) // 10 MB
 	if err != nil {
-		http.Error(w, "Error procesando el archivo", 400)
+		http.Error(w, "Error procesando el archivo", http.StatusBadRequest)
 		return
 	}
 
 	// Recuperación del archivo.
 	file, _, err := r.FormFile("avatar")
 	if err != nil {
-		http.Error(w, "No se pudo leer el archivo", 400)
+		http.Error(w, "No se pudo leer el archivo", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -129,14 +129,14 @@ func uploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	// Se cambia el tamaño de la imagen.
 	resizedFile, err := ResizeImageToAvatar(file)
 	if err != nil {
-		http.Error(w, "Error procesando imagen", 500)
+		http.Error(w, "Error procesando imagen", http.StatusInternalServerError)
 		return
 	}
 
 	// Se sube el archivo al almacenamiento de objetos.
 	url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
 	if err != nil {
-		http.Error(w, "Error subiendo avatar", 500)
+		http.Error(w, "Error subiendo avatar", http.StatusInternalServerError)
 		log.Printf("%s", err)
 		return
 	}
