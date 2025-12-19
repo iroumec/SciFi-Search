@@ -1,14 +1,19 @@
 package extractors
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"html/template"
 	"regexp"
 )
 
 // ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
 
-// Se extrae solo el contenido entre <body> y </body>.
-// Esto debido a que el Layout ya se encarga de todo lo demás.
+// Extrae el contenido entre <body> y </body> de un HTML.
 func ExtractBodyContent(html string) template.HTML {
 	re := regexp.MustCompile(`(?s)<body[^>]*>(.*?)</body>`)
 	matches := re.FindStringSubmatch(html)
