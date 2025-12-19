@@ -28,7 +28,7 @@ templ historyContent(searches []structures.HistoricSearchView, translator langua
 
 templ HistoryPage(searches []structures.HistoricSearchView, translator languages.Translator) {
 	@Layout("History", translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return Header(true, true, translator) },
 		func() templ.Component { return historyContent(searches, translator) },
 	)
 }

@@ -34,7 +34,7 @@ func addFundingContent(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"only-form-content\"><div class=\"centered-container\"><form id=\"funding-form\" action=\"/funding\" method=\"POST\"><div class=\"form-inputs\"><input type=\"text\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"only-form-content\"><div class=\"centered-container\"><form id=\"funding-form\" action=\"/funding\" method=\"POST\"><div id=\"form-inputs\"><input type=\"text\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +155,7 @@ func AddFundingPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("funding.new"), translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return Header(true, true, translator) },
 			func() templ.Component { return addFundingContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -260,7 +260,7 @@ func FundingAddedPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("funding.added"), translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return Header(true, true, translator) },
 			func() templ.Component { return fundingAddedContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

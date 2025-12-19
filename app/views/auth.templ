@@ -23,7 +23,7 @@ templ signUpContent(errorMessage string, translator languages.Translator) {
 
 templ SignUpPage(errorMessage string, translator languages.Translator) {
 	@Layout(translator("sign-up"), translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return AuthHeader(translator) },
 		func() templ.Component { return signUpContent(errorMessage, translator) },
 	)
 }
@@ -53,7 +53,7 @@ templ loginContent(errorMessage string, translator languages.Translator) {
 
 templ LoginPage(errorMessage string, translator languages.Translator) {
 	@Layout(translator("log-in"), translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return AuthHeader(translator) },
 		func() templ.Component { return loginContent(errorMessage, translator) },
 	)
 }
@@ -87,7 +87,7 @@ templ UnloggedContent(translator languages.Translator) {
 
 templ UnloggedPage(translator languages.Translator) {
 	@Layout("No session", translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return AuthHeader(translator) },
 		func() templ.Component { return UnloggedContent(translator) },
 	)
 }

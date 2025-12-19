@@ -9,7 +9,7 @@ templ addFundingContent(translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
 			<form id="funding-form" action="/funding" method="POST">
-				<div class="form-inputs">
+				<div id="form-inputs">
 					<input type="text" placeholder={ translator("name") } name="name" required/>
 					<input type="text" placeholder={ translator("description") } name="description" required/>
 					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
@@ -25,7 +25,7 @@ templ addFundingContent(translator languages.Translator) {
 
 templ AddFundingPage(translator languages.Translator) {
 	@Layout(translator("funding.new"), translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return Header(true, true, translator) },
 		func() templ.Component { return addFundingContent(translator) },
 	)
 }
@@ -47,7 +47,7 @@ templ fundingAddedContent(translator languages.Translator) {
 
 templ FundingAddedPage(translator languages.Translator) {
 	@Layout(translator("funding.added"), translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return Header(true, true, translator) },
 		func() templ.Component { return fundingAddedContent(translator) },
 	)
 }

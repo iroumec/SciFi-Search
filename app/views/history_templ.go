@@ -126,7 +126,7 @@ func HistoryPage(searches []structures.HistoricSearchView, translator languages.
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("History", translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return Header(true, true, translator) },
 			func() templ.Component { return historyContent(searches, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

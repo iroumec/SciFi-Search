@@ -129,7 +129,7 @@ func SignUpPage(errorMessage string, translator languages.Translator) templ.Comp
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("sign-up"), translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return AuthHeader(translator) },
 			func() templ.Component { return signUpContent(errorMessage, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -255,7 +255,7 @@ func LoginPage(errorMessage string, translator languages.Translator) templ.Compo
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("log-in"), translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return AuthHeader(translator) },
 			func() templ.Component { return loginContent(errorMessage, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -345,7 +345,7 @@ func UnloggedPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("No session", translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return AuthHeader(translator) },
 			func() templ.Component { return UnloggedContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -512,7 +512,7 @@ func SettingsPage(user structures.User, preferences []string, translator languag
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("Settings", translator,
-			func() templ.Component { return Header() },
+			func() templ.Component { return Header(true, true, translator) },
 			func() templ.Component { return settingsContent(user, preferences) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

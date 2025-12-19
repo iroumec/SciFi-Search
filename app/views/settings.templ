@@ -225,7 +225,7 @@ templ PreferenceItem(preference string) {
 
 templ SettingsPage(user structures.User, preferences []string, translator languages.Translator) {
 	@Layout("Settings", translator,
-		func() templ.Component { return Header() },
+		func() templ.Component { return Header(true, true, translator) },
 		func() templ.Component { return settingsContent(user, preferences) },
 	)
 }

@@ -2,47 +2,54 @@ package views
 
 import "scifi-search/app/languages"
 
-// ------------------------------------------------------------------------------------------------
+templ Header(showOptions bool, isUserAuthenticated bool, translator languages.Translator) {
+	@headerBuilder("transparent", "logo.png", false, true, isUserAuthenticated, translator)
+}
 
 // ------------------------------------------------------------------------------------------------
-templ Header() {
-	<header class="header">
-		<a onclick="window.location.href='/'">
-			<img src="static/img/logo.png" alt="icono" style="width:240px; height:70px;" id="header-logo"/>
-		</a>
-	</header>
+templ AuthHeader(translator languages.Translator) {
+	@headerBuilder("transparent", "logo.png", false, false, false, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
 templ IndexHeader(isUserAuthenticated bool, translator languages.Translator) {
-	<header class="index-header">
-		@userOptions(isUserAuthenticated, translator)
-	</header>
+	@headerBuilder("transparent", "", false, true, isUserAuthenticated, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
 templ SearchHeader(isUserAuthenticated bool, translator languages.Translator) {
-	<header class="search-header">
+	@headerBuilder("var(--scifi30)", "white-logo.png", true, true, isUserAuthenticated, translator)
+}
+
+// ------------------------------------------------------------------------------------------------
+templ headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, isUserAuthenticated bool, translator languages.Translator) {
+	<header style={ "background-color: " + backgroundColor + ";" }>
 		<div class="header-left">
-			<a href="/">
-				<img src="static/img/logo_blanco.png" alt="icono" id="logo_scifi_header"/>
-			</a>
-			<form hx-get="/search" hx-target="body" hx-push-url="true">
-				<input
-					type="text"
-					name="query"
-					id="query"
-					placeholder="Search for SCIENCE!!!"
-					hx-trigger="keyup[key=='Enter']"
-					hx-get="/search"
-					hx-target="body"
-					hx-push-url="true"
-					hx-include="this"
-				/>
-			</form>
+			if logo != "" {
+				<a href="/">
+					<img src={ "static/img/" + logo  } alt="Scifi Search Logo" id="header-logo"/>
+				</a>
+			}
+			if query {
+				<form hx-get="/search" hx-target="body" hx-push-url="true">
+					<input
+						type="text"
+						name="query"
+						id="query"
+						placeholder="Search for SCIENCE!!!"
+						hx-trigger="keyup[key=='Enter']"
+						hx-get="/search"
+						hx-target="body"
+						hx-push-url="true"
+						hx-include="this"
+					/>
+				</form>
+			}
 		</div>
 		<div class="header-right">
-			@userOptions(isUserAuthenticated, translator)
+			if showOptions {
+				@userOptions(isUserAuthenticated, translator)
+			}
 		</div>
 	</header>
 }
@@ -84,7 +91,7 @@ templ userOptions(isUserAuthenticated bool, translator languages.Translator) {
 				<div id="close-menu">MENU</div>
 				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">Configuración</button>
 				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">Historial</button>
-				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">Subir un proyecto</button>
+				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">Administrar proyectos</button>
 				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">Tendencias</button>
 				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">Cerrar sesión</button>
 			</div>
