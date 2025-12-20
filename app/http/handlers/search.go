@@ -286,7 +286,6 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// Construcción de la búsqueda.
 	searchRequest := &meilisearch.SearchRequest{
-		Limit:            20,
 		ShowRankingScore: true, // Se muestra el score de relevancia.
 	}
 
@@ -445,7 +444,6 @@ func updateFilters(w http.ResponseWriter, r *http.Request) {
 	}
 
 	searchRequest := &meilisearch.SearchRequest{
-		Limit:            20,
 		ShowRankingScore: true,
 	}
 
