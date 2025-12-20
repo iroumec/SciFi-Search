@@ -157,24 +157,31 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 	var indexDocs []map[string]any
 	for _, doc := range documents {
 
-		nombre, ok := doc["Nombre"].(string)
+		nombre, ok := doc["name"].(string)
 
 		// Si el documento tiene un nombre válido.
 		if ok {
-			descripcion, _ := doc["Descripcion"].(string)
-			granArea1, _ := doc["Gran area 1"].(string)
-			granArea2, _ := doc["Gran area 2"].(string)
-			tipo, _ := doc["Tipo"].(string)
-			link, _ := doc["Link"].(string)
+			tipo, _ := doc["type"].(string)
+			granArea1, _ := doc["main_area"].(string)
+			granArea2, _ := doc["secondary_area"].(string)
+			link, _ := doc["link"].(string)
+			descripcion, _ := doc["description"].(string)
+			basedOn, _ := doc["based_on"].(string)
+			grantor, _ := doc["grantor"].(string)
+			/*monto*/
+			deadline, _ := doc["deadline"].(string)
 
 			// Añadido del documento a la base de datos.
 			document, err := queries.AddDocument(context.Background(), sqlc.AddDocumentParams{
 				Name:        nombre,
-				Description: descripcion,
+				Type:        tipo,
 				FirstArea:   granArea1,
 				SecondArea:  sql.NullString{String: granArea2, Valid: granArea2 != ""},
-				Type:        tipo,
 				Link:        sql.NullString{String: link, Valid: link != ""},
+				Description: sql.NullString{String: descripcion, Valid: descripcion != ""},
+				BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
+				Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
+				Deadline:    deadline,
 			})
 			if err != nil {
 				log.Fatal(err)
@@ -184,17 +191,19 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			filtered := map[string]any{
 				"id":          document.ID,
 				"Nombre":      nombre,
-				"Descripcion": descripcion,
+				"Tipo":        tipo,
 				"Gran area 1": granArea1,
 				"Gran area 2": granArea2,
-				"Tipo":        tipo,
 				"Link":        link,
+				"Descripcion": descripcion,
+				"Pais":        basedOn,
+				"Otorgante":   grantor,
+				"Deadline":    deadline,
 			}
 
 			indexDocs = append(indexDocs, filtered)
 
 			structures.AddIfNotExists(documentTypes, tipo)
-
 			structures.AddIfNotExists(documentAreas, granArea1)
 			structures.AddIfNotExists(documentAreas, granArea2)
 		}
@@ -228,10 +237,11 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 	// Configuración de atributos en los que se busca.
 	_, err := index.UpdateSearchableAttributes(&[]string{
 		"Nombre",
-		"Descripcion",
+		"Tipo",
 		"Gran area 1",
 		"Gran area 2",
-		"Tipo",
+		"Descripcion",
+		"Otorgante",
 	})
 	if err != nil {
 		log.Println("Error configurando atributos de búsqueda:", err)
@@ -344,29 +354,38 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	// Obtención de los datos del formulario.
 	name := r.Form.Get("name")
-	description := r.Form.Get("description")
-	firstArea := r.Form.Get("firsrt-area")
-	secondArea := r.Form.Get("second-area")
 	fundingType := r.Form.Get("type")
+	firstArea := r.Form.Get("first-area")
+	secondArea := r.Form.Get("second-area")
 	link := r.Form.Get("link")
+	description := r.Form.Get("description")
+	basedOn := r.Form.Get("based-on")
+	grantor := r.Form.Get("grantor")
+	deadline := r.Form.Get("deadline")
 
 	document, err := queries.AddDocument(r.Context(), sqlc.AddDocumentParams{
 		Name:        name,
-		Description: description,
+		Type:        fundingType,
 		FirstArea:   firstArea,
 		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},
-		Type:        fundingType,
 		Link:        sql.NullString{String: link, Valid: link != ""},
+		Description: sql.NullString{String: description, Valid: description != ""},
+		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
+		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
+		Deadline:    deadline,
 	})
 
 	_, err = client.Index(indexName).AddDocuments(map[string]any{
 		"id":          document.ID,
 		"Nombre":      document.Name,
-		"Descripcion": document.Description,
+		"Tipo":        document.Type,
 		"Gran area 1": document.FirstArea,
 		"Gran area 2": document.SecondArea.String,
-		"Tipo":        document.Type,
 		"Link":        document.Link.String,
+		"Descripcion": document.Description.String,
+		"Pais":        document.BasedOn.String,
+		"Otorgante":   document.Grantor.String,
+		"Deadline":    document.Deadline,
 	}, nil)
 	if err != nil {
 		log.Fatal(err)

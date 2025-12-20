@@ -12,11 +12,14 @@ import (
 type Document struct {
 	ID          int32          `json:"id"`
 	Name        string         `json:"name"`
-	Description string         `json:"description"`
+	Type        string         `json:"type"`
 	FirstArea   string         `json:"first_area"`
 	SecondArea  sql.NullString `json:"second_area"`
-	Type        string         `json:"type"`
 	Link        sql.NullString `json:"link"`
+	Description sql.NullString `json:"description"`
+	BasedOn     sql.NullString `json:"based_on"`
+	Grantor     sql.NullString `json:"grantor"`
+	Deadline    string         `json:"deadline"`
 }
 
 type HistoricSearch struct {

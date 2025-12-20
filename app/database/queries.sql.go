@@ -12,36 +12,45 @@ import (
 )
 
 const addDocument = `-- name: AddDocument :one
-INSERT INTO documents(name, description, first_area, second_area, type, link) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, description, first_area, second_area, type, link
+INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, name, type, first_area, second_area, link, description, based_on, grantor, deadline
 `
 
 type AddDocumentParams struct {
 	Name        string         `json:"name"`
-	Description string         `json:"description"`
+	Type        string         `json:"type"`
 	FirstArea   string         `json:"first_area"`
 	SecondArea  sql.NullString `json:"second_area"`
-	Type        string         `json:"type"`
 	Link        sql.NullString `json:"link"`
+	Description sql.NullString `json:"description"`
+	BasedOn     sql.NullString `json:"based_on"`
+	Grantor     sql.NullString `json:"grantor"`
+	Deadline    string         `json:"deadline"`
 }
 
 func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Document, error) {
 	row := q.db.QueryRowContext(ctx, addDocument,
 		arg.Name,
-		arg.Description,
+		arg.Type,
 		arg.FirstArea,
 		arg.SecondArea,
-		arg.Type,
 		arg.Link,
+		arg.Description,
+		arg.BasedOn,
+		arg.Grantor,
+		arg.Deadline,
 	)
 	var i Document
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.Description,
+		&i.Type,
 		&i.FirstArea,
 		&i.SecondArea,
-		&i.Type,
 		&i.Link,
+		&i.Description,
+		&i.BasedOn,
+		&i.Grantor,
+		&i.Deadline,
 	)
 	return i, err
 }
@@ -131,6 +140,28 @@ DELETE FROM users WHERE user_id = $1
 func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, userID)
 	return err
+}
+
+const getDocumentByID = `-- name: GetDocumentByID :one
+SELECT id, name, type, first_area, second_area, link, description, based_on, grantor, deadline from documents WHERE id = $1
+`
+
+func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, error) {
+	row := q.db.QueryRowContext(ctx, getDocumentByID, id)
+	var i Document
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Type,
+		&i.FirstArea,
+		&i.SecondArea,
+		&i.Link,
+		&i.Description,
+		&i.BasedOn,
+		&i.Grantor,
+		&i.Deadline,
+	)
+	return i, err
 }
 
 const getTrendingSearches = `-- name: GetTrendingSearches :many
@@ -307,6 +338,15 @@ func (q *Queries) RemoveAllPreferenceFromUser(ctx context.Context, userID int32)
 	return err
 }
 
+const removeDocument = `-- name: RemoveDocument :exec
+DELETE FROM documents WHERE id = $1
+`
+
+func (q *Queries) RemoveDocument(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, removeDocument, id)
+	return err
+}
+
 const removePreference = `-- name: RemovePreference :exec
 DELETE FROM user_preferences WHERE user_id = $1 AND preference = $2
 `
@@ -318,6 +358,39 @@ type RemovePreferenceParams struct {
 
 func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferenceParams) error {
 	_, err := q.db.ExecContext(ctx, removePreference, arg.UserID, arg.Preference)
+	return err
+}
+
+const updateDocument = `-- name: UpdateDocument :exec
+UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10 WHERE id = $1
+`
+
+type UpdateDocumentParams struct {
+	ID          int32          `json:"id"`
+	Name        string         `json:"name"`
+	Type        string         `json:"type"`
+	FirstArea   string         `json:"first_area"`
+	SecondArea  sql.NullString `json:"second_area"`
+	Link        sql.NullString `json:"link"`
+	Description sql.NullString `json:"description"`
+	BasedOn     sql.NullString `json:"based_on"`
+	Grantor     sql.NullString `json:"grantor"`
+	Deadline    string         `json:"deadline"`
+}
+
+func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) error {
+	_, err := q.db.ExecContext(ctx, updateDocument,
+		arg.ID,
+		arg.Name,
+		arg.Type,
+		arg.FirstArea,
+		arg.SecondArea,
+		arg.Link,
+		arg.Description,
+		arg.BasedOn,
+		arg.Grantor,
+		arg.Deadline,
+	)
 	return err
 }
 

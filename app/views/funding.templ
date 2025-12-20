@@ -11,11 +11,14 @@ templ addFundingContent(translator languages.Translator) {
 			<form id="funding-form" action="/funding" method="POST">
 				<div id="form-inputs">
 					<input type="text" placeholder={ translator("name") } name="name" required/>
-					<input type="text" placeholder={ translator("description") } name="description" required/>
-					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
-					<input type="text" placeholder={ translator("second-area") } name="second-area" required/>
 					<input type="text" placeholder={ translator("type") } name="type" required/>
+					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
+					<input type="text" placeholder={ translator("second-area") } name="second-area" />
 					<input type="link" placeholder={ translator("link") } name="link"/>
+					<input type="text" placeholder={ translator("description") } name="description"/>
+					<input type="text" placeholder="Basado en (Pais)" name="based-on"/>
+					<input type="text" placeholder="Entidad otorgante" name="grantor"/>
+					<input type="text" placeholder="Deadline" name="deadline" required/> /*TODO: hacerlo input de fecha 2000-01-02*/
 				</div>
 				<button class="scifi-button" type="submit">{ translator("submit") }</button>
 			</form>

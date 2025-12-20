@@ -24,11 +24,15 @@ CREATE TABLE IF NOT EXISTS historic_searches (
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    description TEXT NOT NULL,
+    type TEXT NOT NULL,
     first_area TEXT NOT NULL,
     second_area TEXT,
-    type TEXT NOT NULL,
-    link TEXT
+    link TEXT,
+    description TEXT,
+    based_on TEXT,
+    grantor TEXT,
+    --monto
+    deadline TEXT NOT NULL
 );
 
 -- ASIGNACION DE CLAVES FORÁNEAS 

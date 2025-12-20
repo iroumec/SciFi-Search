@@ -109,6 +109,7 @@ dataset = relevant_data.rename(columns={
     "Tipo": "type",
     "Gran area 1": "main_area",
     "Gran area 2": "secondary_area",
+    "Based on": "based_on",
     "Entidad otorgante": "grantor",
     "Descripcion": "description",
     "Link": "link",
