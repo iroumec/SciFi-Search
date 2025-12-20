@@ -33,8 +33,6 @@ MONTHS_ES = {
 
 dataset_raw = pd.read_excel("resources/planillas/funding.xlsx")
 
-dataset_raw.info()
-
 #Se descarta la columna "2022-08-02 09:23:37.436000"
 dataset_raw = dataset_raw.drop(dataset_raw.columns[0], axis=1)
 
@@ -149,18 +147,6 @@ clean["main_area"] = clean["main_area"].replace({
     "Public health data systems.": "Public health data systems"
 })
 
-#Se descartan las filas con valor de gran aréa 2 nulo o vacío
-clean = clean[
-    clean["secondary_area"].notna() &                         
-    clean["secondary_area"].astype(str).str.strip().ne("")    
-]
-
-#Se corrigen valores específicos de la columna
-clean["main_area"] = clean["main_area"].replace({
-    "Computer Science\n": "Computer Science",
-    "Climate change and resilience\n": "Climate change and resilience"
-})
-
 #Se descartan las filas con valor de deadline nulo o vacío
 clean = clean[
     clean["deadline"].notna() &                         
@@ -222,7 +208,7 @@ clean["deadline"] = np.where(
     clean["deadline"].astype(str)
 )
 
-#
+#Se descartan las columnas auxiliares
 clean = clean.drop(columns=["deadline_clean","deadline_raw"])
 
 ## MONTO ##
