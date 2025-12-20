@@ -51,7 +51,7 @@ func Init(queryObject *sqlc.Queries) {
 	// Se registran los handlers correspondientes a la autenticación (EN PROCESO).
 	registerAuthenticationHandlers()
 
-	// Se registran los handlers correspondientes a la configuración (EN PROCESO).
+	// Se registran los handlers correspondientes a la configuración (EN PROCESO). TODO esto?
 	registerSettingsHandlers()
 
 	// Se registran los handlers correspondientes al historial del usuario.
