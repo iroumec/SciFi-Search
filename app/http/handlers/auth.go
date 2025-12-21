@@ -5,11 +5,13 @@ package handlers
 // ---------------------------------------------------------------------
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
 
 	"scifi-search/app/database"
@@ -17,7 +19,9 @@ import (
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
+	"scifi-search/app/utils"
 	"scifi-search/app/utils/checkers"
+	"scifi-search/app/utils/converters"
 	"scifi-search/app/views"
 	"scifi-search/app/workers"
 
@@ -27,6 +31,7 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/emailverification"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
+	"github.com/supertokens/supertokens-golang/recipe/userroles"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
@@ -43,6 +48,9 @@ const (
 func registerAuthenticationHandlers() {
 
 	auth.InitializeSupertokens()
+
+	// Creación de la cuenta de administración.
+	createAdmin()
 
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
@@ -168,7 +176,49 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 		sendVerificationEmail(resp.OK.User.ID, email)
 	}
 
+	// Se le asigna el rol de usuario.
+	userroles.AddRoleToUser("public", resp.OK.User.ID, "user", nil)
+
 	return &newUser, &resp
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func createAdmin() {
+
+	// Obtención de los datos del administrador.
+	name := utils.GetEnv("ADMIN_NAME", "admin")
+	surname := utils.GetEnv("ADMIN_SURNAME", "full-access")
+	email := utils.GetEnv("ADMIN_EMAIL", "admin@scifi-search.com")
+	password := utils.GetEnv("ADMIN_PASSWORD", "admin")
+
+	resp, err := emailpassword.SignUp("", email, password)
+	if err != nil {
+		log.Fatal("It wasn't possible to create an administrator for the application.")
+	}
+
+	// Verificación de email ya registrado.
+	if resp.EmailAlreadyExistsError != nil {
+		log.Print("Administrator's account already exists. Skipping admin creation...")
+		return
+	}
+
+	if resp.OK != nil {
+		_, err = queries.CreateUser(context.TODO(), sqlc.CreateUserParams{
+			Name:    name,
+			Surname: surname,
+			AuthID:  resp.OK.User.ID,
+		})
+		if err != nil {
+			log.Println("An unexpected error ocurred during the creation of the administrator's account:", err)
+		}
+
+		// Creación del token de verificación.
+		sendVerificationEmail(resp.OK.User.ID, email)
+	}
+
+	// Se le asigna el rol de admin.
+	userroles.AddRoleToUser("public", resp.OK.User.ID, "admin", nil)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -183,7 +233,7 @@ func sendVerificationEmail(userID, email string) {
 
 		// Se construye el cuerpo del email.
 		subject := "Verifica tu email"
-		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n %s.", verificationLink)
+		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n%s", verificationLink)
 
 		// Envío asíncrono del email (no bloquea la respuesta HTTP).
 		workers.SendEmailAsync(email, subject, body)
@@ -308,18 +358,10 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 func isUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 	// Intentar obtener la sesión sin requerirla
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: boolPtr(false),
+		SessionRequired: converters.ToBoolPointer(false),
 	})
 
 	return err == nil && sessionContainer != nil
-}
-
-// ---------------------------------------------------------------------
-
-// Necesaria para obtener un puntero a un booleano,
-// el cual Supertokens requiere.
-func boolPtr(b bool) *bool {
-	return &b
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -331,7 +373,7 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
 	if isUserAuthenticated(w, r) {
 
 		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-			SessionRequired: boolPtr(false),
+			SessionRequired: converters.ToBoolPointer(false),
 		})
 
 		supertokensUserID := sessionContainer.GetUserID()
@@ -425,7 +467,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 func revokeSession(w http.ResponseWriter, r *http.Request) {
 
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: boolPtr(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
+		SessionRequired: converters.ToBoolPointer(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -461,7 +503,7 @@ func deleteSupertokensUser(authID string) error {
 // Función auxiliar para verificar si el email está verificado.
 func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: boolPtr(true),
+		SessionRequired: converters.ToBoolPointer(true),
 	})
 	if err != nil {
 		return false
@@ -496,7 +538,7 @@ func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 	if isUserAuthenticated(w, r) {
 
 		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-			SessionRequired: boolPtr(false),
+			SessionRequired: converters.ToBoolPointer(false),
 		})
 
 		return getUserEmail(sessionContainer.GetUserID())
@@ -638,6 +680,41 @@ func updatePassword(user *database.User, currentPassword, newPassword string) er
 
 	log.Println("Contraseña actualizada")
 	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func canModifyFinancing(userID, financingID string) bool {
+	roles, _ := userroles.GetRolesForUser("public", userID, nil)
+
+	if slices.Contains(roles.OK.Roles, "admin") {
+		return true
+	}
+
+	if slices.Contains(roles.OK.Roles, "loader") {
+		// Verificar propiedad
+		//financing := getFinancingFromDB(financingID)
+		//return financing.OwnerID == userID
+	}
+
+	return false
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getAuthenticationLevel(userID string) int {
+	roles, _ := userroles.GetRolesForUser("public", userID, nil)
+
+	if slices.Contains(roles.OK.Roles, "admin") {
+		return 1
+	} else if slices.Contains(roles.OK.Roles, "loader") {
+		return 2
+	} else if slices.Contains(roles.OK.Roles, "user") {
+		return 3
+	}
+
+	// Usuario sin autenticar.
+	return 0
 }
 
 // ------------------------------------------------------------------------------------------------

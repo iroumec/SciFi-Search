@@ -19,3 +19,11 @@ func ToString(v any) string {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+// Realiza la conversión de un booleano a un puntero a un booleano.
+// Esto es requerido, por ejemplo, por Supertokens.
+func ToBoolPointer(b bool) *bool {
+	return &b
+}
+
+// ------------------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"scifi-search/app/http/cookies"
+	"scifi-search/app/http/middlewares"
 	"scifi-search/app/infra/email"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
@@ -71,7 +72,7 @@ func registerSearchHandlers() {
 
 	// Se registra el handler.
 	http.HandleFunc("/search", searchHandler)
-	http.HandleFunc("/funding", addFundingHandler)
+	http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/search/update-filter", filtersHandler)
 }
 

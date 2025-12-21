@@ -14,6 +14,7 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/emailverification/evmodels"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
+	"github.com/supertokens/supertokens-golang/recipe/userroles"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
@@ -39,6 +40,9 @@ func InitializeSupertokens() {
 		},
 
 		RecipeList: []supertokens.Recipe{
+
+			// Se especifica la utilización de distintos roles de usuarios.
+			userroles.Init(nil),
 
 			// Se permite inicio de sesión mediante email/password.
 			emailpassword.Init(&epmodels.TypeInput{
@@ -84,6 +88,11 @@ func InitializeSupertokens() {
 			}),
 		},
 	})
+
+	// Creación de roles.
+	userroles.CreateNewRoleOrAddPermissions("admin", []string{"full-access"}, nil)            // Administrador.
+	userroles.CreateNewRoleOrAddPermissions("loader", []string{"manage-own-financings"}, nil) // Entidades que cargan financiamiento.
+	userroles.CreateNewRoleOrAddPermissions("user", []string{"view-only"}, nil)               // Usuarios normales.
 
 	if err != nil {
 		log.Fatal(err)
