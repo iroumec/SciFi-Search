@@ -1,5 +1,9 @@
 package files
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"context"
 	"os"
@@ -9,6 +13,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
 
 // Creación del cliente MinIO.
 func NewMinIoClient() (*s3.Client, error) {
@@ -20,7 +28,7 @@ func NewMinIoClient() (*s3.Client, error) {
 				"",
 			),
 		),
-		config.WithRegion("us-east-1"),
+		config.WithRegion("us-east-1"), // Si no se especifica, hay un error.
 	)
 	if err != nil {
 		return nil, err
@@ -33,3 +41,5 @@ func NewMinIoClient() (*s3.Client, error) {
 
 	return client, nil
 }
+
+// ------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 package email
 
 // ------------------------------------------------------------------------------------------------
-// Impors
+// Importaciones
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -13,7 +13,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constants
+// Constantes
 // ------------------------------------------------------------------------------------------------
 
 const (
@@ -21,13 +21,13 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Structures
+// Estructuras
 // ------------------------------------------------------------------------------------------------
 
 type MailHogService struct{}
 
 // ------------------------------------------------------------------------------------------------
-// Functions
+// Funciones
 // ------------------------------------------------------------------------------------------------
 
 func Send(to, subject, body string) error {
@@ -55,7 +55,7 @@ func Send(to, subject, body string) error {
 
 // ------------------------------------------------------------------------------------------------
 
-// El SDK de MailHog pide la función de está forma.
+// Pedido de esta forma por el SDK de MailHog.
 func NewMailHogService() *emaildelivery.EmailDeliveryInterface {
 	send := func(input emaildelivery.EmailType, userContext supertokens.UserContext) error {
 		if input.EmailVerification != nil {
@@ -73,3 +73,5 @@ func NewMailHogService() *emaildelivery.EmailDeliveryInterface {
 		SendEmail: &send,
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
