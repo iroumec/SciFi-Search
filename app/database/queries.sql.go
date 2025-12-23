@@ -25,7 +25,7 @@ type AddDocumentParams struct {
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
 	Deadline    string         `json:"deadline"`
-	UserID      int32          `json:"user_id"`
+	UserID      sql.NullInt32  `json:"user_id"`
 }
 
 func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Document, error) {
@@ -290,9 +290,9 @@ SELECT id, user_id, name, type, first_area, second_area, link, description, base
 `
 
 type ListDocumentsByUserParams struct {
-	UserID int32 `json:"user_id"`
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	UserID sql.NullInt32 `json:"user_id"`
+	Limit  int32         `json:"limit"`
+	Offset int32         `json:"offset"`
 }
 
 func (q *Queries) ListDocumentsByUser(ctx context.Context, arg ListDocumentsByUserParams) ([]Document, error) {
@@ -469,7 +469,7 @@ type UpdateDocumentParams struct {
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
 	Deadline    string         `json:"deadline"`
-	UserID      int32          `json:"user_id"`
+	UserID      sql.NullInt32  `json:"user_id"`
 }
 
 func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) error {

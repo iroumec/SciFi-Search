@@ -159,7 +159,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			// Añadido del documento a la base de datos.
 			document, err := queries.AddDocument(context.Background(), sqlc.AddDocumentParams{
 				Name:        nombre,
-				UserID:      -1, // Indefinido en este caso.
+				UserID:      sql.NullInt32{Valid: false}, // Indefinido en este caso.
 				Type:        tipo,
 				FirstArea:   granArea1,
 				SecondArea:  sql.NullString{String: granArea2, Valid: granArea2 != ""},

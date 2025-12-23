@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS historic_searches (
 
 CREATE TABLE IF NOT EXISTS documents (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id INT NULL,
     name TEXT NOT NULL,
     type TEXT NOT NULL,
     first_area TEXT NOT NULL,

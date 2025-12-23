@@ -5,9 +5,9 @@ import (
 	"log"
 	"net/http"
 	"scifi-search/app/http/cookies"
+	"scifi-search/app/http/middlewares"
 	"scifi-search/app/infra/email"
 
-	//"scifi-search/app/http/middlewares"
 	"scifi-search/app/languages"
 	"scifi-search/app/views"
 
@@ -17,7 +17,7 @@ import (
 func registerFundingHandlers() {
 
 	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
-	http.HandleFunc("/funding", addFundingHandler)
+	http.HandleFunc("/funding", middlewares.RequiresAuthorization(addFundingHandler, 1))
 
 }
 
@@ -27,8 +27,17 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
+
+		fundings, err := queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
+			Limit:  5,
+			Offset: 0,
+		})
+		if err != nil {
+			return
+		}
+
 		//showAddFundingPage(w, r)
-		views.ManageFundingPage(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+		views.ManageFundingPage(fundings, languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	case http.MethodPost:
 		addFunding(w, r)
 	default:
@@ -74,7 +83,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	document, err := queries.AddDocument(r.Context(), sqlc.AddDocumentParams{
 		Name:        name,
-		UserID:      getCurrentUser(w, r).UserID,
+		UserID:      sql.NullInt32{Int32: getCurrentUser(w, r).UserID, Valid: true},
 		Type:        fundingType,
 		FirstArea:   firstArea,
 		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},

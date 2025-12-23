@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"slices"
 	"strings"
 
 	"scifi-search/app/database"
@@ -55,6 +54,7 @@ func registerAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
+	http.HandleFunc("/loader", signOutHandler)
 	http.HandleFunc("/delete-account", deleteUserHandler)
 
 	// Handler de verificación de email.
@@ -104,7 +104,30 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser, resp := createUser(w, r)
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parseo del formulario enviado por POST.
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Obtención de los datos del usuario.
+	name := r.Form.Get("name")
+	surname := r.Form.Get("surname")
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	// Validación.
+	if checkers.HayCampoIncompleto(name, surname, email, password) {
+		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		return
+	}
+
+	newUser, resp := createUser(name, surname, email, password, auth.UserRole.Name)
 
 	if newUser != nil && resp != nil {
 
@@ -123,19 +146,12 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.SignUpResponse) {
-
-	var newUser sqlc.User
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return &newUser, nil
-	}
+func loaderHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Parseo del formulario enviado por POST.
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
-		return &newUser, nil
+		return
 	}
 
 	// Obtención de los datos del usuario.
@@ -147,39 +163,22 @@ func createUser(w http.ResponseWriter, r *http.Request) (*sqlc.User, *epmodels.S
 	// Validación.
 	if checkers.HayCampoIncompleto(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return &newUser, nil
+		return
 	}
 
-	resp, err := emailpassword.SignUp("", email, password)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return &newUser, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func createLoader(name, surname, email, password string) {
+
+	user, resp := createUser(name, surname, email, password, auth.LoaderRole.Name)
+
+	if user == nil || resp == nil {
+		log.Fatal("Ocurrió un error al momento de crear al usuario.")
 	}
 
-	// Verificación de email ya registrado.
-	if resp.EmailAlreadyExistsError != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Usuario ya registado en el sistema. Inicie sesión."))
-		return &newUser, nil
-	}
-
-	if resp.OK != nil {
-		newUser, err = queries.CreateUser(r.Context(), sqlc.CreateUserParams{
-			Name:    name,
-			Surname: surname,
-			AuthID:  resp.OK.User.ID,
-		})
-		if err != nil {
-			log.Println("Error creando usuario interno:", err)
-		}
-
-		// Se crea token de verificación.
-		sendVerificationEmail(resp.OK.User.ID, email)
-	}
-
-	// Se le asigna el rol de usuario.
-	userroles.AddRoleToUser("public", resp.OK.User.ID, "user", nil)
-
-	return &newUser, &resp
+	log.Printf("Loader created: %s", email)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -192,15 +191,28 @@ func createAdmin() {
 	email := utils.GetEnv("ADMIN_EMAIL", "admin@scifi-search.com")
 	password := utils.GetEnv("ADMIN_PASSWORD", "admin")
 
+	user, resp := createUser(name, surname, email, password, auth.AdminRole.Name)
+
+	if user == nil || resp == nil {
+		log.Fatal("Ocurrió un error al momento de crear al usuario.")
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func createUser(name, surname, email, password, role string) (*sqlc.User, *epmodels.SignUpResponse) {
+
+	var newUser sqlc.User
+
 	resp, err := emailpassword.SignUp("", email, password)
 	if err != nil {
-		log.Fatal("It wasn't possible to create an administrator for the application.")
+		log.Fatal("It wasn't possible to create the user.")
 	}
 
 	// Verificación de email ya registrado.
 	if resp.EmailAlreadyExistsError != nil {
-		log.Print("Administrator's account already exists. Skipping admin creation...")
-		return
+		log.Print("Email already in use.")
+		return &newUser, &resp
 	}
 
 	if resp.OK != nil {
@@ -217,8 +229,10 @@ func createAdmin() {
 		sendVerificationEmail(resp.OK.User.ID, email)
 	}
 
-	// Se le asigna el rol de admin.
-	userroles.AddRoleToUser("public", resp.OK.User.ID, "admin", nil)
+	// Asignación del rol al usuario.
+	userroles.AddRoleToUser("public", resp.OK.User.ID, role, nil)
+
+	return &newUser, &resp
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -680,41 +694,6 @@ func updatePassword(user *database.User, currentPassword, newPassword string) er
 
 	log.Println("Contraseña actualizada")
 	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func canModifyFinancing(userID, financingID string) bool {
-	roles, _ := userroles.GetRolesForUser("public", userID, nil)
-
-	if slices.Contains(roles.OK.Roles, "admin") {
-		return true
-	}
-
-	if slices.Contains(roles.OK.Roles, "loader") {
-		// Verificar propiedad
-		//financing := getFinancingFromDB(financingID)
-		//return financing.OwnerID == userID
-	}
-
-	return false
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func getAuthenticationLevel(userID string) int {
-	roles, _ := userroles.GetRolesForUser("public", userID, nil)
-
-	if slices.Contains(roles.OK.Roles, "admin") {
-		return 1
-	} else if slices.Contains(roles.OK.Roles, "loader") {
-		return 2
-	} else if slices.Contains(roles.OK.Roles, "user") {
-		return 3
-	}
-
-	// Usuario sin autenticar.
-	return 0
 }
 
 // ------------------------------------------------------------------------------------------------

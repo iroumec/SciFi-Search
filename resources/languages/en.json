@@ -25,5 +25,6 @@
     "funding.new": "New funding",
     "type": "Type",
     "link": "Link",
-    "submit": "Submit"
+    "submit": "Submit",
+    "cancel": "Cancel"
 }

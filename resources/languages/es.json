@@ -25,5 +25,6 @@
     "funding.new": "Nuevo financiamiento",
     "type": "Tipo",
     "link": "Enlace",
-    "submit": "Subir"
+    "submit": "Subir",
+    "cancel": "Cancelar"
 }

@@ -64,7 +64,7 @@ UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, li
 
 -- name: GetDocumentByID :one
 SELECT * from documents WHERE id = $1;
- 
+
 -- name: ListAllDocuments :many
 SELECT * FROM documents LIMIT $1 OFFSET $2;
 
