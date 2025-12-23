@@ -11,6 +11,7 @@ import (
 
 type Document struct {
 	ID          int32          `json:"id"`
+	UserID      int32          `json:"user_id"`
 	Name        string         `json:"name"`
 	Type        string         `json:"type"`
 	FirstArea   string         `json:"first_area"`

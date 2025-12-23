@@ -54,13 +54,19 @@ ORDER BY count DESC
 LIMIT $1;
 
 -- name: AddDocument :one
-INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;
+INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;
 
 -- name: RemoveDocument :exec
 DELETE FROM documents WHERE id = $1;
 
 -- name: UpdateDocument :exec
-UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10 WHERE id = $1;
+UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10, user_id = $11 WHERE id = $1;
 
 -- name: GetDocumentByID :one
 SELECT * from documents WHERE id = $1;
+ 
+-- name: ListAllDocuments :many
+SELECT * FROM documents LIMIT $1 OFFSET $2;
+
+-- name: ListDocumentsByUser :many
+SELECT * FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3;

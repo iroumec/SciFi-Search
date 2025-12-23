@@ -48,6 +48,9 @@ func Init(queryObject *sqlc.Queries) {
 	// Se registran los handlers correspondientes a la búsqueda.
 	registerSearchHandlers()
 
+	// Se registran los handlers correspondientes a la administración de proyectos.
+	registerFundingHandlers()
+
 	// Se registran los handlers correspondientes a la autenticación (EN PROCESO).
 	registerAuthenticationHandlers()
 

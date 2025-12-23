@@ -27,7 +27,7 @@ templ searchResultsContent(query string, hits []map[string]any, translator langu
 						@searchFilters(query, documentTypes, documentAreas)
 					</div>
 					<div id="results">
-						@SearchResults(hits)
+						@SearchResults(hits, 1)
 					</div>
 				}
 			</div>
@@ -36,25 +36,49 @@ templ searchResultsContent(query string, hits []map[string]any, translator langu
 	</main>
 }
 
-templ SearchResults(hits []map[string]any) {
-	for _, m := range hits {
-		<div class="result">
-			<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
-			<div class="extra-info">
-				@extraInfoItem(converters.ToString(m["Tipo"]), "gray")
-				@extraInfoItem(converters.ToString(m["Gran area 1"]), "scifi")
-				@extraInfoItem(converters.ToString(m["Gran area 2"]), "scifi")
-				@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
-				@extraInfoItem(converters.ToString(m["Pais"]), "yellow")
-				@extraInfoItem(converters.ToString(m["Otorgante"]), "cyan")
-				/*@extraInfoItem(converters.ToString(m["Monto"]), "green")*/
+templ SearchResults(hits []map[string]any, page int) {
+	<div class="results-section">
+		for i := (page - 1) * 10; i < page * 10 && i < len(hits); i++ {
+			<div class="result">
+				@resultsItem(hits[i])
 			</div>
-			if converters.ToString(m["Descripcion"]) != "" {
-				<p id="description">{ converters.ToString(m["Descripcion"]) }</p>
+		}
+	</div>
+	<div class="pagination">
+		for i := 1; i <= (len(hits)+9)/10; i++ {
+			if i == page {
+				<span id="current-page">{ converters.ToString(i) }</span>
 			} else {
-				<p> No description. </p>
+				<a
+					class="page"
+					hx-get="/search/update-results"
+					hx-include="#all-filters"
+					hx-target="#results"
+					hx-swap="innerHTML"
+					hx-vals={ `{"page": "` + converters.ToString(i) + `"}` }
+				>
+					{ converters.ToString(i) }
+				</a>
 			}
-		</div>
+		}
+	</div>
+}
+
+templ resultsItem(m map[string]any) {
+	<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
+	<div class="extra-info">
+		@extraInfoItem(converters.ToString(m["Tipo"]), "gray")
+		@extraInfoItem(converters.ToString(m["Gran area 1"]), "scifi")
+		@extraInfoItem(converters.ToString(m["Gran area 2"]), "scifi")
+		@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
+		@extraInfoItem(converters.ToString(m["Pais"]), "yellow")
+		@extraInfoItem(converters.ToString(m["Otorgante"]), "cyan")
+		/*@extraInfoItem(converters.ToString(m["Monto"]), "green")*/
+	</div>
+	if converters.ToString(m["Descripcion"]) != "" {
+		<p id="description">{ converters.ToString(m["Descripcion"]) }</p>
+	} else {
+		<p> No description. </p>
 	}
 }
 
@@ -230,7 +254,7 @@ templ sortingCheckboxes() {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, isUserAuthenticated bool, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
+templ SearchResultsPage(query string, hits []map[string]any,isUserAuthenticated bool, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
 	@Layout(query+" - SciFi Search", translator,
 		func() templ.Component { return SearchHeader(isUserAuthenticated, translator) },
 		func() templ.Component {

@@ -13,14 +13,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"scifi-search/app/http/cookies"
-	"scifi-search/app/http/middlewares"
-	"scifi-search/app/infra/email"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
 	"sort"
+	"strconv"
 	"strings"
 
 	sqlc "scifi-search/app/database"
@@ -72,8 +70,8 @@ func registerSearchHandlers() {
 
 	// Se registra el handler.
 	http.HandleFunc("/search", searchHandler)
-	http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/search/update-filter", filtersHandler)
+	http.HandleFunc("/search/update-results", filtersHandler)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -92,25 +90,11 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func addFundingHandler(w http.ResponseWriter, r *http.Request) {
-
-	switch r.Method {
-	case http.MethodGet:
-		showAddFundingPage(w, r)
-	case http.MethodPost:
-		addFunding(w, r)
-	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
 func filtersHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		updateFilters(w, r)
+		updateResults(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -175,6 +159,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			// Añadido del documento a la base de datos.
 			document, err := queries.AddDocument(context.Background(), sqlc.AddDocumentParams{
 				Name:        nombre,
+				UserID:      -1, // Indefinido en este caso.
 				Type:        tipo,
 				FirstArea:   granArea1,
 				SecondArea:  sql.NullString{String: granArea2, Valid: granArea2 != ""},
@@ -191,6 +176,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			// Indexado del documento.
 			filtered := map[string]any{
 				"id":          document.ID,
+				"Usuario":     document.UserID,
 				"Nombre":      nombre,
 				"Tipo":        tipo,
 				"Gran area 1": granArea1,
@@ -288,6 +274,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 	// Construcción de la búsqueda.
 	searchRequest := &meilisearch.SearchRequest{
 		ShowRankingScore: true, // Se muestra el score de relevancia.
+		Limit:            1000,
 	}
 
 	res, err := client.Index(indexName).Search(query, searchRequest)
@@ -329,111 +316,13 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
-
-	if !isEmailVerified(w, r) {
-
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad."))
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	component := views.AddFundingPage(languages.GetTranslatorFromRequest(r))
-	component.Render(r.Context(), w)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func addFunding(w http.ResponseWriter, r *http.Request) {
-
-	// Parsin del formulario.
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Obtención de los datos del formulario.
-	name := r.Form.Get("name")
-	fundingType := r.Form.Get("type")
-	firstArea := r.Form.Get("first-area")
-	secondArea := r.Form.Get("second-area")
-	link := r.Form.Get("link")
-	description := r.Form.Get("description")
-	basedOn := r.Form.Get("based-on")
-	grantor := r.Form.Get("grantor")
-	deadline := r.Form.Get("deadline")
-
-	document, err := queries.AddDocument(r.Context(), sqlc.AddDocumentParams{
-		Name:        name,
-		Type:        fundingType,
-		FirstArea:   firstArea,
-		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},
-		Link:        sql.NullString{String: link, Valid: link != ""},
-		Description: sql.NullString{String: description, Valid: description != ""},
-		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
-		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
-		Deadline:    deadline,
-	})
-
-	_, err = client.Index(indexName).AddDocuments(map[string]any{
-		"id":          document.ID,
-		"Nombre":      document.Name,
-		"Tipo":        document.Type,
-		"Gran area 1": document.FirstArea,
-		"Gran area 2": document.SecondArea.String,
-		"Link":        document.Link.String,
-		"Descripcion": document.Description.String,
-		"Pais":        document.BasedOn.String,
-		"Otorgante":   document.Grantor.String,
-		"Deadline":    document.Deadline,
-	}, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	notifyFundingAddition(w, r, name)
-
-	component := views.FundingAddedPage(languages.GetTranslatorFromRequest(r))
-	component.Render(r.Context(), w)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName string) {
-
-	// Acá sería mejor que el email solo se enviara a los usuarios
-	// que están verificados.
-	// TODO: agregar un campo a la base de datos que indique si
-	// el usuario está verificado.
-	// TODO: tampoco debería (creo) notificarse al usuario que añadió
-	// el financiamiento.
-	users, err := queries.ListUsers(r.Context())
-	if err != nil {
-		log.Fatal("Error en la notificación de nuevo financiamiento")
-		return
-	}
-
-	for _, user := range users {
-
-		userEmail := getUserEmail(user.AuthID)
-
-		if userEmail == nil {
-			log.Printf("Usuario %d no encontrado", user.UserID)
-			continue
-		}
-
-		email.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func updateFilters(w http.ResponseWriter, r *http.Request) {
+func updateResults(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
 	filterTipo := r.URL.Query()["tipo"]
 	filterArea := r.URL.Query()["area"]
 	sortBy := r.URL.Query()["sortby"]
+	pageStr := r.URL.Query().Get("page")
 
 	var filters []string
 	for _, t := range filterTipo {
@@ -446,6 +335,7 @@ func updateFilters(w http.ResponseWriter, r *http.Request) {
 
 	searchRequest := &meilisearch.SearchRequest{
 		ShowRankingScore: true,
+		Limit:            1000,
 	}
 
 	if len(filters) > 0 {
@@ -486,7 +376,12 @@ func updateFilters(w http.ResponseWriter, r *http.Request) {
 		sortResults(hitsMaps, sortBy)
 	}
 
-	component := views.SearchResults(hitsMaps)
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1 // TODO: dejarlo así o levantamos error?
+	}
+
+	component := views.SearchResults(hitsMaps, page)
 	component.Render(r.Context(), w)
 }
 

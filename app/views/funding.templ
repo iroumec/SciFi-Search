@@ -54,3 +54,34 @@ templ FundingAddedPage(translator languages.Translator) {
 		func() templ.Component { return fundingAddedContent(translator) },
 	)
 }
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------   -----------------------------------------
+// ------------------------------------------------------------------------------------------------
+
+templ manageFundingContent(translator languages.Translator) {
+	<div class="centered-box-content">
+		<div id="left"></div>
+		<div id="manage-funding-content">
+			<p> Manage projects </p>
+			<div id="funding-list">
+				@fundingItems()
+			</div>
+			<button class="scifi-button">
+				Add new
+			</button>
+		</div>
+		<div id="right"></div>
+	</div>
+}
+
+templ ManageFundingPage(translator languages.Translator) {
+	@Layout("Manage projects", translator,
+		func() templ.Component { return Header(true, true, translator) },
+		func() templ.Component { return manageFundingContent(translator) },
+	)
+}
+
+templ fundingItems() {
+	
+}

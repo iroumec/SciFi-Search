@@ -12,7 +12,7 @@ import (
 )
 
 const addDocument = `-- name: AddDocument :one
-INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, name, type, first_area, second_area, link, description, based_on, grantor, deadline
+INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline
 `
 
 type AddDocumentParams struct {
@@ -25,6 +25,7 @@ type AddDocumentParams struct {
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
 	Deadline    string         `json:"deadline"`
+	UserID      int32          `json:"user_id"`
 }
 
 func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Document, error) {
@@ -38,10 +39,12 @@ func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Docum
 		arg.BasedOn,
 		arg.Grantor,
 		arg.Deadline,
+		arg.UserID,
 	)
 	var i Document
 	err := row.Scan(
 		&i.ID,
+		&i.UserID,
 		&i.Name,
 		&i.Type,
 		&i.FirstArea,
@@ -143,7 +146,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 }
 
 const getDocumentByID = `-- name: GetDocumentByID :one
-SELECT id, name, type, first_area, second_area, link, description, based_on, grantor, deadline from documents WHERE id = $1
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline from documents WHERE id = $1
 `
 
 func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, error) {
@@ -151,6 +154,7 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 	var i Document
 	err := row.Scan(
 		&i.ID,
+		&i.UserID,
 		&i.Name,
 		&i.Type,
 		&i.FirstArea,
@@ -235,6 +239,95 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 		&i.AvatarUrl,
 	)
 	return i, err
+}
+
+const listAllDocuments = `-- name: ListAllDocuments :many
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline FROM documents LIMIT $1 OFFSET $2
+`
+
+type ListAllDocumentsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsParams) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listAllDocuments, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Type,
+			&i.FirstArea,
+			&i.SecondArea,
+			&i.Link,
+			&i.Description,
+			&i.BasedOn,
+			&i.Grantor,
+			&i.Deadline,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listDocumentsByUser = `-- name: ListDocumentsByUser :many
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3
+`
+
+type ListDocumentsByUserParams struct {
+	UserID int32 `json:"user_id"`
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListDocumentsByUser(ctx context.Context, arg ListDocumentsByUserParams) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listDocumentsByUser, arg.UserID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Type,
+			&i.FirstArea,
+			&i.SecondArea,
+			&i.Link,
+			&i.Description,
+			&i.BasedOn,
+			&i.Grantor,
+			&i.Deadline,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listHistoricSearchesFromUser = `-- name: ListHistoricSearchesFromUser :many
@@ -362,7 +455,7 @@ func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferencePara
 }
 
 const updateDocument = `-- name: UpdateDocument :exec
-UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10 WHERE id = $1
+UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10, user_id = $11 WHERE id = $1
 `
 
 type UpdateDocumentParams struct {
@@ -376,6 +469,7 @@ type UpdateDocumentParams struct {
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
 	Deadline    string         `json:"deadline"`
+	UserID      int32          `json:"user_id"`
 }
 
 func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) error {
@@ -390,6 +484,7 @@ func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) 
 		arg.BasedOn,
 		arg.Grantor,
 		arg.Deadline,
+		arg.UserID,
 	)
 	return err
 }
