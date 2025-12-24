@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"scifi-search/app/database"
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/http/middlewares"
+	"scifi-search/app/infra/auth"
 	"scifi-search/app/infra/email"
 
 	"scifi-search/app/languages"
@@ -17,7 +19,7 @@ import (
 func registerFundingHandlers() {
 
 	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
-	http.HandleFunc("/funding", middlewares.RequiresAuthorization(addFundingHandler, 1))
+	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 
 }
 
@@ -27,17 +29,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-
-		fundings, err := queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
-			Limit:  5,
-			Offset: 0,
-		})
-		if err != nil {
-			return
-		}
-
-		//showAddFundingPage(w, r)
-		views.ManageFundingPage(fundings, languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+		showFundingsManagementPage(w, r)
 	case http.MethodPost:
 		addFunding(w, r)
 	default:
@@ -47,16 +39,38 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func showAddFundingPage(w http.ResponseWriter, r *http.Request) {
+func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 
-	if !isEmailVerified(w, r) {
-
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad."))
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+	var fundings []database.Document
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	component := views.AddFundingPage(languages.GetTranslatorFromRequest(r))
+	if auth.GetAuthenticationLevel(user.AuthID) == auth.AdminRole.Level {
+
+		// De ser admin, se listan todos los documentos.
+		fundings, err = queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
+			Limit:  5,
+			Offset: 0,
+		})
+	} else {
+
+		// De ser loader, se listan solo sus documentos.
+		fundings, err = queries.ListDocumentsByUser(r.Context(), sqlc.ListDocumentsByUserParams{
+			UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
+			Limit:  5,
+			Offset: 0,
+		})
+	}
+	if err != nil {
+		return
+	}
+
+	component := views.ManageFundingPage(fundings, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -81,9 +95,17 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	grantor := r.Form.Get("grantor")
 	deadline := r.Form.Get("deadline")
 
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	document, err := queries.AddDocument(r.Context(), sqlc.AddDocumentParams{
 		Name:        name,
-		UserID:      sql.NullInt32{Int32: getCurrentUser(w, r).UserID, Valid: true},
+		UserID:      sql.NullInt32{Int32: user.UserID, Valid: true},
 		Type:        fundingType,
 		FirstArea:   firstArea,
 		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},

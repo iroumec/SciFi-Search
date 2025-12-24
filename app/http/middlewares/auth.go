@@ -7,11 +7,56 @@ import (
 	"net/http"
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/infra/auth"
+	"scifi-search/app/languages"
 	"scifi-search/app/utils/converters"
 
+	"github.com/supertokens/supertokens-golang/recipe/emailverification"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 )
+
+// ------------------------------------------------------------------------------------------------
+
+func RequiresEmailVerified(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !isEmailVerified(w, r) {
+
+			message := languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad.")
+			cookies.AddFlashCookie(w, message)
+
+			// Si es petición HTMX, se envia un trigger para mostrar popup.
+			if r.Header.Get("HX-Request") == "true" {
+				w.Header().Set("HX-Trigger", "showFlash")
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+
+			// Si no es HTMX, simplemente se redirige.
+			http.Redirect(w, r, "/", http.StatusFound)
+			return
+		}
+		next(w, r)
+	}
+}
+
+// Función auxiliar para verificar si el email está verificado.
+func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
+		SessionRequired: converters.ToBoolPointer(true),
+	})
+	if err != nil {
+		return false
+	}
+
+	if sessionContainer == nil {
+		return false
+	}
+
+	userID := sessionContainer.GetUserID()
+	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
+
+	return isVerified
+}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -56,9 +101,19 @@ func RequiresAuthorization(next http.HandlerFunc, minimumLevelOfAuthorizationReq
 		authenticationLevel := auth.GetAuthenticationLevel(userID)
 
 		if authenticationLevel < minimumLevelOfAuthorizationRequired {
-			cookies.AddFlashCookie(w, "No cuenta con los permisos suficientes.")
-			w.Header().Set("HX-Redirect", "/")
-			w.WriteHeader(http.StatusForbidden)
+
+			message := languages.GetTranslatorFromRequest(r)("No cuenta con los permisos suficientes.")
+			cookies.AddFlashCookie(w, message)
+
+			// Si es petición HTMX, se envia un trigger para mostrar popup.
+			if r.Header.Get("HX-Request") == "true" {
+				w.Header().Set("HX-Trigger", "showFlash")
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+
+			// Si no es HTMX, simplemente se redirige.
+			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 		next(w, r)

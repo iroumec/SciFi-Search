@@ -33,10 +33,11 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func showHistory(w http.ResponseWriter, r *http.Request) {
-	user := getCurrentUser(w, r)
-
-	// Si hay un usuario autenticado (con cookies de sesión)...
-	if user != nil {
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
+		component.Render(r.Context(), w)
+	} else {
 
 		rows, err := queries.ListHistoricSearchesFromUser(r.Context(), user.UserID)
 		if err != nil {
@@ -53,10 +54,6 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 		}
 
 		component := views.HistoryPage(searches, languages.GetTranslatorFromRequest(r))
-		component.Render(r.Context(), w)
-
-	} else {
-		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	}
 }

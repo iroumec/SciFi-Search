@@ -382,7 +382,7 @@ func isUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 // Get Current User
 // ------------------------------------------------------------------------------------------------
 
-func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
+func getCurrentUser(w http.ResponseWriter, r *http.Request) (*database.User, error) {
 
 	if isUserAuthenticated(w, r) {
 
@@ -397,11 +397,11 @@ func getCurrentUser(w http.ResponseWriter, r *http.Request) *database.User {
 			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		}
 
-		return &user
+		return &user, nil
 
 	} else {
 
-		return nil
+		return nil, fmt.Errorf("There is no user authenticated.")
 	}
 }
 
@@ -421,8 +421,8 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
-	user := getCurrentUser(w, r)
-	if user == nil {
+	user, err := getCurrentUser(w, r)
+	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
 	}
@@ -434,7 +434,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se elimina el usuario de supertokens.
-	err := deleteSupertokensUser(user.AuthID)
+	err = deleteSupertokensUser(user.AuthID)
 	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
@@ -510,27 +510,6 @@ func deleteSupertokensUser(authID string) error {
 
 	// Usuario eliminado exitosamente.
 	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-// Función auxiliar para verificar si el email está verificado.
-func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
-	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(true),
-	})
-	if err != nil {
-		return false
-	}
-
-	if sessionContainer == nil {
-		return false
-	}
-
-	userID := sessionContainer.GetUserID()
-	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
-
-	return isVerified
 }
 
 // ------------------------------------------------------------------------------------------------

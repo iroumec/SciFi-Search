@@ -303,8 +303,14 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// De estar autenticado el usuario, se guarda la búsqueda
 	// en su historial.
-	user := getCurrentUser(w, r)
-	if user != nil {
+	if isUserAuthenticated(w, r) {
+
+		user, err := getCurrentUser(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		params := sqlc.CreateHistoricSearchParams{UserID: user.UserID, SearchString: query}
 		queries.CreateHistoricSearch(r.Context(), params)
 	}

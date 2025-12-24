@@ -118,8 +118,8 @@ func uploadAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// Obtención del usuario.
-	user := getCurrentUser(w, r)
-	if user == nil {
+	user, err := getCurrentUser(w, r)
+	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		// Acá podría enviarse a la pestaña de login si el usuario no está autenticado.
 		// Pero ¿puede el usuario acceder a esto si no está autenticado?

@@ -7,37 +7,6 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// ------------------------------------------ Upload ----------------------------------------------
-// ------------------------------------------------------------------------------------------------
-templ addFundingContent(translator languages.Translator) {
-	<div class="only-form-content">
-		<div class="centered-container">
-			<form id="funding-form" action="/funding" method="POST">
-				<div id="form-inputs">
-					<input type="text" placeholder={ translator("name") } name="name" required/>
-					<input type="text" placeholder={ translator("type") } name="type" required/>
-					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
-					<input type="text" placeholder={ translator("second-area") } name="second-area"/>
-					<input type="link" placeholder={ translator("link") } name="link"/>
-					<input type="text" placeholder={ translator("description") } name="description"/>
-					<input type="text" placeholder="Basado en (Pais)" name="based-on"/>
-					<input type="text" placeholder="Entidad otorgante" name="grantor"/>
-					<input type="date" placeholder="Deadline" name="deadline" required/>
-				</div>
-				<button class="scifi-button" type="submit">{ translator("submit") }</button>
-			</form>
-		</div>
-	</div>
-}
-
-templ AddFundingPage(translator languages.Translator) {
-	@Layout(translator("funding.new"), translator,
-		func() templ.Component { return Header(true, true, translator) },
-		func() templ.Component { return addFundingContent(translator) },
-	)
-}
-
-// ------------------------------------------------------------------------------------------------
 // ------------------------------------ Modal Component -------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ addFundingModal(translator languages.Translator) {

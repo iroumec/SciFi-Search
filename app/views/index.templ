@@ -30,68 +30,6 @@ templ indexContent(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ showPopUp() {
-	<div id="flash-popup" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:15px 20px; background:#3f4646; color:white; border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.2); z-index:9999;">
-		<span id="flash-popup-text"></span>
-		<button
-			id="close-flash-popup"
-			type="button"
-			style="margin-left:15px; background:transparent; border:none; color:white; font-size:20px; cursor:pointer; padding:0 5px;"
-		>x</button>
-	</div>
-	<script>
-        (function() {
-            function getCookie(name) {
-                const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-                return m ? m.pop() : "";
-            }
-            
-            function deleteCookie(name) {
-                document.cookie = name + '=; Max-Age=0; path=/;';
-            }
-            
-            function showFlashPopup(msg) {
-                const el = document.getElementById("flash-popup");
-                const textEl = document.getElementById("flash-popup-text");
-                if (el && textEl) {
-                    textEl.textContent = msg;
-                    el.style.display = "block";
-                    setTimeout(function() {
-                        el.style.display = "none";
-                    }, 5000);
-                }
-            }
-            
-            // Event listener para el botón de cerrar.
-            const closeBtn = document.getElementById("close-flash-popup");
-            if (closeBtn) {
-                closeBtn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    const el = document.getElementById("flash-popup");
-                    if (el) {
-                        el.style.display = "none";
-                    }
-                });
-            }
-
-			function b64DecodeUnicode(str) {
-				const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0));
-				return new TextDecoder("utf-8").decode(bytes);
-			}
-            
-            // Se verifica la cookie y se muestra el popup.
-            const flash = getCookie("flash");
-            if (flash) {
-				const decoded = b64DecodeUnicode(flash);
-				showFlashPopup(decoded);
-                deleteCookie("flash");
-            }
-        })();
-    </script>
-}
-
-// ------------------------------------------------------------------------------------------------
 templ IndexPage(isUserAuthenticated bool, translator languages.Translator) {
 	@Layout("SciFi Search", translator,
 		func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },

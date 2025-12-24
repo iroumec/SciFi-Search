@@ -110,7 +110,11 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		currentUser := getCurrentUser(w, r)
+		currentUser, err := getCurrentUser(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
@@ -141,9 +145,11 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 // Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
-	currentUser := getCurrentUser(w, r)
-
-	if currentUser != nil {
+	currentUser, err := getCurrentUser(w, r)
+	if err != nil {
+		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
+		component.Render(r.Context(), w)
+	} else {
 
 		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
@@ -162,12 +168,6 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 		component := views.SettingsPage(user, preferences, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
-
-	} else {
-
-		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
-		component.Render(r.Context(), w)
-
 	}
 }
 
@@ -176,7 +176,11 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 // Renderiza el campo que está siendo editado.
 func editField(w http.ResponseWriter, r *http.Request) {
 
-	user := getCurrentUser(w, r)
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	email := getCurrentUserEmail(w, r)
 	fieldStr := strings.TrimPrefix(r.URL.Path, "/settings/edit/")
 
@@ -217,7 +221,11 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Obtengo el usuario
-	user := getCurrentUser(w, r)
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	//Obtencion de los valores guardados en nuestra BD que cambian
 	name := user.Name
@@ -271,7 +279,11 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Renderización final
-	currentUpdatedUser := getCurrentUser(w, r)
+	currentUpdatedUser, err := getCurrentUser(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	updatedUser := structures.User{
 		Name:            currentUpdatedUser.Name,
