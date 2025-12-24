@@ -4,63 +4,74 @@ package views
 templ showPopUp() {
 	<div
 		x-data="{
-            show: false,
-            message: '',
-            init() {
-                console.log('Alpine popup iniciado');
-                const flash = this.getCookie('flash');
-                console.log('Cookie flash:', flash);
-                console.log('Todas las cookies:', document.cookie);
-                if (flash) {
-                    this.message = this.b64DecodeUnicode(flash);
-                    console.log('Mensaje decodificado:', this.message);
-                    this.deleteCookie('flash');
-                    this.show = true;
-                    console.log('Show establecido a true');
-                    setTimeout(() => { 
-                        console.log('Ocultando popup');
-                        this.show = false 
-                    }, 5000);
-                }
-                
-                document.body.addEventListener('showFlash', () => {
-                    console.log('Evento showFlash recibido');
-                    const flash = this.getCookie('flash');
-                    console.log('Cookie en evento:', flash);
-                    console.log('Todas las cookies:', document.cookie);
-                    if (flash) {
-                        this.message = this.b64DecodeUnicode(flash);
-                        this.deleteCookie('flash');
-                        this.show = true;
-                        setTimeout(() => { this.show = false }, 5000);
-                    }
-                });
-            },
-            getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-                return '';
-            },
-            deleteCookie(name) {
-                document.cookie = name + '=; Max-Age=0; path=/;';
-            },
-            b64DecodeUnicode(str) {
-                const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0));
-                return new TextDecoder('utf-8').decode(bytes);
-            },
-            close() {
-                this.show = false;
-            }
-        }"
+			show: false,
+			message: '',
+
+			init() {
+
+				// --------------------------------------------------
+				// HTMX
+				// --------------------------------------------------
+				document.body.addEventListener('showFlash', (e) => {
+					if (!e.detail || !e.detail.message) return
+
+					this.message = e.detail.message
+					this.open()
+				})
+
+				// --------------------------------------------------
+				// HTTP (redirect y cookie)
+				// --------------------------------------------------
+				const flash = this.getCookie('flash')
+				if (flash) {
+					this.message = this.b64DecodeUnicode(flash)
+					this.deleteCookie('flash')
+					this.open()
+				}
+			},
+
+			open() {
+				this.show = true
+				setTimeout(() => this.show = false, 5000)
+			},
+
+			close() {
+				this.show = false
+			},
+
+			// --------------------------------------------------
+			// Utils
+			// --------------------------------------------------
+			getCookie(name) {
+				const value = '; ' + document.cookie
+				const parts = value.split('; ' + name + '=')
+				if (parts.length === 2) return parts.pop().split(';').shift()
+				return ''
+			},
+
+			deleteCookie(name) {
+				document.cookie = name + '=; Max-Age=0; path=/;'
+			},
+
+			b64DecodeUnicode(str) {
+				const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0))
+				return new TextDecoder('utf-8').decode(bytes)
+			}
+		}"
 		x-show="show"
-		style="position:fixed; top:20px; left:50%; transform:translateX(-50%); padding:15px 20px; background:#3f4646; color:white; border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.2); z-index:9999;"
+		x-cloak
+		@click.outside="close()"
+		style="position:fixed; top:20px; left:50%; transform:translateX(-50%);
+                padding:15px 20px; background:#3f4646; color:white;
+                border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.2);
+                z-index:9999;"
 	>
-		<span x-text="message">TEST</span>
+		<span x-text="message"></span>
 		<button
-			@click="close()"
+			@click.stop="close()"
 			type="button"
-			style="margin-left:15px; background:transparent; border:none; color:white; font-size:20px; cursor:pointer; padding:0 5px;"
+			style="margin-left:15px; background:transparent; border:none;
+                    color:white; font-size:20px; cursor:pointer;"
 		>×</button>
 	</div>
 }

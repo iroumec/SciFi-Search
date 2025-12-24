@@ -12,20 +12,20 @@ templ indexContent(translator languages.Translator) {
 					<img src="static/img/logo.png" alt="Logo Scifi" id="logo_scifi"/>
 				</div>
 				<div class="inicio-query-container">
-					<input type="text" id="first-query" placeholder="Search for SCIENCE!!!"/>
+					<input
+						type="text"
+						id="first-query"
+						name="query"
+						placeholder="Search for SCIENCE!!!"
+						hx-get="/search"
+						hx-trigger="keyup[key=='Enter' && this.value.trim()!='']"
+						hx-target="body"
+						hx-push-url="true"
+						hx-include="this"
+					/>
 				</div>
 			</div>
 		</div>
-		<script>
-            const input = document.getElementById("first-query");
-            input.addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    const query = input.value.trim();
-                    if (!query) return;
-                    window.location.href = `/search?query=${encodeURIComponent(query)}`;
-                }
-            });
-        </script>
 	</main>
 }
 

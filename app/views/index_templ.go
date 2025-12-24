@@ -40,7 +40,7 @@ func indexContent(translator languages.Translator) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" placeholder=\"Search for SCIENCE!!!\"></div></div></div><script>\n            const input = document.getElementById(\"first-query\");\n            input.addEventListener(\"keypress\", (e) => {\n                if (e.key === \"Enter\") {\n                    const query = input.value.trim();\n                    if (!query) return;\n                    window.location.href = `/search?query=${encodeURIComponent(query)}`;\n                }\n            });\n        </script></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" name=\"query\" placeholder=\"Search for SCIENCE!!!\" hx-get=\"/search\" hx-trigger=\"keyup[key=='Enter' && this.value.trim()!='']\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></div></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

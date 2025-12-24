@@ -8,6 +8,7 @@ import (
 )
 
 templ settingsContent(user structures.User, preferences []string) {
+	@showPopUp()
 	<div class="centered-box-content">
 		<div id="left"></div>
 		@SettingsForm(user, preferences)

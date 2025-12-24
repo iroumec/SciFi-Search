@@ -22,16 +22,20 @@ func RequiresEmailVerified(next http.HandlerFunc) http.HandlerFunc {
 		if !isEmailVerified(w, r) {
 
 			message := languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad.")
-			cookies.AddFlashCookie(w, message)
 
 			// Si es petición HTMX, se envia un trigger para mostrar popup.
 			if r.Header.Get("HX-Request") == "true" {
-				w.Header().Set("HX-Trigger", "showFlash")
+				w.Header().Set("HX-Trigger", `{
+					"showFlash": {
+						"message": "`+message+`"
+					}
+				}`)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 
 			// Si no es HTMX, simplemente se redirige.
+			cookies.AddFlashCookie(w, message)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
@@ -103,16 +107,20 @@ func RequiresAuthorization(next http.HandlerFunc, minimumLevelOfAuthorizationReq
 		if authenticationLevel < minimumLevelOfAuthorizationRequired {
 
 			message := languages.GetTranslatorFromRequest(r)("No cuenta con los permisos suficientes.")
-			cookies.AddFlashCookie(w, message)
 
 			// Si es petición HTMX, se envia un trigger para mostrar popup.
 			if r.Header.Get("HX-Request") == "true" {
-				w.Header().Set("HX-Trigger", "showFlash")
+				w.Header().Set("HX-Trigger", `{
+					"showFlash": {
+						"message": "`+message+`"
+					}
+				}`)
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
 
 			// Si no es HTMX, simplemente se redirige.
+			cookies.AddFlashCookie(w, message)
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}

@@ -26,9 +26,15 @@ templ headerBuilder(backgroundColor string, logo string, query bool, showOptions
 	<header style={ "background-color: " + backgroundColor + ";" }>
 		<div class="header-left">
 			if logo != "" {
-				<a href="/">
-					<img src={ "static/img/" + logo  } alt="Scifi Search Logo" id="header-logo"/>
-				</a>
+				<img
+					src={ "static/img/" + logo }
+					alt="Scifi Search Logo"
+					id="header-logo"
+					hx-get="/"
+					hx-target="body"
+					hx-push-url="true"
+					style="cursor: pointer;"
+				/>
 			}
 			if query {
 				<form hx-get="/search" hx-target="body" hx-push-url="true">
