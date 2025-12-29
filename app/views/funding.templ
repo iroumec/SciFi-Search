@@ -116,7 +116,7 @@ templ manageFundingContent(fundings []map[string]any, translator languages.Trans
 }
 
 templ FundingList(fundings []map[string]any, page int, translator languages.Translator) {
-	<div class="documents-section">
+	<div class="documents-section"> { len(fundings) }
 		for i := 0; i < len(fundings); i++ {
 			<div class="result">
 				@resultsItem(fundings[i])
@@ -133,7 +133,7 @@ templ FundingList(fundings []map[string]any, page int, translator languages.Tran
 			</div>
 		}
 	</div>
-	//@pagination(fundings, page, "/funding/update-items", "", "#funding-list")
+	@pagination(len(fundings), page, "/funding/update-items", "", "#funding-list")
 }
 
 templ fundingItem(funding database.Document, translator languages.Translator) {

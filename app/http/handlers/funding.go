@@ -41,7 +41,9 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 
-	var fundings []database.Document
+	var fundingsDocs []database.Document
+	var fundings []map[string]any
+
 	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
@@ -50,17 +52,19 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(queries.CountAllDocuments(r.Context()))
 	if auth.GetAuthenticationLevel(user.AuthID) == auth.AdminRole.Level {
 
 		// De ser admin, se listan todos los documentos.
-		fundings, err = queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
-			Limit:  5,
+		fundingsDocs, err = queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
+			Limit:  10,
 			Offset: 0,
 		})
+
 	} else {
 
 		// De ser loader, se listan solo sus documentos.
-		fundings, err = queries.ListDocumentsByUser(r.Context(), sqlc.ListDocumentsByUserParams{
+		fundingsDocs, err = queries.ListDocumentsByUser(r.Context(), sqlc.ListDocumentsByUserParams{
 			UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
 			Limit:  5,
 			Offset: 0,
@@ -68,6 +72,22 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		return
+	}
+
+	for _, doc := range fundingsDocs {
+		funding := map[string]any{
+			"id":          doc.ID,
+			"Nombre":      doc.Name,
+			"Tipo":        doc.Type,
+			"Gran area 1": doc.FirstArea,
+			"Gran area 2": doc.SecondArea.String,
+			"Link":        doc.Link.String,
+			"Descripcion": doc.Description.String,
+			"Pais":        doc.BasedOn.String,
+			"Otorgante":   doc.Grantor.String,
+			"Deadline":    doc.Deadline,
+		}
+		fundings = append(fundings, funding)
 	}
 
 	component := views.ManageFundingPage(fundings, languages.GetTranslatorFromRequest(r))
