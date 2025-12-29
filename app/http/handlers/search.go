@@ -41,8 +41,9 @@ var (
 // ------------------------------------------------------------------------------------------------
 
 const (
-	indexName = "funding"
-	dataPath  = "./resources/planillas/fundingRecords.json"
+	indexName      = "funding"
+	dataPath       = "./resources/planillas/fundingRecords.json"
+	resultsPerPage = 10
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -285,9 +286,9 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// No puedo utilizar res.Hist directamnete porque es un slice reservado
 	// de Meilisearch. Debo almacenarlo en una variable local.
-	hits := make([]any, len(res.Hits))
-	for i, h := range res.Hits {
-		hits[i] = h
+	hits := make([]any, resultsPerPage)
+	for i := 0; i < len(res.Hits) && i < resultsPerPage; i++ {
+		hits[i] = res.Hits[i]
 	}
 
 	// Convertir a []map[string]any de forma segura
@@ -316,7 +317,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
+	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
 }
 
@@ -339,26 +340,24 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t))
 	}
 
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1 // TODO: dejarlo así o levantamos error?
+	}
+
+	fullSearchRequest := &meilisearch.SearchRequest{
+		Limit: 1000,
+	}
+
 	searchRequest := &meilisearch.SearchRequest{
 		ShowRankingScore: true,
-		Limit:            1000,
+		Limit:            resultsPerPage,
+		Offset:           int64(page),
 	}
 
-	if len(filters) > 0 {
-		searchRequest.Filter = filters
-	}
+	allHits := getFilteredResponse(w, filters, sortBy, query, fullSearchRequest)
 
-	// Aplicación de ordenamiento.
-	if len(sortBy) > 0 {
-		searchRequest.Sort = sortBy
-	}
-	// El anterior es un ordenamiento previo a la relevancia.
-
-	res, err := client.Index(indexName).Search(query, searchRequest)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	res := getFilteredResponse(w, filters, sortBy, query, searchRequest)
 
 	hits := make([]any, len(res.Hits))
 	for i, h := range res.Hits {
@@ -382,13 +381,30 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 		sortResults(hitsMaps, sortBy)
 	}
 
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1 // TODO: dejarlo así o levantamos error?
+	component := views.SearchResults(hitsMaps, len(allHits.Hits), page)
+	component.Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getFilteredResponse(w http.ResponseWriter, filters []string, sortBy []string, query string, searchRequest *meilisearch.SearchRequest) *meilisearch.SearchResponse {
+	if len(filters) > 0 {
+		searchRequest.Filter = filters
 	}
 
-	component := views.SearchResults(hitsMaps, page)
-	component.Render(r.Context(), w)
+	// Aplicación de ordenamiento.
+	if len(sortBy) > 0 {
+		searchRequest.Sort = sortBy
+	}
+	// El anterior es un ordenamiento previo a la relevancia.
+
+	res, err := client.Index(indexName).Search(query, searchRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil
+	}
+
+	return res
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -558,7 +558,7 @@ header {
             max-height: 100%;
         }
 
-            .results-section {
+            .documents-section {
                 overflow-y: auto;       
                 max-height: 100%;       
             }
@@ -943,6 +943,51 @@ header {
                 padding-right: 1rem;
                 padding-left: 0.25rem;
             }
+
+
+/* ------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------ Modal ----------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
+
+#manage-funding-content {
+    background-color: var(--scifi30);
+    height: 92%;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 4% 90% 6%;
+    grid-template-areas: 
+        "manage-funding"
+        "funding-content"
+        "funding-buttons";
+
+    border-radius: 0.3rem;
+    
+}
+    #funding-title {
+        grid-area: manage-funding;
+        color: var(--scifi);
+        display: flex;
+        align-items: center;
+        padding-left: 0.7rem;
+    }
+
+    #funding-content {
+        grid-area: funding-content;
+        overflow-y: auto;
+        max-height: 100%;
+
+        background-color: rgba(255, 255, 255, 0.57);
+        margin: 1rem;
+        border-radius: 1rem;
+    }
+
+    #funding-buttons {
+        grid-area: funding-buttons;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
 /* Modal Styles */
 .modal-overlay {
