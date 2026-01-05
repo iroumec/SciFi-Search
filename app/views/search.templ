@@ -17,14 +17,14 @@ templ searchResultsContent(query string, hits []map[string]any, totalHits int, t
 			<div class="search-content">
 				if len(hits) == 0 {
 					<div class="message">
-						<p>No results found for "{ query }".</p>
+						<p>{ translator("no-results-for") + " \"" + query + "\"." }</p>
 					</div>
 				} else {
 					<div class="message">
-						<p>Search results for “{ query }”</p>
+						<p>{ translator("results-for") + " \"" + query + "\"." }</p>
 					</div>
 					<div class="filters">
-						@searchFilters(query, documentTypes, documentAreas)
+						@searchFilters(query, documentTypes, documentAreas, translator)
 					</div>
 					<div id="results">
 						@SearchResults(hits, totalHits, 1)
@@ -96,19 +96,19 @@ templ extraInfoItem(item string, color string) {
 	}
 }
 
-templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List) {
+templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List, translator languages.Translator) {
 	<div id="all-filters">
 		<div class="dropdown">
 			<button class="dropbtn" name="sortby" onclick="toggleDropdown(event)">
-				SORT BY
+				{ translator("sort-by") }
 			</button>
 			<div id="sortby-menu" class="dropdown-content onlyone hidden">
-				@sortingCheckboxes()
+				@sortingCheckboxes(translator)
 			</div>
 		</div>
 		<div class="dropdown">
 			<button class="dropbtn" name="area" onclick="toggleDropdown(event)">
-				AREA
+				{ translator("filter.area") }
 			</button>
 			<div id="document-area-menu" class="dropdown-content hidden">
 				@valuesCheckboxes("area", false, documentAreas)
@@ -116,7 +116,7 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 		</div>
 		<div class="dropdown">
 			<button class="dropbtn" name="tipo" onclick="toggleDropdown(event)">
-				TYPE
+				{ translator("filter.type") }
 			</button>
 			<div id="document-type-menu" class="dropdown-content onlyone hidden">
 				@valuesCheckboxes("tipo", true, documentTypes)
@@ -204,7 +204,7 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 	}
 }
 
-templ sortingCheckboxes() {
+templ sortingCheckboxes(translator languages.Translator) {
 	<label class="checkbox-item">
 		<input
 			type="checkbox"
@@ -216,7 +216,8 @@ templ sortingCheckboxes() {
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		Nombre ascendente
+		{ translator("name-asc") }
+
 	</label>
 	<label class="checkbox-item">
 		<input
@@ -229,7 +230,7 @@ templ sortingCheckboxes() {
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		Nombre descendente
+		{ translator("name-desc") }
 	</label>
 	<label class="checkbox-item">
 		<input
@@ -242,7 +243,7 @@ templ sortingCheckboxes() {
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		Tipo ascendente
+		{ translator("type-asc") }
 	</label>
 	<label class="checkbox-item">
 		<input
@@ -255,7 +256,7 @@ templ sortingCheckboxes() {
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		Tipo descendente
+		{ translator("type-desc") }
 	</label>
 }
 

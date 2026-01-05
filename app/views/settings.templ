@@ -7,37 +7,37 @@ import (
 	"time"
 )
 
-templ settingsContent(user structures.User, preferences []string) {
+templ settingsContent(user structures.User, preferences []string, translator languages.Translator) {
 	@showPopUp()
 	<div class="centered-box-content">
 		<div id="left"></div>
-		@SettingsForm(user, preferences)
+		@SettingsForm(user, preferences, translator)
 		<div id="right"></div>
 	</div>
 }
 
-templ SettingsForm(user structures.User, preferences []string) {
+templ SettingsForm(user structures.User, preferences []string, translator languages.Translator) {
 	<form
 		id="settings-section"
 		enctype="multipart/form-data"
 	>
 		<div class="profile-settings">
-			<p class="subtitle" id="profile">Profile</p>
+			<p class="subtitle" id="profile">{ translator("profile.tag") }</p>
 			<p id="fullname">{ user.Name } { user.Surname } </p>
 			<div class="info-section">
 				<div class="centered-container">
-					@InfoField("name", "text", user.Name)
-					@InfoField("surname", "text", user.Surname)
-					@InfoField("email", "email", user.Email)
-					@InfoField("password", "password", "********")
+					@InfoField("name", "text", user.Name, translator)
+					@InfoField("surname", "text", user.Surname, translator)
+					@InfoField("email", "email", user.Email, translator)
+					@InfoField("password", "password", "********", translator)
 				</div>
 			</div>
 		</div>
 		<div id="avatar-settings">
-			@AvatarSettings(user)
+			@AvatarSettings(user, translator)
 		</div>
 		<div class="preferences-settings">
-			<p class="subtitle" id="preference">Preferences</p>
+			<p class="subtitle" id="preference">{ translator("settings.preferences") }</p>
 			<div id="preferences-list">
 				for _, p := range preferences {
 					@PreferenceItem(p)
@@ -54,7 +54,7 @@ templ SettingsForm(user structures.User, preferences []string) {
 					hx-swap="beforeend"
 					hx-on="htmx:afterRequest: document.getElementById('preference-field').value=''"
 				>
-					Submit
+					{ translator("add") }
 				</button>
 			</div>
 		</div>
@@ -68,7 +68,7 @@ templ SettingsForm(user structures.User, preferences []string) {
 					hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
 					hx-target="body"
 				>
-					Delete account
+					{ translator("delete-account") }
 				</button>
 			</div>
 			<div id="set-right">
@@ -80,7 +80,7 @@ templ SettingsForm(user structures.User, preferences []string) {
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
-					Cancel 
+					{ translator("cancel") } 
 				</button>
 				<button
 					type="button"
@@ -90,14 +90,14 @@ templ SettingsForm(user structures.User, preferences []string) {
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
-					Save changes 
+					{ translator("save-changes") }
 				</button>
 			</div>
 		</div>
 	</form>
 }
 
-templ InfoField(name string, typeStr string, value string) {
+templ InfoField(name string, typeStr string, value string, translator languages.Translator) {
 	<div id={ "field-" + name }>
 		<input
 			type={ typeStr }
@@ -112,7 +112,7 @@ templ InfoField(name string, typeStr string, value string) {
 			hx-target={ "#field-" + name }
 			hx-swap="outerHTML"
 		>
-			Edit    
+			{ translator("edit") }    
 		</button>
 	</div>
 }
@@ -128,12 +128,12 @@ templ EditableInfoField(name string, typeStr string, value string) {
 	</div>
 }
 
-templ EditPasswordSection() {
+templ EditPasswordSection(translator languages.Translator) {
 	<div id="edit-password-section">
 		<div id="password-inputs">
-			<input type="password" name="current-password" placeholder="Current password" style="width: 100%;"/>
-			<input type="password" name="new-password" placeholder="New password" style="width: 100%;"/>
-			<input type="password" name="repeat-password" placeholder="Repeat new password" style="width: 100%;"/>
+			<input type="password" name="current-password" placeholder={ translator("current-password") } style="width: 100%;"/>
+			<input type="password" name="new-password" placeholder={ translator("new-password") } style="width: 100%;"/>
+			<input type="password" name="repeat-password" placeholder={ translator("repeat-new-password") } style="width: 100%;"/>
 		</div>
 		<div id="password-button">
 			<button
@@ -143,13 +143,13 @@ templ EditPasswordSection() {
 				hx-target="#edit-password-section"
 				hx-swap="outerHTML"
 			>
-				Cancel    
+				{ translator("cancel") }    
 			</button>
 		</div>
 	</div>
 }
 
-templ AvatarSettings(user structures.User) {
+templ AvatarSettings(user structures.User, translator languages.Translator) {
 	<div id="avatar-section">
 		if user.AvatarURLValid {
 			<img
@@ -175,12 +175,12 @@ templ AvatarSettings(user structures.User) {
 			hx-target="#edit-avatar"
 			hx-swap="innerHTML"
 		>
-			Modify 
+			{ translator("modify") } 
 		</button>
 	</div>
 }
 
-templ AvatarOptions() {
+templ AvatarOptions(translator languages.Translator) {
 	<input
 		type="file"
 		id="avatar"
@@ -193,7 +193,7 @@ templ AvatarOptions() {
 				document.getElementById('avatar-preview').src = URL.createObjectURL(file);
 			}"
 	/>
-	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;">Upload new avatar </label>
+	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;"> { translator("upload-new-avatar") } </label>
 	<input
 		type="hidden"
 		id="delete-avatar-flag"
@@ -207,7 +207,7 @@ templ AvatarOptions() {
 			document.getElementById('delete-avatar-flag').value='true';
 			document.getElementById('avatar-preview').src='static/img/default-avatar.jpg';"
 	>
-		Delete avatar 
+		{ translator("delete-avatar") }
 	</button>
 }
 
@@ -227,6 +227,6 @@ templ PreferenceItem(preference string) {
 templ SettingsPage(user structures.User, preferences []string, translator languages.Translator) {
 	@Layout("Settings", translator,
 		func() templ.Component { return Header(true, true, translator) },
-		func() templ.Component { return settingsContent(user, preferences) },
+		func() templ.Component { return settingsContent(user, preferences, translator) },
 	)
 }

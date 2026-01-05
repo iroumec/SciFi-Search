@@ -94,12 +94,12 @@ templ userOptions(isUserAuthenticated bool, translator languages.Translator) {
 				/>
 			</button>
 			<div id="menu" class="menu-content" x-show="open" style="display: none;">
-				<div id="close-menu">MENU</div>
-				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">Configuración</button>
-				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">Historial</button>
-				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">Administrar proyectos</button>
-				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">Tendencias</button>
-				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">Cerrar sesión</button>
+				<div id="close-menu"> { translator("menu") } </div>
+				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">{ translator("menu.settings") }</button>
+				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">{ translator("menu.history") }</button>
+				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("menu.fundings") }</button>
+				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
+				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">{ translator("log-out") }</button>
 			</div>
 		</div>
 	}

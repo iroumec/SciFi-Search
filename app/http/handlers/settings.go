@@ -65,7 +65,7 @@ func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		views.EditPasswordSection().Render(r.Context(), w)
+		views.EditPasswordSection(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -97,7 +97,7 @@ func handleAvatarModification(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		views.AvatarOptions().Render(r.Context(), w)
+		views.AvatarOptions(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
 		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
 	}
@@ -131,7 +131,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 			Email:           *getCurrentUserEmail(w, r),
 		}
 
-		views.SettingsForm(user, preferences).Render(r.Context(), w)
+		views.SettingsForm(user, preferences, languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
 		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
 	}
@@ -293,7 +293,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		Email:           *getCurrentUserEmail(w, r),
 	}
 
-	component := views.SettingsForm(updatedUser, updatedPreferences)
+	component := views.SettingsForm(updatedUser, updatedPreferences, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -365,7 +365,7 @@ func updatePreferences(user *sqlc.User, r *http.Request) []string {
 func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		views.InfoField("password", "password", "********").Render(r.Context(), w)
+		views.InfoField("password", "password", "********", languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
