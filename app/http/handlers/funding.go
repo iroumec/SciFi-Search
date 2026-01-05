@@ -9,6 +9,7 @@ import (
 	"scifi-search/app/http/middlewares"
 	"scifi-search/app/infra/auth"
 	"scifi-search/app/infra/email"
+	"strconv"
 
 	"scifi-search/app/languages"
 	"scifi-search/app/views"
@@ -20,6 +21,7 @@ func registerFundingHandlers() {
 
 	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
+	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingItemsHandler, 1)))
 
 }
 
@@ -41,24 +43,33 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 
 func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 
-	var fundingsDocs []database.Document
+	fundings, totalFundings, err := getFundingDocs(w, r, 1)
+	if err != nil {
+		return
+	}
+	component := views.ManageFundingPage(fundings, totalFundings, languages.GetTranslatorFromRequest(r))
+	component.Render(r.Context(), w)
+}
+
+func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[string]any, int, error) {
+
 	var fundings []map[string]any
+	var fundingsDocs []database.Document
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, 0, err
 	}
 
-	log.Println(queries.CountAllDocuments(r.Context()))
 	if auth.GetAuthenticationLevel(user.AuthID) == auth.AdminRole.Level {
 
 		// De ser admin, se listan todos los documentos.
 		fundingsDocs, err = queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
 			Limit:  10,
-			Offset: 0,
+			Offset: int32((offset - 1) * 10),
 		})
 
 	} else {
@@ -66,12 +77,12 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		// De ser loader, se listan solo sus documentos.
 		fundingsDocs, err = queries.ListDocumentsByUser(r.Context(), sqlc.ListDocumentsByUserParams{
 			UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
-			Limit:  5,
-			Offset: 0,
+			Limit:  10,
+			Offset: int32((offset - 1) * 10),
 		})
 	}
 	if err != nil {
-		return
+		return nil, 0, err
 	}
 
 	for _, doc := range fundingsDocs {
@@ -90,7 +101,28 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		fundings = append(fundings, funding)
 	}
 
-	component := views.ManageFundingPage(fundings, languages.GetTranslatorFromRequest(r))
+	totalFundings, err := queries.CountAllDocuments(r.Context())
+	if err != nil {
+		log.Fatal("Error al contar los documentos")
+	}
+
+	return fundings, int(totalFundings), nil
+}
+
+func updateFundingItemsHandler(w http.ResponseWriter, r *http.Request) {
+
+	pageStr := r.URL.Query().Get("page")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1 // TODO: dejarlo así o levantamos error?
+	}
+
+	fundings, totalFundings, err := getFundingDocs(w, r, page)
+	if err != nil {
+		return
+	}
+	component := views.FundingList(fundings, page, totalFundings, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

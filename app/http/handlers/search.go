@@ -352,7 +352,7 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	searchRequest := &meilisearch.SearchRequest{
 		ShowRankingScore: true,
 		Limit:            resultsPerPage,
-		Offset:           int64(page),
+		Offset:           int64(page-1) * resultsPerPage,
 	}
 
 	allHits := getFilteredResponse(w, filters, sortBy, query, fullSearchRequest)
