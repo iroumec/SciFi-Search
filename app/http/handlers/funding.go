@@ -34,6 +34,8 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 		showFundingsManagementPage(w, r)
 	case http.MethodPost:
 		addFunding(w, r)
+	case http.MethodDelete:
+		//deleteFunding(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}

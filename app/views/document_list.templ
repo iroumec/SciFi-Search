@@ -54,3 +54,29 @@ templ navigationButton(page int, button string, get string, include string, targ
 			{ button }
 	</a>
 }
+
+templ documentItem(m map[string]any, name string) {
+	<div id={ name + "-" + converters.ToString(m["id"]) }>
+		<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
+		<div class="extra-info">
+			@extraInfoItem(converters.ToString(m["Tipo"]), "gray")
+			@extraInfoItem(converters.ToString(m["Gran area 1"]), "scifi")
+			@extraInfoItem(converters.ToString(m["Gran area 2"]), "scifi")
+			@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
+			@extraInfoItem(converters.ToString(m["Pais"]), "yellow")
+			@extraInfoItem(converters.ToString(m["Otorgante"]), "cyan")
+			/*@extraInfoItem(converters.ToString(m["Monto"]), "green")*/
+		</div>
+		if converters.ToString(m["Descripcion"]) != "" {
+			<p id="description">{ converters.ToString(m["Descripcion"]) }</p>
+		} else {
+			<p> No description. </p>
+		}
+	</div>
+}
+
+templ extraInfoItem(item string, color string) {
+	if item != "" {
+		<span class={ color }> { item } </span>
+	}
+}

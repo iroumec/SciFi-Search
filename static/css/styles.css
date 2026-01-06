@@ -977,10 +977,51 @@ header {
         overflow-y: auto;
         max-height: 100%;
 
-        background-color: rgba(255, 255, 255, 0.57);
         margin: 1rem;
         border-radius: 1rem;
     }
+
+        #funding-content .result {
+            background-color: var(--white80);
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 0.5rem;
+            margin-right: 1rem;
+            
+            display: grid;
+            grid-template-columns: 92% 8%;
+            grid-template-rows: 100%;
+            grid-template-areas:
+                "item item-buttons";
+        }
+
+        .funding-item-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10%;
+            flex-direction: column;
+        }
+
+            .funding-item-button {
+                height: 2rem;
+                width: 2rem;
+                border: none;
+                border-radius: 0.3rem;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            .edit-button {
+                background-color: var(--scifi);
+                background-image: url('../img/edit.svg');
+            }
+            .delete-button {
+                background-color: darkred;
+                background-image: url('../img/delete.svg');
+            }
+            .funding-item-button {
+                cursor: pointer;
+            }
 
     #funding-buttons {
         grid-area: funding-buttons;

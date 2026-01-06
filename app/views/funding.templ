@@ -1,7 +1,6 @@
 package views
 
 import (
-	"scifi-search/app/database"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/converters"
 )
@@ -119,11 +118,14 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	<div class="documents-section">
 		for i := 0; i < len(fundings); i++ {
 			<div class="result">
-				@resultsItem(fundings[i])
+				@documentItem(fundings[i],"funding-item")
 				<div class="funding-item-buttons">
 					<button
-						class="delete-button"
-						hx-delete={ "/fundings/" + converters.ToString(fundings[i]["id"]) }
+							class="funding-item-button edit-button"
+					/>
+					<button
+						class="funding-item-button delete-button"
+						hx-delete={ "/funding/" + converters.ToString(fundings[i]["id"]) }
 						hx-target={ "#funding-item-" + converters.ToString(fundings[i]["id"]) }
 						hx-swap="outerHTML"
 						hx-confirm="¿Desea eliminar el funding? ¡Esta decisión no puede deshacerse!"
@@ -136,10 +138,11 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	@pagination(totalFundings, page, "/funding/update-items", "", "#funding-list")
 }
 
-templ fundingItem(funding database.Document, translator languages.Translator) {
+/*templ fundingItem(funding database.Document, translator languages.Translator) {
 	<li id={ "funding-item-" + converters.ToString(funding.ID) }>
 		{ funding.Name }
 		{ funding.Type }
+
 		<button
 			class="delete-button"
 			hx-delete={ "/fundings/" + converters.ToString(funding.ID) }
@@ -151,7 +154,7 @@ templ fundingItem(funding database.Document, translator languages.Translator) {
 			{ translator("delete") }
 		</button>
 	</li>
-}
+}*/
 
 templ ManageFundingPage(fundings []map[string]any, totalFundings int, translator languages.Translator) {
 	@Layout("Manage projects", translator,
