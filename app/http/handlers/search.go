@@ -286,9 +286,9 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// No puedo utilizar res.Hist directamnete porque es un slice reservado
 	// de Meilisearch. Debo almacenarlo en una variable local.
-	hits := make([]any, resultsPerPage)
+	hits := make([]any, 0, resultsPerPage)
 	for i := 0; i < len(res.Hits) && i < resultsPerPage; i++ {
-		hits[i] = res.Hits[i]
+		hits = append(hits, res.Hits[i])
 	}
 
 	// Convertir a []map[string]any de forma segura
@@ -332,17 +332,20 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 
 	var filters []string
+
 	for _, t := range filterTipo {
 		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
 	}
 
 	for _, t := range filterArea {
-		filters = append(filters, fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t))
+		filters = append(filters,
+			fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t),
+		)
 	}
 
 	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1 // TODO: dejarlo así o levantamos error?
+	if err != nil || page < 1 {
+		page = 1
 	}
 
 	fullSearchRequest := &meilisearch.SearchRequest{
@@ -356,15 +359,22 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	allHits := getFilteredResponse(w, filters, sortBy, query, fullSearchRequest)
-
 	res := getFilteredResponse(w, filters, sortBy, query, searchRequest)
 
-	hits := make([]any, len(res.Hits))
-	for i, h := range res.Hits {
-		hits[i] = h
+	// Sin resultados reales.
+	if res == nil || len(res.Hits) == 0 {
+		component := views.SearchResults([]map[string]any{}, 0, page)
+		component.Render(r.Context(), w)
+		return
 	}
 
-	// Convertir a []map[string]any de forma segura
+	// Construcción dinámica del slice.
+	hits := make([]any, 0, len(res.Hits))
+	for _, h := range res.Hits {
+		hits = append(hits, h)
+	}
+
+	// Conversión a []map[string]any.
 	data, err := json.Marshal(hits)
 	if err != nil {
 		log.Println("Error marshal hits:", err)
@@ -375,13 +385,17 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
-	// Ordenar los resultados después de obtenerlos (para mantener relevancia base).
-	// TODO: llevarlo a una opción extra.
+	// Ordenamiento.
 	if len(sortBy) > 0 {
 		sortResults(hitsMaps, sortBy)
 	}
 
-	component := views.SearchResults(hitsMaps, len(allHits.Hits), page)
+	total := 0
+	if allHits != nil {
+		total = len(allHits.Hits)
+	}
+
+	component := views.SearchResults(hitsMaps, total, page)
 	component.Render(r.Context(), w)
 }
 

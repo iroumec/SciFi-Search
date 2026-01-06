@@ -219,4 +219,12 @@ cols.remove("amount")
 cols.insert(cols.index("currency") + 1, "amount")
 clean = clean[cols]
 
+# Se eliminan filas vacías.
+clean = (
+    clean
+    .replace(r"^\s*$", np.nan, regex=True)
+    .replace("", np.nan)
+    .dropna(how="all")
+)
+
 clean.to_excel("resources/planillas/clean_funding_spreadsheet.xlsx", index=False)
