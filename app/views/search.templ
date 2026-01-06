@@ -47,29 +47,6 @@ templ SearchResults(hits []map[string]any, totalHits int, page int) {
 	@pagination(totalHits, page, "/search/update-results", "#all-filters", "#results")
 }
 
-templ pagination(totalLength int, page int, get string, include string, target string) {
-	<div class="pagination">
-		for i := 1; i <= (totalLength+9)/10; i++ {
-			if i == page {
-				<span id="current-page">{ converters.ToString(i) }</span>
-			} else {
-				<a
-					class="page"
-					hx-get={ get }
-					if include != "" {
-						hx-include={ include }
-					}
-					hx-target={ target }
-					hx-swap="innerHTML"
-					hx-vals={ `{"page": "` + converters.ToString(i) + `"}` }
-				>
-					{ converters.ToString(i) }
-				</a>
-			}
-		}
-	</div>
-}
-
 templ resultsItem(m map[string]any) {
 	<div class={ "item-" + converters.ToString(m["id"]) }>
 		<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
