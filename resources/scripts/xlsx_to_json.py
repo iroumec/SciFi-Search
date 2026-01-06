@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Lectura del Excel
-df = pd.read_excel("resources/planillas/clean_funding.xlsx")
+df = pd.read_excel("resources/planillas/clean_funding_spreadsheet.xlsx")
 
 # Conversión a JSON sin orientación de registros
 df.to_json("resources/planillas/funding.json")

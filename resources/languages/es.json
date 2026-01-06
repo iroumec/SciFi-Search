@@ -54,5 +54,6 @@
     "current-password": "Contraseña actual",
     "new-password": "Nueva contraseña",
     "repeat-new-password": "Repetir nueva contraseña",
-    "search-trends": "Tendencias de búsqueda"
+    "search-trends": "Tendencias de búsqueda",
+    "not-specified": "No especificado"
 }

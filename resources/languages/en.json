@@ -54,5 +54,6 @@
     "current-password": "Current password",
     "new-password": "New password",
     "repeat-new-password": "Repeat new password",
-    "search-trends": "Search Trends"
+    "search-trends": "Search Trends",
+    "not-especified": "Not specified"
 }
