@@ -5,6 +5,7 @@ import "html/template"
 import "scifi-search/app/languages"
 
 templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
+	@showPopUp()
 	<div class="trends-container">
 		<h1>{ translator("search-trends") }</h1>
 		<div class="chart-wrapper">

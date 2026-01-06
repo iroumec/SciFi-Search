@@ -12,6 +12,7 @@ import (
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/languages"
+	"scifi-search/app/utils/getters"
 	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
 	"strings"
@@ -206,94 +207,102 @@ func editField(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Guarda la nueva configuración.
 func saveSettings(w http.ResponseWriter, r *http.Request) {
-
-	log.Println(r)
-	//Parseo del formulario
-	err := r.ParseMultipartForm(10 << 20)
-	if err != nil {
-		log.Println("d2sadsad")
-		log.Println(err)
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		http.Error(w, "Invalid form", http.StatusBadRequest)
-
 		return
 	}
 
-	//Obtengo el usuario
 	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	//Obtencion de los valores guardados en nuestra BD que cambian
-	name := user.Name
-	if v := r.Form.Get("name"); v != "" {
-		name = v
+	emailUpdated, err := updateUserData(r.Context(), user, w, r)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
-	surname := user.Surname
-	if v := r.Form.Get("surname"); v != "" {
-		surname = v
-	}
+	renderUpdatedSettings(w, r, emailUpdated)
+}
 
-	saveAvatar(user, w, r)
-	if r.Form.Get("delete-avatar") == "true" { //En caso de Upload + Delete, gana Delete
-		err := deleteAvatar(r.Context(), user.UserID)
-		if err != nil {
-			http.Error(w, "Error deleting avatar", http.StatusInternalServerError)
-			return
-		}
-	}
+// ------------------------------------------------------------------------------------------------
 
-	//Actualizacion de datos que se guardan en nuestra BD
-	queries.UpdateUser(context.Background(), sqlc.UpdateUserParams{
+func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter, r *http.Request) (bool, error) {
+	// Actualizar nombre y apellido
+	name := getters.GetOrDefault(r.Form.Get("name"), user.Name)
+	surname := getters.GetOrDefault(r.Form.Get("surname"), user.Surname)
+
+	queries.UpdateUser(ctx, sqlc.UpdateUserParams{
 		UserID:  user.UserID,
 		Name:    name,
 		Surname: surname,
 	})
 
-	updatedPreferences := updatePreferences(user, r)
-
-	// Actualización del email.
-	if v := r.Form.Get("email"); v != "" {
-		err := updateEmail(user, v)
-		if err == nil {
-			cookies.AddFlashCookie(w, "Email actualizado. Por favor, verfiique su nuevo email.")
-		} else {
-			cookies.AddFlashCookie(w, "Error interno del servidor.")
-			return
+	// Actualización de avatar.
+	saveAvatar(user, w, r)
+	if r.Form.Get("delete-avatar") == "true" {
+		if err := deleteAvatar(ctx, user.UserID); err != nil {
+			http.Error(w, "Error deleting avatar", http.StatusInternalServerError)
+			return false, err
 		}
 	}
 
-	// Actualización de la contrasñea.
-	currentPassword := r.Form.Get("current-password")
-	newPassword := r.Form.Get("new-password")
-	if currentPassword != "" && newPassword != "" {
-		err := updatePassword(user, currentPassword, newPassword)
-		if err != nil {
+	// Actualización de preferencias.
+	updatePreferences(user, r)
+
+	// Actualización de email.
+	emailUpdated := false
+	if email := r.Form.Get("email"); email != "" {
+		if err := updateEmail(user, email); err != nil {
+			return false, err
+		}
+		emailUpdated = true
+	}
+
+	// Actualización de contraseña.
+	currentPwd := r.Form.Get("current-password")
+	newPwd := r.Form.Get("new-password")
+	if currentPwd != "" && newPwd != "" {
+		if err := updatePassword(user, currentPwd, newPwd); err != nil {
 			cookies.AddFlashCookie(w, "Error interno del servidor.")
-			return
+			return false, err
 		}
 	}
 
-	//Renderización final
-	currentUpdatedUser, err := getCurrentUser(w, r)
+	return emailUpdated, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated bool) {
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	updatedUser := structures.User{
-		Name:            currentUpdatedUser.Name,
-		Surname:         currentUpdatedUser.Surname,
-		AvatarURLString: currentUpdatedUser.AvatarUrl.String,
-		AvatarURLValid:  currentUpdatedUser.AvatarUrl.Valid,
-		Email:           *getCurrentUserEmail(w, r),
+	t := languages.GetTranslatorFromRequest(r)
+	message := t("Cambios guardados con éxito.")
+	if emailUpdated {
+		message += " " + t("Verifique su nuevo correo.")
 	}
 
-	component := views.SettingsForm(updatedUser, updatedPreferences, languages.GetTranslatorFromRequest(r))
+	w.Header().Set("HX-Trigger", `{"showFlash": {"message": "`+message+`"}}`)
+
+	component := views.SettingsForm(
+		structures.User{
+			Name:            user.Name,
+			Surname:         user.Surname,
+			AvatarURLString: user.AvatarUrl.String,
+			AvatarURLValid:  user.AvatarUrl.Valid,
+			Email:           *getCurrentUserEmail(w, r),
+		},
+		updatePreferences(user, r),
+		t,
+	)
 	component.Render(r.Context(), w)
 }
 

@@ -225,3 +225,5 @@ func ResizeImageToAvatar(file io.Reader) (io.Reader, error) {
 
 	return buf, nil
 }
+
+// ------------------------------------------------------------------------------------------------

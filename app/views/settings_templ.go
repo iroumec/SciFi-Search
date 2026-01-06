@@ -8,6 +8,7 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+// ------------------------------------------------------------------------------------------------
 import (
 	"fmt"
 	"scifi-search/app/languages"
@@ -15,6 +16,7 @@ import (
 	"time"
 )
 
+// ------------------------------------------------------------------------------------------------
 func settingsContent(user structures.User, preferences []string, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -56,6 +58,7 @@ func settingsContent(user structures.User, preferences []string, translator lang
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func SettingsForm(user structures.User, preferences []string, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -84,7 +87,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("profile.tag"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 25, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 28, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -97,7 +100,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 29, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -110,7 +113,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(user.Surname)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 26, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 29, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -151,7 +154,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("settings.preferences"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 40, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 43, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -174,7 +177,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(translator("add"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 57, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 60, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -187,7 +190,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(translator("delete-account"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 71, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 74, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -200,7 +203,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(translator("cancel"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 83, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 86, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -213,7 +216,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(translator("save-changes"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 93, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 96, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -227,6 +230,7 @@ func SettingsForm(user structures.User, preferences []string, translator languag
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func InfoField(name string, typeStr string, value string, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -255,7 +259,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 101, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 105, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -268,7 +272,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 103, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 107, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -281,7 +285,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 104, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 108, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -294,7 +298,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 105, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 109, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -307,7 +311,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs("/settings/edit/" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 111, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 115, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -320,7 +324,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs("#field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 112, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 116, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -333,7 +337,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(translator("edit"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 115, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 119, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -347,6 +351,7 @@ func InfoField(name string, typeStr string, value string, translator languages.T
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func EditableInfoField(name string, typeStr string, value string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -375,7 +380,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs("field-" + name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 121, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 126, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -388,7 +393,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(typeStr)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 123, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 128, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -401,7 +406,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 124, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 129, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -414,7 +419,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(value)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 125, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 130, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -428,6 +433,7 @@ func EditableInfoField(name string, typeStr string, value string) templ.Componen
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func EditPasswordSection(translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -456,7 +462,7 @@ func EditPasswordSection(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(translator("current-password"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 134, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 140, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -469,7 +475,7 @@ func EditPasswordSection(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(translator("new-password"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 135, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 141, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -482,7 +488,7 @@ func EditPasswordSection(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(translator("repeat-new-password"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 136, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 142, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -495,7 +501,7 @@ func EditPasswordSection(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(translator("cancel"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 146, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 152, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -509,6 +515,7 @@ func EditPasswordSection(translator languages.Translator) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func AvatarSettings(user structures.User, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -542,7 +549,7 @@ func AvatarSettings(user structures.User, translator languages.Translator) templ
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 158, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 165, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -565,7 +572,7 @@ func AvatarSettings(user structures.User, translator languages.Translator) templ
 		var templ_7745c5c3_Var31 string
 		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(translator("modify"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 178, Col: 25}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 185, Col: 25}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 		if templ_7745c5c3_Err != nil {
@@ -579,6 +586,7 @@ func AvatarSettings(user structures.User, translator languages.Translator) templ
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func AvatarOptions(translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -607,7 +615,7 @@ func AvatarOptions(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(translator("upload-new-avatar"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 196, Col: 122}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 204, Col: 121}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -620,7 +628,7 @@ func AvatarOptions(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(translator("delete-avatar"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 210, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 218, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
@@ -634,6 +642,7 @@ func AvatarOptions(translator languages.Translator) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func PreferenceItem(preference string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -662,7 +671,7 @@ func PreferenceItem(preference string) templ.Component {
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(preference)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 220, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/settings.templ`, Line: 229, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 		if templ_7745c5c3_Err != nil {
@@ -676,6 +685,7 @@ func PreferenceItem(preference string) templ.Component {
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 func SettingsPage(user structures.User, preferences []string, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -708,4 +718,5 @@ func SettingsPage(user structures.User, preferences []string, translator languag
 	})
 }
 
+// ------------------------------------------------------------------------------------------------
 var _ = templruntime.GeneratedTemplate

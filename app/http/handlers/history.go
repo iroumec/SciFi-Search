@@ -15,7 +15,6 @@ import (
 func registerHistoryHandlers() {
 
 	http.HandleFunc("/history", historyHandler)
-
 }
 
 // ------------------------------------------------------------------------------------------------

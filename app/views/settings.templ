@@ -1,5 +1,6 @@
 package views 
 
+// ------------------------------------------------------------------------------------------------
 import (
 	"fmt"
 	"scifi-search/app/languages"
@@ -7,6 +8,7 @@ import (
 	"time"
 )
 
+// ------------------------------------------------------------------------------------------------
 templ settingsContent(user structures.User, preferences []string, translator languages.Translator) {
 	@showPopUp()
 	<div class="centered-box-content">
@@ -16,6 +18,7 @@ templ settingsContent(user structures.User, preferences []string, translator lan
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ SettingsForm(user structures.User, preferences []string, translator languages.Translator) {
 	<form
 		id="settings-section"
@@ -80,7 +83,7 @@ templ SettingsForm(user structures.User, preferences []string, translator langua
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
-					{ translator("cancel") } 
+					{ translator("cancel") }
 				</button>
 				<button
 					type="button"
@@ -97,6 +100,7 @@ templ SettingsForm(user structures.User, preferences []string, translator langua
 	</form>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ InfoField(name string, typeStr string, value string, translator languages.Translator) {
 	<div id={ "field-" + name }>
 		<input
@@ -112,11 +116,12 @@ templ InfoField(name string, typeStr string, value string, translator languages.
 			hx-target={ "#field-" + name }
 			hx-swap="outerHTML"
 		>
-			{ translator("edit") }    
+			{ translator("edit") }
 		</button>
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ EditableInfoField(name string, typeStr string, value string) {
 	<div id={ "field-" + name }>
 		<input
@@ -128,6 +133,7 @@ templ EditableInfoField(name string, typeStr string, value string) {
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ EditPasswordSection(translator languages.Translator) {
 	<div id="edit-password-section">
 		<div id="password-inputs">
@@ -143,12 +149,13 @@ templ EditPasswordSection(translator languages.Translator) {
 				hx-target="#edit-password-section"
 				hx-swap="outerHTML"
 			>
-				{ translator("cancel") }    
+				{ translator("cancel") }
 			</button>
 		</div>
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ AvatarSettings(user structures.User, translator languages.Translator) {
 	<div id="avatar-section">
 		if user.AvatarURLValid {
@@ -175,11 +182,12 @@ templ AvatarSettings(user structures.User, translator languages.Translator) {
 			hx-target="#edit-avatar"
 			hx-swap="innerHTML"
 		>
-			{ translator("modify") } 
+			{ translator("modify") }
 		</button>
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ AvatarOptions(translator languages.Translator) {
 	<input
 		type="file"
@@ -193,7 +201,7 @@ templ AvatarOptions(translator languages.Translator) {
 				document.getElementById('avatar-preview').src = URL.createObjectURL(file);
 			}"
 	/>
-	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;"> { translator("upload-new-avatar") } </label>
+	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;">{ translator("upload-new-avatar") } </label>
 	<input
 		type="hidden"
 		id="delete-avatar-flag"
@@ -211,6 +219,7 @@ templ AvatarOptions(translator languages.Translator) {
 	</button>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ PreferenceItem(preference string) {
 	<div class="preference">
 		<button type="button" class="remove-preference" onclick="this.parentElement.remove()"></button>
@@ -224,9 +233,12 @@ templ PreferenceItem(preference string) {
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ SettingsPage(user structures.User, preferences []string, translator languages.Translator) {
 	@Layout("Settings", translator,
 		func() templ.Component { return Header(true, true, translator) },
 		func() templ.Component { return settingsContent(user, preferences, translator) },
 	)
 }
+
+// ------------------------------------------------------------------------------------------------

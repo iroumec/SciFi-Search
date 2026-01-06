@@ -6,21 +6,54 @@ import "scifi-search/app/languages"
 // ----------------------------------------- Sign Up ----------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string, translator languages.Translator) {
+	@showPopUp()
 	<div class="only-form-content">
 		<div class="centered-container">
-			<form id="signup-form" action="/signup" method="POST">
+			<form
+				id="signup-form"
+				hx-post="/signup"
+				hx-target="body"
+				hx-push-url="true"
+			>
 				<div id="form-inputs">
-					<input type="text" id="name" placeholder={ translator("name") } name="name" required/>
-					<input type="text" id="surname" placeholder={ translator("surname") } name="surname" required/>
-					<input type="email" id="email" placeholder={ translator("email") } name="email" required/>
-					<input type="password" id="password" placeholder={ translator("password") } name="password" required/>
+					<input
+						id="name"
+						type="text"
+						name="name"
+						placeholder={ translator("name") }
+						required
+					/>
+					<input
+						id="surname"
+						type="text"
+						name="surname"
+						placeholder={ translator("surname") }
+						required
+					/>
+					<input
+						id="email"
+						type="email"
+						name="email"
+						placeholder={ translator("email") }
+						required
+					/>
+					<input
+						id="password"
+						type="password"
+						name="password"
+						placeholder={ translator("password") }
+						required
+					/>
 				</div>
-				<button class="scifi-button" type="submit">{ translator("sign-up") }</button>
+				<button class="scifi-button" type="submit">
+					{ translator("sign-up") }
+				</button>
 			</form>
 		</div>
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ SignUpPage(errorMessage string, translator languages.Translator) {
 	@Layout(translator("sign-up"), translator,
 		func() templ.Component { return AuthHeader(translator) },
@@ -31,30 +64,45 @@ templ SignUpPage(errorMessage string, translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 // ----------------------------------------- Log In -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ loginContent(errorMessage string, translator languages.Translator) {
+templ loginContent(translator languages.Translator) {
 	@showPopUp()
 	<div class="only-form-content">
 		<div class="centered-container">
-			<form id="login-form" action="/login" method="POST">
+			<form
+				id="login-form"
+				hx-post="/login"
+				hx-target="body"
+				hx-push-url="true"
+			>
 				<div id="form-inputs">
-					<input id="email" type="email" name="email" placeholder={ translator("email") } required/>
-					<input id="password" type="password" name="password" placeholder={ translator("password") } required/>
+					<input
+						id="email"
+						type="email"
+						name="email"
+						placeholder={ translator("email") }
+						required
+					/>
+					<input
+						id="password"
+						type="password"
+						name="password"
+						placeholder={ translator("password") }
+						required
+					/>
 				</div>
-				<button class="scifi-button" type="submit">{ translator("log-in") }</button>
+				<button class="scifi-button" type="submit">
+					{ translator("log-in") }
+				</button>
 			</form>
 		</div>
 	</div>
-	if errorMessage != "" {
-		<div id="mensaje" style="color:red;">
-			{ errorMessage }
-		</div>
-	}
 }
 
-templ LoginPage(errorMessage string, translator languages.Translator) {
+// ------------------------------------------------------------------------------------------------
+templ LoginPage(translator languages.Translator) {
 	@Layout(translator("log-in"), translator,
 		func() templ.Component { return AuthHeader(translator) },
-		func() templ.Component { return loginContent(errorMessage, translator) },
+		func() templ.Component { return loginContent(translator) },
 	)
 }
 
@@ -114,3 +162,5 @@ templ SessionInfo(userID string, payload map[string]string) {
 		</body>
 	</html>
 }
+
+// ------------------------------------------------------------------------------------------------

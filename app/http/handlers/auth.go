@@ -287,10 +287,10 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func logInHandler(w http.ResponseWriter, r *http.Request) {
+	translator := languages.GetTranslatorFromRequest(r)
 
 	if r.Method == http.MethodGet {
-		component := views.LoginPage("", languages.GetTranslatorFromRequest(r))
-		templ.Handler(component).ServeHTTP(w, r)
+		views.LoginPage(translator).Render(r.Context(), w)
 		return
 	}
 
@@ -299,56 +299,43 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Parseo del formulario enviado por POST.
+	// Se parsean y obtienen las credenciales.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Error al parsear formulario", http.StatusBadRequest)
 		return
 	}
 
-	// Obtención de los datos del usuario.
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
 
-	// Inicio de sesión.
+	// Se intenta realizar un log in.
 	resp, err := emailpassword.SignIn("", email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Abarca tanto la comprovación del email como de la constraseña.
+	// Credenciales incorrectas.
 	if resp.WrongCredentialsError != nil {
-		// TODO: no recargar toda la página.
-		cookies.AddFlashCookie(w, "Email o contraseña incorrectos.")
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		cookies.AddFlashCookie(w, "Credenciales incorrectas")
+		views.LoginPage(translator).Render(r.Context(), w)
 		return
 	}
 
-	// Si todo está OK, se crea la sesión.
+	// Login exitoso: se crea la sesión y se redirige.
 	if resp.OK != nil {
-		userID := resp.OK.User.ID
-
-		// Se crea la sesión y automáticamente se establecen
-		// las cookies de sesión en el http.ResponseWriter (w).
-		_, err := session.CreateNewSession(r, w, "", userID, nil, nil)
+		_, err := session.CreateNewSession(r, w, "", resp.OK.User.ID, nil, nil)
 		if err != nil {
-			http.Error(w, "Error al crear la sesión: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error al crear la sesión", http.StatusInternalServerError)
 			return
 		}
 
 		cookies.AddFlashCookie(w, "Welcome back!")
-
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	// Manejo de cualquier otro caso inesperado.
-	http.Error(w, "Error desconocido durante el inicio de sesión", http.StatusInternalServerError)
+	http.Error(w, "Error desconocido", http.StatusInternalServerError)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -472,8 +459,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		"Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!",
 	)
 
-	w.Header().Set("HX-Redirect", "/")
-	w.WriteHeader(http.StatusOK)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // ------------------------------------------------------------------------------------------------
