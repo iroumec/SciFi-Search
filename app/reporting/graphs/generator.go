@@ -1,5 +1,9 @@
 package graphs
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"bytes"
 	"scifi-search/app/database"
@@ -9,11 +13,17 @@ import (
 	"github.com/go-echarts/go-echarts/v2/types"
 )
 
-// Interface que define el contrato para cualquier tipo de gráfico
+// ------------------------------------------------------------------------------------------------
+// Interfaces
+// ------------------------------------------------------------------------------------------------
+
+// Interfaz que define el contrato para cualquier tipo de gráfico
 type ChartRenderer interface {
 	Render(xValues []string, yValues []int) (bytes.Buffer, error)
 }
 
+// ------------------------------------------------------------------------------------------------
+// Funciones
 // ------------------------------------------------------------------------------------------------
 
 func generateGraph(renderer ChartRenderer, values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {

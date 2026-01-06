@@ -1,5 +1,9 @@
 package graphs
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"bytes"
 	"scifi-search/app/database"
@@ -9,13 +13,13 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
+
 // Implementación para gráfico de líneas
 type LineChartRenderer struct{}
 
-func GenerateLineChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
-
-	return generateGraph(&LineChartRenderer{}, values)
-}
+// ------------------------------------------------------------------------------------------------
 
 func (l *LineChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
 	line := charts.NewLine()
@@ -27,10 +31,21 @@ func (l *LineChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffe
 	return buffer, err
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func (l *LineChartRenderer) generateItems(values []int) []opts.LineData {
 	items := make([]opts.LineData, len(values))
 	for i, v := range values {
 		items[i] = opts.LineData{Value: v}
 	}
 	return items
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func GenerateLineChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+
+	return generateGraph(&LineChartRenderer{}, values)
 }

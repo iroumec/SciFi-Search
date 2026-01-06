@@ -13,14 +13,13 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
 
 // Implementación del gráfico de barras.
 type BarChartRenderer struct{}
 
-func GenerateBarChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
-
-	return generateGraph(&BarChartRenderer{}, values)
-}
+// ------------------------------------------------------------------------------------------------
 
 func (b *BarChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
 	bar := charts.NewBar()
@@ -32,6 +31,8 @@ func (b *BarChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer
 	return buffer, err
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func (b *BarChartRenderer) generateItems(values []int) []opts.BarData {
 	items := make([]opts.BarData, len(values))
 	for i, v := range values {
@@ -39,3 +40,14 @@ func (b *BarChartRenderer) generateItems(values []int) []opts.BarData {
 	}
 	return items
 }
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func GenerateBarChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+
+	return generateGraph(&BarChartRenderer{}, values)
+}
+
+// ------------------------------------------------------------------------------------------------

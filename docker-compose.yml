@@ -26,6 +26,8 @@ services:
       timeout: 5s
       retries: 5
 
+  # =================================================================================================
+
   # Aplicación
   app:
     build:
@@ -68,9 +70,11 @@ services:
         max-file: "5"
     restart: always
 
+  # =================================================================================================
+
   # Motor de búsqueda MeiliSearch
   meilisearch:
-    image: getmeili/meilisearch:latest
+    image: getmeili/meilisearch:v1.31.0 # "latest" si se desea utilizar la última versión.
     container_name: meilisearch
     ports:
       - "${MEILI_PORT}:${MEILI_PORT}"
@@ -85,6 +89,8 @@ services:
     environment:
       MEILI_MASTER_KEY: "${MEILI_KEY}"
     restart: always
+
+  # =================================================================================================
 
   # Servicio de autenticación SuperTokens
   supertokens:
@@ -107,9 +113,11 @@ services:
         max-size: "10m"
         max-file: "5"
 
+  # =================================================================================================
+
   # Almacenamiento de objetos MinIO.
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
     container_name: minio
     command: server /data --console-address ":9001"
     environment:
@@ -123,9 +131,11 @@ services:
       - ./logs/minio:/var/log
     restart: always
 
+  # =================================================================================================
+
   # Simulación de emails.
   mailhog:
-    image: mailhog/mailhog:latest
+    image: mailhog/mailhog:v1.0.1
     container_name: mailhog
     ports:
       - "1025:1025" # SMTP
@@ -136,5 +146,8 @@ services:
         max-size: "5m"
         max-file: "2"
 
+# =================================================================================================
+
 volumes:
   tpe-db-data:
+# =================================================================================================
