@@ -6,7 +6,7 @@ import "scifi-search/app/languages"
 
 templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 	<div class="trends-container">
-		<h1>Tendencias de Búsqueda</h1>
+		<h1>{ translator("search-trends") }</h1>
 		<div class="chart-wrapper">
 			@templ.Raw(string(htmlChart))
 		</div>

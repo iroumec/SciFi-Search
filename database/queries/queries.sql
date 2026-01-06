@@ -70,3 +70,6 @@ SELECT * FROM documents LIMIT $1 OFFSET $2;
 
 -- name: ListDocumentsByUser :many
 SELECT * FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3;
+
+-- name: CountAllDocuments :one
+SELECT COUNT(*) FROM documents;

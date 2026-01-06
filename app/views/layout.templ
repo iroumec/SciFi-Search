@@ -58,9 +58,9 @@ templ Footer(translator languages.Translator) {
 			</a>
 		</div>
 		<div id="options-section">
-			<button class="footer-button" onclick="window.location.href='/trends'">Trends</button>
-			<button class="footer-button">Language: EN</button>
-			<a id="github-btn" class="footer-button" href="https://github.com/iroumec/SciFi-Search" target="_blank">GitHub Repository</a>
+			<button class="footer-button" onclick="window.location.href='/trends'"> { translator("trends") } </button>
+			<button class="footer-button">Language: EN</button> //TODO: se puede cliclear para cambiar idioma?
+			<a id="github-btn" class="footer-button" href="https://github.com/iroumec/SciFi-Search" target="_blank">{ translator("footer.github") }</a>
 		</div>
 		<div class="clear-right"></div>
 	</footer>

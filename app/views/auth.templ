@@ -63,7 +63,7 @@ templ LoginPage(errorMessage string, translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 templ UnloggedContent(translator languages.Translator) {
 	<div id="no-session">
-		<p>The session doesn't exists or it's expired. Please sign up or log in again. </p>
+		<p>{ translator("no-session") }</p>
 		<div id="buttons">
 			<button
 				class="scifi-button"

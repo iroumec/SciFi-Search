@@ -93,17 +93,21 @@ templ FundingAddedPage(translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------ Manage Funding --------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ manageFundingContent(fundings []database.Document, translator languages.Translator) {
+templ manageFundingContent(fundings []map[string]any, totalFundings int, translator languages.Translator) {
 	<div class="centered-box-content" x-data="{ open: false }">
 		<div id="left"></div>
 		<div id="manage-funding-content">
-			<p>Manage projects</p>
-			<div id="funding-list">
-				@fundingItems(fundings, translator)
+			<div id="funding-title"> Manage projects </div>
+			<div id="funding-content">
+				<div id="funding-list">
+					@FundingList(fundings, 1, totalFundings, translator)
+				</div>
 			</div>
-			<button class="scifi-button" @click="open = true" type="button">
-				Add new
-			</button>
+			<div id="funding-buttons">
+				<button class="scifi-button" @click="open = true" type="button">
+					Add new
+				</button>
+			</div>
 		</div>
 		<div id="right"></div>
 		<!-- Modal Component -->
@@ -111,23 +115,25 @@ templ manageFundingContent(fundings []database.Document, translator languages.Tr
 	</div>
 }
 
-templ ManageFundingPage(fundings []database.Document, translator languages.Translator) {
-	@Layout("Manage projects", translator,
-		func() templ.Component { return Header(true, true, translator) },
-		func() templ.Component { return manageFundingContent(fundings, translator) },
-	)
-}
-
-templ fundingItems(fundings []database.Document, translator languages.Translator) {
-	<div class="fundings-list">
-		<div class="centered-container">
-			<ul id="the-user-list">
-				for _, funding := range fundings {
-					@fundingItem(funding, translator)
-				}
-			</ul>
-		</div>
+templ FundingList(fundings []map[string]any, page int, totalFundings int, translator languages.Translator) {
+	<div class="documents-section">
+		for i := 0; i < len(fundings); i++ {
+			<div class="result">
+				@resultsItem(fundings[i])
+				<div class="funding-item-buttons">
+					<button
+						class="delete-button"
+						hx-delete={ "/fundings/" + converters.ToString(fundings[i]["id"]) }
+						hx-target={ "#funding-item-" + converters.ToString(fundings[i]["id"]) }
+						hx-swap="outerHTML"
+						hx-confirm="¿Desea eliminar el funding? ¡Esta decisión no puede deshacerse!"
+						type="submit"
+					/>
+				</div>
+			</div>
+		}
 	</div>
+	@pagination(totalFundings, page, "/funding/update-items", "", "#funding-list")
 }
 
 templ fundingItem(funding database.Document, translator languages.Translator) {
@@ -145,4 +151,11 @@ templ fundingItem(funding database.Document, translator languages.Translator) {
 			{ translator("delete") }
 		</button>
 	</li>
+}
+
+templ ManageFundingPage(fundings []map[string]any, totalFundings int, translator languages.Translator) {
+	@Layout("Manage projects", translator,
+		func() templ.Component { return Header(true, true, translator) },
+		func() templ.Component { return manageFundingContent(fundings, totalFundings, translator) },
+	)
 }
