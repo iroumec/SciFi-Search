@@ -115,7 +115,7 @@ func Footer(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("trends"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 61, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 61, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

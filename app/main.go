@@ -1,77 +1,63 @@
 ﻿package main
 
 import (
-	"database/sql"
-	"fmt"
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"scifi-search/app/http/handlers"
+	"scifi-search/app/bootstrap"
 	"scifi-search/app/http/middlewares"
 	"scifi-search/app/utils"
-	"scifi-search/app/workers"
 
 	"github.com/supertokens/supertokens-golang/supertokens"
-
-	_ "github.com/lib/pq"
-
-	sqlc "scifi-search/app/database"
 )
-
-// ------------------------------------------------------------------------------------------------
 
 func main() {
 
-	// Obtención de las variables de ambiente necesarias
-	// para conectarse a la base de datos.
-	appPort := utils.GetEnv("APP_PORT", ":8080")
-	dbHost := utils.GetEnv("DB_HOST", "db")
-	dbPort := utils.GetEnv("DB_PORT", "5432")
-	dbUser := utils.GetEnv("DB_USER", "postgres")
-	dbPassword := utils.GetEnv("DB_PASSWORD", "postgres")
-	dbName := utils.GetEnv("DB_NAME", "postgres")
+	appPort := utils.GetEnv("APP_PORT", "8080")
 
-	db := openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName)
-	defer db.Close() // Independientemente de lo que ocurra, se cierra la conexión con la base de datos al final.
+	app, err := bootstrap.Boot()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Se obtiene un objeto que nos permita realizar las queries.
-	queries := sqlc.New(db)
+	// Contexto de shutdown.
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer stop()
 
-	// Se inicializa el worker de envíos asíncronos de emails.
-	workers.StartEmailWorker()
+	go func() {
+		<-ctx.Done()
+		log.Println("Apagando aplicación...")
 
-	// Se registran los handlers.
-	handlers.Init(queries)
+		if app.Resources.DB != nil {
+			log.Println("Cerrando base de datos...")
+			app.Resources.DB.Close()
+		}
 
-	// Se informa que el servidor está corriendo.
-	log.Printf("Server running...")
-	log.Printf("Server listening in http://localhost:%s\n", appPort)
+		os.Exit(0)
+	}()
+
+	log.Println("Servidor iniciado")
+	log.Printf("Escuchando en http://localhost:%s\n", appPort)
 
 	// El servidor queda a la espera de solicitudes, trabajando en conjunto con un LoggingMiddleware.
-	if err := http.ListenAndServe(":"+appPort, supertokens.Middleware(middlewares.LoggingMiddleware(http.DefaultServeMux))); err != nil {
-		log.Printf("Error al iniciar el servidor: %s\n", err)
-	}
+	err = http.ListenAndServe(
+		":"+appPort,
+		supertokens.Middleware(
+			middlewares.LoggingMiddleware(http.DefaultServeMux),
+		),
+	)
 
-	// Nada de lo que esté acá debajo se ejecuta.
-}
+	// Nada de lo que esté acá debajo se ejecuta mientras el servidor espere solicitudes.
 
-// -----------------------------------------------------------------------------------------------
-
-func openConnectionToDatabase(dbHost, dbPort, dbUser, dbPassword, dbName string) *sql.DB {
-
-	// Se obtiene la información necesaria para conectarnos a la base de datos a partir de
-	// los datos de sesión definidos anteriormente.
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbPort, dbUser, dbPassword, dbName)
-
-	var err error
-	// Se extablece conexión con la base de datos.
-	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		log.Println("Servidor detenido:", err)
 	}
-
-	return db
 }
-
-// -----------------------------------------------------------------------------------------------

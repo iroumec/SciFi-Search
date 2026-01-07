@@ -54,9 +54,9 @@ templ signUpContent(errorMessage string, translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SignUpPage(errorMessage string, translator languages.Translator) {
+templ SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) {
 	@Layout(translator("sign-up"), translator,
-		func() templ.Component { return AuthHeader(translator) },
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 		func() templ.Component { return signUpContent(errorMessage, translator) },
 	)
 }
@@ -99,9 +99,9 @@ templ loginContent(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ LoginPage(translator languages.Translator) {
+templ LoginPage(authorizationLevel int, translator languages.Translator) {
 	@Layout(translator("log-in"), translator,
-		func() templ.Component { return AuthHeader(translator) },
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 		func() templ.Component { return loginContent(translator) },
 	)
 }
@@ -133,9 +133,9 @@ templ UnloggedContent(translator languages.Translator) {
 	</div>
 }
 
-templ UnloggedPage(translator languages.Translator) {
+templ UnloggedPage(authorizationLevel int, translator languages.Translator) {
 	@Layout("No session", translator,
-		func() templ.Component { return AuthHeader(translator) },
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 		func() templ.Component { return UnloggedContent(translator) },
 	)
 }

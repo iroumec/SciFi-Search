@@ -15,7 +15,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 // Carga los mensajes y registra los handlers correspondientes al lenguaje.
-func registerLanguageHandlers() {
+func RegisterLanguageHandlers() {
 
 	languages.LoadAllMessages()
 

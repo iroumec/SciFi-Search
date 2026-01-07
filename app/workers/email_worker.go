@@ -1,15 +1,13 @@
 package workers
 
-// ------------------------------------------------------------------------------------------------
-
 import (
 	"log"
-	"scifi-search/app/infra/email"
+
+	"scifi-search/app/email"
 )
 
 // ------------------------------------------------------------------------------------------------
 
-// Un 'work' de envío de email.
 type EmailJob struct {
 	To      string
 	Subject string
@@ -25,22 +23,35 @@ const (
 
 // ------------------------------------------------------------------------------------------------
 
-// Canal global para la cola de emails.
-// Se pueden encolar hasta N emails sin bloquear.
-var emailQueue = make(chan EmailJob, numberOfMaxQueuedEmails)
+var (
+	emailQueue   = make(chan EmailJob, numberOfMaxQueuedEmails)
+	emailService *email.Service
+)
 
 // ------------------------------------------------------------------------------------------------
 
-// Inicia el worker que procesa emails de forma asíncrona.
+// Inyección del servicio
+func SetEmailService(s *email.Service) {
+	emailService = s
+}
+
+// ------------------------------------------------------------------------------------------------
+
+// Inicia el worker
 func StartEmailWorker() {
 	go func() {
 		for job := range emailQueue {
-			// Se procesa cada email.
-			err := email.Send(job.To, job.Subject, job.Body)
+
+			if emailService == nil {
+				log.Println("email service not configured")
+				continue
+			}
+
+			err := emailService.Send(job.To, job.Subject, job.Body)
+
 			if debug {
 				if err != nil {
 					log.Printf("Error enviando email a %s: %v", job.To, err)
-					// TODO: implementar reintentos.
 				} else {
 					log.Printf("Email enviado exitosamente a %s", job.To)
 				}
@@ -51,15 +62,10 @@ func StartEmailWorker() {
 
 // ------------------------------------------------------------------------------------------------
 
-// Encola un email para envío asíncrono.
 func SendEmailAsync(to, subject, body string) {
 	select {
 	case emailQueue <- EmailJob{To: to, Subject: subject, Body: body}:
-		// Email encolado exitosamente
 	default:
-		// La cola está llena.
 		log.Printf("Cola de emails llena, no se pudo encolar email a %s", to)
 	}
 }
-
-// ------------------------------------------------------------------------------------------------

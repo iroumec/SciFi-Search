@@ -13,7 +13,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"scifi-search/app/infra/auth"
+	"scifi-search/app/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/structures"
@@ -59,7 +59,7 @@ type SearchResponse struct {
 // Registro de endpoints
 // ------------------------------------------------------------------------------------------------
 
-func registerSearchHandlers() {
+func RegisterSearchHandlers() {
 
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
@@ -307,9 +307,9 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	// De estar autenticado el usuario, se guarda la búsqueda
 	// en su historial.
-	if isUserAuthenticated(w, r) {
+	if auth.IsUserAuthenticated(w, r) {
 
-		user, err := getCurrentUser(w, r)
+		user, err := auth.GetCurrentUser(w, r, queries)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

@@ -11,16 +11,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
-	"scifi-search/app/database"
+	"scifi-search/app/auth"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/cookies"
-	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/checkers"
-	"scifi-search/app/utils/converters"
 	"scifi-search/app/views"
 	"scifi-search/app/workers"
 
@@ -29,7 +26,6 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
 	"github.com/supertokens/supertokens-golang/recipe/emailverification"
 	"github.com/supertokens/supertokens-golang/recipe/session"
-	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 	"github.com/supertokens/supertokens-golang/recipe/userroles"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
@@ -38,20 +34,7 @@ import (
 // Constantes
 // ---------------------------------------------------------------------
 
-const (
-	websiteDomain = "http://localhost:8080"
-)
-
-// ---------------------------------------------------------------------
-
-var ErrNotAuthenticated = errors.New("user not authenticated")
-var ErrUserNotFound = errors.New("user not found")
-
-// ---------------------------------------------------------------------
-
-func registerAuthenticationHandlers() {
-
-	auth.InitializeSupertokens()
+func RegisterAuthenticationHandlers() {
 
 	// Creación de la cuenta de administración.
 	createAdmin()
@@ -104,7 +87,7 @@ func registerAuthenticationHandlers() {
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.SignUpPage("", languages.GetTranslatorFromRequest(r))
+		component := views.SignUpPage("", auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}
@@ -147,43 +130,6 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func loaderHandler(w http.ResponseWriter, r *http.Request) {
-
-	// Parseo del formulario enviado por POST.
-	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Obtención de los datos del usuario.
-	name := r.Form.Get("name")
-	surname := r.Form.Get("surname")
-	email := r.Form.Get("email")
-	password := r.Form.Get("password")
-
-	// Validación.
-	if checkers.HayCampoIncompleto(name, surname, email, password) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
-		return
-	}
-
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func createLoader(name, surname, email, password string) {
-
-	user, resp := createUser(name, surname, email, password, auth.LoaderRole.Name)
-
-	if user == nil || resp == nil {
-		log.Fatal("Ocurrió un error al momento de crear al usuario.")
-	}
-
-	log.Printf("Loader created: %s", email)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -231,32 +177,13 @@ func createUser(name, surname, email, password, role string) (*sqlc.User, *epmod
 		}
 
 		// Creación del token de verificación.
-		sendVerificationEmail(resp.OK.User.ID, email)
+		auth.SendVerificationEmail(resp.OK.User.ID, email)
 	}
 
 	// Asignación del rol al usuario.
 	userroles.AddRoleToUser("public", resp.OK.User.ID, role, nil)
 
 	return &newUser, &resp
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func sendVerificationEmail(userID, email string) {
-
-	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
-	if err != nil {
-		log.Println("Error creando token de verificación:", err)
-	} else if tokenResponse.OK != nil {
-		verificationLink := websiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token
-
-		// Se construye el cuerpo del email.
-		subject := "Verifica tu email"
-		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n%s", verificationLink)
-
-		// Envío asíncrono del email (no bloquea la respuesta HTTP).
-		workers.SendEmailAsync(email, subject, body)
-	}
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -295,7 +222,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	translator := languages.GetTranslatorFromRequest(r)
 
 	if r.Method == http.MethodGet {
-		views.LoginPage(translator).Render(r.Context(), w)
+		views.LoginPage(auth.GetCurrentAuthorizationLevel(w, r, queries), translator).Render(r.Context(), w)
 		return
 	}
 
@@ -323,7 +250,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	// Credenciales incorrectas.
 	if resp.WrongCredentialsError != nil {
 		cookies.AddFlashCookie(w, "Credenciales incorrectas")
-		views.LoginPage(translator).Render(r.Context(), w)
+		views.LoginPage(auth.GetCurrentAuthorizationLevel(w, r, queries), translator).Render(r.Context(), w)
 		return
 	}
 
@@ -349,7 +276,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 
 func signOutHandler(w http.ResponseWriter, r *http.Request) {
 
-	revokeSession(w, r)
+	auth.RevokeSession(w, r)
 
 	cookies.AddFlashCookie(w, "Successful signout!")
 
@@ -357,47 +284,8 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones Auxiliares
-// ------------------------------------------------------------------------------------------------
-
-// Retorna si el usuario está autenticado.
-func isUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
-	// Intentar obtener la sesión sin requerirla
-	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(false),
-	})
-
-	return err == nil && sessionContainer != nil
-}
-
-// ------------------------------------------------------------------------------------------------
 // Get Current User
 // ------------------------------------------------------------------------------------------------
-
-func getCurrentUser(w http.ResponseWriter, r *http.Request) (*database.User, error) {
-	if !isUserAuthenticated(w, r) {
-		return nil, ErrNotAuthenticated
-	}
-
-	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(false),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("get session: %w", err)
-	}
-
-	supertokensUserID := sessionContainer.GetUserID()
-
-	user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-		return nil, fmt.Errorf("get user by auth id: %w", err)
-	}
-
-	return &user, nil
-}
 
 // ------------------------------------------------------------------------------------------------
 
@@ -415,13 +303,13 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
 	}
 
-	userEmail := getCurrentUserEmail(w, r)
+	userEmail := auth.GetCurrentUserEmail(w, r)
 	if userEmail == nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
@@ -435,7 +323,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se elimina el avatar del usuario (si tiene).
-	err = deleteAvatar(r.Context(), user.UserID)
+	err = avatarService.Delete(r.Context(), user.UserID)
 	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
@@ -456,7 +344,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Se cierra la sesión del usuario.
-	revokeSession(w, r)
+	auth.RevokeSession(w, r)
 
 	cookies.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
 
@@ -471,29 +359,6 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func revokeSession(w http.ResponseWriter, r *http.Request) {
-
-	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
-	}
-
-	if sessionContainer == nil {
-		http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
-		return
-	}
-
-	if err := sessionContainer.RevokeSession(); err != nil {
-		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
-		return
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
 func deleteSupertokensUser(authID string) error {
 	err := supertokens.DeleteUser(authID)
 
@@ -503,187 +368,6 @@ func deleteSupertokensUser(authID string) error {
 
 	// Usuario eliminado exitosamente.
 	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func getUserEmail(userID string) *string {
-
-	user, err := emailpassword.GetUserByID(userID)
-	if err != nil || user == nil {
-		return nil
-	}
-
-	return &user.Email
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func getCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
-
-	if isUserAuthenticated(w, r) {
-
-		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-			SessionRequired: converters.ToBoolPointer(false),
-		})
-
-		return getUserEmail(sessionContainer.GetUserID())
-
-	} else {
-
-		return nil
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-// Actualiza el email del usuario y solicita re-verificación si el email cambió.
-func updateEmail(user *database.User, newEmail string) error {
-	newEmail = strings.TrimSpace(newEmail)
-
-	// Obtención del email actual del usuario.
-	currentUser, err := emailpassword.GetUserByID(user.AuthID)
-	if err != nil || currentUser == nil {
-		log.Println("Error al obtener usuario actual:", err)
-		return err
-	}
-
-	currentEmail := currentUser.Email
-
-	// Si el email es el mismo, no se hace nada.
-	if strings.EqualFold(currentEmail, newEmail) {
-		log.Println("El email no cambió, omitiendo actualización")
-		return nil
-	}
-
-	// Se verifica si el nuevo emaul ya está en uso por otro usuario.
-	existingUser, err := emailpassword.GetUserByEmail("", newEmail)
-	if err != nil {
-		log.Println("Error al verificar email existente:", err)
-		return err
-	}
-
-	if existingUser != nil && existingUser.ID != user.AuthID {
-		log.Println("El email ya está en uso por otro usuario")
-		return err
-	}
-
-	// Se actualiza el email en SuperTokens.
-	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, &newEmail, nil, nil, nil)
-	if err != nil {
-		log.Println("Error actualizando email:", err)
-		return err
-	}
-
-	if updateResp.OK == nil {
-		if updateResp.EmailAlreadyExistsError != nil {
-			log.Println("Email ya existe")
-		} else if updateResp.UnknownUserIdError != nil {
-			log.Println("Usuario no encontrado")
-		}
-		return err
-	}
-
-	// Se desverifica el email (forzando re-verificación).
-	_, err = emailverification.UnverifyEmail(user.AuthID, &newEmail, nil)
-	if err != nil {
-		log.Println("Error al desverificar email:", err)
-	}
-
-	// Se envía un email de verificación con un nuevo token al nuevo email.
-	sendVerificationEmail(user.AuthID, newEmail)
-
-	log.Println("Email actualizado exitosamente, se envió verificación")
-	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-// Actualiza la contraseña del usuario.
-func updatePassword(user *database.User, currentPassword, newPassword string) error {
-	// Se valida que se proporcionaron ambas contraseñas.
-	if currentPassword == "" || newPassword == "" {
-		log.Println("Contraseñas no proporcionadas")
-		return nil
-	}
-
-	// Se obtiene el email actual para verificar la contraseña.
-	currentUser, err := emailpassword.GetUserByID(user.AuthID)
-	if err != nil || currentUser == nil {
-		log.Println("Error al obtener usuario actual:", err)
-		return err
-	}
-
-	// Se verifica la contraseña actual.
-	signInResp, err := emailpassword.SignIn("", currentUser.Email, currentPassword)
-	if err != nil {
-		log.Println("Error al verificar contraseña:", err)
-		return err
-	}
-
-	if signInResp.WrongCredentialsError != nil {
-		log.Println("Contraseña actual incorrecta")
-		return err
-	}
-
-	// Se actualiza la contraseña.
-	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, nil, &newPassword, nil, nil)
-	if err != nil {
-		log.Println("Error actualizando contraseña:", err)
-		return err
-	}
-
-	if debug {
-
-		// Ver qué tiene la respuesta.
-		log.Printf("UpdateEmailOrPassword response - OK: %v, UnknownUser: %v, EmailExists: %v, PasswordPolicy: %v",
-			updateResp.OK != nil,
-			updateResp.UnknownUserIdError != nil,
-			updateResp.EmailAlreadyExistsError != nil,
-			updateResp.PasswordPolicyViolatedError != nil)
-
-		if updateResp.PasswordPolicyViolatedError != nil {
-			log.Printf("DETALLE del error de política: %+v", updateResp.PasswordPolicyViolatedError)
-		}
-
-	}
-
-	if updateResp.OK == nil {
-		if updateResp.UnknownUserIdError != nil {
-			log.Println("Usuario no encontrado")
-			return fmt.Errorf("usuario no encontrado")
-		} else if updateResp.EmailAlreadyExistsError != nil {
-			log.Println("Email ya existe (esto no debería ocurrir al cambiar solo contraseña)")
-			return fmt.Errorf("email ya existe")
-		} else if updateResp.PasswordPolicyViolatedError != nil {
-			log.Println("La contraseña no cumple con la política de seguridad")
-			return fmt.Errorf("contraseña no cumple con los requisitos de seguridad")
-		} else {
-			log.Println("Error desconocido al actualizar contraseña")
-			return fmt.Errorf("error desconocido al actualizar contraseña")
-		}
-	}
-
-	log.Println("Contraseña actualizada")
-	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func getCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {
-
-	authID := auth.NoRole.Level
-	currentUser, err := getCurrentUser(w, r)
-	if err != nil {
-		if !errors.Is(err, ErrNotAuthenticated) {
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-			return auth.NoRole.Level
-		}
-	} else {
-		authID = auth.GetAuthenticationLevel(currentUser.AuthID)
-	}
-
-	return authID
 }
 
 // ------------------------------------------------------------------------------------------------

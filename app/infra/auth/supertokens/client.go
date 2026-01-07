@@ -1,12 +1,11 @@
-package auth
+package supertokens
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"scifi-search/app/infra/email"
-	"slices"
+	"scifi-search/app/email"
 
 	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
@@ -20,24 +19,10 @@ import (
 )
 
 const (
-	websiteDomain = "http://localhost:8080"
+	WebsiteDomain = "http://localhost:8080"
 )
 
-// Role representa un rol del sistema con su nombre y nivel de autorización.
-type Role struct {
-	Name  string
-	Level int
-}
-
-// Roles predefinidos del sistema.
-var (
-	NoRole     = Role{Name: "no-role", Level: -1}
-	AdminRole  = Role{Name: "admin", Level: 2}
-	LoaderRole = Role{Name: "loader", Level: 1}
-	UserRole   = Role{Name: "user", Level: 0}
-)
-
-func InitializeSupertokens() {
+func Initialize(emailService *email.Service) {
 
 	err := supertokens.Init(supertokens.TypeInput{
 		Supertokens: &supertokens.ConnectionInfo{
@@ -50,8 +35,8 @@ func InitializeSupertokens() {
 
 		AppInfo: supertokens.AppInfo{
 			AppName:       "scifi-search",
-			APIDomain:     websiteDomain,
-			WebsiteDomain: websiteDomain,
+			APIDomain:     WebsiteDomain,
+			WebsiteDomain: WebsiteDomain,
 		},
 
 		RecipeList: []supertokens.Recipe{
@@ -91,7 +76,7 @@ func InitializeSupertokens() {
 				// Mode: evmodels.ModeRequired,
 
 				EmailDelivery: &emaildelivery.TypeInput{
-					Service: email.NewMailHogService(),
+					Service: EmailDelivery(emailService),
 				},
 			}),
 
@@ -104,28 +89,21 @@ func InitializeSupertokens() {
 		},
 	})
 
-	// Creación de roles.
-	userroles.CreateNewRoleOrAddPermissions(AdminRole.Name, []string{"full-access"}, nil)            // Administrador.
-	userroles.CreateNewRoleOrAddPermissions(LoaderRole.Name, []string{"manage-own-financings"}, nil) // Entidades que cargan financiamiento.
-	userroles.CreateNewRoleOrAddPermissions(UserRole.Name, []string{"view-only"}, nil)               // Usuarios normales.
-
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func GetAuthenticationLevel(userID string) int {
+func CreateNewRoleOrAddPermissions(roleName string, permissions []string) {
+	userroles.CreateNewRoleOrAddPermissions(roleName, permissions, nil)
+}
 
-	roles, _ := userroles.GetRolesForUser("public", userID, nil)
+func GetRolesForUser(userID string) []string {
 
-	if slices.Contains(roles.OK.Roles, AdminRole.Name) {
-		return AdminRole.Level
-	} else if slices.Contains(roles.OK.Roles, LoaderRole.Name) {
-		return LoaderRole.Level
-	} else if slices.Contains(roles.OK.Roles, UserRole.Name) {
-		return UserRole.Level
+	roles, err := userroles.GetRolesForUser("public", userID, nil)
+	if err != nil {
+		return []string{}
+	} else {
+		return roles.OK.Roles
 	}
-
-	// Usuario sin autenticar.
-	return NoRole.Level
 }

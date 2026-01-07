@@ -112,7 +112,7 @@ func signUpContent(errorMessage string, translator languages.Translator) templ.C
 }
 
 // ------------------------------------------------------------------------------------------------
-func SignUpPage(errorMessage string, translator languages.Translator) templ.Component {
+func SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -134,7 +134,7 @@ func SignUpPage(errorMessage string, translator languages.Translator) templ.Comp
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("sign-up"), translator,
-			func() templ.Component { return AuthHeader(translator) },
+			func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 			func() templ.Component { return signUpContent(errorMessage, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func loginContent(translator languages.Translator) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-func LoginPage(translator languages.Translator) templ.Component {
+func LoginPage(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -242,7 +242,7 @@ func LoginPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("log-in"), translator,
-			func() templ.Component { return AuthHeader(translator) },
+			func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 			func() templ.Component { return loginContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -323,7 +323,7 @@ func UnloggedContent(translator languages.Translator) templ.Component {
 	})
 }
 
-func UnloggedPage(translator languages.Translator) templ.Component {
+func UnloggedPage(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -345,7 +345,7 @@ func UnloggedPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("No session", translator,
-			func() templ.Component { return AuthHeader(translator) },
+			func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 			func() templ.Component { return UnloggedContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -1,24 +1,22 @@
 package views
 
-import (
-    "scifi-search/app/utils/converters"
-)
+import "scifi-search/app/utils/converters"
 
 templ pagination(totalHits int, currentPage int, get string, include string, target string) {
 	{{
 		itemsPerPage := 10
 		pagesPerWindow := 10
 
-		pageAmount := (totalHits + itemsPerPage -1) / itemsPerPage
-		windowAmount := (pageAmount + pagesPerWindow -1) / pagesPerWindow
+		pageAmount := (totalHits + itemsPerPage - 1) / itemsPerPage
+		windowAmount := (pageAmount + pagesPerWindow - 1) / pagesPerWindow
 
-		currentWindow := (currentPage + pagesPerWindow -1) / pagesPerWindow
+		currentWindow := (currentPage + pagesPerWindow - 1) / pagesPerWindow
 
-		init := (currentWindow -1)* pagesPerWindow +1
-		last := min(currentWindow*pagesPerWindow,pageAmount)
+		init := (currentWindow-1)*pagesPerWindow + 1
+		last := min(currentWindow*pagesPerWindow, pageAmount)
 	}}
 	<div class="pagination">
-	    if currentWindow > 1 {
+		if currentWindow > 1 {
 			@navigationButton((currentWindow-1)*pagesPerWindow, "«", get, include, target)
 		}
 		if currentPage > 1 {
@@ -50,8 +48,8 @@ templ navigationButton(page int, button string, get string, include string, targ
 		hx-target={ target }
 		hx-swap="innerHTML"
 		hx-vals={ `{"page": "` + converters.ToString(page) + `"}` }
-		>
-			{ button }
+	>
+		{ button }
 	</a>
 }
 
@@ -70,13 +68,13 @@ templ documentItem(m map[string]any, name string) {
 		if converters.ToString(m["Descripcion"]) != "" {
 			<p id="description">{ converters.ToString(m["Descripcion"]) }</p>
 		} else {
-			<p> No description. </p>
+			<p>No description. </p>
 		}
 	</div>
 }
 
 templ extraInfoItem(item string, color string) {
 	if item != "" {
-		<span class={ color }> { item } </span>
+		<span class={ color }>{ item } </span>
 	}
 }

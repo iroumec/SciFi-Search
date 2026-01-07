@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"scifi-search/app/auth"
 	"scifi-search/app/database"
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/http/middlewares"
-	"scifi-search/app/infra/auth"
-	"scifi-search/app/infra/email"
 	"strconv"
 
 	"scifi-search/app/languages"
@@ -17,12 +16,11 @@ import (
 	sqlc "scifi-search/app/database"
 )
 
-func registerFundingHandlers() {
+func RegisterFundingHandlers() {
 
 	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingItemsHandler, 1)))
-
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -50,7 +48,7 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component := views.ManageFundingPage(fundings, totalFundings, getCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
+	component := views.ManageFundingPage(fundings, totalFundings, auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -59,7 +57,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 	var fundings []map[string]any
 	var fundingsDocs []database.Document
 
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
 		w.Header().Set("HX-Redirect", "/")
@@ -150,7 +148,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	grantor := r.Form.Get("grantor")
 	deadline := r.Form.Get("deadline")
 
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
 		w.Header().Set("HX-Redirect", "/")
@@ -204,21 +202,21 @@ func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName s
 	// el usuario está verificado.
 	// TODO: tampoco debería (creo) notificarse al usuario que añadió
 	// el financiamiento.
-	users, err := queries.ListUsers(r.Context())
+	usersList, err := queries.ListUsers(r.Context())
 	if err != nil {
 		log.Fatal("Error en la notificación de nuevo financiamiento")
 		return
 	}
 
-	for _, user := range users {
+	for _, user := range usersList {
 
-		userEmail := getUserEmail(user.AuthID)
+		userEmail := auth.GetUserEmail(user.AuthID)
 
 		if userEmail == nil {
 			log.Printf("Usuario %d no encontrado", user.UserID)
 			continue
 		}
 
-		email.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
+		emailService.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
 	}
 }

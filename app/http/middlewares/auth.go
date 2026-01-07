@@ -5,8 +5,8 @@ package middlewares
 import (
 	"log"
 	"net/http"
+	"scifi-search/app/auth"
 	"scifi-search/app/http/cookies"
-	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/converters"
 

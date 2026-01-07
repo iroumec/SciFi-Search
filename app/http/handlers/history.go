@@ -4,7 +4,7 @@ package handlers
 
 import (
 	"net/http"
-	"scifi-search/app/infra/auth"
+	"scifi-search/app/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
@@ -13,7 +13,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 // Registra los endpoint asociados al historial.
-func registerHistoryHandlers() {
+func RegisterHistoryHandlers() {
 
 	http.HandleFunc("/history", historyHandler)
 }
@@ -33,9 +33,9 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func showHistory(w http.ResponseWriter, r *http.Request) {
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
-		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
+		component := views.UnloggedPage(auth.NoRole.Level, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	} else {
 

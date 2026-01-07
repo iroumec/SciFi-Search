@@ -9,9 +9,10 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"scifi-search/app/auth"
+	"scifi-search/app/avatars"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/cookies"
-	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/getters"
 	"scifi-search/app/utils/structures"
@@ -23,7 +24,7 @@ import (
 // Registro de endpoints
 // ------------------------------------------------------------------------------------------------
 
-func registerSettingsHandlers() {
+func RegisterSettingsHandlers() {
 
 	http.HandleFunc("/settings", handleSettings)
 	http.HandleFunc("/settings/edit/", handleEditField)
@@ -112,7 +113,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		currentUser, err := getCurrentUser(w, r)
+		currentUser, err := auth.GetCurrentUser(w, r, queries)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -130,7 +131,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 			Surname:         currentUser.Surname,
 			AvatarURLString: currentUser.AvatarUrl.String,
 			AvatarURLValid:  currentUser.AvatarUrl.Valid,
-			Email:           *getCurrentUserEmail(w, r),
+			Email:           *auth.GetCurrentUserEmail(w, r),
 		}
 
 		views.SettingsForm(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
@@ -147,9 +148,9 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 // Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
-	currentUser, err := getCurrentUser(w, r)
+	currentUser, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
-		component := views.UnloggedPage(languages.GetTranslatorFromRequest(r))
+		component := views.UnloggedPage(auth.NoRole.Level, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	} else {
 
@@ -165,7 +166,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 			Surname:         currentUser.Surname,
 			AvatarURLString: currentUser.AvatarUrl.String,
 			AvatarURLValid:  currentUser.AvatarUrl.Valid,
-			Email:           *getCurrentUserEmail(w, r),
+			Email:           *auth.GetCurrentUserEmail(w, r),
 		}
 
 		component := views.SettingsPage(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r))
@@ -178,12 +179,12 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 // Renderiza el campo que está siendo editado.
 func editField(w http.ResponseWriter, r *http.Request) {
 
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	email := getCurrentUserEmail(w, r)
+	email := auth.GetCurrentUserEmail(w, r)
 	fieldStr := strings.TrimPrefix(r.URL.Path, "/settings/edit/")
 
 	var value, typeStr string
@@ -214,7 +215,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -245,7 +246,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 	// Actualización de avatar.
 	saveAvatar(user, w, r)
 	if r.Form.Get("delete-avatar") == "true" {
-		if err := deleteAvatar(ctx, user.UserID); err != nil {
+		if err := avatarService.Delete(ctx, user.UserID); err != nil {
 			http.Error(w, "Error deleting avatar", http.StatusInternalServerError)
 			return false, err
 		}
@@ -257,7 +258,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 	// Actualización de email.
 	emailUpdated := false
 	if email := r.Form.Get("email"); email != "" {
-		if err := updateEmail(user, email); err != nil {
+		if err := auth.UpdateEmail(user, email); err != nil {
 			return false, err
 		}
 		emailUpdated = true
@@ -267,7 +268,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 	currentPwd := r.Form.Get("current-password")
 	newPwd := r.Form.Get("new-password")
 	if currentPwd != "" && newPwd != "" {
-		if err := updatePassword(user, currentPwd, newPwd); err != nil {
+		if err := auth.UpdatePassword(user, currentPwd, newPwd); err != nil {
 			cookies.AddFlashCookie(w, "Error interno del servidor.")
 			return false, err
 		}
@@ -279,7 +280,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 // ------------------------------------------------------------------------------------------------
 
 func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated bool) {
-	user, err := getCurrentUser(w, r)
+	user, err := auth.GetCurrentUser(w, r, queries)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -299,7 +300,7 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 			Surname:         user.Surname,
 			AvatarURLString: user.AvatarUrl.String,
 			AvatarURLValid:  user.AvatarUrl.Valid,
-			Email:           *getCurrentUserEmail(w, r),
+			Email:           *auth.GetCurrentUserEmail(w, r),
 		},
 		updatePreferences(user, r),
 		auth.GetAuthenticationLevel(user.AuthID),
@@ -316,33 +317,38 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 	if err != nil && err != http.ErrMissingFile {
 		http.Error(w, "No se pudo leer el archivo", http.StatusBadRequest)
 		return
-	} else if err == nil {
-
-		defer file.Close()
-
-		// Se cambia el tamaño de la imagen.
-		resizedFile, err := ResizeImageToAvatar(file)
-		if err != nil {
-			http.Error(w, "Error procesando imagen", http.StatusInternalServerError)
-			return
-		}
-		// Se sube el archivo al almacenamiento de objetos.
-		url, err := UploadAvatar(r.Context(), bucketName, user.UserID, resizedFile)
-		if err != nil {
-			http.Error(w, "Error subiendo avatar", http.StatusInternalServerError)
-			log.Printf("%s", err)
-			return
-		}
-
-		// Guardado de la URL en la Base de Datos.
-		err = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
-			UserID: user.UserID,
-			AvatarUrl: sql.NullString{
-				String: url,
-				Valid:  true,
-			},
-		})
 	}
+
+	if err == http.ErrMissingFile {
+		return
+	}
+
+	defer file.Close()
+
+	resizedFile, err := avatars.ResizeImageToAvatar(file)
+	if err != nil {
+		http.Error(w, "Error procesando imagen", http.StatusInternalServerError)
+		return
+	}
+
+	if avatarService == nil {
+		http.Error(w, "Avatar service not configured", http.StatusInternalServerError)
+		return
+	}
+
+	url, err := avatarService.Upload(r.Context(), user.UserID, resizedFile)
+	if err != nil {
+		http.Error(w, "Error subiendo avatar", http.StatusInternalServerError)
+		return
+	}
+
+	_ = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
+		UserID: user.UserID,
+		AvatarUrl: sql.NullString{
+			String: url,
+			Valid:  true,
+		},
+	})
 }
 
 // ------------------------------------------------------------------------------------------------

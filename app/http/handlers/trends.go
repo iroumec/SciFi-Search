@@ -6,6 +6,7 @@ package handlers
 
 import (
 	"net/http"
+	"scifi-search/app/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/reporting/graphs"
 	"scifi-search/app/utils/extractors"
@@ -25,7 +26,7 @@ const (
 // ------------------------------------------------------------------------------------------------
 
 // Registra los handlers correspondientes a las tendencias.
-func registerTrendsHandler() {
+func RegisterTrendsHandlers() {
 	http.HandleFunc("/trends", trendsHandler)
 }
 
@@ -69,7 +70,7 @@ func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 	htmlChart := extractors.ExtractBodyContent(buffer.String())
 
 	// Se renderiza la página resultante.
-	component := views.TrendsPage(htmlChart, getCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
+	component := views.TrendsPage(htmlChart, auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

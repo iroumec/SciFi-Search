@@ -1,15 +1,17 @@
 package views 
 
-import "scifi-search/app/languages"
-import "scifi-search/app/infra/auth"
+import (
+	"scifi-search/app/auth"
+	"scifi-search/app/languages"
+)
 
 templ Header(showOptions bool, authorizationLevel int, translator languages.Translator) {
 	@headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
-templ AuthHeader(translator languages.Translator) {
-	@headerBuilder("transparent", "logo.png", false, false, -1, translator)
+templ AuthHeader(authorizationLevel int, translator languages.Translator) {
+	@headerBuilder("transparent", "logo.png", false, false, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
