@@ -12,7 +12,7 @@ import (
 )
 
 const addDocument = `-- name: AddDocument :one
-INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline
+INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline
 `
 
 type AddDocumentParams struct {
@@ -24,6 +24,8 @@ type AddDocumentParams struct {
 	Description sql.NullString `json:"description"`
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
+	Currency    string         `json:"currency"`
+	Amount      string         `json:"amount"`
 	Deadline    string         `json:"deadline"`
 	UserID      sql.NullInt32  `json:"user_id"`
 }
@@ -38,6 +40,8 @@ func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Docum
 		arg.Description,
 		arg.BasedOn,
 		arg.Grantor,
+		arg.Currency,
+		arg.Amount,
 		arg.Deadline,
 		arg.UserID,
 	)
@@ -53,6 +57,8 @@ func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Docum
 		&i.Description,
 		&i.BasedOn,
 		&i.Grantor,
+		&i.Currency,
+		&i.Amount,
 		&i.Deadline,
 	)
 	return i, err
@@ -157,7 +163,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 }
 
 const getDocumentByID = `-- name: GetDocumentByID :one
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline from documents WHERE id = $1
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline from documents WHERE id = $1
 `
 
 func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, error) {
@@ -174,6 +180,8 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 		&i.Description,
 		&i.BasedOn,
 		&i.Grantor,
+		&i.Currency,
+		&i.Amount,
 		&i.Deadline,
 	)
 	return i, err
@@ -253,7 +261,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listAllDocuments = `-- name: ListAllDocuments :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline FROM documents LIMIT $1 OFFSET $2
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents LIMIT $1 OFFSET $2
 `
 
 type ListAllDocumentsParams struct {
@@ -281,6 +289,8 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 			&i.Description,
 			&i.BasedOn,
 			&i.Grantor,
+			&i.Currency,
+			&i.Amount,
 			&i.Deadline,
 		); err != nil {
 			return nil, err
@@ -297,7 +307,7 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 }
 
 const listDocumentsByUser = `-- name: ListDocumentsByUser :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, deadline FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3
 `
 
 type ListDocumentsByUserParams struct {
@@ -326,6 +336,8 @@ func (q *Queries) ListDocumentsByUser(ctx context.Context, arg ListDocumentsByUs
 			&i.Description,
 			&i.BasedOn,
 			&i.Grantor,
+			&i.Currency,
+			&i.Amount,
 			&i.Deadline,
 		); err != nil {
 			return nil, err
@@ -466,7 +478,7 @@ func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferencePara
 }
 
 const updateDocument = `-- name: UpdateDocument :exec
-UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, deadline = $10, user_id = $11 WHERE id = $1
+UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, currency = $10, amount = $11, deadline = $12, user_id = $13 WHERE id = $1
 `
 
 type UpdateDocumentParams struct {
@@ -479,6 +491,8 @@ type UpdateDocumentParams struct {
 	Description sql.NullString `json:"description"`
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
+	Currency    string         `json:"currency"`
+	Amount      string         `json:"amount"`
 	Deadline    string         `json:"deadline"`
 	UserID      sql.NullInt32  `json:"user_id"`
 }
@@ -494,6 +508,8 @@ func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) 
 		arg.Description,
 		arg.BasedOn,
 		arg.Grantor,
+		arg.Currency,
+		arg.Amount,
 		arg.Deadline,
 		arg.UserID,
 	)

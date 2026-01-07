@@ -20,6 +20,8 @@ type Document struct {
 	Description sql.NullString `json:"description"`
 	BasedOn     sql.NullString `json:"based_on"`
 	Grantor     sql.NullString `json:"grantor"`
+	Currency    string         `json:"currency"`
+	Amount      string         `json:"amount"`
 	Deadline    string         `json:"deadline"`
 }
 

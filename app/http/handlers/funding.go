@@ -97,6 +97,8 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 			"Descripcion": doc.Description.String,
 			"Pais":        doc.BasedOn.String,
 			"Otorgante":   doc.Grantor.String,
+			"Moneda":      doc.Currency,
+			"Monto":       doc.Amount,
 			"Deadline":    doc.Deadline,
 		}
 		fundings = append(fundings, funding)
@@ -146,6 +148,8 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	description := r.Form.Get("description")
 	basedOn := r.Form.Get("based-on")
 	grantor := r.Form.Get("grantor")
+	currency := r.Form.Get("currency")
+	amount := r.Form.Get("amount")
 	deadline := r.Form.Get("deadline")
 
 	user, err := auth.GetCurrentUser(w, r, queries)
@@ -166,6 +170,8 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		Description: sql.NullString{String: description, Valid: description != ""},
 		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
 		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
+		Currency:    currency,
+		Amount:      amount,
 		Deadline:    deadline,
 	})
 
@@ -180,6 +186,8 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		"Descripcion": document.Description.String,
 		"Pais":        document.BasedOn.String,
 		"Otorgante":   document.Grantor.String,
+		"Moneda":      document.Currency,
+		"Monto":       document.Amount,
 		"Deadline":    document.Deadline,
 	}, nil)
 	if err != nil {

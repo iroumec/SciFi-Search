@@ -63,7 +63,7 @@ templ documentItem(m map[string]any, name string) {
 			@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
 			@extraInfoItem(converters.ToString(m["Pais"]), "yellow")
 			@extraInfoItem(converters.ToString(m["Otorgante"]), "cyan")
-			/*@extraInfoItem(converters.ToString(m["Monto"]), "green")*/
+			@extraInfoItem("("+converters.ToString(m["Moneda"])+") "+converters.ToString(m["Monto"]), "green")
 		</div>
 		if converters.ToString(m["Descripcion"]) != "" {
 			<p id="description">{ converters.ToString(m["Descripcion"]) }</p>

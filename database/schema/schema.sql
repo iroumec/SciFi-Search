@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS documents (
     description TEXT,
     based_on TEXT,
     grantor TEXT,
-    --monto
+    currency TEXT NOT NULL,
+    amount TEXT NOT NULL,
     deadline TEXT NOT NULL
 );
 

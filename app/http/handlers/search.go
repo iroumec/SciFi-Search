@@ -155,7 +155,8 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			descripcion, _ := doc["description"].(string)
 			basedOn, _ := doc["based_on"].(string)
 			grantor, _ := doc["grantor"].(string)
-			/*monto*/
+			currency, _ := doc["currency"].(string)
+			amount, _ := doc["amount"].(string)
 			deadline, _ := doc["deadline"].(string)
 
 			// Añadido del documento a la base de datos.
@@ -169,6 +170,8 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 				Description: sql.NullString{String: descripcion, Valid: descripcion != ""},
 				BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
 				Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
+				Currency:    currency,
+				Amount:      amount,
 				Deadline:    deadline,
 			})
 			if err != nil {
@@ -187,6 +190,8 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 				"Descripcion": descripcion,
 				"Pais":        basedOn,
 				"Otorgante":   grantor,
+				"Moneda":      currency,
+				"Monto":       amount,
 				"Deadline":    deadline,
 			}
 
