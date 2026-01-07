@@ -917,15 +917,33 @@ header {
 /* ------------------------------------------------------------------------------------------------ */
 #history-content { 
     grid-area: display-center;
-    height: 85%;
+    height: 92%;
+
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 4% 96%;
+    grid-template-areas: 
+        "history-title"
+        "history-content";
 
     background-color: var(--scifi30);
-    padding: 2.5rem;
+    padding: 1rem;
+    border-radius: 0.3rem;
 }
 
+    #history-title {
+        grid-area: history-title;
+        color: var(--scifi);
+        display: flex;
+        align-items: center;
+        padding-left: 0.7rem;
+    }
+
     #history-list {
+        grid-area: history-content;
         overflow-y: auto;
         max-height: 100%;
+        padding: 1rem;
     }
 
         .historic-query {
