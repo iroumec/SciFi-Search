@@ -379,7 +379,7 @@ func sortingCheckboxes(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(translator("name-desc"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 183, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 182, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -392,7 +392,7 @@ func sortingCheckboxes(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(translator("type-asc"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 196, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 195, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -405,7 +405,7 @@ func sortingCheckboxes(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(translator("type-desc"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 209, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/search.templ`, Line: 208, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -422,7 +422,7 @@ func sortingCheckboxes(translator languages.Translator) templ.Component {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-func SearchResultsPage(query string, hits []map[string]any, totalHits int, isUserAuthenticated bool, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) templ.Component {
+func SearchResultsPage(query string, hits []map[string]any, totalHits int, authorizationLevel int, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -444,7 +444,7 @@ func SearchResultsPage(query string, hits []map[string]any, totalHits int, isUse
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(query+" - SciFi Search", translator,
-			func() templ.Component { return SearchHeader(isUserAuthenticated, translator) },
+			func() templ.Component { return SearchHeader(authorizationLevel, translator) },
 			func() templ.Component {
 				return searchResultsContent(query, hits, totalHits, translator, documentTypes, documentAreas)
 			},

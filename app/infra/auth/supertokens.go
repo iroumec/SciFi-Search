@@ -115,6 +115,7 @@ func InitializeSupertokens() {
 }
 
 func GetAuthenticationLevel(userID string) int {
+
 	roles, _ := userroles.GetRolesForUser("public", userID, nil)
 
 	if slices.Contains(roles.OK.Roles, AdminRole.Name) {

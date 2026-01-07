@@ -11,6 +11,7 @@ import (
 	"net/http"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/cookies"
+	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/getters"
 	"scifi-search/app/utils/structures"
@@ -132,7 +133,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 			Email:           *getCurrentUserEmail(w, r),
 		}
 
-		views.SettingsForm(user, preferences, languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+		views.SettingsForm(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
 		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
 	}
@@ -167,7 +168,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 			Email:           *getCurrentUserEmail(w, r),
 		}
 
-		component := views.SettingsPage(user, preferences, languages.GetTranslatorFromRequest(r))
+		component := views.SettingsPage(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	}
 }
@@ -301,6 +302,7 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 			Email:           *getCurrentUserEmail(w, r),
 		},
 		updatePreferences(user, r),
+		auth.GetAuthenticationLevel(user.AuthID),
 		t,
 	)
 	component.Render(r.Context(), w)

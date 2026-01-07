@@ -3,23 +3,24 @@ package views
 // ------------------------------------------------------------------------------------------------
 import (
 	"fmt"
+	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/structures"
 	"time"
 )
 
 // ------------------------------------------------------------------------------------------------
-templ settingsContent(user structures.User, preferences []string, translator languages.Translator) {
+templ settingsContent(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
 	@showPopUp()
 	<div class="centered-box-content">
 		<div id="left"></div>
-		@SettingsForm(user, preferences, translator)
+		@SettingsForm(user, preferences, authorizationLevel, translator)
 		<div id="right"></div>
 	</div>
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SettingsForm(user structures.User, preferences []string, translator languages.Translator) {
+templ SettingsForm(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
 	<form
 		id="settings-section"
 		enctype="multipart/form-data"
@@ -62,18 +63,20 @@ templ SettingsForm(user structures.User, preferences []string, translator langua
 			</div>
 		</div>
 		<div class="nav-section">
-			<div id="set-left">
-				<button
-					type="button"
-					class="scifi-button"
-					id="delete-account-btn"
-					hx-delete="/delete-account"
-					hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
-					hx-target="body"
-				>
-					{ translator("delete-account") }
-				</button>
-			</div>
+			if authorizationLevel != auth.AdminRole.Level {
+				<div id="set-left">
+					<button
+						type="button"
+						class="scifi-button"
+						id="delete-account-btn"
+						hx-delete="/delete-account"
+						hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
+						hx-target="body"
+					>
+						{ translator("delete-account") }
+					</button>
+				</div>
+			}
 			<div id="set-right">
 				<button
 					type="button"
@@ -234,10 +237,10 @@ templ PreferenceItem(preference string) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SettingsPage(user structures.User, preferences []string, translator languages.Translator) {
+templ SettingsPage(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
 	@Layout("Settings", translator,
-		func() templ.Component { return Header(true, true, translator) },
-		func() templ.Component { return settingsContent(user, preferences, translator) },
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
+		func() templ.Component { return settingsContent(user, preferences, authorizationLevel, translator) },
 	)
 }
 

@@ -30,9 +30,9 @@ templ indexContent(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexPage(isUserAuthenticated bool, translator languages.Translator) {
+templ IndexPage(authorizationLevel int, translator languages.Translator) {
 	@Layout("SciFi Search", translator,
-		func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+		func() templ.Component { return IndexHeader(authorizationLevel, translator) },
 		func() templ.Component { return indexContent(translator) },
 	)
 }

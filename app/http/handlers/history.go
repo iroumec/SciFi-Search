@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"net/http"
+	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
@@ -52,7 +53,7 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		component := views.HistoryPage(searches, languages.GetTranslatorFromRequest(r))
+		component := views.HistoryPage(searches, auth.GetAuthenticationLevel(user.AuthID), languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 	}
 }

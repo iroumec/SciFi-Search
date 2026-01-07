@@ -1,28 +1,29 @@
 package views 
 
 import "scifi-search/app/languages"
+import "scifi-search/app/infra/auth"
 
-templ Header(showOptions bool, isUserAuthenticated bool, translator languages.Translator) {
-	@headerBuilder("transparent", "logo.png", false, true, isUserAuthenticated, translator)
+templ Header(showOptions bool, authorizationLevel int, translator languages.Translator) {
+	@headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
 templ AuthHeader(translator languages.Translator) {
-	@headerBuilder("transparent", "logo.png", false, false, false, translator)
+	@headerBuilder("transparent", "logo.png", false, false, -1, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexHeader(isUserAuthenticated bool, translator languages.Translator) {
-	@headerBuilder("transparent", "", false, true, isUserAuthenticated, translator)
+templ IndexHeader(authorizationLevel int, translator languages.Translator) {
+	@headerBuilder("transparent", "", false, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SearchHeader(isUserAuthenticated bool, translator languages.Translator) {
-	@headerBuilder("var(--scifi30)", "white-logo.png", true, true, isUserAuthenticated, translator)
+templ SearchHeader(authorizationLevel int, translator languages.Translator) {
+	@headerBuilder("var(--scifi30)", "white-logo.png", true, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
-templ headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, isUserAuthenticated bool, translator languages.Translator) {
+templ headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, authorizationLevel int, translator languages.Translator) {
 	<header style={ "background-color: " + backgroundColor + ";" }>
 		<div class="header-left">
 			if logo != "" {
@@ -54,15 +55,15 @@ templ headerBuilder(backgroundColor string, logo string, query bool, showOptions
 		</div>
 		<div class="header-right">
 			if showOptions {
-				@userOptions(isUserAuthenticated, translator)
+				@userOptions(authorizationLevel, translator)
 			}
 		</div>
 	</header>
 }
 
 // ------------------------------------------------------------------------------------------------
-templ userOptions(isUserAuthenticated bool, translator languages.Translator) {
-	if !isUserAuthenticated {
+templ userOptions(authorizationLevel int, translator languages.Translator) {
+	if authorizationLevel <= auth.NoRole.Level {
 		<button
 			class="scifi-button"
 			hx-get="/signup"
@@ -94,10 +95,12 @@ templ userOptions(isUserAuthenticated bool, translator languages.Translator) {
 				/>
 			</button>
 			<div id="menu" class="menu-content" x-show="open" style="display: none;">
-				<div id="close-menu"> { translator("menu") } </div>
+				<div id="close-menu">{ translator("menu") } </div>
 				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">{ translator("menu.settings") }</button>
 				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">{ translator("menu.history") }</button>
-				<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("menu.fundings") }</button>
+				if authorizationLevel >= auth.LoaderRole.Level {
+					<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("menu.fundings") }</button>
+				}
 				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
 				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">{ translator("log-out") }</button>
 			</div>

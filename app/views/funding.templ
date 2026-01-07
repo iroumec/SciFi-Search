@@ -84,7 +84,7 @@ templ fundingAddedContent(translator languages.Translator) {
 
 templ FundingAddedPage(translator languages.Translator) {
 	@Layout(translator("funding.added"), translator,
-		func() templ.Component { return Header(true, true, translator) },
+		func() templ.Component { return Header(true, 0, translator) },
 		func() templ.Component { return fundingAddedContent(translator) },
 	)
 }
@@ -96,7 +96,7 @@ templ manageFundingContent(fundings []map[string]any, totalFundings int, transla
 	<div class="centered-box-content" x-data="{ open: false }">
 		<div id="left"></div>
 		<div id="manage-funding-content">
-			<div id="funding-title"> Manage projects </div>
+			<div id="funding-title">Manage projects </div>
 			<div id="funding-content">
 				<div id="funding-list">
 					@FundingList(fundings, 1, totalFundings, translator)
@@ -118,11 +118,11 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	<div class="documents-section">
 		for i := 0; i < len(fundings); i++ {
 			<div class="result">
-				@documentItem(fundings[i],"funding-item")
+				@documentItem(fundings[i], "funding-item")
 				<div class="funding-item-buttons">
 					<button
-							class="funding-item-button edit-button"
-					/>
+						class="funding-item-button edit-button"
+					></button>
 					<button
 						class="funding-item-button delete-button"
 						hx-delete={ "/funding/" + converters.ToString(fundings[i]["id"]) }
@@ -130,7 +130,7 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 						hx-swap="outerHTML"
 						hx-confirm="¿Desea eliminar el funding? ¡Esta decisión no puede deshacerse!"
 						type="submit"
-					/>
+					></button>
 				</div>
 			</div>
 		}
@@ -156,9 +156,9 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	</li>
 }*/
 
-templ ManageFundingPage(fundings []map[string]any, totalFundings int, translator languages.Translator) {
+templ ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, translator languages.Translator) {
 	@Layout("Manage projects", translator,
-		func() templ.Component { return Header(true, true, translator) },
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return manageFundingContent(fundings, totalFundings, translator) },
 	)
 }

@@ -36,10 +36,10 @@ templ searchResultsContent(query string, hits []map[string]any, totalHits int, t
 }
 
 templ SearchResults(hits []map[string]any, totalHits int, page int) {
-	<div class="documents-section"> 
+	<div class="documents-section">
 		for i := 0; i < len(hits); i++ {
 			<div class="result">
-				@documentItem(hits[i],"item")
+				@documentItem(hits[i], "item")
 			</div>
 		}
 	</div>
@@ -167,7 +167,6 @@ templ sortingCheckboxes(translator languages.Translator) {
 			hx-include="#all-filters"
 		/>
 		{ translator("name-asc") }
-
 	</label>
 	<label class="checkbox-item">
 		<input
@@ -213,9 +212,9 @@ templ sortingCheckboxes(translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, totalHits int, isUserAuthenticated bool, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
+templ SearchResultsPage(query string, hits []map[string]any, totalHits int, authorizationLevel int, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
 	@Layout(query+" - SciFi Search", translator,
-		func() templ.Component { return SearchHeader(isUserAuthenticated, translator) },
+		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
 		func() templ.Component {
 			return searchResultsContent(query, hits, totalHits, translator, documentTypes, documentAreas)
 		},

@@ -255,7 +255,7 @@ func FundingAddedPage(translator languages.Translator) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("funding.added"), translator,
-			func() templ.Component { return Header(true, true, translator) },
+			func() templ.Component { return Header(true, 0, translator) },
 			func() templ.Component { return fundingAddedContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -408,7 +408,7 @@ func FundingList(fundings []map[string]any, page int, totalFundings int, transla
 	</li>
 }*/
 
-func ManageFundingPage(fundings []map[string]any, totalFundings int, translator languages.Translator) templ.Component {
+func ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -430,7 +430,7 @@ func ManageFundingPage(fundings []map[string]any, totalFundings int, translator 
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("Manage projects", translator,
-			func() templ.Component { return Header(true, true, translator) },
+			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return manageFundingContent(fundings, totalFundings, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

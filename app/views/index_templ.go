@@ -49,7 +49,7 @@ func indexContent(translator languages.Translator) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-func IndexPage(isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func IndexPage(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -71,7 +71,7 @@ func IndexPage(isUserAuthenticated bool, translator languages.Translator) templ.
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("SciFi Search", translator,
-			func() templ.Component { return IndexHeader(isUserAuthenticated, translator) },
+			func() templ.Component { return IndexHeader(authorizationLevel, translator) },
 			func() templ.Component { return indexContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

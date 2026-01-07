@@ -44,6 +44,11 @@ const (
 
 // ---------------------------------------------------------------------
 
+var ErrNotAuthenticated = errors.New("user not authenticated")
+var ErrUserNotFound = errors.New("user not found")
+
+// ---------------------------------------------------------------------
+
 func registerAuthenticationHandlers() {
 
 	auth.InitializeSupertokens()
@@ -370,26 +375,28 @@ func isUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 // ------------------------------------------------------------------------------------------------
 
 func getCurrentUser(w http.ResponseWriter, r *http.Request) (*database.User, error) {
-
-	if isUserAuthenticated(w, r) {
-
-		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-			SessionRequired: converters.ToBoolPointer(false),
-		})
-
-		supertokensUserID := sessionContainer.GetUserID()
-
-		user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
-		if err != nil {
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
-		}
-
-		return &user, nil
-
-	} else {
-
-		return nil, fmt.Errorf("There is no user authenticated.")
+	if !isUserAuthenticated(w, r) {
+		return nil, ErrNotAuthenticated
 	}
+
+	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+		SessionRequired: converters.ToBoolPointer(false),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("get session: %w", err)
+	}
+
+	supertokensUserID := sessionContainer.GetUserID()
+
+	user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("get user by auth id: %w", err)
+	}
+
+	return &user, nil
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -659,6 +666,24 @@ func updatePassword(user *database.User, currentPassword, newPassword string) er
 
 	log.Println("Contraseña actualizada")
 	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {
+
+	authID := auth.NoRole.Level
+	currentUser, err := getCurrentUser(w, r)
+	if err != nil {
+		if !errors.Is(err, ErrNotAuthenticated) {
+			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+			return auth.NoRole.Level
+		}
+	} else {
+		authID = auth.GetAuthenticationLevel(currentUser.AuthID)
+	}
+
+	return authID
 }
 
 // ------------------------------------------------------------------------------------------------

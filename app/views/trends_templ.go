@@ -66,7 +66,7 @@ func trendsContent(htmlChart template.HTML, translator languages.Translator) tem
 	})
 }
 
-func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -88,7 +88,7 @@ func TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator la
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout("Trending", translator,
-			func() templ.Component { return Header(true, isUserAuthenticated, translator) },
+			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return trendsContent(htmlChart, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

@@ -2,7 +2,7 @@ module scifi-search
 
 go 1.25
 
-require github.com/a-h/templ v0.3.960
+require github.com/a-h/templ v0.3.977
 
 require (
 	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect

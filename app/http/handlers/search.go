@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"scifi-search/app/infra/auth"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/structures"
@@ -302,6 +303,8 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
+	var authorizationLevel = auth.NoRole.Level
+
 	// De estar autenticado el usuario, se guarda la búsqueda
 	// en su historial.
 	if isUserAuthenticated(w, r) {
@@ -312,12 +315,14 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		authorizationLevel = auth.GetAuthenticationLevel(user.AuthID)
+
 		params := sqlc.CreateHistoricSearchParams{UserID: user.UserID, SearchString: query}
 		queries.CreateHistoricSearch(r.Context(), params)
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), isUserAuthenticated(w, r), languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
+	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), authorizationLevel, languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
 	component.Render(r.Context(), w)
 }
 

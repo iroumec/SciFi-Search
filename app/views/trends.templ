@@ -14,9 +14,9 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 	</div>
 }
 
-templ TrendsPage(htmlChart template.HTML, isUserAuthenticated bool, translator languages.Translator) {
+templ TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) {
 	@Layout("Trending", translator,
-		func() templ.Component { return Header(true, isUserAuthenticated, translator) },
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return trendsContent(htmlChart, translator) },
 	)
 }

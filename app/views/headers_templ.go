@@ -9,8 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import "scifi-search/app/languages"
+import "scifi-search/app/infra/auth"
 
-func Header(showOptions bool, isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func Header(showOptions bool, authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -31,7 +32,7 @@ func Header(showOptions bool, isUserAuthenticated bool, translator languages.Tra
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, true, isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -61,7 +62,7 @@ func AuthHeader(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, false, false, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, false, -1, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +71,7 @@ func AuthHeader(translator languages.Translator) templ.Component {
 }
 
 // ------------------------------------------------------------------------------------------------
-func IndexHeader(isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func IndexHeader(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -91,7 +92,7 @@ func IndexHeader(isUserAuthenticated bool, translator languages.Translator) temp
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("transparent", "", false, true, isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("transparent", "", false, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -100,7 +101,7 @@ func IndexHeader(isUserAuthenticated bool, translator languages.Translator) temp
 }
 
 // ------------------------------------------------------------------------------------------------
-func SearchHeader(isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func SearchHeader(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -121,7 +122,7 @@ func SearchHeader(isUserAuthenticated bool, translator languages.Translator) tem
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("var(--scifi30)", "white-logo.png", true, true, isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("var(--scifi30)", "white-logo.png", true, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,7 +131,7 @@ func SearchHeader(isUserAuthenticated bool, translator languages.Translator) tem
 }
 
 // ------------------------------------------------------------------------------------------------
-func headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -158,7 +159,7 @@ func headerBuilder(backgroundColor string, logo string, query bool, showOptions 
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues("background-color: " + backgroundColor + ";")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 26, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 27, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -176,7 +177,7 @@ func headerBuilder(backgroundColor string, logo string, query bool, showOptions 
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("static/img/" + logo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 30, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 31, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -198,7 +199,7 @@ func headerBuilder(backgroundColor string, logo string, query bool, showOptions 
 			return templ_7745c5c3_Err
 		}
 		if showOptions {
-			templ_7745c5c3_Err = userOptions(isUserAuthenticated, translator).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = userOptions(authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -212,7 +213,7 @@ func headerBuilder(backgroundColor string, logo string, query bool, showOptions 
 }
 
 // ------------------------------------------------------------------------------------------------
-func userOptions(isUserAuthenticated bool, translator languages.Translator) templ.Component {
+func userOptions(authorizationLevel int, translator languages.Translator) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -233,7 +234,7 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if !isUserAuthenticated {
+		if authorizationLevel <= auth.NoRole.Level {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<button class=\"scifi-button\" hx-get=\"/signup\" hx-target=\"body\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -241,7 +242,7 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(translator("sign-up.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 72, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 73, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -254,7 +255,7 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-in.tag"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 80, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 81, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -272,7 +273,7 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(translator("menu"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 97, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 98, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -285,7 +286,7 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(translator("menu.settings"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 98, Col: 116}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 99, Col: 116}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -298,52 +299,62 @@ func userOptions(isUserAuthenticated bool, translator languages.Translator) temp
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(translator("menu.history"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 99, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 100, Col: 114}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</button> <button class=\"menu-button\" hx-get=\"/funding\" hx-target=\"body\" hx-push-url=\"true\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(translator("menu.fundings"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 100, Col: 115}
+			if authorizationLevel >= auth.LoaderRole.Level {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<button class=\"menu-button\" hx-get=\"/funding\" hx-target=\"body\" hx-push-url=\"true\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var14 string
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(translator("menu.fundings"))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 102, Col: 116}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</button> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</button> <button class=\"menu-button\" hx-get=\"/trends\" hx-target=\"body\" hx-push-url=\"true\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button class=\"menu-button\" hx-get=\"/trends\" hx-target=\"body\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(translator("trends"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 101, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 104, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</button> <button class=\"menu-button\" hx-get=\"/signout\" hx-target=\"body\" hx-push-url=\"true\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</button> <button class=\"menu-button\" hx-get=\"/signout\" hx-target=\"body\" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(translator("log-out"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 102, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 105, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
