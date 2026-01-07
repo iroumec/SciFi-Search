@@ -8,7 +8,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 // Search Results Content
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, totalHits int, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
+templ searchResultsContent(query string, hits []map[string]any, totalHits int, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator) {
 	<main>
 		<div class="search-container-grid">
 			<div class="top"></div>
@@ -23,7 +23,7 @@ templ searchResultsContent(query string, hits []map[string]any, totalHits int, t
 						<p>{ translator("results-for") + " \"" + query + "\"." }</p>
 					</div>
 					<div class="filters">
-						@searchFilters(query, documentTypes, documentAreas, translator)
+						@searchFilters(query, documentTypes, documentAreas, documentCountriesBasedOn, translator)
 					</div>
 					<div id="results">
 						@SearchResults(hits, totalHits, 1)
@@ -46,7 +46,7 @@ templ SearchResults(hits []map[string]any, totalHits int, page int) {
 	@pagination(totalHits, page, "/search/update-results", "#all-filters", "#results")
 }
 
-templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List, translator languages.Translator) {
+templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator) {
 	<div id="all-filters">
 		<div class="dropdown">
 			<button class="dropbtn" name="sortby" onclick="toggleDropdown(event)">
@@ -72,11 +72,20 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 				@valuesCheckboxes("tipo", true, documentTypes)
 			</div>
 		</div>
+		<div class="dropdown">
+			<button class="dropbtn" name="based-on" onclick="toggleDropdown(event)">
+				BASED ON
+			</button>
+			<div id="document-based-on-menu" class="dropdown-content onlyone hidden">
+				@valuesCheckboxes("based-on", true, documentCountriesBasedOn)
+			</div>
+		</div>
 		<input type="hidden" name="query" value={ query }/>
 	</div>
 	<script>
 
 		document.addEventListener("click", () => { // Para cerrar el dropdown menu al cliquear afuera
+			document.getElementById("document-based-on-menu").classList.add("hidden");
 			document.getElementById("document-type-menu").classList.add("hidden");
 			document.getElementById("document-area-menu").classList.add("hidden");
 			document.getElementById("sortby-menu").classList.add("hidden");
@@ -85,22 +94,31 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 		function toggleDropdown(e) {// Para abrir el dropdown menú que está oculto y ocultar otro si está abierto.
 			e.stopPropagation();
 
+			const basedOnMenu = document.getElementById("document-based-on-menu");
 			const typeMenu = document.getElementById("document-type-menu");
 			const areaMenu = document.getElementById("document-area-menu");
 			const sortbyMenu = document.getElementById("sortby-menu");
 
 			let menu;
 
-			if (e.currentTarget.name === "tipo") {
+			if (e.currentTarget.name === "based-on") {
+				menu = basedOnMenu;
+				typeMenu.classList.add("hidden");
+				areaMenu.classList.add("hidden");
+				sortbyMenu.classList.add("hidden");
+			} else if (e.currentTarget.name === "tipo") {
 				menu = typeMenu;
+				basedOnMenu.classList.add("hidden");
 				areaMenu.classList.add("hidden");
 				sortbyMenu.classList.add("hidden");  
 			} else if (e.currentTarget.name === "area") {
 				menu = areaMenu;
+				basedOnMenu.classList.add("hidden");
 				typeMenu.classList.add("hidden");
 				sortbyMenu.classList.add("hidden");
 			} else {
 				menu = sortbyMenu;
+				basedOnMenu.classList.add("hidden");
 				areaMenu.classList.add("hidden");
 				typeMenu.classList.add("hidden");
 			}
@@ -155,68 +173,38 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 }
 
 templ sortingCheckboxes(translator languages.Translator) {
+	@sortingCheckboxesItem("Nombre","name","asc", translator)
+	@sortingCheckboxesItem("Nombre","name","desc", translator)
+	@sortingCheckboxesItem("Tipo","type","asc", translator)
+	@sortingCheckboxesItem("Tipo","type","desc", translator)
+	@sortingCheckboxesItem("Deadline","Deadline","asc", translator)
+	@sortingCheckboxesItem("Deadline","Deadline","desc", translator)
+}
+
+templ sortingCheckboxesItem(value string, valueAux string, order string, translator languages.Translator) {
 	<label class="checkbox-item">
 		<input
 			type="checkbox"
 			name="sortby"
-			value="Nombre:asc"
+			value={ value + ":" + order }
 			hx-get="/search/update-filter"
 			hx-trigger="mychange"
 			hx-target="#results"
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		{ translator("name-asc") }
-	</label>
-	<label class="checkbox-item">
-		<input
-			type="checkbox"
-			name="sortby"
-			value="Nombre:desc"
-			hx-get="/search/update-filter"
-			hx-trigger="mychange"
-			hx-target="#results"
-			hx-swap="innerHTML"
-			hx-include="#all-filters"
-		/>
-		{ translator("name-desc") }
-	</label>
-	<label class="checkbox-item">
-		<input
-			type="checkbox"
-			name="sortby"
-			value="Tipo:asc"
-			hx-get="/search/update-filter"
-			hx-trigger="mychange"
-			hx-target="#results"
-			hx-swap="innerHTML"
-			hx-include="#all-filters"
-		/>
-		{ translator("type-asc") }
-	</label>
-	<label class="checkbox-item">
-		<input
-			type="checkbox"
-			name="sortby"
-			value="Tipo:desc"
-			hx-get="/search/update-filter"
-			hx-trigger="mychange"
-			hx-target="#results"
-			hx-swap="innerHTML"
-			hx-include="#all-filters"
-		/>
-		{ translator("type-desc") }
+		{ translator("sort-by." + valueAux + "-" + order) }
 	</label>
 }
 
 // ------------------------------------------------------------------------------------------------
 // Search Results Page
 // ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, totalHits int, authorizationLevel int, translator languages.Translator, documentTypes *list.List, documentAreas *list.List) {
+templ SearchResultsPage(query string, hits []map[string]any, totalHits int, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, authorizationLevel int, translator languages.Translator) {
 	@Layout(query+" - SciFi Search", translator,
 		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
 		func() templ.Component {
-			return searchResultsContent(query, hits, totalHits, translator, documentTypes, documentAreas)
+			return searchResultsContent(query, hits, totalHits, documentTypes, documentAreas, documentCountriesBasedOn, translator)
 		},
 	)
 }

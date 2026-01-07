@@ -44,6 +44,8 @@
     "sort-by.name-desc": "Descending Name",
     "sort-by.type-asc": "Ascending Type",
     "sort-by.type-desc": "Descending Type",
+    "sort-by.Deadline-asc": "Ascending Deadline",
+    "sort-by.Deadline-desc": "Descending Deadline",
     "settings.preferences": "Preferences",
     "delete-account": "Delete account",
     "save-changes": "Save changes",

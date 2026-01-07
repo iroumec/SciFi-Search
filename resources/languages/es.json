@@ -44,6 +44,8 @@
     "sort-by.name-desc": "Nombre descendente",
     "sort-by.type-asc": "Tipo ascendente",
     "sort-by.type-desc": "Tipo descendente",
+    "sort-by.Deadline-asc": "Fecha límite ascendente",
+    "sort-by.Deadline-desc": "Fecha límite descendente",
     "settings.preferences": "Preferencias",
     "delete-account": "Eliminar cuenta",
     "save-changes": "Guardar cambios",

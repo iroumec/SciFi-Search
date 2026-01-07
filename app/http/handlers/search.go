@@ -32,9 +32,10 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	client        meilisearch.ServiceManager
-	documentTypes = list.New()
-	documentAreas = list.New()
+	client                   meilisearch.ServiceManager
+	documentTypes            = list.New()
+	documentAreas            = list.New()
+	documentCountriesBasedOn = list.New()
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -200,6 +201,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			structures.AddIfNotExists(documentTypes, tipo)
 			structures.AddIfNotExists(documentAreas, granArea1)
 			structures.AddIfNotExists(documentAreas, granArea2)
+			structures.AddIfNotExists(documentCountriesBasedOn, basedOn)
 		}
 	}
 
@@ -327,7 +329,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), authorizationLevel, languages.GetTranslatorFromRequest(r), documentTypes, documentAreas)
+	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), documentTypes, documentAreas, documentCountriesBasedOn, authorizationLevel, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -336,12 +338,19 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 func updateResults(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
+	filterBasedOn := r.URL.Query()["based-on"]
 	filterTipo := r.URL.Query()["tipo"]
 	filterArea := r.URL.Query()["area"]
 	sortBy := r.URL.Query()["sortby"]
 	pageStr := r.URL.Query().Get("page")
 
+	log.Println(sortBy)
+
 	var filters []string
+
+	for _, t := range filterBasedOn {
+		filters = append(filters, fmt.Sprintf("Pais = '%s'", t))
+	}
 
 	for _, t := range filterTipo {
 		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
@@ -439,6 +448,7 @@ func configureFilterableAttributes(index meilisearch.IndexManager) {
 		"Tipo",
 		"Gran area 1",
 		"Gran area 2",
+		"Pais",
 	})
 	if err != nil {
 		log.Println("Error configurando filtros:", err)
@@ -454,6 +464,7 @@ func configureSortableAttributes(index meilisearch.IndexManager) {
 	_, err := index.UpdateSortableAttributes(&[]string{
 		"Nombre",
 		"Tipo",
+		"Deadline",
 	})
 	if err != nil {
 		log.Println("Error configurando ordenamiento:", err)
