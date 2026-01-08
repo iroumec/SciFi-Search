@@ -180,7 +180,7 @@ templ sortingCheckboxes(translator languages.Translator) {
 	@sortingCheckboxesItem("Deadline","Deadline","asc", translator)
 	@sortingCheckboxesItem("Deadline","Deadline","desc", translator)
 }
-
+/*TODO: cambiar Tipo por Type y demás en todo el tratamiento de documentos, así también se deja inutil valueAux y se elimina*/
 templ sortingCheckboxesItem(value string, valueAux string, order string, translator languages.Translator) {
 	<label class="checkbox-item">
 		<input

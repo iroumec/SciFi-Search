@@ -36,6 +36,8 @@ var (
 	documentTypes            = list.New()
 	documentAreas            = list.New()
 	documentCountriesBasedOn = list.New()
+	documentGrantors         = list.New()
+	documentCurrencies       = list.New()
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -202,6 +204,8 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			structures.AddIfNotExists(documentAreas, granArea1)
 			structures.AddIfNotExists(documentAreas, granArea2)
 			structures.AddIfNotExists(documentCountriesBasedOn, basedOn)
+			structures.AddIfNotExists(documentGrantors, grantor)
+			structures.AddIfNotExists(documentCurrencies, currency)
 		}
 	}
 
