@@ -12,6 +12,7 @@ import (
 
 	"scifi-search/app/database"
 	"scifi-search/app/infra/auth/supertokens"
+	"scifi-search/app/utils/converters"
 	"scifi-search/app/workers"
 
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
@@ -262,6 +263,18 @@ func VerifyCredentials(email, password string) (*string, error) {
 	}
 
 	return nil, UnknownError
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+func IsEmailVerified(authID string) (*bool, error) {
+
+	isVerified, err := emailverification.IsEmailVerified(authID, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return converters.ToBoolPointer(isVerified), nil
 }
 
 // --------------------------------------------------------------------------------------------- //

@@ -82,7 +82,7 @@ func RegisterAuthenticationHandlers() {
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		component := views.SignUpPage("", auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
+		component := views.SignUpPage("", auth.GetCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
 		return
 	}
@@ -197,7 +197,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	translator := languages.GetTranslatorFromRequest(r)
 
 	if r.Method == http.MethodGet {
-		views.LoginPage(auth.GetCurrentAuthorizationLevel(w, r, queries), translator).Render(r.Context(), w)
+		views.LoginPage(auth.GetCurrentAuthorizationLevel(w, r), translator).Render(r.Context(), w)
 		return
 	}
 
@@ -290,8 +290,6 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
 	}
-
-	log.Printf("Llegué hasta aquí2")
 
 	// Se elimina el usuario de la base de datos.
 	err = queries.DeleteUser(r.Context(), user.UserID)

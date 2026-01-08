@@ -3,63 +3,42 @@ package middlewares
 // ------------------------------------------------------------------------------------------------
 
 import (
-	"log"
 	"net/http"
 	"scifi-search/app/auth"
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/languages"
-	"scifi-search/app/utils/converters"
-
-	"github.com/supertokens/supertokens-golang/recipe/emailverification"
-	"github.com/supertokens/supertokens-golang/recipe/session"
-	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 )
 
 // ------------------------------------------------------------------------------------------------
 
 func RequiresEmailVerified(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !isEmailVerified(w, r) {
 
-			message := languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad.")
-
-			// Si es petición HTMX, se envia un trigger para mostrar popup.
-			if r.Header.Get("HX-Request") == "true" {
-				w.Header().Set("HX-Trigger", `{
-					"showFlash": {
-						"message": "`+message+`"
-					}
-				}`)
-				w.WriteHeader(http.StatusForbidden)
-				return
+		userID, err := auth.GetCurrentUserID(w, r)
+		if err == nil {
+			isEmailVerified, err := auth.IsEmailVerified(*userID)
+			if err == nil && *isEmailVerified {
+				next(w, r)
 			}
+		}
 
-			// Si no es HTMX, simplemente se redirige.
-			cookies.AddFlashCookie(w, message)
-			http.Redirect(w, r, "/", http.StatusFound)
+		message := languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad.")
+
+		// Si es petición HTMX, se envia un trigger para mostrar popup.
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Trigger", `{
+						"showFlash": {
+						"message": "`+message+`"
+						}
+					}`)
+			w.WriteHeader(http.StatusForbidden)
 			return
 		}
-		next(w, r)
+
+		// Si no es HTMX, simplemente se redirige.
+		cookies.AddFlashCookie(w, message)
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
-}
-
-// Función auxiliar para verificar si el email está verificado.
-func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
-	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(true),
-	})
-	if err != nil {
-		return false
-	}
-
-	if sessionContainer == nil {
-		return false
-	}
-
-	userID := sessionContainer.GetUserID()
-	isVerified, err := emailverification.IsEmailVerified(userID, nil, nil)
-
-	return isVerified
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -84,27 +63,9 @@ func isEmailVerified(w http.ResponseWriter, r *http.Request) bool {
 func RequiresAuthorization(next http.HandlerFunc, minimumLevelOfAuthorizationRequired int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// Obtención manual de la sesión. Esto la verifica y la pone en el contexto.
-		sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-			SessionRequired: converters.ToBoolPointer(true),
-		})
+		authorizationLevel := auth.GetCurrentAuthorizationLevel(w, r)
 
-		if err != nil {
-			log.Printf("Error getting session: %v", err)
-			http.Error(w, "Unauthorized - No valid session", http.StatusUnauthorized)
-			return
-		}
-
-		if sessionContainer == nil {
-			log.Printf("Session container is nil")
-			http.Error(w, "Unauthorized - No session", http.StatusUnauthorized)
-			return
-		}
-
-		userID := sessionContainer.GetUserID()
-		authenticationLevel := auth.GetAuthenticationLevel(userID)
-
-		if authenticationLevel < minimumLevelOfAuthorizationRequired {
+		if authorizationLevel < minimumLevelOfAuthorizationRequired {
 
 			message := languages.GetTranslatorFromRequest(r)("No cuenta con los permisos suficientes.")
 

@@ -70,7 +70,7 @@ func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 	htmlChart := extractors.ExtractBodyContent(buffer.String())
 
 	// Se renderiza la página resultante.
-	component := views.TrendsPage(htmlChart, auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
+	component := views.TrendsPage(htmlChart, auth.GetCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

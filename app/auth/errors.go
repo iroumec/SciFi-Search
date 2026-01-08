@@ -22,4 +22,6 @@ var ErrInvalidOrExpiredToken = errors.New("invalid or expired token")
 // Generales
 var UnknownError = errors.New("Unknown error")
 
+var NoSessionError = errors.New("No session")
+
 // ---------------------------------------------------------------------

@@ -47,20 +47,19 @@ func GetCurrentUser(w http.ResponseWriter, r *http.Request, queries *database.Qu
 
 // ------------------------------------------------------------------------------------------------
 
-func GetCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request, queries *database.Queries) int {
+func GetCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {
 
-	authID := NoRole.Level
-	currentUser, err := GetCurrentUser(w, r, queries)
+	authorizationLevel := NoRole.Level
+	authID, err := GetCurrentUserID(w, r)
 	if err != nil {
 		if !errors.Is(err, ErrNotAuthenticated) {
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 			return NoRole.Level
 		}
 	} else {
-		authID = GetAuthenticationLevel(currentUser.AuthID)
+		authorizationLevel = GetAuthenticationLevel(*authID)
 	}
 
-	return authID
+	return authorizationLevel
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -126,6 +125,26 @@ func CreateSession(w http.ResponseWriter, r *http.Request, userID string) error 
 	}
 
 	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func GetCurrentUserID(w http.ResponseWriter, r *http.Request) (*string, error) {
+
+	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
+		SessionRequired: converters.ToBoolPointer(false),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if sessionContainer == nil {
+		return nil, NoSessionError
+	}
+
+	userID := sessionContainer.GetUserID()
+
+	return &userID, nil
 }
 
 // ------------------------------------------------------------------------------------------------
