@@ -1028,14 +1028,23 @@ header {
                 border-radius: 0.3rem;
                 background-repeat: no-repeat;
                 background-position: center;
+                transition: background 0.2s;
             }
             .edit-button {
                 background-color: var(--scifi);
                 background-image: url('../img/edit.svg');
             }
+            .edit-button:hover {
+                background-color: white;
+                background-image: url(../img/edit-color.svg);   
+            }
             .delete-button {
                 background-color: darkred;
                 background-image: url('../img/delete.svg');
+            }
+            .delete-button:hover {
+                background-color: white;
+                background-image: url(../img/delete-red.svg);   
             }
             .funding-item-button {
                 cursor: pointer;

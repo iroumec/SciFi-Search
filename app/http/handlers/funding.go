@@ -9,6 +9,7 @@ import (
 	"scifi-search/app/http/cookies"
 	"scifi-search/app/http/middlewares"
 	"strconv"
+	"strings"
 
 	"scifi-search/app/languages"
 	"scifi-search/app/views"
@@ -20,6 +21,7 @@ func RegisterFundingHandlers() {
 
 	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
+	http.HandleFunc("/funding/", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingItemsHandler, 1)))
 }
 
@@ -33,7 +35,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		addFunding(w, r)
 	case http.MethodDelete:
-		//deleteFunding(w, r)
+		deleteFunding(w, r)
 	default:
 		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 	}
@@ -51,6 +53,8 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 	component := views.ManageFundingPage(fundings, totalFundings, auth.GetCurrentAuthorizationLevel(w, r), documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[string]any, int, error) {
 
@@ -112,8 +116,24 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 	return fundings, int(totalFundings), nil
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func updateFundingItemsHandler(w http.ResponseWriter, r *http.Request) {
 
+	page := getPage(r)
+
+	fundings, totalFundings, err := getFundingDocs(w, r, page)
+	if err != nil {
+		return
+	}
+
+	component := views.FundingList(fundings, page, totalFundings, languages.GetTranslatorFromRequest(r))
+	component.Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getPage(r *http.Request) int {
 	pageStr := r.URL.Query().Get("page")
 
 	page, err := strconv.Atoi(pageStr)
@@ -121,12 +141,7 @@ func updateFundingItemsHandler(w http.ResponseWriter, r *http.Request) {
 		page = 1 // TODO: dejarlo así o levantamos error?
 	}
 
-	fundings, totalFundings, err := getFundingDocs(w, r, page)
-	if err != nil {
-		return
-	}
-	component := views.FundingList(fundings, page, totalFundings, languages.GetTranslatorFromRequest(r))
-	component.Render(r.Context(), w)
+	return page
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -227,4 +242,26 @@ func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName s
 
 		emailService.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func deleteFunding(w http.ResponseWriter, r *http.Request) {
+
+	idStr := strings.TrimPrefix(r.URL.Path, "/funding/")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	err = queries.RemoveDocument(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(""))
 }
