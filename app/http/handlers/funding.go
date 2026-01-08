@@ -48,7 +48,7 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component := views.ManageFundingPage(fundings, totalFundings, auth.GetCurrentAuthorizationLevel(w, r, queries), languages.GetTranslatorFromRequest(r))
+	component := views.ManageFundingPage(fundings, totalFundings, auth.GetCurrentAuthorizationLevel(w, r, queries), documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

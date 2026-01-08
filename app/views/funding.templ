@@ -1,6 +1,7 @@
 package views
 
 import (
+	"container/list"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/converters"
 )
@@ -8,7 +9,7 @@ import (
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------ Modal Component -------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ addFundingModal(translator languages.Translator) {
+templ addFundingModal(documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	<!-- Modal Overlay -->
 	<div
 		x-show="open"
@@ -47,16 +48,22 @@ templ addFundingModal(translator languages.Translator) {
 			>
 				<div class="form-inputs">
 					<input type="text" placeholder={ translator("name") } name="name" required/>
-					<input type="text" placeholder={ translator("type") } name="type" required/>
-					<input type="text" placeholder={ translator("first-area") } name="first-area" required/>
-					<input type="text" placeholder={ translator("second-area") } name="second-area"/>
+					<input type="text" placeholder={ translator("type") } name="type" list="types" required/>
+					<input type="text" placeholder={ translator("first-area") } name="first-area" list="areas" required/>
+					<input type="text" placeholder={ translator("second-area") } name="second-area" list="areas" />
 					<input type="url" placeholder={ translator("link") } name="link"/>
 					<input type="text" placeholder={ translator("description") } name="description"/>
-					<input type="text" placeholder="Basado en (País)" name="based-on"/>
-					<input type="text" placeholder="Entidad otorgante" name="grantor"/>
-					<input type="text" placeholder="Currency" name="currency" required/>
-					<input type="text" placeholder="Amount" name="amount" required/>
+					<input type="text" placeholder="Basado en (País)" name="based-on" list="based-on"/>
+					<input type="text" placeholder="Entidad otorgante" name="grantor" list="grantors"/>
+					<input type="text" placeholder="Currency" name="currency" required list="currencies"/>
+					<input type="text" placeholder="Amount (min - max)" name="amount" required/>
 					<input type="date" name="deadline" required/>
+
+					@datalist("types", documentTypes)
+					@datalist("areas", documentAreas)
+					@datalist("based-on", documentBasedOn)
+					@datalist("grantors", documentGrantors)
+					@datalist("currencies", documentCurrencies)
 				</div>
 				<div class="modal-footer">
 					<button type="button" @click="open = false" class="scifi-button secondary">
@@ -69,6 +76,14 @@ templ addFundingModal(translator languages.Translator) {
 			</form>
 		</div>
 	</div>
+}
+
+templ datalist(name string, options *list.List) {
+	<datalist id={ name }>
+		for e := options.Front(); e != nil; e = e.Next() {
+			<option value={ e.Value.(string) } />
+		}
+	</datalist>
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -94,7 +109,7 @@ templ FundingAddedPage(translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------ Manage Funding --------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ manageFundingContent(fundings []map[string]any, totalFundings int, translator languages.Translator) {
+templ manageFundingContent(fundings []map[string]any, totalFundings int, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	<div class="centered-box-content" x-data="{ open: false }">
 		<div id="left"></div>
 		<div id="manage-funding-content">
@@ -112,7 +127,7 @@ templ manageFundingContent(fundings []map[string]any, totalFundings int, transla
 		</div>
 		<div id="right"></div>
 		<!-- Modal Component -->
-		@addFundingModal(translator)
+		@addFundingModal(documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator)
 	</div>
 }
 
@@ -158,9 +173,9 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	</li>
 }*/
 
-templ ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, translator languages.Translator) {
+templ ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	@Layout("Manage projects", translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return manageFundingContent(fundings, totalFundings, translator) },
+		func() templ.Component { return manageFundingContent(fundings, totalFundings, documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator) },
 	)
 }
