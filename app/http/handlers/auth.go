@@ -22,12 +22,7 @@ import (
 	"scifi-search/app/workers"
 
 	"github.com/a-h/templ"
-	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
-	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
-	"github.com/supertokens/supertokens-golang/recipe/emailverification"
 	"github.com/supertokens/supertokens-golang/recipe/session"
-	"github.com/supertokens/supertokens-golang/recipe/userroles"
-	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
 // ---------------------------------------------------------------------
@@ -115,20 +110,19 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser, resp := createUser(name, surname, email, password, auth.UserRole.Name)
-
-	if newUser != nil && resp != nil {
-
-		// Creación de sesión en SuperTokens.
-		_, err := session.CreateNewSession(r, w, "", resp.OK.User.ID, nil, nil)
-		if err != nil {
-			http.Error(w, "Error al crear la sesión: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("email-verification.sent"))
+	newUser, err := createUser(name, surname, email, password, auth.UserRole)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
+	err = auth.CreateSession(w, r, newUser.AuthID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("email-verification.sent"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -142,48 +136,37 @@ func createAdmin() {
 	email := utils.GetEnv("ADMIN_EMAIL", "admin@scifi-search.com")
 	password := utils.GetEnv("ADMIN_PASSWORD", "admin")
 
-	user, resp := createUser(name, surname, email, password, auth.AdminRole.Name)
-
-	if user == nil || resp == nil {
-		log.Fatal("Ocurrió un error al momento de crear al usuario.")
+	_, err := createUser(name, surname, email, password, auth.AdminRole)
+	if err != nil {
+		if !errors.Is(err, auth.EmailAlreadyInUseError) {
+			log.Fatal("Ocurrió un error al momento de crear al administrador.")
+		}
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func createUser(name, surname, email, password, role string) (*sqlc.User, *epmodels.SignUpResponse) {
+func createUser(name, surname, email, password string, role auth.Role) (*sqlc.User, error) {
 
-	var newUser sqlc.User
-
-	resp, err := emailpassword.SignUp("", email, password)
+	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
-		log.Fatal("It wasn't possible to create the user.")
+		return nil, err
 	}
 
-	// Verificación de email ya registrado.
-	if resp.EmailAlreadyExistsError != nil {
-		log.Print("Email already in use.")
-		return &newUser, &resp
+	// Se crea el usuario en la base de datos.
+	user, err := queries.CreateUser(context.TODO(), sqlc.CreateUserParams{
+		Name:    name,
+		Surname: surname,
+		AuthID:  *userID,
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	if resp.OK != nil {
-		_, err = queries.CreateUser(context.TODO(), sqlc.CreateUserParams{
-			Name:    name,
-			Surname: surname,
-			AuthID:  resp.OK.User.ID,
-		})
-		if err != nil {
-			log.Println("An unexpected error ocurred during the creation of the administrator's account:", err)
-		}
+	auth.SendVerificationEmail(*userID, email)
+	auth.AssignRoleToUser(role, *userID)
 
-		// Creación del token de verificación.
-		auth.SendVerificationEmail(resp.OK.User.ID, email)
-	}
-
-	// Asignación del rol al usuario.
-	userroles.AddRoleToUser("public", resp.OK.User.ID, role, nil)
-
-	return &newUser, &resp
+	return &user, nil
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -196,22 +179,14 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Se verifica el token.
-	response, err := emailverification.VerifyEmailUsingToken("", token, nil)
+	err := auth.VerifyEmail(token)
 	if err != nil {
-		log.Println("Error verificando email:", err)
-		http.Error(w, "Error verificando email", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if response.OK != nil {
-		cookies.AddFlashCookie(w, "¡Email verificado exitosamente!")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-	} else if response.EmailVerificationInvalidTokenError != nil {
-		http.Error(w, "Token inválido o expirado", http.StatusBadRequest)
-	} else {
-		http.Error(w, "Error desconocido al verificar email", http.StatusInternalServerError)
-	}
+	cookies.AddFlashCookie(w, "¡Email verificado exitosamente!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -240,34 +215,22 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
 
-	// Se intenta realizar un log in.
-	resp, err := emailpassword.SignIn("", email, password)
+	// Se validan las credenciales.
+	userID, err := auth.VerifyCredentials(email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Credenciales incorrectas.
-	if resp.WrongCredentialsError != nil {
-		cookies.AddFlashCookie(w, "Credenciales incorrectas")
-		views.LoginPage(auth.GetCurrentAuthorizationLevel(w, r, queries), translator).Render(r.Context(), w)
+	// Se intenta crear la sesión.
+	err = auth.CreateSession(w, r, *userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Login exitoso: se crea la sesión y se redirige.
-	if resp.OK != nil {
-		_, err := session.CreateNewSession(r, w, "", resp.OK.User.ID, nil, nil)
-		if err != nil {
-			http.Error(w, "Error al crear la sesión", http.StatusInternalServerError)
-			return
-		}
-
-		cookies.AddFlashCookie(w, "Welcome back!")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
-	http.Error(w, "Error desconocido", http.StatusInternalServerError)
+	cookies.AddFlashCookie(w, "Welcome back!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -315,10 +278,9 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Se elimina el usuario de supertokens.
-	err = deleteSupertokensUser(user.AuthID)
+	err = auth.DeleteUser(user.AuthID)
 	if err != nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -328,6 +290,8 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
 	}
+
+	log.Printf("Llegué hasta aquí2")
 
 	// Se elimina el usuario de la base de datos.
 	err = queries.DeleteUser(r.Context(), user.UserID)
@@ -343,6 +307,8 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Llegué hasta aquí3")
+
 	// Se cierra la sesión del usuario.
 	auth.RevokeSession(w, r)
 
@@ -355,19 +321,6 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func deleteSupertokensUser(authID string) error {
-	err := supertokens.DeleteUser(authID)
-
-	if err != nil {
-		return err
-	}
-
-	// Usuario eliminado exitosamente.
-	return nil
 }
 
 // ------------------------------------------------------------------------------------------------

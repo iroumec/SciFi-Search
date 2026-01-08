@@ -1,11 +1,19 @@
 package avatars
 
+// ---------------------------------------------------------------------
+// Importaciones
+// ---------------------------------------------------------------------
+
 import (
 	"bytes"
 	"io"
 
 	"github.com/disintegration/imaging"
 )
+
+// ---------------------------------------------------------------------
+// Funciones
+// ---------------------------------------------------------------------
 
 func ResizeImageToAvatar(file io.Reader) ([]byte, error) {
 	img, err := imaging.Decode(file)
@@ -22,3 +30,5 @@ func ResizeImageToAvatar(file io.Reader) ([]byte, error) {
 
 	return buf.Bytes(), nil
 }
+
+// ---------------------------------------------------------------------

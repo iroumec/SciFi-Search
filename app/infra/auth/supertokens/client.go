@@ -107,3 +107,24 @@ func GetRolesForUser(userID string) []string {
 		return roles.OK.Roles
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
+
+func DeleteUser(authID string) error {
+	err := supertokens.DeleteUser(authID)
+
+	if err != nil {
+		return err
+	}
+
+	// Usuario eliminado exitosamente.
+	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func AssignRoleToUser(authID, role string) {
+	userroles.AddRoleToUser("public", authID, role, nil)
+}
+
+// ------------------------------------------------------------------------------------------------

@@ -1,5 +1,9 @@
 package auth
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"database/sql"
 	"errors"
@@ -8,16 +12,12 @@ import (
 	"scifi-search/app/database"
 	"scifi-search/app/utils/converters"
 
-	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/session"
 	"github.com/supertokens/supertokens-golang/recipe/session/sessmodels"
 )
 
 // ------------------------------------------------------------------------------------------------
-
-var ErrNotAuthenticated = errors.New("user not authenticated")
-var ErrUserNotFound = errors.New("user not found")
-
+// Servicios (ligados a la sesión actual)
 // ------------------------------------------------------------------------------------------------
 
 func GetCurrentUser(w http.ResponseWriter, r *http.Request, queries *database.Queries) (*database.User, error) {
@@ -69,7 +69,7 @@ func GetCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 
 	if IsUserAuthenticated(w, r) {
 
-		sessionContainer, _ := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
+		sessionContainer, _ := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 			SessionRequired: converters.ToBoolPointer(false),
 		})
 
@@ -81,10 +81,6 @@ func GetCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------------------------------
-// Funciones Auxiliares
 // ------------------------------------------------------------------------------------------------
 
 // Retorna si el usuario está autenticado.
@@ -122,12 +118,14 @@ func RevokeSession(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func GetUserEmail(userID string) *string {
+func CreateSession(w http.ResponseWriter, r *http.Request, userID string) error {
 
-	user, err := emailpassword.GetUserByID(userID)
-	if err != nil || user == nil {
-		return nil
+	_, err := session.CreateNewSession(r, w, "", userID, nil, nil)
+	if err != nil {
+		return UnknownError
 	}
 
-	return &user.Email
+	return nil
 }
+
+// ------------------------------------------------------------------------------------------------

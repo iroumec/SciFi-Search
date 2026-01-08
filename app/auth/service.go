@@ -1,5 +1,9 @@
 package auth
 
+// --------------------------------------------------------------------------------------------- //
+// Importaciones
+// --------------------------------------------------------------------------------------------- //
+
 import (
 	"fmt"
 	"log"
@@ -13,6 +17,10 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/emailverification"
 )
+
+// --------------------------------------------------------------------------------------------- //
+// Servicios Generales
+// --------------------------------------------------------------------------------------------- //
 
 func GetAuthenticationLevel(userID string) int {
 
@@ -30,7 +38,7 @@ func GetAuthenticationLevel(userID string) int {
 	return NoRole.Level
 }
 
-// ------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------- //
 
 func SendVerificationEmail(userID, email string) {
 
@@ -49,7 +57,7 @@ func SendVerificationEmail(userID, email string) {
 	}
 }
 
-// ------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------- //
 
 // Actualiza el email del usuario y solicita re-verificación si el email cambió.
 func UpdateEmail(user *database.User, newEmail string) error {
@@ -111,7 +119,7 @@ func UpdateEmail(user *database.User, newEmail string) error {
 	return nil
 }
 
-// ------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------- //
 
 // Actualiza la contraseña del usuario.
 func UpdatePassword(user *database.User, currentPassword, newPassword string) error {
@@ -166,3 +174,94 @@ func UpdatePassword(user *database.User, currentPassword, newPassword string) er
 	log.Println("Contraseña actualizada")
 	return nil
 }
+
+// --------------------------------------------------------------------------------------------- //
+
+func GetUserEmail(userID string) *string {
+
+	user, err := emailpassword.GetUserByID(userID)
+	if err != nil || user == nil {
+		return nil
+	}
+
+	return &user.Email
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+func DeleteUser(userID string) error {
+
+	// Se elimina el usuario de supertokens.
+	err := supertokens.DeleteUser(userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+func RegisterUser(email, password string) (*string, error) {
+
+	resp, err := emailpassword.SignUp("", email, password)
+	if err != nil {
+		return nil, UnknownError
+	}
+
+	// Verificación de email ya registrado.
+	if resp.EmailAlreadyExistsError != nil {
+		return nil, EmailAlreadyInUseError
+	}
+
+	if resp.OK != nil {
+		return &resp.OK.User.ID, nil
+	}
+
+	return nil, UnknownError
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+func VerifyEmail(token string) error {
+
+	// Se verifica el token.
+	response, err := emailverification.VerifyEmailUsingToken("", token, nil)
+	if err != nil {
+		return err
+	}
+
+	if response.OK != nil {
+		return nil
+	} else if response.EmailVerificationInvalidTokenError != nil {
+		return ErrInvalidOrExpiredToken
+	} else {
+		return UnknownError
+	}
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+// Retorna la ID del usuario al que corresponden las credenciales.
+func VerifyCredentials(email, password string) (*string, error) {
+
+	// Se intenta realizar un log in.
+	resp, err := emailpassword.SignIn("", email, password)
+	if err != nil {
+		return nil, err
+	}
+
+	// Credenciales incorrectas.
+	if resp.WrongCredentialsError != nil {
+		return nil, WrongCredentialsError
+	}
+
+	// Login exitoso: se crea la sesión y se redirige.
+	if resp.OK != nil {
+		return &resp.OK.User.ID, nil
+	}
+
+	return nil, UnknownError
+}
+
+// --------------------------------------------------------------------------------------------- //

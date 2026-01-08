@@ -55,7 +55,7 @@ func createNewLoader(w http.ResponseWriter, r *http.Request) {
 
 func createLoader(name, surname, email, password string) {
 
-	user, resp := createUser(name, surname, email, password, auth.LoaderRole.Name)
+	user, resp := createUser(name, surname, email, password, auth.LoaderRole)
 
 	if user == nil || resp == nil {
 		log.Fatal("Ocurrió un error al momento de crear al usuario.")
