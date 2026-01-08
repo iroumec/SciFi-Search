@@ -47,17 +47,45 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 				x-ref="fundingForm"
 			>
 				<div class="form-inputs">
-					<input type="text" placeholder={ translator("name") } name="name" required/>
-					<input type="text" placeholder={ translator("type") } name="type" list="types" required/>
-					<input type="text" placeholder={ translator("first-area") } name="first-area" list="areas" required/>
-					<input type="text" placeholder={ translator("second-area") } name="second-area" list="areas" />
-					<input type="url" placeholder={ translator("link") } name="link"/>
-					<input type="text" placeholder={ translator("description") } name="description"/>
-					<input type="text" placeholder="Basado en (País)" name="based-on" list="based-on"/>
-					<input type="text" placeholder="Entidad otorgante" name="grantor" list="grantors"/>
-					<input type="text" placeholder="Currency" name="currency" required list="currencies"/>
-					<input type="text" placeholder="Amount (min - max)" name="amount" required/>
-					<input type="date" name="deadline" required/>
+					<label for="name">{ translator("name") }</label>
+					<input type="text" id="name" name="name" required/>
+
+					<label for="type">{ translator("type") }</label>
+					<input type="text" id="type" name="type" list="types" required/>
+
+					<label for="first-area">{ translator("areas") }</label>
+					<input type="text" id="first-area" placeholder={ translator("first-area") } name="first-area" list="areas" required/>
+					<input type="text" id="second-area" placeholder={ translator("second-area") } name="second-area" list="areas" />
+
+					<label for="link">{ translator("link") }</label>
+					<input type="url" id="link" name="link"/>
+
+					<label for="description">{ translator("description") }</label>
+					<input type="text" id="description" name="description"/>
+
+					<div class="double-input">
+						<div class="labeled-input">
+							<label for="based-on">{ translator("based_on") }</label>
+							<input type="text" id="based-on" name="based-on" list="based-on"/>
+						</div>
+						<div class="labeled-input">
+							<label for="grantor">{ translator("grantor") }</label>
+							<input type="text" id="grantor" name="grantor" list="grantors"/>
+						</div>
+					</div>
+
+					<div class="double-input">
+						<div class="labeled-input">
+							<label for="currency">{ translator("currency") }</label>
+							<input type="text" id="currency" name="currency" required list="currencies"/>
+						</div>
+						<div class="labeled-input">
+							<label for="amount">{ translator("amount") }</label>
+							<input type="text" id="amount" placeholder="(min - max)" name="amount" required/>
+						</div>
+					</div>
+					<label for="deadline">{ translator("deadline") }</label>
+					<input type="date" id="deadline" name="deadline" required/>
 
 					@datalist("types", documentTypes)
 					@datalist("areas", documentAreas)
