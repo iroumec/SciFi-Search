@@ -1,0 +1,29 @@
+package views
+
+import "scifi-search/app/languages"
+
+templ loaderContent(translator languages.Translator) {
+	@showPopUp()
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form
+				id="signup-form"
+				hx-post="/loader"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				@signUpFields(translator)
+				<button class="scifi-button" type="submit">
+					{ translator("loader.create") }
+				</button>
+			</form>
+		</div>
+	</div>
+}
+
+templ LoaderPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("loader.creation"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return loaderContent(translator) },
+	)
+}

@@ -42,10 +42,12 @@ func (l *LineChartRenderer) generateItems(values []int) []opts.LineData {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 func GenerateLineChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
 
 	return generateGraph(&LineChartRenderer{}, values)
 }
+
+// ------------------------------------------------------------------------------------------------

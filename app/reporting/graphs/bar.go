@@ -42,7 +42,7 @@ func (b *BarChartRenderer) generateItems(values []int) []opts.BarData {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 func GenerateBarChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {

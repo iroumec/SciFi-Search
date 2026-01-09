@@ -2,6 +2,39 @@ package views
 
 import "scifi-search/app/languages"
 
+templ signUpFields(translator languages.Translator) {
+	<div id="form-inputs">
+		<input
+			id="name"
+			type="text"
+			name="name"
+			placeholder={ translator("name") }
+			required
+		/>
+		<input
+			id="surname"
+			type="text"
+			name="surname"
+			placeholder={ translator("surname") }
+			required
+		/>
+		<input
+			id="email"
+			type="email"
+			name="email"
+			placeholder={ translator("email") }
+			required
+		/>
+		<input
+			id="password"
+			type="password"
+			name="password"
+			placeholder={ translator("password") }
+			required
+		/>
+	</div>
+}
+
 templ signUpContent(errorMessage string, translator languages.Translator) {
 	@showPopUp()
 	<div class="only-form-content">
@@ -12,36 +45,7 @@ templ signUpContent(errorMessage string, translator languages.Translator) {
 				hx-target="body"
 				hx-push-url="true"
 			>
-				<div id="form-inputs">
-					<input
-						id="name"
-						type="text"
-						name="name"
-						placeholder={ translator("name") }
-						required
-					/>
-					<input
-						id="surname"
-						type="text"
-						name="surname"
-						placeholder={ translator("surname") }
-						required
-					/>
-					<input
-						id="email"
-						type="email"
-						name="email"
-						placeholder={ translator("email") }
-						required
-					/>
-					<input
-						id="password"
-						type="password"
-						name="password"
-						placeholder={ translator("password") }
-						required
-					/>
-				</div>
+				@signUpFields(translator)
 				<button class="scifi-button" type="submit">
 					{ translator("sign-up") }
 				</button>

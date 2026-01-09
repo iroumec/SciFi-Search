@@ -2,21 +2,8 @@
 # Makefile para levantar un entorno Docker, ejecutar pruebas Hurl y limpiar.
 # ==============================================================================
 
-# --- Variables de Configuración ---
-HURL_VERSION ?= 7.0.0
-INSTALL_DIR ?= /tmp
-HURL_BIN_DIR = $(INSTALL_DIR)/hurl-$(HURL_VERSION)-x86_64-unknown-linux-gnu/bin
-HURL_FILE ?= resources/tests/requests.hurl
-
 # Target por defecto que se ejecuta al correr `make`.
 all: help
-
-test: up ## Levanta el entorno, ejecuta las pruebas y lo detiene.
-	@$(MAKE) -s run-tests
-	@echo
-	@echo "--> Pruebas finalizadas. Deteniendo el entorno..."
-	@echo
-	@$(MAKE) -s down
 
 run: up ## Construye y levanta los contenedores, esperando a que el servidor avise.
 
@@ -57,20 +44,6 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 development: create-env ## Construye y levanta los contenedores en modo desarrollador (con air activo).
 	@docker compose up --build
 
-run-tests: is-running ## Ejecuta únicamente las pruebas Hurl (asume que el entorno ya está levantado).
-	@echo
-	@# Instalación universal de hurl, independientemente de la distribución de Linux.
-	@if [ ! -x "$(HURL_BIN_DIR)/hurl" ]; then \
-		echo "Hurl no encontrado en $(HURL_BIN_DIR). Instalando versión $(HURL_VERSION)..."; \
-		curl --silent --location https://github.com/Orange-OpenSource/hurl/releases/download/$(HURL_VERSION)/hurl-$(HURL_VERSION)-x86_64-unknown-linux-gnu.tar.gz \
-			| tar xvz -C $(INSTALL_DIR); \
-		echo "Hurl instalado en $(HURL_BIN_DIR)"; \
-	fi
-
-	@echo "--> Ejecutando pruebas con hurl..."
-	@echo
-	@PATH=$(HURL_BIN_DIR):$$PATH hurl --test ${HURL_FILE}
-
 down: ## Detiene los contenedores y redes, sin eliminar volúmenes.
 	@echo "Deteniendo el servidor..."
 	@ #Se detiene la versión de producción. La versión no sobrescritra.
@@ -85,9 +58,6 @@ is-running: ## Verifica que el servidor esté corriendo.
 
 create-env: ## Crea un archivo `.env` con valores por defecto para las variables de ambiente.
 	@cp resources/.env.example .env
-
-delete-meili-data: ## Elimina los datos almacenados por Meilisearch. Útil ante mensajes de incompatibilidad de la versión de la base de datos y el engine.
-	@sudo rm -rf meili_data
 
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"

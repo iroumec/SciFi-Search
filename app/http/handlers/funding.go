@@ -219,7 +219,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifyFundingAddition(w, r, name)
+	notifyFundingAddition(r, name)
 
 	component := views.FundingAddedPage(languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
@@ -227,7 +227,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func notifyFundingAddition(w http.ResponseWriter, r *http.Request, fundingName string) {
+func notifyFundingAddition(r *http.Request, fundingName string) {
 
 	// Acá sería mejor que el email solo se enviara a los usuarios
 	// que están verificados.

@@ -9,13 +9,13 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 // Verifica si hay un campo incompleto (vacío).
-func HayCampoIncompleto(campos ...string) bool {
+func IsThereAnEmptyField(fields ...string) bool {
 
-	return slices.Contains(campos, "")
+	return slices.Contains(fields, "")
 }
 
 // ------------------------------------------------------------------------------------------------

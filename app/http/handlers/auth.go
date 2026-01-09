@@ -15,6 +15,7 @@ import (
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
+	"scifi-search/app/http/middlewares"
 	"scifi-search/app/http/notifications/cookies"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
@@ -38,8 +39,17 @@ func RegisterAuthenticationHandlers() {
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
 	http.HandleFunc("/signout", signOutHandler)
-	http.HandleFunc("/loader", signOutHandler)
 	http.HandleFunc("/delete-account", deleteUserHandler)
+
+	http.HandleFunc(
+		"/loader",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				loaderHandler,
+				1,
+			),
+		),
+	)
 
 	// Handler de verificación de email.
 	http.HandleFunc("/auth/verify-email", verifyEmailHandler)
@@ -106,7 +116,7 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.Form.Get("password")
 
 	// Validación.
-	if checkers.HayCampoIncompleto(name, surname, email, password) {
+	if checkers.IsThereAnEmptyField(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}

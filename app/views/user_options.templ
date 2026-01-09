@@ -42,10 +42,13 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 				<div id="close-menu">{ translator("menu") } </div>
 				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">{ translator("menu.settings") }</button>
 				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">{ translator("menu.history") }</button>
+				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
+				if authorizationLevel >= auth.AdminRole.Level {
+					<button class="menu-button" hx-get="/loader" hx-target="body" hx-push-url="true">{ translator("menu.loader") }</button>
+				}
 				if authorizationLevel >= auth.LoaderRole.Level {
 					<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("menu.fundings") }</button>
 				}
-				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
 				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">{ translator("log-out") }</button>
 			</div>
 		</div>
