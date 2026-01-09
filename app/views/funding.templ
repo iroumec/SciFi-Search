@@ -171,10 +171,10 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 					<button
 						class="funding-item-button delete-button"
 						hx-delete={ "/funding/" + converters.ToString(fundings[i]["id"]) }
-						hx-target={ "#funding-item-" + converters.ToString(fundings[i]["id"]) }
+						hx-target="closest .result"
 						hx-swap="outerHTML"
 						hx-confirm="¿Desea eliminar el funding? ¡Esta decisión no puede deshacerse!"
-						type="submit"
+						type="button"
 					></button>
 				</div>
 			</div>
@@ -182,24 +182,6 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 	</div>
 	@pagination(totalFundings, page, "/funding/update-items", "", "#funding-list")
 }
-
-/*templ fundingItem(funding database.Document, translator languages.Translator) {
-	<li id={ "funding-item-" + converters.ToString(funding.ID) }>
-		{ funding.Name }
-		{ funding.Type }
-
-		<button
-			class="delete-button"
-			hx-delete={ "/fundings/" + converters.ToString(funding.ID) }
-			hx-target={ "#funding-item-" + converters.ToString(funding.ID) }
-			hx-swap="outerHTML"
-			hx-confirm="¿Desea eliminar el funding? ¡Esta decisión no puede deshacerse!"
-			type="submit"
-		>
-			{ translator("delete") }
-		</button>
-	</li>
-}*/
 
 templ ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	@Layout("Manage projects", translator,
