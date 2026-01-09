@@ -51,7 +51,7 @@ func addFundingModal(documentTypes *list.List, documentAreas *list.List, documen
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><button @click=\"open = false\" class=\"close-button\" type=\"button\">&times;</button></div><form hx-post=\"/funding\" hx-target=\"#funding-list\" hx-swap=\"beforeend\" @htmx:after-request=\"if($event.detail.successful) { open = false; $refs.fundingForm.reset(); }\" x-ref=\"fundingForm\"><div class=\"form-inputs\"><label for=\"name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><button @click=\"open = false\" class=\"close-button\" type=\"button\">&times;</button></div><form hx-post=\"/funding\" hx-target=\"#funding-list\" hx-swap=\"innerHTML\" @htmx:after-request=\"if($event.detail.successful) { open = false; $refs.fundingForm.reset(); }\" x-ref=\"fundingForm\"><div class=\"form-inputs\"><label for=\"name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

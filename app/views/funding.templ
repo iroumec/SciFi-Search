@@ -42,7 +42,7 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 			<form
 				hx-post="/funding"
 				hx-target="#funding-list"
-				hx-swap="beforeend"
+				hx-swap="innerHTML"
 				@htmx:after-request="if($event.detail.successful) { open = false; $refs.fundingForm.reset(); }"
 				x-ref="fundingForm"
 			>

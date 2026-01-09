@@ -30,7 +30,7 @@ func RegisterFundingHandlers() {
 
 	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 	http.HandleFunc("/funding/", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
-	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingItemsHandler, 1)))
+	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingList, 1)))
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 // ------------------------------------------------------------------------------------------------
 
-func updateFundingItemsHandler(w http.ResponseWriter, r *http.Request) {
+func updateFundingList(w http.ResponseWriter, r *http.Request) {
 
 	page := getPage(r)
 
@@ -221,8 +221,10 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(r, name)
 
-	component := views.FundingAddedPage(languages.GetTranslatorFromRequest(r))
-	component.Render(r.Context(), w)
+	//TODO: esto no funciona porque no se hace redirect, ver cómo arreglarlo
+	cookies.AddFlashCookie(w, "New funding added successfully!")
+
+	updateFundingList(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
