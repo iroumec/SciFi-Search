@@ -1,5 +1,9 @@
 package bootstrap
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"scifi-search/app/avatars"
 	sqlc "scifi-search/app/database"
@@ -7,11 +11,19 @@ import (
 	"scifi-search/app/http/handlers"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
+
 type HTTPDependencies struct {
 	Queries       *sqlc.Queries
 	AvatarService *avatars.Service
 	EmailService  *email.Service
 }
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
 
 func registerEndpoints(dependencies HTTPDependencies) {
 	handlers.SetQueries(dependencies.Queries)
@@ -30,3 +42,5 @@ func registerEndpoints(dependencies HTTPDependencies) {
 	handlers.RegisterTrendsHandlers()
 	handlers.RegisterLanguageHandlers()
 }
+
+// ------------------------------------------------------------------------------------------------

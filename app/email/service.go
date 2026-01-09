@@ -15,6 +15,7 @@ func (s *Service) Send(to, subject, body string) error {
 
 // Caso de uso concreto
 func (s *Service) SendVerification(to, link string) error {
+
 	return s.Send(
 		to,
 		"Verificá tu email",

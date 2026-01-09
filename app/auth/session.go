@@ -14,7 +14,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios (ligados a la sesión actual)
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 func GetCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {

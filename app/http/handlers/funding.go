@@ -241,6 +241,8 @@ func notifyFundingAddition(r *http.Request, fundingName string) {
 		return
 	}
 
+	log.Printf("Llegué 1")
+
 	for _, user := range usersList {
 
 		userEmail := auth.GetUserEmail(user.AuthID)
@@ -250,7 +252,13 @@ func notifyFundingAddition(r *http.Request, fundingName string) {
 			continue
 		}
 
+		log.Printf("He aquí el error")
+		log.Printf(*userEmail)
+		log.Printf(fundingName)
+
 		emailService.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
+
+		log.Printf("LLegué 2")
 	}
 }
 
