@@ -1,28 +1,18 @@
-package cookies
+package bootstrap
 
 // ------------------------------------------------------------------------------------------------
 // Importaciones
 // ------------------------------------------------------------------------------------------------
 
-import (
-	"encoding/base64"
-	"net/http"
-)
+import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Funciones
 // ------------------------------------------------------------------------------------------------
 
-// Añade una cookie flash (de muy corta duración).
-func AddFlashCookie(w http.ResponseWriter, message string) {
+func loadLanguages() {
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "flash",
-		Value:    base64.StdEncoding.EncodeToString([]byte(message)),
-		Path:     "/", // Para que la cookie esté disponible en toda la app.
-		MaxAge:   10,
-		HttpOnly: false,
-	})
+	languages.LoadAllMessages()
 }
 
 // ------------------------------------------------------------------------------------------------

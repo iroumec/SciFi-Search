@@ -1,5 +1,9 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"database/sql"
 	"log"
@@ -17,14 +21,20 @@ import (
 	sqlc "scifi-search/app/database"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
+
+// Registro de endpoints.
 func RegisterFundingHandlers() {
 
-	//http.HandleFunc("/funding", middlewares.AdminOnly(addFundingHandler))
 	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 	http.HandleFunc("/funding/", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
 	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingItemsHandler, 1)))
 }
 
+// ------------------------------------------------------------------------------------------------
+// Handlers
 // ------------------------------------------------------------------------------------------------
 
 func addFundingHandler(w http.ResponseWriter, r *http.Request) {
@@ -265,3 +275,5 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(""))
 }
+
+// ------------------------------------------------------------------------------------------------

@@ -1,6 +1,8 @@
 package notifications
 
-// ------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"net/http"
@@ -8,9 +10,11 @@ import (
 	"scifi-search/app/http/notifications/triggers"
 )
 
-// ------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
 
-// Retorna el tipo de Notificación que se agregó.
+// Retorna el tipo de notificación que se agregó.
 func ShowFlash(w http.ResponseWriter, r *http.Request, message string) Notifications {
 
 	// Si es petición HTMX, se envia un trigger para mostrar popup.

@@ -1,5 +1,9 @@
 package supertokens
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"fmt"
 	"log"
@@ -18,9 +22,17 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Constantes
+// ------------------------------------------------------------------------------------------------
+
 const (
 	WebsiteDomain = "http://localhost:8080"
 )
+
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
 
 func Initialize(emailService *email.Service) {
 
@@ -92,39 +104,6 @@ func Initialize(emailService *email.Service) {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func CreateNewRoleOrAddPermissions(roleName string, permissions []string) {
-	userroles.CreateNewRoleOrAddPermissions(roleName, permissions, nil)
-}
-
-func GetRolesForUser(userID string) []string {
-
-	roles, err := userroles.GetRolesForUser("public", userID, nil)
-	if err != nil {
-		return []string{}
-	} else {
-		return roles.OK.Roles
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func DeleteUser(authID string) error {
-	err := supertokens.DeleteUser(authID)
-
-	if err != nil {
-		return err
-	}
-
-	// Usuario eliminado exitosamente.
-	return nil
-}
-
-// ------------------------------------------------------------------------------------------------
-
-func AssignRoleToUser(authID, role string) {
-	userroles.AddRoleToUser("public", authID, role, nil)
 }
 
 // ------------------------------------------------------------------------------------------------

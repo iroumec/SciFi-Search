@@ -49,20 +49,15 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 				<div class="form-inputs">
 					<label for="name">{ translator("name") }</label>
 					<input type="text" id="name" name="name" required/>
-
 					<label for="type">{ translator("type") }</label>
 					<input type="text" id="type" name="type" list="types" required/>
-
 					<label for="first-area">{ translator("areas") }</label>
 					<input type="text" id="first-area" placeholder={ translator("first-area") } name="first-area" list="areas" required/>
-					<input type="text" id="second-area" placeholder={ translator("second-area") } name="second-area" list="areas" />
-
+					<input type="text" id="second-area" placeholder={ translator("second-area") } name="second-area" list="areas"/>
 					<label for="link">{ translator("link") }</label>
 					<input type="url" id="link" name="link"/>
-
 					<label for="description">{ translator("description") }</label>
 					<input type="text" id="description" name="description"/>
-
 					<div class="double-input">
 						<div class="labeled-input">
 							<label for="based-on">{ translator("based_on") }</label>
@@ -73,7 +68,6 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 							<input type="text" id="grantor" name="grantor" list="grantors"/>
 						</div>
 					</div>
-
 					<div class="double-input">
 						<div class="labeled-input">
 							<label for="currency">{ translator("currency") }</label>
@@ -86,7 +80,6 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 					</div>
 					<label for="deadline">{ translator("deadline") }</label>
 					<input type="date" id="deadline" name="deadline" required/>
-
 					@datalist("types", documentTypes)
 					@datalist("areas", documentAreas)
 					@datalist("based-on", documentBasedOn)
@@ -109,7 +102,7 @@ templ addFundingModal(documentTypes *list.List, documentAreas *list.List, docume
 templ datalist(name string, options *list.List) {
 	<datalist id={ name }>
 		for e := options.Front(); e != nil; e = e.Next() {
-			<option value={ e.Value.(string) } />
+			<option value={ e.Value.(string) }></option>
 		}
 	</datalist>
 }
@@ -186,6 +179,8 @@ templ FundingList(fundings []map[string]any, page int, totalFundings int, transl
 templ ManageFundingPage(fundings []map[string]any, totalFundings int, authorizationLevel int, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	@Layout("Manage projects", translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return manageFundingContent(fundings, totalFundings, documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator) },
+		func() templ.Component {
+			return manageFundingContent(fundings, totalFundings, documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator)
+		},
 	)
 }

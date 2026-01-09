@@ -29,7 +29,7 @@ func (w *gzipResponseWriter) Write(b []byte) (int, error) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 // Comprime la respuesta si el cliente acepta gzip y el archivo existe.

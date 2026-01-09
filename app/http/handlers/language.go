@@ -6,18 +6,14 @@ package handlers
 
 import (
 	"net/http"
-
-	"scifi-search/app/languages"
 )
 
 // ------------------------------------------------------------------------------------------------
-// Registro de endpoints
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
-// Carga los mensajes y registra los handlers correspondientes al lenguaje.
+// Registro de endpoints.
 func RegisterLanguageHandlers() {
-
-	languages.LoadAllMessages()
 
 	http.HandleFunc("/language", setLanguageHandler)
 }
@@ -45,7 +41,7 @@ func setLanguageHandler(w http.ResponseWriter, r *http.Request) {
 		Path:  "/",
 	})
 
-	// Volver a la página previa.
+	// Se vuelve a la página previa.
 	referer := r.Header.Get("Referer")
 	if referer != "" {
 		http.Redirect(w, r, referer, http.StatusSeeOther)

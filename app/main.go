@@ -1,5 +1,9 @@
 ﻿package main
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"context"
 	"log"
@@ -15,16 +19,23 @@ import (
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Punto de Entrada de la Aplicación
+// ------------------------------------------------------------------------------------------------
+
 func main() {
 
+	// Obtención del puerto de la aplicación.
 	appPort := utils.GetEnv("APP_PORT", "8080")
 
+	// Booteo de la aplicación.
 	app, err := bootstrap.Boot()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Contexto de shutdown.
+	// Asegura el cierre de todo ante un Ctrl + C, Docker Down, etc.
 	ctx, stop := signal.NotifyContext(
 		context.Background(),
 		os.Interrupt,
@@ -44,10 +55,11 @@ func main() {
 		os.Exit(0)
 	}()
 
+	// Se notifica que el servicio fue iniciado.
 	log.Println("Servidor iniciado")
 	log.Printf("Escuchando en http://localhost:%s\n", appPort)
 
-	// El servidor queda a la espera de solicitudes, trabajando en conjunto con un LoggingMiddleware.
+	// El servidor queda a la espera de solicitudes, trabajando en conjunto con los middlewares.
 	err = http.ListenAndServe(
 		":"+appPort,
 		supertokens.Middleware(
@@ -61,3 +73,5 @@ func main() {
 		log.Println("Servidor detenido:", err)
 	}
 }
+
+// ------------------------------------------------------------------------------------------------

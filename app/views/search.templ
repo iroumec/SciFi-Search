@@ -173,14 +173,16 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 }
 
 templ sortingCheckboxes(translator languages.Translator) {
-	@sortingCheckboxesItem("Nombre","name","asc", translator)
-	@sortingCheckboxesItem("Nombre","name","desc", translator)
-	@sortingCheckboxesItem("Tipo","type","asc", translator)
-	@sortingCheckboxesItem("Tipo","type","desc", translator)
-	@sortingCheckboxesItem("Deadline","Deadline","asc", translator)
-	@sortingCheckboxesItem("Deadline","Deadline","desc", translator)
+	@sortingCheckboxesItem("Nombre", "name", "asc", translator)
+	@sortingCheckboxesItem("Nombre", "name", "desc", translator)
+	@sortingCheckboxesItem("Tipo", "type", "asc", translator)
+	@sortingCheckboxesItem("Tipo", "type", "desc", translator)
+	@sortingCheckboxesItem("Deadline", "Deadline", "asc", translator)
+	@sortingCheckboxesItem("Deadline", "Deadline", "desc", translator)
 }
+
 /*TODO: cambiar Tipo por Type y demás en todo el tratamiento de documentos, así también se deja inutil valueAux y se elimina*/
+
 templ sortingCheckboxesItem(value string, valueAux string, order string, translator languages.Translator) {
 	<label class="checkbox-item">
 		<input

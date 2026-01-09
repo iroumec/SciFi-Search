@@ -27,6 +27,8 @@ func Boot() (*App, error) {
 		AvatarService: avatarService,
 	})
 
+	loadLanguages()
+
 	return &App{
 		Resources: &Resources{
 			DB:      db,

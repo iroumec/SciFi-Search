@@ -28,14 +28,7 @@ func (lrw *LoggingResponseWriter) WriteHeader(code int) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
-// ------------------------------------------------------------------------------------------------
-
-func newLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
-	// Inicializa el status code por defecto como HTTP 200 OK.
-	return &LoggingResponseWriter{w, http.StatusOK}
-}
-
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
 // Muestra información de logging acerca de las solicitudes entrantes.
@@ -63,6 +56,15 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		// responder la solicitud.
 		log.Printf("<-- %s %s completed in %v", r.Method, r.URL.Path, time.Since(start))
 	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func newLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
+	// Inicializa el status code por defecto como HTTP 200 OK.
+	return &LoggingResponseWriter{w, http.StatusOK}
 }
 
 // ------------------------------------------------------------------------------------------------

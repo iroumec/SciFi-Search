@@ -1,0 +1,59 @@
+package views
+
+import "scifi-search/app/languages"
+
+templ signUpContent(errorMessage string, translator languages.Translator) {
+	@showPopUp()
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form
+				id="signup-form"
+				hx-post="/signup"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				<div id="form-inputs">
+					<input
+						id="name"
+						type="text"
+						name="name"
+						placeholder={ translator("name") }
+						required
+					/>
+					<input
+						id="surname"
+						type="text"
+						name="surname"
+						placeholder={ translator("surname") }
+						required
+					/>
+					<input
+						id="email"
+						type="email"
+						name="email"
+						placeholder={ translator("email") }
+						required
+					/>
+					<input
+						id="password"
+						type="password"
+						name="password"
+						placeholder={ translator("password") }
+						required
+					/>
+				</div>
+				<button class="scifi-button" type="submit">
+					{ translator("sign-up") }
+				</button>
+			</form>
+		</div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("sign-up"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return signUpContent(errorMessage, translator) },
+	)
+}

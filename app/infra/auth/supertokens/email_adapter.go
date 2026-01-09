@@ -1,11 +1,19 @@
 package supertokens
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"scifi-search/app/email"
 
 	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	"github.com/supertokens/supertokens-golang/supertokens"
 )
+
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
 
 func EmailDelivery(service *email.Service) *emaildelivery.EmailDeliveryInterface {
 
@@ -24,3 +32,5 @@ func EmailDelivery(service *email.Service) *emaildelivery.EmailDeliveryInterface
 		SendEmail: &send,
 	}
 }
+
+// ------------------------------------------------------------------------------------------------

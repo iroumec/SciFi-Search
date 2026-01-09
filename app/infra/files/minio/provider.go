@@ -1,5 +1,9 @@
 package minio
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"bytes"
 	"context"
@@ -10,13 +14,15 @@ import (
 	"scifi-search/app/storage"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
+
 type Provider struct {
 	client *s3.Client
 }
 
-func New(client *s3.Client) storage.ObjectStore {
-	return &Provider{client: client}
-}
+// ------------------------------------------------------------------------------------------------
 
 func (p *Provider) Put(
 	ctx context.Context,
@@ -35,6 +41,8 @@ func (p *Provider) Put(
 	return err
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func (p *Provider) Get(ctx context.Context, bucket, key string) ([]byte, error) {
 	out, err := p.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &bucket,
@@ -48,6 +56,8 @@ func (p *Provider) Get(ctx context.Context, bucket, key string) ([]byte, error) 
 	return io.ReadAll(out.Body)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func (p *Provider) Delete(ctx context.Context, bucket, key string) error {
 	_, err := p.client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: &bucket,
@@ -55,3 +65,14 @@ func (p *Provider) Delete(ctx context.Context, bucket, key string) error {
 	})
 	return err
 }
+
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
+
+// Retorno de un proveedor a partir de un cliente.
+func New(client *s3.Client) storage.ObjectStore {
+	return &Provider{client: client}
+}
+
+// ------------------------------------------------------------------------------------------------

@@ -1,9 +1,6 @@
 package views 
 
-import (
-	"scifi-search/app/auth"
-	"scifi-search/app/languages"
-)
+import "scifi-search/app/languages"
 
 templ Header(showOptions bool, authorizationLevel int, translator languages.Translator) {
 	@headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator)
@@ -62,52 +59,3 @@ templ headerBuilder(backgroundColor string, logo string, query bool, showOptions
 		</div>
 	</header>
 }
-
-// ------------------------------------------------------------------------------------------------
-templ userOptions(authorizationLevel int, translator languages.Translator) {
-	if authorizationLevel <= auth.NoRole.Level {
-		<button
-			class="scifi-button"
-			hx-get="/signup"
-			hx-target="body"
-			hx-push-url="true"
-		>
-			{ translator("sign-up.tag") }
-		</button>
-		<button
-			class="scifi-button"
-			hx-get="/login"
-			hx-target="body"
-			hx-push-url="true"
-		>
-			{ translator("log-in.tag") }
-		</button>
-	} else {
-		<div
-			class="index-menu"
-			x-data="{ open: false }"
-			@click.outside="open = false"
-		>
-			<button id="header-menu" @click.stop="open = !open">
-				<img
-					src="static/img/menu.svg"
-					alt="header-menu-img"
-					id="header-menu-img"
-					x-show="!open"
-				/>
-			</button>
-			<div id="menu" class="menu-content" x-show="open" style="display: none;">
-				<div id="close-menu">{ translator("menu") } </div>
-				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">{ translator("menu.settings") }</button>
-				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">{ translator("menu.history") }</button>
-				if authorizationLevel >= auth.LoaderRole.Level {
-					<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("menu.fundings") }</button>
-				}
-				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
-				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">{ translator("log-out") }</button>
-			</div>
-		</div>
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
