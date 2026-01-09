@@ -13,8 +13,9 @@ import (
 	"net/http"
 
 	"scifi-search/app/auth"
+	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
-	"scifi-search/app/http/cookies"
+	"scifi-search/app/http/notifications/cookies"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/checkers"
@@ -266,7 +267,7 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
 		return
@@ -319,6 +320,23 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getCurrentUser(w http.ResponseWriter, r *http.Request) (*database.User, error) {
+
+	authID, err := auth.GetCurrentUserID(w, r)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := queries.GetUserByAuthID(r.Context(), *authID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // ------------------------------------------------------------------------------------------------

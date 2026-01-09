@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
-	"scifi-search/app/http/cookies"
 	"scifi-search/app/http/middlewares"
+	"scifi-search/app/http/notifications/cookies"
 	"strconv"
 
 	"scifi-search/app/languages"
@@ -57,7 +57,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 	var fundings []map[string]any
 	var fundingsDocs []database.Document
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
 		w.Header().Set("HX-Redirect", "/")
@@ -152,7 +152,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	amount := r.Form.Get("amount")
 	deadline := r.Form.Get("deadline")
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
 		w.Header().Set("HX-Redirect", "/")

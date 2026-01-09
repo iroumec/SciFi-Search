@@ -9,15 +9,17 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"strings"
+
 	"scifi-search/app/auth"
 	"scifi-search/app/avatars"
 	sqlc "scifi-search/app/database"
-	"scifi-search/app/http/cookies"
+	"scifi-search/app/http/notifications/cookies"
+	"scifi-search/app/http/notifications/triggers"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/getters"
 	"scifi-search/app/utils/structures"
 	"scifi-search/app/views"
-	"strings"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -113,7 +115,8 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		currentUser, err := auth.GetCurrentUser(w, r, queries)
+
+		currentUser, err := getCurrentUser(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -148,7 +151,7 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 // Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
-	currentUser, err := auth.GetCurrentUser(w, r, queries)
+	currentUser, err := getCurrentUser(w, r)
 	if err != nil {
 		component := views.UnloggedPage(auth.NoRole.Level, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
@@ -179,11 +182,12 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 // Renderiza el campo que está siendo editado.
 func editField(w http.ResponseWriter, r *http.Request) {
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	email := auth.GetCurrentUserEmail(w, r)
 	fieldStr := strings.TrimPrefix(r.URL.Path, "/settings/edit/")
 
@@ -215,7 +219,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -257,18 +261,19 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 
 	// Actualización de email.
 	emailUpdated := false
-	if email := r.Form.Get("email"); email != "" {
-		if err := auth.UpdateEmail(user, email); err != nil {
+	if newEmail := r.Form.Get("email"); newEmail != "" {
+		if err := auth.UpdateEmail(user.AuthID, newEmail); err != nil {
 			return false, err
 		}
 		emailUpdated = true
+		auth.SendVerificationEmail(user.AuthID, newEmail)
 	}
 
 	// Actualización de contraseña.
 	currentPwd := r.Form.Get("current-password")
 	newPwd := r.Form.Get("new-password")
 	if currentPwd != "" && newPwd != "" {
-		if err := auth.UpdatePassword(user, currentPwd, newPwd); err != nil {
+		if err := auth.UpdatePassword(user.AuthID, currentPwd, newPwd); err != nil {
 			cookies.AddFlashCookie(w, "Error interno del servidor.")
 			return false, err
 		}
@@ -280,7 +285,8 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 // ------------------------------------------------------------------------------------------------
 
 func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated bool) {
-	user, err := auth.GetCurrentUser(w, r, queries)
+
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -292,7 +298,7 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 		message += " " + t("Verifique su nuevo correo.")
 	}
 
-	w.Header().Set("HX-Trigger", `{"showFlash": {"message": "`+message+`"}}`)
+	triggers.AddHXTrigger(w, r, message)
 
 	component := views.SettingsForm(
 		structures.User{

@@ -320,7 +320,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 	// en su historial.
 	if auth.IsUserAuthenticated(w, r) {
 
-		user, err := auth.GetCurrentUser(w, r, queries)
+		user, err := getCurrentUser(w, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

@@ -33,7 +33,7 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func showHistory(w http.ResponseWriter, r *http.Request) {
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		component := views.UnloggedPage(auth.NoRole.Level, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)

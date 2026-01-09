@@ -5,11 +5,8 @@ package auth
 // ------------------------------------------------------------------------------------------------
 
 import (
-	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
-	"scifi-search/app/database"
 	"scifi-search/app/utils/converters"
 
 	"github.com/supertokens/supertokens-golang/recipe/session"
@@ -18,33 +15,6 @@ import (
 
 // ------------------------------------------------------------------------------------------------
 // Servicios (ligados a la sesión actual)
-// ------------------------------------------------------------------------------------------------
-
-func GetCurrentUser(w http.ResponseWriter, r *http.Request, queries *database.Queries) (*database.User, error) {
-	if !IsUserAuthenticated(w, r) {
-		return nil, ErrNotAuthenticated
-	}
-
-	sessionContainer, err := session.GetSession(r, nil, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(false),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("get session: %w", err)
-	}
-
-	supertokensUserID := sessionContainer.GetUserID()
-
-	user, err := queries.GetUserByAuthID(r.Context(), supertokensUserID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-		return nil, fmt.Errorf("get user by auth id: %w", err)
-	}
-
-	return &user, nil
-}
-
 // ------------------------------------------------------------------------------------------------
 
 func GetCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {
@@ -94,25 +64,24 @@ func IsUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 
 // ------------------------------------------------------------------------------------------------
 
-func RevokeSession(w http.ResponseWriter, r *http.Request) {
+func RevokeSession(w http.ResponseWriter, r *http.Request) error {
 
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 		SessionRequired: converters.ToBoolPointer(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
-		return
+		return Unauthorized
 	}
 
 	if sessionContainer == nil {
-		http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
-		return
+		return NoSessionError
 	}
 
 	if err := sessionContainer.RevokeSession(); err != nil {
-		http.Error(w, "Error cerrando sesión", http.StatusInternalServerError)
-		return
+		return err
 	}
+
+	return nil
 }
 
 // ------------------------------------------------------------------------------------------------

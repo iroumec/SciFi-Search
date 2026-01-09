@@ -10,7 +10,6 @@ import (
 	"slices"
 	"strings"
 
-	"scifi-search/app/database"
 	"scifi-search/app/infra/auth/supertokens"
 	"scifi-search/app/utils/converters"
 	"scifi-search/app/workers"
@@ -46,6 +45,7 @@ func SendVerificationEmail(userID, email string) {
 	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
 	if err != nil {
 		log.Println("Error creando token de verificación:", err)
+		// TODO: implementar reintento.
 	} else if tokenResponse.OK != nil {
 		verificationLink := supertokens.WebsiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token
 
@@ -61,13 +61,12 @@ func SendVerificationEmail(userID, email string) {
 // --------------------------------------------------------------------------------------------- //
 
 // Actualiza el email del usuario y solicita re-verificación si el email cambió.
-func UpdateEmail(user *database.User, newEmail string) error {
+func UpdateEmail(authID, newEmail string) error {
 	newEmail = strings.TrimSpace(newEmail)
 
 	// Obtención del email actual del usuario.
-	currentUser, err := emailpassword.GetUserByID(user.AuthID)
+	currentUser, err := emailpassword.GetUserByID(authID)
 	if err != nil || currentUser == nil {
-		log.Println("Error al obtener usuario actual:", err)
 		return err
 	}
 
@@ -75,104 +74,81 @@ func UpdateEmail(user *database.User, newEmail string) error {
 
 	// Si el email es el mismo, no se hace nada.
 	if strings.EqualFold(currentEmail, newEmail) {
-		log.Println("El email no cambió, omitiendo actualización")
 		return nil
 	}
 
 	// Se verifica si el nuevo emaul ya está en uso por otro usuario.
 	existingUser, err := emailpassword.GetUserByEmail("", newEmail)
 	if err != nil {
-		log.Println("Error al verificar email existente:", err)
 		return err
 	}
 
-	if existingUser != nil && existingUser.ID != user.AuthID {
-		log.Println("El email ya está en uso por otro usuario")
-		return err
+	if existingUser != nil && existingUser.ID != authID {
+		return EmailAlreadyInUseError
 	}
 
 	// Se actualiza el email en SuperTokens.
-	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, &newEmail, nil, nil, nil)
+	updateResp, err := emailpassword.UpdateEmailOrPassword(authID, &newEmail, nil, nil, nil)
 	if err != nil {
-		log.Println("Error actualizando email:", err)
 		return err
 	}
 
 	if updateResp.OK == nil {
 		if updateResp.EmailAlreadyExistsError != nil {
-			log.Println("Email ya existe")
+			return EmailAlreadyInUseError
 		} else if updateResp.UnknownUserIdError != nil {
-			log.Println("Usuario no encontrado")
+			return UserNotFoundError
 		}
 		return err
 	}
 
 	// Se desverifica el email (forzando re-verificación).
-	_, err = emailverification.UnverifyEmail(user.AuthID, &newEmail, nil)
+	_, err = emailverification.UnverifyEmail(authID, &newEmail, nil)
 	if err != nil {
-		log.Println("Error al desverificar email:", err)
+		return err
 	}
 
-	// Se envía un email de verificación con un nuevo token al nuevo email.
-	SendVerificationEmail(user.AuthID, newEmail)
-
-	log.Println("Email actualizado exitosamente, se envió verificación")
 	return nil
 }
 
 // --------------------------------------------------------------------------------------------- //
 
 // Actualiza la contraseña del usuario.
-func UpdatePassword(user *database.User, currentPassword, newPassword string) error {
+func UpdatePassword(authID, currentPassword, newPassword string) error {
 	// Se valida que se proporcionaron ambas contraseñas.
 	if currentPassword == "" || newPassword == "" {
-		log.Println("Contraseñas no proporcionadas")
 		return nil
 	}
 
 	// Se obtiene el email actual para verificar la contraseña.
-	currentUser, err := emailpassword.GetUserByID(user.AuthID)
+	currentUser, err := emailpassword.GetUserByID(authID)
 	if err != nil || currentUser == nil {
-		log.Println("Error al obtener usuario actual:", err)
 		return err
 	}
 
-	// Se verifica la contraseña actual.
-	signInResp, err := emailpassword.SignIn("", currentUser.Email, currentPassword)
+	_, err = VerifyCredentials(currentUser.Email, currentPassword)
 	if err != nil {
-		log.Println("Error al verificar contraseña:", err)
-		return err
-	}
-
-	if signInResp.WrongCredentialsError != nil {
-		log.Println("Contraseña actual incorrecta")
 		return err
 	}
 
 	// Se actualiza la contraseña.
-	updateResp, err := emailpassword.UpdateEmailOrPassword(user.AuthID, nil, &newPassword, nil, nil)
+	updateResp, err := emailpassword.UpdateEmailOrPassword(authID, nil, &newPassword, nil, nil)
 	if err != nil {
-		log.Println("Error actualizando contraseña:", err)
 		return err
 	}
 
 	if updateResp.OK == nil {
 		if updateResp.UnknownUserIdError != nil {
-			log.Println("Usuario no encontrado")
-			return fmt.Errorf("usuario no encontrado")
+			return UserNotFoundError
 		} else if updateResp.EmailAlreadyExistsError != nil {
-			log.Println("Email ya existe (esto no debería ocurrir al cambiar solo contraseña)")
-			return fmt.Errorf("email ya existe")
+			return EmailAlreadyInUseError
 		} else if updateResp.PasswordPolicyViolatedError != nil {
-			log.Println("La contraseña no cumple con la política de seguridad")
-			return fmt.Errorf("contraseña no cumple con los requisitos de seguridad")
+			return PasswordPolicyViolatedError
 		} else {
-			log.Println("Error desconocido al actualizar contraseña")
-			return fmt.Errorf("error desconocido al actualizar contraseña")
+			return UnknownError
 		}
 	}
 
-	log.Println("Contraseña actualizada")
 	return nil
 }
 

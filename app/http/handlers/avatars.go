@@ -1,18 +1,23 @@
 package handlers
 
+// ------------------------------------------------------------------
+
 import (
 	"database/sql"
 	"net/http"
 
-	"scifi-search/app/auth"
 	"scifi-search/app/avatars"
 	"scifi-search/app/database"
 )
+
+// ------------------------------------------------------------------
 
 func RegisterAvatarHandlers() {
 
 	http.HandleFunc("/avatar", uploadAvatar)
 }
+
+// ------------------------------------------------------------------
 
 func uploadAvatar(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -32,7 +37,7 @@ func uploadAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	user, err := auth.GetCurrentUser(w, r, queries)
+	user, err := getCurrentUser(w, r)
 	if err != nil {
 		http.Error(w, "No autenticado", http.StatusUnauthorized)
 		return
@@ -60,3 +65,5 @@ func uploadAvatar(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
+
+// ------------------------------------------------------------------

@@ -5,7 +5,7 @@ package middlewares
 import (
 	"net/http"
 	"scifi-search/app/auth"
-	"scifi-search/app/http/cookies"
+	"scifi-search/app/http/notifications"
 	"scifi-search/app/languages"
 )
 
@@ -19,25 +19,13 @@ func RequiresEmailVerified(next http.HandlerFunc) http.HandlerFunc {
 			isEmailVerified, err := auth.IsEmailVerified(*userID)
 			if err == nil && *isEmailVerified {
 				next(w, r)
+				return
 			}
 		}
 
 		message := languages.GetTranslatorFromRequest(r)("Debe verificar su email antes de acceder a esta funcionalidad.")
 
-		// Si es petición HTMX, se envia un trigger para mostrar popup.
-		if r.Header.Get("HX-Request") == "true" {
-			w.Header().Set("HX-Trigger", `{
-						"showFlash": {
-						"message": "`+message+`"
-						}
-					}`)
-			w.WriteHeader(http.StatusForbidden)
-			return
-		}
-
-		// Si no es HTMX, simplemente se redirige.
-		cookies.AddFlashCookie(w, message)
-		http.Redirect(w, r, "/", http.StatusFound)
+		addFlash(w, r, message)
 	}
 }
 
@@ -69,23 +57,26 @@ func RequiresAuthorization(next http.HandlerFunc, minimumLevelOfAuthorizationReq
 
 			message := languages.GetTranslatorFromRequest(r)("No cuenta con los permisos suficientes.")
 
-			// Si es petición HTMX, se envia un trigger para mostrar popup.
-			if r.Header.Get("HX-Request") == "true" {
-				w.Header().Set("HX-Trigger", `{
-					"showFlash": {
-						"message": "`+message+`"
-					}
-				}`)
-				w.WriteHeader(http.StatusForbidden)
-				return
-			}
-
-			// Si no es HTMX, simplemente se redirige.
-			cookies.AddFlashCookie(w, message)
-			http.Redirect(w, r, "/", http.StatusFound)
+			addFlash(w, r, message)
 			return
 		}
 		next(w, r)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func addFlash(w http.ResponseWriter, r *http.Request, message string) {
+
+	notificationType := notifications.ShowFlash(w, r, message)
+
+	switch notificationType {
+	case notifications.HXTriggerNotification:
+		w.WriteHeader(http.StatusForbidden)
+	case notifications.CookieNotification:
+		http.Redirect(w, r, "/", http.StatusFound)
+	default:
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 }
 
