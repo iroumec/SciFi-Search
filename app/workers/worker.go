@@ -1,23 +1,21 @@
-package bootstrap
+package workers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Estructuras
 // ------------------------------------------------------------------------------------------------
 
-import (
-	"scifi-search/app/email"
-	"scifi-search/app/workers"
-)
+type Job func()
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Servicios
 // ------------------------------------------------------------------------------------------------
 
-func startWorkers(emailService *email.Service) {
-
-	workers.SetEmailService(emailService)
-	// Se inicializa el worker de envíos asíncronos de emails.
-	workers.StartEmailWorker()
+func StartWorker(queue chan Job) {
+	go func() {
+		for job := range queue {
+			job()
+		}
+	}()
 }
 
 // ------------------------------------------------------------------------------------------------

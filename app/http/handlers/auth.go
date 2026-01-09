@@ -21,7 +21,6 @@ import (
 	"scifi-search/app/utils"
 	"scifi-search/app/utils/checkers"
 	"scifi-search/app/views"
-	"scifi-search/app/workers"
 
 	"github.com/a-h/templ"
 	"github.com/supertokens/supertokens-golang/recipe/session"
@@ -174,7 +173,7 @@ func createUser(name, surname, email, password string, role auth.Role) (*sqlc.Us
 		return nil, err
 	}
 
-	auth.SendVerificationEmail(*userID, email)
+	auth.SendVerificationEmail(emailService, *userID, email)
 	auth.AssignRoleToUser(role, *userID)
 
 	return &user, nil
@@ -323,7 +322,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	cookies.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
 
-	workers.SendEmailAsync(
+	emailService.Send(
 		*userEmail,
 		"¡Lamentamos que te vayas!",
 		"Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!",

@@ -32,7 +32,6 @@ func Boot() (*App, error) {
 	emailService := getEmailService()
 
 	initializeAuthorizationMechanisms()
-	startWorkers(emailService)
 
 	registerEndpoints(HTTPDependencies{
 		Queries:       queries,

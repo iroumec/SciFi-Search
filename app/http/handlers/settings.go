@@ -266,7 +266,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 			return false, err
 		}
 		emailUpdated = true
-		auth.SendVerificationEmail(user.AuthID, newEmail)
+		auth.SendVerificationEmail(emailService, user.AuthID, newEmail)
 	}
 
 	// Actualización de contraseña.

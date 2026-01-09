@@ -7,6 +7,7 @@ package bootstrap
 import (
 	"scifi-search/app/email"
 	"scifi-search/app/infra/email/mailhog"
+	"scifi-search/app/workers"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -15,9 +16,14 @@ import (
 
 func getEmailService() *email.Service {
 
-	provider := mailhog.New()
+	jobQueue := make(chan workers.Job, 100)
 
-	return email.New(provider)
+	workers.StartWorker(jobQueue)
+
+	provider := mailhog.New()
+	asyncProvider := email.NewAsyncProvider(jobQueue, provider)
+
+	return email.New(asyncProvider)
 }
 
 // ------------------------------------------------------------------------------------------------

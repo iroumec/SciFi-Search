@@ -10,9 +10,9 @@ import (
 	"slices"
 	"strings"
 
+	"scifi-search/app/email"
 	"scifi-search/app/infra/auth/supertokens"
 	"scifi-search/app/utils/converters"
-	"scifi-search/app/workers"
 
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/emailverification"
@@ -40,7 +40,7 @@ func GetAuthenticationLevel(userID string) int {
 
 // --------------------------------------------------------------------------------------------- //
 
-func SendVerificationEmail(userID, email string) {
+func SendVerificationEmail(emailService *email.Service, userID, email string) {
 
 	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
 	if err != nil {
@@ -54,7 +54,7 @@ func SendVerificationEmail(userID, email string) {
 		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n%s", verificationLink)
 
 		// Envío asíncrono del email (no bloquea la respuesta HTTP).
-		workers.SendEmailAsync(email, subject, body)
+		emailService.Send(email, subject, body)
 	}
 }
 
