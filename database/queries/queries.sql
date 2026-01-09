@@ -73,3 +73,6 @@ SELECT * FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3;
 
 -- name: CountAllDocuments :one
 SELECT COUNT(*) FROM documents;
+
+-- name: CountDocumentsByUser :one
+SELECT COUNT(*) FROM documents WHERE user_id = $1;

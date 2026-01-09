@@ -91,6 +91,17 @@ func (q *Queries) CountAllDocuments(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const countDocumentsByUser = `-- name: CountDocumentsByUser :one
+SELECT COUNT(*) FROM documents WHERE user_id = $1
+`
+
+func (q *Queries) CountDocumentsByUser(ctx context.Context, userID sql.NullInt32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countDocumentsByUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createHistoricSearch = `-- name: CreateHistoricSearch :one
 INSERT INTO historic_searches(user_id,search_string) VALUES ($1,$2) RETURNING historic_search_id, user_id, search_string, search_datetime
 `

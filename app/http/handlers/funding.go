@@ -70,6 +70,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	var fundings []map[string]any
 	var fundingsDocs []database.Document
+	var totalFundings int64
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
@@ -87,6 +88,11 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 			Offset: int32((offset - 1) * 10),
 		})
 
+		totalFundings, err = queries.CountAllDocuments(r.Context())
+		if err != nil {
+			log.Fatal("Error al contar los documentos")
+		}
+
 	} else {
 
 		// De ser loader, se listan solo sus documentos.
@@ -95,6 +101,11 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 			Limit:  10,
 			Offset: int32((offset - 1) * 10),
 		})
+
+		totalFundings, err = queries.CountDocumentsByUser(r.Context(), sql.NullInt32{Int32: user.UserID, Valid: true})
+		if err != nil {
+			log.Fatal("Error al contar los documentos")
+		}
 	}
 	if err != nil {
 		return nil, 0, err
@@ -116,11 +127,6 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 			"Deadline":    doc.Deadline,
 		}
 		fundings = append(fundings, funding)
-	}
-
-	totalFundings, err := queries.CountAllDocuments(r.Context())
-	if err != nil {
-		log.Fatal("Error al contar los documentos")
 	}
 
 	return fundings, int(totalFundings), nil
