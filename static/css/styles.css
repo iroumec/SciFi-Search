@@ -964,7 +964,7 @@ header {
 
 
 /* ------------------------------------------------------------------------------------------------ */
-/* ------------------------------------------ Modal ----------------------------------------------- */
+/* ----------------------------------------- Funding ---------------------------------------------- */
 /* ------------------------------------------------------------------------------------------------ */
 
 #manage-funding-content {
@@ -1057,7 +1057,10 @@ header {
         align-items: center;
     }
 
-/* Modal Styles */
+/* ------------------------------------------------------------------------------------------------ */
+/* ------------------------------------------ Modal ----------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------ */
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1065,12 +1068,10 @@ header {
     right: 0;
     bottom: 0;
     background-color: rgba(0, 87, 133, 0.28);
-    /* Usa tu color scifi con transparencia */
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    /* Más alto que el footer */
     backdrop-filter: blur(4px);
 }
 
@@ -1191,7 +1192,6 @@ header {
     color: white;
 }
 
-/* Ocultar elementos con x-cloak hasta que Alpine.js esté listo */
-[x-cloak] {
-    display: none !important;
+[hidden] {
+	display: none !important;
 }

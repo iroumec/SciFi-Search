@@ -56,7 +56,7 @@ templ navigationButton(page int, button string, get string, include string, targ
 
 templ documentItem(m map[string]any, name string) {
 	<div id={ name + "-" + converters.ToString(m["id"]) }>
-		<a id="title" href={ converters.ToString(m["Link"]) }>{ converters.ToString(m["Nombre"]) }</a>
+		<a id="title" href={ converters.ToString(m["Link"]) } target="_blank">{ converters.ToString(m["Nombre"]) }</a>
 		<div class="extra-info">
 			@extraInfoItem(converters.ToString(m["Tipo"]), "gray")
 			@extraInfoItem(converters.ToString(m["Gran area 1"]), "scifi")

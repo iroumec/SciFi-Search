@@ -46,7 +46,7 @@ func RegisterFundingHandlers() {
 		middlewares.RequiresEmailVerified(
 			middlewares.RequiresAuthorization(
 				addFundingHandler,
-				auth.AdminRole.Level,
+				auth.LoaderRole.Level,
 			),
 		),
 	)
@@ -56,7 +56,7 @@ func RegisterFundingHandlers() {
 		middlewares.RequiresEmailVerified(
 			middlewares.RequiresAuthorization(
 				addFundingHandler,
-				auth.AdminRole.Level,
+				auth.LoaderRole.Level,
 			),
 		),
 	)
@@ -66,7 +66,7 @@ func RegisterFundingHandlers() {
 		middlewares.RequiresEmailVerified(
 			middlewares.RequiresAuthorization(
 				updateFundingList,
-				auth.AdminRole.Level,
+				auth.LoaderRole.Level,
 			),
 		),
 	)
