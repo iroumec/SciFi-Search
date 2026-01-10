@@ -6,6 +6,7 @@ package bootstrap
 
 import (
 	"scifi-search/app/database"
+	"scifi-search/app/languages"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -28,8 +29,8 @@ func Boot() (*App, error) {
 	}
 
 	queries := database.New(db)
-	avatarService := getAvatarsService()
 	emailService := getEmailService()
+	avatarService := getAvatarsService()
 
 	initializeAuthorizationMechanisms()
 
@@ -39,7 +40,7 @@ func Boot() (*App, error) {
 		EmailService:  emailService,
 	})
 
-	loadLanguages()
+	languages.LoadAllMessages()
 
 	return &App{
 		Resources: &Resources{

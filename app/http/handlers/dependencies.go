@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"scifi-search/app/avatars"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/email"
@@ -12,18 +13,25 @@ import (
 
 // Ruta a partir de la cual se servirán los archivos estáticos.
 const (
-	debug   = false
-	fileDir = "./static"
+	debug = false
 )
 
 // ------------------------------------------------------------------------------------------------
 // Variables
 // ------------------------------------------------------------------------------------------------
 
+// Dependencias.
 var (
 	queries       *sqlc.Queries
 	avatarService *avatars.Service
 	emailService  *email.Service
+)
+
+// ------------------------------------------------------------------------------------------------
+
+// Errores.
+var (
+	MethodNotAllowedError = errors.New("Method not allowed")
 )
 
 // ------------------------------------------------------------------------------------------------

@@ -8,9 +8,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
@@ -45,7 +45,7 @@ func RegisterAuthenticationHandlers() {
 		middlewares.RequiresEmailVerified(
 			middlewares.RequiresAuthorization(
 				loaderHandler,
-				1,
+				auth.AdminRole.Level,
 			),
 		),
 	)
@@ -57,50 +57,88 @@ func RegisterAuthenticationHandlers() {
 		session.RefreshSession(r, w)
 	})
 
+	// TODO: refactorizar.
 	// Al usar VerifySession, la sesión ya está garantizada y puesta en el contexto
 	// si las cookies de sesión son válidas.
-	http.HandleFunc("/auth/sessioninfo", session.VerifySession(nil, func(w http.ResponseWriter, r *http.Request) {
-		// Al usar session.VerifySession, la sesión ya estará garantizada y
-		// puesta en el contexto si las cookies de sesión son válidas.
+	http.HandleFunc("/auth/sessioninfo", func(w http.ResponseWriter, r *http.Request) {
 
-		sessionContainer := session.GetSessionFromRequestContext(r.Context())
-
-		if sessionContainer == nil {
-			// Este caso sólo debería ocurrir si hay un error interno en el middleware
-			// o si VerifySession no está configurado para devolver error 401.
-			http.Error(w, "No session (Error interno o configuración)", http.StatusUnauthorized)
+		payload, err := auth.GetSessionInfo(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusMethodNotAllowed)
 			return
 		}
 
-		userID := sessionContainer.GetUserID()
-		rawPayload := sessionContainer.GetAccessTokenPayload()
-
-		payload := make(map[string]string)
-		for k, v := range rawPayload {
-			payload[k] = fmt.Sprintf("%v", v)
-		}
-
-		component := views.SessionInfo(userID, payload)
+		component := views.SessionInfo(payload)
 		templ.Handler(component).ServeHTTP(w, r)
-	}))
+	})
 }
 
 // ------------------------------------------------------------------------------------------------
-// Sign Up (Registro)
+// Handlers
 // ------------------------------------------------------------------------------------------------
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == http.MethodGet {
+	switch r.Method {
+	case http.MethodGet:
 		component := views.SignUpPage("", auth.GetCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
 		templ.Handler(component).ServeHTTP(w, r)
+	case http.MethodPost:
+		signUp(w, r)
+	default:
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func logInHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+
+	case http.MethodGet:
+		component := views.LoginPage(
+			auth.GetCurrentAuthorizationLevel(w, r),
+			languages.GetTranslatorFromRequest(r),
+		)
+		component.Render(r.Context(), w)
+
+	case http.MethodPost:
+		logIn(w, r)
+
+	default:
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func signOutHandler(w http.ResponseWriter, r *http.Request) {
+
+	auth.RevokeSession(w, r)
+
+	cookies.AddFlashCookie(w, "Successful signout!")
+
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodDelete {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
+	deleteUser(w, r)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func signUp(w http.ResponseWriter, r *http.Request) {
 
 	// Parseo del formulario enviado por POST.
 	if err := r.ParseForm(); err != nil {
@@ -149,7 +187,7 @@ func createAdmin() {
 	_, err := createUser(name, surname, email, password, auth.AdminRole)
 	if err != nil {
 		if !errors.Is(err, auth.EmailAlreadyInUseError) {
-			log.Fatal("Ocurrió un error al momento de crear al administrador.")
+			log.Fatal(UnknownError.Error())
 		}
 	}
 }
@@ -200,10 +238,8 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Sign In (Log In)
-// ------------------------------------------------------------------------------------------------
 
-func logInHandler(w http.ResponseWriter, r *http.Request) {
+func logIn(w http.ResponseWriter, r *http.Request) {
 	translator := languages.GetTranslatorFromRequest(r)
 
 	if r.Method == http.MethodGet {
@@ -212,7 +248,7 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -244,47 +280,18 @@ func logInHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Sign Out (Log Out)
-// ------------------------------------------------------------------------------------------------
-
-func signOutHandler(w http.ResponseWriter, r *http.Request) {
-
-	auth.RevokeSession(w, r)
-
-	cookies.AddFlashCookie(w, "Successful signout!")
-
-	http.Redirect(w, r, "/", http.StatusFound)
-}
-
-// ------------------------------------------------------------------------------------------------
-// Get Current User
-// ------------------------------------------------------------------------------------------------
-
-// ------------------------------------------------------------------------------------------------
-
-func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodDelete {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	deleteUser(w, r)
-}
-
-// ------------------------------------------------------------------------------------------------
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	userEmail := auth.GetCurrentUserEmail(w, r)
 	if userEmail == nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -297,7 +304,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	// Se elimina el avatar del usuario (si tiene).
 	err = avatarService.Delete(r.Context(), user.UserID)
 	if err != nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -306,7 +313,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			// Error 404: El usuario no existe.
-			http.Error(w, "Usuario no encontrado", http.StatusNotFound)
+			http.Error(w, UserNotFoundError.Error(), http.StatusNotFound)
 		} else {
 			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
 			log.Printf("Error al obtener usuario por ID %d: %v", user.UserID, err)
@@ -315,17 +322,21 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Llegué hasta aquí3")
-
 	// Se cierra la sesión del usuario.
 	auth.RevokeSession(w, r)
 
 	cookies.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
 
+	emailBody := strings.Join([]string{
+		"¡Nos entristece ver que te vayas! \n",
+		"Para tu seguridad y tranquilidad, hemos eliminado todos tus datos. \n",
+		"¡Esperamos volver a verte pronto!",
+	}, "")
+
 	emailService.Send(
 		*userEmail,
 		"¡Lamentamos que te vayas!",
-		"Nos entristece ver que te vayas. Para tu seguridad, hemos eliminado todos tus datos. ¡Esperamos volver a verte pronto!",
+		emailBody,
 	)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)

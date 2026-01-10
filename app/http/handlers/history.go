@@ -26,7 +26,7 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		showHistory(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -41,7 +41,7 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 
 		rows, err := queries.ListHistoricSearchesFromUser(r.Context(), user.UserID)
 		if err != nil {
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+			http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 			return
 		}
 

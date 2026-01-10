@@ -6,11 +6,13 @@ package handlers
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"net/http"
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
 	"scifi-search/app/http/middlewares"
+	"scifi-search/app/http/notifications"
 	"scifi-search/app/http/notifications/cookies"
 	"strconv"
 	"strings"
@@ -22,15 +24,52 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Variables
+// ------------------------------------------------------------------------------------------------
+
+var (
+	InvalidIDError      = errors.New("Invalid ID")
+	UnknownError        = errors.New("Unknown error")
+	InternalServerError = errors.New("Internal server error")
+	UserNotFoundError   = errors.New("User not found")
+)
+
+// ------------------------------------------------------------------------------------------------
 // Servicios
 // ------------------------------------------------------------------------------------------------
 
 // Registro de endpoints.
 func RegisterFundingHandlers() {
 
-	http.HandleFunc("/funding", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
-	http.HandleFunc("/funding/", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(addFundingHandler, 1)))
-	http.HandleFunc("/funding/update-items", middlewares.RequiresEmailVerified(middlewares.RequiresAuthorization(updateFundingList, 1)))
+	http.HandleFunc(
+		"/funding",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				addFundingHandler,
+				auth.AdminRole.Level,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/funding/",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				addFundingHandler,
+				auth.AdminRole.Level,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/funding/update-items",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				updateFundingList,
+				auth.AdminRole.Level,
+			),
+		),
+	)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -47,7 +86,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		deleteFunding(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -164,7 +203,7 @@ func getPage(r *http.Request) int {
 
 func addFunding(w http.ResponseWriter, r *http.Request) {
 
-	// Parsin del formulario.
+	// Parsing del formulario.
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
 		return
@@ -227,8 +266,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(r, name)
 
-	//TODO: esto no funciona porque no se hace redirect, ver cómo arreglarlo
-	cookies.AddFlashCookie(w, "New funding added successfully!")
+	notifications.ShowFlash(w, r, "New funding added successfully!")
 
 	updateFundingList(w, r)
 }
@@ -249,24 +287,17 @@ func notifyFundingAddition(r *http.Request, fundingName string) {
 		return
 	}
 
-	log.Printf("Llegué 1")
-
 	for _, user := range usersList {
 
 		userEmail := auth.GetUserEmail(user.AuthID)
 
 		if userEmail == nil {
-			log.Printf("Usuario %d no encontrado", user.UserID)
+			// The user is ignored.
+			// This should never happen.
 			continue
 		}
 
-		log.Printf("He aquí el error")
-		log.Printf(*userEmail)
-		log.Printf(fundingName)
-
 		emailService.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
-
-		log.Printf("LLegué 2")
 	}
 }
 
@@ -278,13 +309,14 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "invalid id", http.StatusBadRequest)
+		http.Error(w, InvalidIDError.Error(), http.StatusBadRequest)
 		return
 	}
 
+	// TODO: ¿acá no deberían también desindexarse de MeiliSearch?
 	err = queries.RemoveDocument(r.Context(), int32(id))
 	if err != nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -10,22 +10,25 @@ import "errors"
 //  Variables
 // ------------------------------------------------------------------------------------------------
 
-// Authentication of user
-var ErrNotAuthenticated = errors.New("user not authenticated")
-var UserNotFoundError = errors.New("User not found")
-var WrongCredentialsError = errors.New("Wrong credentials")
-var EmailAlreadyInUseError = errors.New("Email already in use")
-var RequiredDataNotSpecified = errors.New("Required data was not specified")
-var PasswordPolicyViolatedError = errors.New("Password policy violated")
-var Unauthorized = errors.New("Unauthorized") // 401 -> No autenticado
-var Forbidden = errors.New("Forbidden")       // 403 -> No autorizado
+var (
 
-// Validation of email
-var ErrInvalidOrExpiredToken = errors.New("invalid or expired token")
+	// Authentication of user
+	ErrNotAuthenticated         = errors.New("user not authenticated")
+	UserNotFoundError           = errors.New("User not found")
+	WrongCredentialsError       = errors.New("Wrong credentials")
+	EmailAlreadyInUseError      = errors.New("Email already in use")
+	RequiredDataNotSpecified    = errors.New("Required data was not specified")
+	PasswordPolicyViolatedError = errors.New("Password policy violated")
+	Unauthorized                = errors.New("Unauthorized") // 401 -> No autenticado
+	Forbidden                   = errors.New("Forbidden")    // 403 -> No autorizado
 
-// Generales
-var UnknownError = errors.New("Unknown error")
+	// Validation of email
+	ErrInvalidOrExpiredToken = errors.New("invalid or expired token")
 
-var NoSessionError = errors.New("No session")
+	// Generales
+	UnknownError = errors.New("Unknown error")
+
+	NoSessionError = errors.New("No session")
+)
 
 // ------------------------------------------------------------------------------------------------

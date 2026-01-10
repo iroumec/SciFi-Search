@@ -5,7 +5,16 @@ package handlers
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"net/http"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Variables
+// ------------------------------------------------------------------------------------------------
+
+var (
+	InvalidLanguageError = errors.New("Invalid language")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -30,7 +39,7 @@ func setLanguageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Validación del lenguaje.
 	if language != "es" && language != "en" {
-		http.Error(w, "invalid language", http.StatusBadRequest)
+		http.Error(w, InvalidLanguageError.Error(), http.StatusBadRequest)
 		return
 	}
 

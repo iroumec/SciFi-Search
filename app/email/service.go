@@ -1,17 +1,21 @@
 package email
 
+// ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
+
 type Service struct {
 	provider Provider
 }
 
-func New(provider Provider) *Service {
-	return &Service{provider: provider}
-}
+// ------------------------------------------------------------------------------------------------
 
 // Método genérico
 func (s *Service) Send(to, subject, body string) error {
 	return s.provider.Send(to, subject, body)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 // Caso de uso concreto
 func (s *Service) SendVerification(to, link string) error {
@@ -22,3 +26,14 @@ func (s *Service) SendVerification(to, link string) error {
 		"Hacé click acá:\n\n"+link,
 	)
 }
+
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
+
+// A partir de un proveedor, retorna un servicio que depende de dicho proveedor.
+func New(provider Provider) *Service {
+	return &Service{provider: provider}
+}
+
+// ------------------------------------------------------------------------------------------------

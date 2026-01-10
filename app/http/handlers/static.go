@@ -10,6 +10,15 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Constantes
+// ------------------------------------------------------------------------------------------------
+
+const (
+	StaticFilesRoute     = "./static"
+	StaticFilesDirectory = "/static/"
+)
+
+// ------------------------------------------------------------------------------------------------
 // Servicios
 // ------------------------------------------------------------------------------------------------
 
@@ -17,15 +26,15 @@ import (
 func RegisterStatic() {
 
 	// Se crea un manejador (handler) de servidor de archivos.
-	fileServer := http.FileServer(http.Dir(fileDir))
+	fileServer := http.FileServer(http.Dir(StaticFilesRoute))
 
 	// Se sirven archivos estáticos en /static/,
 	// comprimidos en gzip si el navegador así lo acepta.
 	http.Handle(
-		"/static/",
+		StaticFilesDirectory,
 		http.StripPrefix(
-			"/static/",
-			middlewares.GzipMiddleware(fileDir, fileServer),
+			StaticFilesDirectory,
+			middlewares.GzipMiddleware(StaticFilesRoute, fileServer),
 		),
 	)
 }

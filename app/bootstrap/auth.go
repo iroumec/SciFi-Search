@@ -28,15 +28,18 @@ func initializeAuthorizationMechanisms() {
 // ------------------------------------------------------------------------------------------------
 
 func defineRolesInProvider() {
+
 	// Creación de roles.
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.AdminRole.Name,
 		[]string{"full-access"},
 	) // Administrador.
+
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.LoaderRole.Name,
 		[]string{"manage-own-financings"},
 	) // Entidades que cargan financiamiento.
+
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.UserRole.Name,
 		[]string{"view-only"},

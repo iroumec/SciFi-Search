@@ -1,11 +1,32 @@
 package email
 
+// ------------------------------------------------------------------------------------------------
+// Importaciones
+// ------------------------------------------------------------------------------------------------
+
 import "scifi-search/app/workers"
+
+// ------------------------------------------------------------------------------------------------
+// Estructuras
+// ------------------------------------------------------------------------------------------------
 
 type AsyncProvider struct {
 	queue        chan workers.Job
 	syncProvider Provider
 }
+
+// ------------------------------------------------------------------------------------------------
+
+func (p *AsyncProvider) Send(to, subject, body string) error {
+	p.queue <- func() {
+		_ = p.syncProvider.Send(to, subject, body)
+	}
+	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+// Servicios
+// ------------------------------------------------------------------------------------------------
 
 func NewAsyncProvider(queue chan workers.Job, sync Provider) Provider {
 	return &AsyncProvider{
@@ -14,9 +35,4 @@ func NewAsyncProvider(queue chan workers.Job, sync Provider) Provider {
 	}
 }
 
-func (p *AsyncProvider) Send(to, subject, body string) error {
-	p.queue <- func() {
-		_ = p.syncProvider.Send(to, subject, body)
-	}
-	return nil
-}
+// ------------------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ func loaderHandler(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodGet:
 		showNewLoaderPage(w, r)
+
 	case http.MethodPost:
 		createNewLoader(w, r)
 	}

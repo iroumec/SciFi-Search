@@ -7,6 +7,14 @@ package handlers
 import "net/http"
 
 // ------------------------------------------------------------------------------------------------
+// Constantes
+// ------------------------------------------------------------------------------------------------
+
+const (
+	BrowserSimpleMessage = "Servidor OK"
+)
+
+// ------------------------------------------------------------------------------------------------
 // Servicios
 // ------------------------------------------------------------------------------------------------
 
@@ -16,7 +24,7 @@ func RegisterHealth() {
 
 		// Solo se responde a peticiones GET.
 		if r.Method != http.MethodGet {
-			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+			http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 			return
 		}
 
@@ -25,7 +33,7 @@ func RegisterHealth() {
 		w.WriteHeader(http.StatusOK)
 
 		// Cuerpo simple para saber que funciona si se abre desde un navegador.
-		w.Write([]byte("Servidor OK"))
+		w.Write([]byte(BrowserSimpleMessage))
 	})
 }
 

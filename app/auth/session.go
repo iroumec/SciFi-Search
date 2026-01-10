@@ -6,6 +6,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"scifi-search/app/utils/converters"
 
@@ -100,20 +101,53 @@ func CreateSession(w http.ResponseWriter, r *http.Request, userID string) error 
 
 func GetCurrentUserID(w http.ResponseWriter, r *http.Request) (*string, error) {
 
+	session, err := getCurrentSession(w, r)
+	if err != nil {
+		return nil, err
+	}
+
+	userID := session.GetUserID()
+
+	return &userID, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func GetSessionInfo(w http.ResponseWriter, r *http.Request) (map[string]string, error) {
+
+	session, err := getCurrentSession(w, r)
+	if err != nil {
+		return nil, err
+	}
+
+	rawPayload := session.GetAccessTokenPayload()
+
+	payload := make(map[string]string)
+	for k, v := range rawPayload {
+		payload[k] = fmt.Sprintf("%v", v)
+	}
+
+	return payload, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funciones
+// ------------------------------------------------------------------------------------------------
+
+func getCurrentSession(w http.ResponseWriter, r *http.Request) (sessmodels.SessionContainer, error) {
+
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
 		SessionRequired: converters.ToBoolPointer(false),
 	})
 	if err != nil {
-		return nil, err
+		return nil, NoSessionError
 	}
 
 	if sessionContainer == nil {
 		return nil, NoSessionError
 	}
 
-	userID := sessionContainer.GetUserID()
-
-	return &userID, nil
+	return sessionContainer, nil
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -26,21 +26,21 @@ type HTTPDependencies struct {
 // ------------------------------------------------------------------------------------------------
 
 func registerEndpoints(dependencies HTTPDependencies) {
-	handlers.SetQueries(dependencies.Queries)
-	handlers.SetAvatarService(dependencies.AvatarService)
-	handlers.SetEmailService(dependencies.EmailService)
 
-	handlers.RegisterStatic()
+	handlers.SetQueries(dependencies.Queries)
+	handlers.SetEmailService(dependencies.EmailService)
+	handlers.SetAvatarService(dependencies.AvatarService)
+
 	handlers.RegisterIndex()
+	handlers.RegisterStatic()
 	handlers.RegisterHealth()
-	handlers.RegisterAuthenticationHandlers()
 	handlers.RegisterSearchHandlers()
-	handlers.RegisterSettingsHandlers()
-	handlers.RegisterAvatarHandlers()
+	handlers.RegisterTrendsHandlers()
 	handlers.RegisterHistoryHandlers()
 	handlers.RegisterFundingHandlers()
-	handlers.RegisterTrendsHandlers()
+	handlers.RegisterSettingsHandlers()
 	handlers.RegisterLanguageHandlers()
+	handlers.RegisterAuthenticationHandlers()
 }
 
 // ------------------------------------------------------------------------------------------------

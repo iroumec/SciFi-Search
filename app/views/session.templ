@@ -1,14 +1,12 @@
 package views 
 
-templ SessionInfo(userID string, payload map[string]string) {
+templ SessionInfo(payload map[string]string) {
 	<html>
 		<head>
-			<title>Session Info</title>
+			<title>Session Information</title>
 		</head>
 		<body>
-			<h1>Session activa</h1>
-			<p><strong>User ID:</strong> { userID }</p>
-			<h2>Datos de sesión</h2>
+			<h1>Active Session</h1>
 			<ul>
 				for key, value := range payload {
 					<li>
