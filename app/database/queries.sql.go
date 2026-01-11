@@ -272,7 +272,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listAllDocuments = `-- name: ListAllDocuments :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents LIMIT $1 OFFSET $2
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY name LIMIT $1 OFFSET $2
 `
 
 type ListAllDocumentsParams struct {
@@ -318,7 +318,7 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 }
 
 const listDocumentsByUser = `-- name: ListDocumentsByUser :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3
 `
 
 type ListDocumentsByUserParams struct {

@@ -66,10 +66,10 @@ UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, li
 SELECT * from documents WHERE id = $1;
 
 -- name: ListAllDocuments :many
-SELECT * FROM documents LIMIT $1 OFFSET $2;
+SELECT * FROM documents ORDER BY name LIMIT $1 OFFSET $2;
 
 -- name: ListDocumentsByUser :many
-SELECT * FROM documents WHERE user_id = $1 LIMIT $2 OFFSET $3;
+SELECT * FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3;
 
 -- name: CountAllDocuments :one
 SELECT COUNT(*) FROM documents;

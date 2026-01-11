@@ -31,7 +31,6 @@ templ pagination(totalHits int, currentPage int, get string, include string, tar
 		}
 		if pageAmount > currentPage {
 			@navigationButton(currentPage+1, "›", get, include, target)
-			{ pageAmount }
 		}
 		if windowAmount > currentWindow {
 			@navigationButton(currentWindow*pagesPerWindow+1, "»", get, include, target)

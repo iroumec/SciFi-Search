@@ -52,6 +52,26 @@ func RegisterFundingHandlers() {
 	)
 
 	http.HandleFunc(
+		"/funding/open-add-new",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				openAddNewFundingModal,
+				auth.LoaderRole.Level,
+			),
+		),
+	)
+
+	http.HandleFunc(
+		"/funding/open-edit/",
+		middlewares.RequiresEmailVerified(
+			middlewares.RequiresAuthorization(
+				openEditFundingModal,
+				auth.LoaderRole.Level,
+			),
+		),
+	)
+
+	http.HandleFunc(
 		"/funding/",
 		middlewares.RequiresEmailVerified(
 			middlewares.RequiresAuthorization(
@@ -85,6 +105,8 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 		addFunding(w, r)
 	case http.MethodDelete:
 		deleteFunding(w, r)
+	case http.MethodPut:
+		editFundingModal(w, r)
 	default:
 		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
@@ -266,6 +288,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(r, name)
 
+	//TODO: no funciona el mensaje de notificación
 	notifications.ShowFlash(w, r, "New funding added successfully!")
 
 	updateFundingList(w, r)
@@ -325,3 +348,125 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func openAddNewFundingModal(w http.ResponseWriter, r *http.Request) {
+	component := views.FundingModal("new", nil, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
+	component.Render(r.Context(), w)
+}
+
+func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/funding/open-edit/")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, InvalidIDError.Error(), http.StatusBadRequest)
+		return
+	}
+
+	sqlcDocument, err := queries.GetDocumentByID(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	document := map[string]any{
+		"id":          strconv.Itoa(int(sqlcDocument.ID)),
+		"Nombre":      sqlcDocument.Name,
+		"Tipo":        sqlcDocument.Type,
+		"Gran area 1": sqlcDocument.FirstArea,
+		"Gran area 2": sqlcDocument.SecondArea.String,
+		"Link":        sqlcDocument.Link.String,
+		"Descripcion": sqlcDocument.Description.String,
+		"Pais":        sqlcDocument.BasedOn.String,
+		"Otorgante":   sqlcDocument.Grantor.String,
+		"Moneda":      sqlcDocument.Currency,
+		"Monto":       sqlcDocument.Amount,
+		"Deadline":    sqlcDocument.Deadline,
+	}
+
+	component := views.FundingModal("edit", document, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
+	component.Render(r.Context(), w)
+}
+
+func editFundingModal(w http.ResponseWriter, r *http.Request) {
+
+	idStr := strings.TrimPrefix(r.URL.Path, "/funding/")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, InvalidIDError.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	name := r.Form.Get("name")
+	fundingType := r.Form.Get("type")
+	firstArea := r.Form.Get("first-area")
+	secondArea := r.Form.Get("second-area")
+	link := r.Form.Get("link")
+	description := r.Form.Get("description")
+	basedOn := r.Form.Get("based-on")
+	grantor := r.Form.Get("grantor")
+	currency := r.Form.Get("currency")
+	amount := r.Form.Get("amount")
+	deadline := r.Form.Get("deadline")
+
+	user, err := getCurrentUser(w, r)
+	if err != nil {
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = queries.UpdateDocument(r.Context(), sqlc.UpdateDocumentParams{
+		ID:          int32(id),
+		Name:        name,
+		UserID:      sql.NullInt32{Int32: user.UserID, Valid: true},
+		Type:        fundingType,
+		FirstArea:   firstArea,
+		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},
+		Link:        sql.NullString{String: link, Valid: link != ""},
+		Description: sql.NullString{String: description, Valid: description != ""},
+		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
+		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
+		Currency:    currency,
+		Amount:      amount,
+		Deadline:    deadline,
+	})
+	if err != nil {
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = client.Index(indexName).UpdateDocuments(map[string]any{
+		"id":          id,
+		"Usuario":     user.UserID,
+		"Nombre":      name,
+		"Tipo":        fundingType,
+		"Gran area 1": firstArea,
+		"Gran area 2": secondArea,
+		"Link":        link,
+		"Descripcion": description,
+		"Pais":        basedOn,
+		"Otorgante":   grantor,
+		"Moneda":      currency,
+		"Monto":       amount,
+		"Deadline":    deadline,
+	}, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//notifyFundingEdit(r, name)
+
+	//TODO: no funciona el mensaje de notificación
+	notifications.ShowFlash(w, r, "Funding edited successfully!")
+
+	updateFundingList(w, r)
+
+}
