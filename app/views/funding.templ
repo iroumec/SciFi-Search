@@ -46,7 +46,7 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 		}
 		hx-target="#funding-list"
 		hx-swap="innerHTML"
-		hx-on::after-request="if(event.detail.successful) { document.getElementById('modal-root').innerHTML=''; }"
+		hx-on="htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''"
 	>
 		<div class="form-inputs">
 			<div class="labeled-input">

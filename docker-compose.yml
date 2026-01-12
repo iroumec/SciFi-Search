@@ -14,7 +14,7 @@ services:
     volumes:
       - tpe-db-data:/var/lib/postgresql/data
       - ./logs/db:/var/log
-      - ./database/init/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh # Trigramas.
+      - ./database/init:/docker-entrypoint-initdb.d # Ejecuta cada archivo en la carpeta de acuerdo al orden alfabético.
     logging:
       driver: local
       options:
@@ -47,7 +47,7 @@ services:
       minio:
         condition: service_started
     environment:
-      DATABASE_URL: "postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable"
+      DATABASE_URL: "${DB_URL}"
       MEILI_URL: "${MEILI_URL}"
       MEILI_MASTER_KEY: "${MEILI_KEY}"
       SUPERTOKENS_URL: "${SUPERTOKENS_URL}"
@@ -102,7 +102,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      POSTGRESQL_CONNECTION_URI: "postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}"
+      POSTGRESQL_CONNECTION_URI: "${DB_URL}"
       SUPERTOKENS_LOG_LEVEL: "warn"
     ports:
       - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"

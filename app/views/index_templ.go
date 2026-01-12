@@ -32,15 +32,7 @@ func indexContent(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = showPopUp().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" name=\"query\" placeholder=\"Search for SCIENCE!!!\" hx-get=\"/search\" hx-trigger=\"keyup[key=='Enter' && this.value.trim()!='']\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></div></div></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logo.png\" alt=\"Logo Scifi\" id=\"logo_scifi\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" name=\"query\" placeholder=\"Search for SCIENCE!!!\" hx-get=\"/search\" hx-trigger=\"keyup[key=='Enter' && this.value.trim()!='']\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></div></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -47,7 +47,15 @@ func Layout(title string, translator languages.Translator, header func() templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/css/styles.css\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/icono.png\"></head><body><div class=\"contenedor-grid\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/css/styles.css\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap\"><link rel=\"icon\" type=\"image/png\" href=\"/static/img/icono.png\"></head><body>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = showPopUp().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"contenedor-grid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,7 +71,7 @@ func Layout(title string, translator languages.Translator, header func() templ.C
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,46 +103,46 @@ func Footer(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<footer class=\"footer\"><div class=\"clear-top\"></div><div class=\"clear-left\"></div><div id=\"powered-section\"><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<footer class=\"footer\"><div class=\"clear-top\"></div><div class=\"clear-left\"></div><div id=\"powered-section\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("powered-by"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 42, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 43, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo-meilisearch.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo-supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo-minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logo-unicen.png\" alt=\"Logo Supertokens\" id=\"logo-unicen\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logo-meilisearch.png\" alt=\"Logo Meilisearch\" id=\"logo-meilisearch\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logo-supertokens.png\" alt=\"Logo Supertokens\" id=\"logo-supertokens\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logo-minio.svg\" alt=\"Logo MinIO\" id=\"logo-minio\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logo-unicen.png\" alt=\"Logo Supertokens\" id=\"logo-unicen\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(translator("trends"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 61, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 62, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</button> <button class=\"footer-button\">Language: EN</button><a id=\"github-btn\" class=\"footer-button\" href=\"https://github.com/iroumec/SciFi-Search\" target=\"_blank\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</button> <button class=\"footer-button\">Language: EN</button><a id=\"github-btn\" class=\"footer-button\" href=\"https://github.com/iroumec/SciFi-Search\" target=\"_blank\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("footer.github"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 63, Col: 136}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 64, Col: 136}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</a></div><div class=\"clear-right\"></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</a></div><div class=\"clear-right\"></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

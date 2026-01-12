@@ -11,7 +11,6 @@ import (
 
 // ------------------------------------------------------------------------------------------------
 templ settingsContent(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
-	@showPopUp()
 	<div class="centered-box-content">
 		<div id="left"></div>
 		@SettingsForm(user, preferences, authorizationLevel, translator)

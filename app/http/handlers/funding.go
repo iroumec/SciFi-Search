@@ -289,7 +289,6 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(r.Context(), document)
 
-	//TODO: no funciona el mensaje de notificación
 	notifications.ShowFlash(w, r, "New funding added successfully!")
 
 	updateFundingList(w, r)
@@ -471,11 +470,7 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	//notifyFundingEdit(r, name)
-
-	//TODO: no funciona el mensaje de notificación
 	notifications.ShowFlash(w, r, "Funding edited successfully!")
 
 	updateFundingList(w, r)
-
 }

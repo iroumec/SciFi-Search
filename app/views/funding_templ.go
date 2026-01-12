@@ -128,7 +128,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " hx-target=\"#funding-list\" hx-swap=\"innerHTML\" hx-on::after-request=\"if(event.detail.successful) { document.getElementById('modal-root').innerHTML=''; }\"><div class=\"form-inputs\"><div class=\"labeled-input\"><label for=\"name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " hx-target=\"#funding-list\" hx-swap=\"innerHTML\" hx-on=\"htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''\"><div class=\"form-inputs\"><div class=\"labeled-input\"><label for=\"name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

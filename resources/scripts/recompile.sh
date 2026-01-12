@@ -21,15 +21,19 @@ atlas migrate diff --env docker
 # Aplicación de migraciones.
 atlas migrate apply --env docker
 
-# 2. Generación de sqlc.
+# 2. Acciones post-migración.
+echo "Ejecutando acciones post-migración..."
+
+
+# 3. Generación de sqlc.
 echo "Generando sqlc..."
 sqlc generate -f database/sqlc.yaml
 
-# 3. Generación de templ
+# 4. Generación de templ
 echo "Generando templ..."
 go run github.com/a-h/templ/cmd/templ@latest generate ./app/views
 
-# 4. Compilación de Go
+# 5. Compilación de Go
 echo "Compilando aplicación Go..."
 go build -buildvcs=false -o ./tmp/main ./app
 

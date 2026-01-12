@@ -22,6 +22,7 @@ templ Layout(title string, translator languages.Translator, header func() templ.
 			<link rel="icon" type="image/png" href="/static/img/icono.png"/>
 		</head>
 		<body>
+			@showPopUp()
 			<div class="contenedor-grid">
 				@header()
 				@content()
