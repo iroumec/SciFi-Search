@@ -76,3 +76,19 @@ SELECT COUNT(*) FROM documents;
 
 -- name: CountDocumentsByUser :one
 SELECT COUNT(*) FROM documents WHERE user_id = $1;
+
+-- name: UsersInterestedInFunding :many
+SELECT DISTINCT u.user_id, u.auth_id
+FROM users u
+JOIN user_preferences up ON up.user_id = u.user_id
+JOIN documents d ON d.id = $1
+WHERE
+    d.user_id != u.user_id
+    AND (up.preference % d.name
+    OR up.preference % d.type
+    OR up.preference % d.first_area
+    OR up.preference % d.second_area
+    OR up.preference % d.based_on
+    OR up.preference % d.grantor)
+;
+

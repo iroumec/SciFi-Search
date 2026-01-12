@@ -555,3 +555,46 @@ func (q *Queries) UploadAvatar(ctx context.Context, arg UploadAvatarParams) erro
 	_, err := q.db.ExecContext(ctx, uploadAvatar, arg.UserID, arg.AvatarUrl)
 	return err
 }
+
+const usersInterestedInFunding = `-- name: UsersInterestedInFunding :many
+SELECT DISTINCT u.user_id, u.auth_id
+FROM users u
+JOIN user_preferences up ON up.user_id = u.user_id
+JOIN documents d ON d.id = $1
+WHERE
+    d.user_id != u.user_id
+    AND (up.preference % d.name
+    OR up.preference % d.type
+    OR up.preference % d.first_area
+    OR up.preference % d.second_area
+    OR up.preference % d.based_on
+    OR up.preference % d.grantor)
+`
+
+type UsersInterestedInFundingRow struct {
+	UserID int32  `json:"user_id"`
+	AuthID string `json:"auth_id"`
+}
+
+func (q *Queries) UsersInterestedInFunding(ctx context.Context, id int32) ([]UsersInterestedInFundingRow, error) {
+	rows, err := q.db.QueryContext(ctx, usersInterestedInFunding, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UsersInterestedInFundingRow
+	for rows.Next() {
+		var i UsersInterestedInFundingRow
+		if err := rows.Scan(&i.UserID, &i.AuthID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

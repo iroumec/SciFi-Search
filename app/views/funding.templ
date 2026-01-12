@@ -46,51 +46,76 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 		}
 		hx-target="#funding-list"
 		hx-swap="innerHTML"
-		hx-on="htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''"
+		hx-on::after-request="if(event.detail.successful) { document.getElementById('modal-root').innerHTML=''; }"
 	>
 		<div class="form-inputs">
 			<div class="labeled-input">
 				<label for="name">{ translator("name") }</label>
-				<input type="text" id="name" name="name" required 
-					if document["Nombre"] != "" {
-						value={ document["Nombre"].(string) } 
+				<input
+					type="text"
+					id="name"
+					name="name"
+					required
+					if document["Nombre"] != nil && document["Nombre"].(string) != "" {
+						value={ document["Nombre"].(string) }
 					}
 				/>
 			</div>
-			// TODO: tengo que emprolijar esto, todos los labeled-input son casi iguales
 			<div class="labeled-input">
 				<label for="type">{ translator("type") }</label>
-				<input type="text" id="type" name="type" list="types" required
-					if document["Tipo"] != "" {
+				<input
+					type="text"
+					id="type"
+					name="type"
+					list="types"
+					required
+					if document["Tipo"] != nil && document["Tipo"].(string) != "" {
 						value={ document["Tipo"].(string) }
 					}
 				/>
 			</div>
 			<div class="labeled-input">
 				<label for="first-area">{ translator("areas") }</label>
-				<input type="text" id="first-area" placeholder={ translator("first-area") } name="first-area" list="areas" required
-					if document["Gran area 1"] != "" {
+				<input
+					type="text"
+					id="first-area"
+					placeholder={ translator("first-area") }
+					name="first-area"
+					list="areas"
+					required
+					if document["Gran area 1"] != nil && document["Gran area 1"].(string) != "" {
 						value={ document["Gran area 1"].(string) }
 					}
 				/>
-				<input type="text" id="second-area" placeholder={ translator("second-area") } name="second-area" list="areas"
-					if document["Gran area 2"] != "" {
+				<input
+					type="text"
+					id="second-area"
+					placeholder={ translator("second-area") }
+					name="second-area"
+					list="areas"
+					if document["Gran area 2"] != nil && document["Gran area 2"].(string) != "" {
 						value={ document["Gran area 2"].(string) }
 					}
 				/>
 			</div>
 			<div class="labeled-input">
 				<label for="link">{ translator("link") }</label>
-				<input type="url" id="link" name="link"
-					if document["Link"] != "" {
+				<input
+					type="url"
+					id="link"
+					name="link"
+					if document["Link"] != nil && document["Link"].(string) != "" {
 						value={ document["Link"].(string) }
 					}
 				/>
 			</div>
 			<div class="labeled-input">
 				<label for="description">{ translator("description") }</label>
-				<input type="text" id="description" name="description"
-					if document["Descripcion"] != "" {
+				<input
+					type="text"
+					id="description"
+					name="description"
+					if document["Descripcion"] != nil && document["Descripcion"].(string) != "" {
 						value={ document["Descripcion"].(string) }
 					}
 				/>
@@ -98,62 +123,84 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 			<div class="double-input">
 				<div class="labeled-input">
 					<label for="based-on">{ translator("based_on") }</label>
-					<input type="text" id="based-on" name="based-on" list="based-on"
-						if document["Pais"] != "" {
+					<input
+						type="text"
+						id="based-on"
+						name="based-on"
+						list="based-on"
+						if document["Pais"] != nil && document["Pais"].(string) != "" {
 							value={ document["Pais"].(string) }
 						}
 					/>
 				</div>
 				<div class="labeled-input">
 					<label for="grantor">{ translator("grantor") }</label>
-					<input type="text" id="grantor" name="grantor" list="grantors"
-						if document["Otorgante"] != "" {
+					<input
+						type="text"
+						id="grantor"
+						name="grantor"
+						list="grantors"
+						if document["Otorgante"] != nil && document["Otorgante"].(string) != "" {
 							value={ document["Otorgante"].(string) }
 						}
 					/>
 				</div>
-					</div>
-					<div class="double-input">
-						<div class="labeled-input">
-							<label for="currency">{ translator("currency") }</label>
-							<input type="text" id="currency" name="currency" list="currencies" required
-								if document["Moneda"] != "" {
-									value={ document["Moneda"].(string) }
-								}
-							/>
-						</div>
-						<div class="labeled-input">
-							<label for="amount">{ translator("amount") }</label>
-							<input type="text" id="amount" placeholder="min - max" name="amount" required
-								if document["Monto"] != "" {
-									value={ document["Monto"].(string) }
-								}
-							/>
-						</div>
-					</div>
-					<div class="labeled-input">
-						<label for="deadline">{ translator("deadline") }</label>
-						<input type="date" id="deadline" name="deadline" required
-							if document["Deadline"] != "" {
-								value={ document["Deadline"].(string) }
-							}
-						/>
-					</div>
-					@datalist("types", documentTypes)
-					@datalist("areas", documentAreas)
-					@datalist("based-on", documentBasedOn)
-					@datalist("grantors", documentGrantors)
-					@datalist("currencies", documentCurrencies)
+			</div>
+			<div class="double-input">
+				<div class="labeled-input">
+					<label for="currency">{ translator("currency") }</label>
+					<input
+						type="text"
+						id="currency"
+						name="currency"
+						list="currencies"
+						required
+						if document["Moneda"] != nil && document["Moneda"].(string) != "" {
+							value={ document["Moneda"].(string) }
+						}
+					/>
 				</div>
-				<div class="modal-footer">
-					<button id="cancel-button" type="button" class="scifi-button secondary" onclick="this.closest('.modal-overlay').remove()">
-						{ translator("cancel") }
-					</button>
-					<button type="submit" class="scifi-button">
-						{ translator("submit") }
-					</button>
+				<div class="labeled-input">
+					<label for="amount">{ translator("amount") }</label>
+					<input
+						type="text"
+						id="amount"
+						placeholder="min - max"
+						name="amount"
+						required
+						if document["Monto"] != nil && document["Monto"].(string) != "" {
+							value={ document["Monto"].(string) }
+						}
+					/>
 				</div>
-			</form>
+			</div>
+			<div class="labeled-input">
+				<label for="deadline">{ translator("deadline") }</label>
+				<input
+					type="date"
+					id="deadline"
+					name="deadline"
+					required
+					if document["Deadline"] != nil && document["Deadline"].(string) != "" {
+						value={ document["Deadline"].(string) }
+					}
+				/>
+			</div>
+			@datalist("types", documentTypes)
+			@datalist("areas", documentAreas)
+			@datalist("based-on", documentBasedOn)
+			@datalist("grantors", documentGrantors)
+			@datalist("currencies", documentCurrencies)
+		</div>
+		<div class="modal-footer">
+			<button id="cancel-button" type="button" class="scifi-button secondary" onclick="this.closest('.modal-overlay').remove()">
+				{ translator("cancel") }
+			</button>
+			<button type="submit" class="scifi-button">
+				{ translator("submit") }
+			</button>
+		</div>
+	</form>
 }
 
 templ datalist(name string, options *list.List) {
@@ -198,12 +245,12 @@ templ manageFundingContent(fundings []map[string]any, totalFundings int, documen
 				</div>
 			</div>
 			<div id="funding-buttons">
-				<button 
-					class="scifi-button" 
+				<button
+					class="scifi-button"
 					type="button"
 					hx-get="/funding/open-add-new"
 					hx-target="#modal-root"
-  					hx-swap="innerHTML"
+					hx-swap="innerHTML"
 				>
 					Add new
 				</button>

@@ -53,3 +53,23 @@ REFERENCES users(user_id)
     ON UPDATE CASCADE 
     ON DELETE CASCADE
 ;
+
+-- ------------------------------------------------------------------------------------------------
+-- Trigramas
+-- Ver archivo: database/init/init-db.sh
+-- Este último es necesario ya que la extensión debe crearse con una cuenta de superusuario.
+-- ------------------------------------------------------------------------------------------------
+
+-- Creación de índice.
+-- Esto tiene el objetivo de mejorar la eficiencia y la escalabilidad.
+CREATE INDEX idx_user_preferences_preference_trgm 
+ON user_preferences 
+USING gin (preference pg_catalog.gin_trgm_ops);
+
+
+-- ------------------------------------------------------------------------------------------------
+
+-- Definición de umbral de similitud.
+SET pg_trgm.similarity_threshold = 0.4;
+
+-- ------------------------------------------------------------------------------------------------

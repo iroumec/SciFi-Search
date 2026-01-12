@@ -128,7 +128,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " hx-target=\"#funding-list\" hx-swap=\"innerHTML\" hx-on=\"htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''\"><div class=\"form-inputs\"><div class=\"labeled-input\"><label for=\"name\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " hx-target=\"#funding-list\" hx-swap=\"innerHTML\" hx-on::after-request=\"if(event.detail.successful) { document.getElementById('modal-root').innerHTML=''; }\"><div class=\"form-inputs\"><div class=\"labeled-input\"><label for=\"name\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -145,7 +145,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Nombre"] != "" {
+		if document["Nombre"] != nil && document["Nombre"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -153,7 +153,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(document["Nombre"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 56, Col: 41}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 60, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -171,7 +171,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(translator("type"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 62, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 65, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -181,7 +181,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Tipo"] != "" {
+		if document["Tipo"] != nil && document["Tipo"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -189,7 +189,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(document["Tipo"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 65, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 73, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -207,7 +207,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(translator("areas"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 70, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 78, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -220,7 +220,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(translator("first-area"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 71, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 82, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -230,7 +230,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Gran area 1"] != "" {
+		if document["Gran area 1"] != nil && document["Gran area 1"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -238,7 +238,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(document["Gran area 1"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 73, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 87, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -256,7 +256,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(translator("second-area"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 76, Col: 79}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 93, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -266,7 +266,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Gran area 2"] != "" {
+		if document["Gran area 2"] != nil && document["Gran area 2"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -274,7 +274,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(document["Gran area 2"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 78, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 97, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -292,7 +292,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(translator("link"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 83, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 102, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -302,7 +302,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Link"] != "" {
+		if document["Link"] != nil && document["Link"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -310,7 +310,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(document["Link"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 86, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 108, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -328,7 +328,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(translator("description"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 91, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 113, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Descripcion"] != "" {
+		if document["Descripcion"] != nil && document["Descripcion"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -346,7 +346,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(document["Descripcion"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 94, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 119, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -364,7 +364,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(translator("based_on"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 100, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 125, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -374,7 +374,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Pais"] != "" {
+		if document["Pais"] != nil && document["Pais"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -382,7 +382,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(document["Pais"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 103, Col: 40}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 132, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -400,7 +400,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var21 string
 		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(translator("grantor"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 108, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 137, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
@@ -410,7 +410,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Otorgante"] != "" {
+		if document["Otorgante"] != nil && document["Otorgante"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -418,7 +418,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(document["Otorgante"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 111, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 144, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -436,7 +436,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(translator("currency"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 118, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 151, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -446,7 +446,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Moneda"] != "" {
+		if document["Moneda"] != nil && document["Moneda"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -454,7 +454,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(document["Moneda"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 121, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 159, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -472,7 +472,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(translator("amount"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 126, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 164, Col: 47}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -482,7 +482,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Monto"] != "" {
+		if document["Monto"] != nil && document["Monto"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -490,7 +490,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(document["Monto"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 129, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 172, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -508,7 +508,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(translator("deadline"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 135, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 178, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -518,7 +518,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if document["Deadline"] != "" {
+		if document["Deadline"] != nil && document["Deadline"].(string) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, " value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -526,7 +526,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(document["Deadline"].(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 138, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 185, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -568,7 +568,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var29 string
 		templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(translator("cancel"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 150, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 197, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 		if templ_7745c5c3_Err != nil {
@@ -581,7 +581,7 @@ func fundingForm(document map[string]any, mode string, documentTypes *list.List,
 		var templ_7745c5c3_Var30 string
 		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(translator("submit"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 153, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 200, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -623,7 +623,7 @@ func datalist(name string, options *list.List) templ.Component {
 		var templ_7745c5c3_Var32 string
 		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 160, Col: 20}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 207, Col: 20}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 		if templ_7745c5c3_Err != nil {
@@ -641,7 +641,7 @@ func datalist(name string, options *list.List) templ.Component {
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(e.Value.(string))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 162, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 209, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -691,7 +691,7 @@ func fundingAddedContent(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(translator("funding.added"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 173, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 220, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 		if templ_7745c5c3_Err != nil {
@@ -704,7 +704,7 @@ func fundingAddedContent(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var36 string
 		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(translator("redirect.main_page"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 174, Col: 102}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 221, Col: 102}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 		if templ_7745c5c3_Err != nil {
@@ -717,7 +717,7 @@ func fundingAddedContent(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(translator("funding.add_another"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 175, Col: 110}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 222, Col: 110}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 		if templ_7745c5c3_Err != nil {
@@ -844,7 +844,7 @@ func FundingList(fundings []map[string]any, page int, totalFundings int, transla
 			var templ_7745c5c3_Var41 string
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs("/funding/open-edit/" + converters.ToString(fundings[i]["id"]))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 225, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 272, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {
@@ -857,7 +857,7 @@ func FundingList(fundings []map[string]any, page int, totalFundings int, transla
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs("/funding/" + converters.ToString(fundings[i]["id"]))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 231, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/funding.templ`, Line: 278, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {

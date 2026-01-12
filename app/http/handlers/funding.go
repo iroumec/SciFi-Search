@@ -5,6 +5,7 @@ package handlers
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log"
@@ -286,7 +287,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifyFundingAddition(r, name)
+	notifyFundingAddition(r.Context(), document)
 
 	//TODO: no funciona el mensaje de notificación
 	notifications.ShowFlash(w, r, "New funding added successfully!")
@@ -296,31 +297,39 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func notifyFundingAddition(r *http.Request, fundingName string) {
+func notifyFundingAddition(ctx context.Context, document sqlc.Document) {
 
-	// Acá sería mejor que el email solo se enviara a los usuarios
-	// que están verificados.
-	// TODO: agregar un campo a la base de datos que indique si
-	// el usuario está verificado.
-	// TODO: tampoco debería (creo) notificarse al usuario que añadió
-	// el financiamiento.
-	usersList, err := queries.ListUsers(r.Context())
+	users, err := queries.UsersInterestedInFunding(ctx, document.ID)
 	if err != nil {
-		log.Fatal("Error en la notificación de nuevo financiamiento")
+		log.Println("Error obteniendo usuarios interesados:", err)
 		return
 	}
 
-	for _, user := range usersList {
+	emailBody := strings.Join([]string{
+		"Se ha publicado un nuevo financiamiento que podría interesarte de acuerdo a tus preferencias: \n\n",
+		"Nombre: " + document.Name + "\n\n",
+		"Descripción: " + document.Description.String + "\n",
+		"\n¡Accede a SciFi para ver sus detalles!\n",
+		"\nSi el documento no te interesa, puedes ajustar tus preferencias en la configuración de tu perfil",
+	}, "")
 
-		userEmail := auth.GetUserEmail(user.AuthID)
+	for _, user := range users {
 
-		if userEmail == nil {
-			// The user is ignored.
-			// This should never happen.
+		emailVerified, err := auth.IsEmailVerified(user.AuthID)
+		if err != nil || !*emailVerified {
 			continue
 		}
 
-		emailService.Send(*userEmail, "Nuevo financiamiento añadido", fundingName)
+		userEmail := auth.GetUserEmail(user.AuthID)
+		if userEmail == nil {
+			continue
+		}
+
+		emailService.Send(
+			*userEmail,
+			"Nuevo financiamiento disponible",
+			emailBody,
+		)
 	}
 }
 
