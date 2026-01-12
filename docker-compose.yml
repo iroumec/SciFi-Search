@@ -1,35 +1,28 @@
 services:
-  # Base de Datos PostgreSQL
   db:
     image: postgres:15
-    container_name: scifi-search-db
+    container_name: database
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      POSTGRES_LOGGING_COLLECTOR: "off"
-      POSTGRES_LOG_MIN_MESSAGES: "WARNING"
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
       - tpe-db-data:/var/lib/postgresql/data
-      - ./logs/db:/var/log
-      - ./database/init:/docker-entrypoint-initdb.d # Ejecuta cada archivo en la carpeta de acuerdo al orden alfabético.
+      - ./database/init:/docker-entrypoint-initdb.d
+    restart: always
     logging:
-      driver: local
+      driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "5"
-    restart: always
+        max-file: "3"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -p ${DB_PORT}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # =================================================================================================
-
-  # Aplicación
   app:
     build:
       context: .
@@ -62,38 +55,30 @@ services:
       MINIO_BUCKET: "${MINIO_BUCKET}"
     env_file:
       - .env
-    volumes:
-      - ./logs/app:/var/log
+    restart: always
     logging:
-      driver: local
+      driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "5"
-    restart: always
+        max-file: "3"
 
-  # =================================================================================================
-
-  # Motor de búsqueda MeiliSearch
   meilisearch:
-    image: getmeili/meilisearch:v1.31.0 # "latest" si se desea utilizar la última versión.
+    image: getmeili/meilisearch:v1.31.0
     container_name: meilisearch
     ports:
       - "${MEILI_PORT}:${MEILI_PORT}"
     volumes:
-      - ./meili_data:/meili_data
-      - ./logs/meili:/var/log
-    logging:
-      driver: local
-      options:
-        max-size: "10m"
-        max-file: "5"
+      - meili-data:/meili_data
     environment:
       MEILI_MASTER_KEY: "${MEILI_KEY}"
+      MEILI_LOG_LEVEL: "WARN" # Reducir logs: OFF, ERROR, WARN, INFO, DEBUG, TRACE
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # =================================================================================================
-
-  # Servicio de autenticación SuperTokens
   supertokens:
     image: supertokens/supertokens-core:dev-branch-11.0
     container_name: supertokens
@@ -103,52 +88,103 @@ services:
         condition: service_healthy
     environment:
       POSTGRESQL_CONNECTION_URI: "${DB_URL}"
-      SUPERTOKENS_LOG_LEVEL: "warn"
+      SUPERTOKENS_LOG_LEVEL: "error" # O "warn"
     ports:
       - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"
-    volumes:
-      - ./logs/supertokens:/var/log
     logging:
-      driver: local
+      driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "5"
+        max-file: "3"
 
-  # =================================================================================================
-
-  # Almacenamiento de objetos MinIO.
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
     container_name: minio
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":9001" --quiet
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
-      - "9000:9000" # API S3-compatible.
-      - "9001:9001" # Panel web.
+      - "9000:9000"
+      - "9001:9001"
     volumes:
-      - ./minio_data:/data
-      - ./logs/minio:/var/log
+      - minio-data:/data
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # =================================================================================================
-
-  # Simulación de emails.
   mailhog:
     image: mailhog/mailhog:v1.0.1
     container_name: mailhog
     ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI.
+      - "1025:1025"
+      - "8025:8025"
     logging:
-      driver: local
+      driver: "json-file"
       options:
         max-size: "5m"
         max-file: "2"
 
-# =================================================================================================
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    command: -config.file=/etc/loki/config.yaml
+    ports:
+      - "${LOKI_PORT}:3100"
+    volumes:
+      - loki-data:/loki
+      - ./observability/loki/loki-config.yaml:/etc/loki/config.yaml
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  promtail:
+    image: grafana/promtail:3.0.0
+    container_name: promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./observability/promtail/promtail.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: grafana
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./observability/grafana/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_LOG_LEVEL: error # debug, info, warn, error, critical...
+    depends_on:
+      - loki
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
 
 volumes:
   tpe-db-data:
-# =================================================================================================
+  meili-data:
+  minio-data:
+  loki-data:
+  grafana-data:
