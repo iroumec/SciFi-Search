@@ -175,18 +175,18 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	for _, doc := range fundingsDocs {
 		funding := map[string]any{
-			"id":          doc.ID,
-			"Nombre":      doc.Name,
-			"Tipo":        doc.Type,
-			"Gran area 1": doc.FirstArea,
-			"Gran area 2": doc.SecondArea.String,
-			"Link":        doc.Link.String,
-			"Descripcion": doc.Description.String,
-			"Pais":        doc.BasedOn.String,
-			"Otorgante":   doc.Grantor.String,
-			"Moneda":      doc.Currency,
-			"Monto":       doc.Amount,
-			"Deadline":    doc.Deadline,
+			"id":             doc.ID,
+			"Name":           doc.Name,
+			"Type":           doc.Type,
+			"Main area":      doc.MainArea,
+			"Secondary area": doc.SecondaryArea.String,
+			"Link":           doc.Link.String,
+			"Description":    doc.Description.String,
+			"Based on":       doc.BasedOn.String,
+			"Grantor":        doc.Grantor.String,
+			"Currency":       doc.Currency,
+			"Amount":         doc.Amount,
+			"Deadline":       doc.Deadline,
 		}
 		fundings = append(fundings, funding)
 	}
@@ -235,8 +235,8 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	// Obtención de los datos del formulario.
 	name := r.Form.Get("name")
 	fundingType := r.Form.Get("type")
-	firstArea := r.Form.Get("first-area")
-	secondArea := r.Form.Get("second-area")
+	mainArea := r.Form.Get("main-area")
+	secondaryArea := r.Form.Get("secondary-area")
 	link := r.Form.Get("link")
 	description := r.Form.Get("description")
 	basedOn := r.Form.Get("based-on")
@@ -254,34 +254,34 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	}
 
 	document, err := queries.AddDocument(r.Context(), sqlc.AddDocumentParams{
-		Name:        name,
-		UserID:      sql.NullInt32{Int32: user.UserID, Valid: true},
-		Type:        fundingType,
-		FirstArea:   firstArea,
-		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},
-		Link:        sql.NullString{String: link, Valid: link != ""},
-		Description: sql.NullString{String: description, Valid: description != ""},
-		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
-		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
-		Currency:    currency,
-		Amount:      amount,
-		Deadline:    deadline,
+		Name:          name,
+		UserID:        sql.NullInt32{Int32: user.UserID, Valid: true},
+		Type:          fundingType,
+		MainArea:      mainArea,
+		SecondaryArea: sql.NullString{String: secondaryArea, Valid: secondaryArea != ""},
+		Link:          sql.NullString{String: link, Valid: link != ""},
+		Description:   sql.NullString{String: description, Valid: description != ""},
+		BasedOn:       sql.NullString{String: basedOn, Valid: basedOn != ""},
+		Grantor:       sql.NullString{String: grantor, Valid: grantor != ""},
+		Currency:      currency,
+		Amount:        amount,
+		Deadline:      deadline,
 	})
 
 	_, err = client.Index(indexName).AddDocuments(map[string]any{
-		"id":          document.ID,
-		"Usuario":     document.UserID,
-		"Nombre":      document.Name,
-		"Tipo":        document.Type,
-		"Gran area 1": document.FirstArea,
-		"Gran area 2": document.SecondArea.String,
-		"Link":        document.Link.String,
-		"Descripcion": document.Description.String,
-		"Pais":        document.BasedOn.String,
-		"Otorgante":   document.Grantor.String,
-		"Moneda":      document.Currency,
-		"Monto":       document.Amount,
-		"Deadline":    document.Deadline,
+		"id":             document.ID,
+		"User":           document.UserID,
+		"Name":           document.Name,
+		"Type":           document.Type,
+		"Main area":      document.MainArea,
+		"Secondary area": document.SecondaryArea.String,
+		"Link":           document.Link.String,
+		"Description":    document.Description.String,
+		"Based on":       document.BasedOn.String,
+		"Grantor":        document.Grantor.String,
+		"Currency":       document.Currency,
+		"Amount":         document.Amount,
+		"Deadline":       document.Deadline,
 	}, &primaryKey)
 	if err != nil {
 		log.Fatal(err)
@@ -381,18 +381,18 @@ func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	document := map[string]any{
-		"id":          strconv.Itoa(int(sqlcDocument.ID)),
-		"Nombre":      sqlcDocument.Name,
-		"Tipo":        sqlcDocument.Type,
-		"Gran area 1": sqlcDocument.FirstArea,
-		"Gran area 2": sqlcDocument.SecondArea.String,
-		"Link":        sqlcDocument.Link.String,
-		"Descripcion": sqlcDocument.Description.String,
-		"Pais":        sqlcDocument.BasedOn.String,
-		"Otorgante":   sqlcDocument.Grantor.String,
-		"Moneda":      sqlcDocument.Currency,
-		"Monto":       sqlcDocument.Amount,
-		"Deadline":    sqlcDocument.Deadline,
+		"id":             strconv.Itoa(int(sqlcDocument.ID)),
+		"Name":           sqlcDocument.Name,
+		"Type":           sqlcDocument.Type,
+		"Main area":      sqlcDocument.MainArea,
+		"Secondary area": sqlcDocument.SecondaryArea.String,
+		"Link":           sqlcDocument.Link.String,
+		"Description":    sqlcDocument.Description.String,
+		"Based on":       sqlcDocument.BasedOn.String,
+		"Grantor":        sqlcDocument.Grantor.String,
+		"Currency":       sqlcDocument.Currency,
+		"Amount":         sqlcDocument.Amount,
+		"Deadline":       sqlcDocument.Deadline,
 	}
 
 	component := views.FundingModal("edit", document, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
@@ -418,8 +418,8 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 
 	name := r.Form.Get("name")
 	fundingType := r.Form.Get("type")
-	firstArea := r.Form.Get("first-area")
-	secondArea := r.Form.Get("second-area")
+	mainArea := r.Form.Get("main-area")
+	secondaryArea := r.Form.Get("secondary-area")
 	link := r.Form.Get("link")
 	description := r.Form.Get("description")
 	basedOn := r.Form.Get("based-on")
@@ -437,19 +437,19 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = queries.UpdateDocument(r.Context(), sqlc.UpdateDocumentParams{
-		ID:          int32(id),
-		Name:        name,
-		UserID:      sql.NullInt32{Int32: user.UserID, Valid: true},
-		Type:        fundingType,
-		FirstArea:   firstArea,
-		SecondArea:  sql.NullString{String: secondArea, Valid: secondArea != ""},
-		Link:        sql.NullString{String: link, Valid: link != ""},
-		Description: sql.NullString{String: description, Valid: description != ""},
-		BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
-		Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
-		Currency:    currency,
-		Amount:      amount,
-		Deadline:    deadline,
+		ID:            int32(id),
+		Name:          name,
+		UserID:        sql.NullInt32{Int32: user.UserID, Valid: true},
+		Type:          fundingType,
+		MainArea:      mainArea,
+		SecondaryArea: sql.NullString{String: secondaryArea, Valid: secondaryArea != ""},
+		Link:          sql.NullString{String: link, Valid: link != ""},
+		Description:   sql.NullString{String: description, Valid: description != ""},
+		BasedOn:       sql.NullString{String: basedOn, Valid: basedOn != ""},
+		Grantor:       sql.NullString{String: grantor, Valid: grantor != ""},
+		Currency:      currency,
+		Amount:        amount,
+		Deadline:      deadline,
 	})
 	if err != nil {
 		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
@@ -457,19 +457,19 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = client.Index(indexName).UpdateDocuments(map[string]any{
-		"id":          id,
-		"Usuario":     user.UserID,
-		"Nombre":      name,
-		"Tipo":        fundingType,
-		"Gran area 1": firstArea,
-		"Gran area 2": secondArea,
-		"Link":        link,
-		"Descripcion": description,
-		"Pais":        basedOn,
-		"Otorgante":   grantor,
-		"Moneda":      currency,
-		"Monto":       amount,
-		"Deadline":    deadline,
+		"id":             id,
+		"User":           user.UserID,
+		"Name":           name,
+		"Type":           fundingType,
+		"Main area":      mainArea,
+		"Secondary area": secondaryArea,
+		"Link":           link,
+		"Description":    description,
+		"Based on":       basedOn,
+		"Grantor":        grantor,
+		"Currency":       currency,
+		"Amount":         amount,
+		"Deadline":       deadline,
 	}, &primaryKey)
 	if err != nil {
 		log.Fatal(err)

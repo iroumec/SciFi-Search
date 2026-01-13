@@ -12,30 +12,30 @@ import (
 )
 
 const addDocument = `-- name: AddDocument :one
-INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline
+INSERT INTO documents(name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline
 `
 
 type AddDocumentParams struct {
-	Name        string         `json:"name"`
-	Type        string         `json:"type"`
-	FirstArea   string         `json:"first_area"`
-	SecondArea  sql.NullString `json:"second_area"`
-	Link        sql.NullString `json:"link"`
-	Description sql.NullString `json:"description"`
-	BasedOn     sql.NullString `json:"based_on"`
-	Grantor     sql.NullString `json:"grantor"`
-	Currency    string         `json:"currency"`
-	Amount      string         `json:"amount"`
-	Deadline    string         `json:"deadline"`
-	UserID      sql.NullInt32  `json:"user_id"`
+	Name          string         `json:"name"`
+	Type          string         `json:"type"`
+	MainArea      string         `json:"main_area"`
+	SecondaryArea sql.NullString `json:"secondary_area"`
+	Link          sql.NullString `json:"link"`
+	Description   sql.NullString `json:"description"`
+	BasedOn       sql.NullString `json:"based_on"`
+	Grantor       sql.NullString `json:"grantor"`
+	Currency      string         `json:"currency"`
+	Amount        string         `json:"amount"`
+	Deadline      string         `json:"deadline"`
+	UserID        sql.NullInt32  `json:"user_id"`
 }
 
 func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Document, error) {
 	row := q.db.QueryRowContext(ctx, addDocument,
 		arg.Name,
 		arg.Type,
-		arg.FirstArea,
-		arg.SecondArea,
+		arg.MainArea,
+		arg.SecondaryArea,
 		arg.Link,
 		arg.Description,
 		arg.BasedOn,
@@ -51,8 +51,8 @@ func (q *Queries) AddDocument(ctx context.Context, arg AddDocumentParams) (Docum
 		&i.UserID,
 		&i.Name,
 		&i.Type,
-		&i.FirstArea,
-		&i.SecondArea,
+		&i.MainArea,
+		&i.SecondaryArea,
 		&i.Link,
 		&i.Description,
 		&i.BasedOn,
@@ -174,7 +174,7 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 }
 
 const getDocumentByID = `-- name: GetDocumentByID :one
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline from documents WHERE id = $1
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline from documents WHERE id = $1
 `
 
 func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, error) {
@@ -185,8 +185,8 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 		&i.UserID,
 		&i.Name,
 		&i.Type,
-		&i.FirstArea,
-		&i.SecondArea,
+		&i.MainArea,
+		&i.SecondaryArea,
 		&i.Link,
 		&i.Description,
 		&i.BasedOn,
@@ -199,7 +199,7 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 }
 
 const getDocuments = `-- name: GetDocuments :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY id
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY id
 `
 
 func (q *Queries) GetDocuments(ctx context.Context) ([]Document, error) {
@@ -216,8 +216,8 @@ func (q *Queries) GetDocuments(ctx context.Context) ([]Document, error) {
 			&i.UserID,
 			&i.Name,
 			&i.Type,
-			&i.FirstArea,
-			&i.SecondArea,
+			&i.MainArea,
+			&i.SecondaryArea,
 			&i.Link,
 			&i.Description,
 			&i.BasedOn,
@@ -313,7 +313,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listAllDocuments = `-- name: ListAllDocuments :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY name LIMIT $1 OFFSET $2
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY name LIMIT $1 OFFSET $2
 `
 
 type ListAllDocumentsParams struct {
@@ -335,8 +335,8 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 			&i.UserID,
 			&i.Name,
 			&i.Type,
-			&i.FirstArea,
-			&i.SecondArea,
+			&i.MainArea,
+			&i.SecondaryArea,
 			&i.Link,
 			&i.Description,
 			&i.BasedOn,
@@ -359,7 +359,7 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 }
 
 const listDocumentsByUser = `-- name: ListDocumentsByUser :many
-SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3
 `
 
 type ListDocumentsByUserParams struct {
@@ -382,8 +382,8 @@ func (q *Queries) ListDocumentsByUser(ctx context.Context, arg ListDocumentsByUs
 			&i.UserID,
 			&i.Name,
 			&i.Type,
-			&i.FirstArea,
-			&i.SecondArea,
+			&i.MainArea,
+			&i.SecondaryArea,
 			&i.Link,
 			&i.Description,
 			&i.BasedOn,
@@ -530,23 +530,23 @@ func (q *Queries) RemovePreference(ctx context.Context, arg RemovePreferencePara
 }
 
 const updateDocument = `-- name: UpdateDocument :exec
-UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, currency = $10, amount = $11, deadline = $12, user_id = $13 WHERE id = $1
+UPDATE documents SET name = $2, type = $3, main_area = $4, secondary_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, currency = $10, amount = $11, deadline = $12, user_id = $13 WHERE id = $1
 `
 
 type UpdateDocumentParams struct {
-	ID          int32          `json:"id"`
-	Name        string         `json:"name"`
-	Type        string         `json:"type"`
-	FirstArea   string         `json:"first_area"`
-	SecondArea  sql.NullString `json:"second_area"`
-	Link        sql.NullString `json:"link"`
-	Description sql.NullString `json:"description"`
-	BasedOn     sql.NullString `json:"based_on"`
-	Grantor     sql.NullString `json:"grantor"`
-	Currency    string         `json:"currency"`
-	Amount      string         `json:"amount"`
-	Deadline    string         `json:"deadline"`
-	UserID      sql.NullInt32  `json:"user_id"`
+	ID            int32          `json:"id"`
+	Name          string         `json:"name"`
+	Type          string         `json:"type"`
+	MainArea      string         `json:"main_area"`
+	SecondaryArea sql.NullString `json:"secondary_area"`
+	Link          sql.NullString `json:"link"`
+	Description   sql.NullString `json:"description"`
+	BasedOn       sql.NullString `json:"based_on"`
+	Grantor       sql.NullString `json:"grantor"`
+	Currency      string         `json:"currency"`
+	Amount        string         `json:"amount"`
+	Deadline      string         `json:"deadline"`
+	UserID        sql.NullInt32  `json:"user_id"`
 }
 
 func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) error {
@@ -554,8 +554,8 @@ func (q *Queries) UpdateDocument(ctx context.Context, arg UpdateDocumentParams) 
 		arg.ID,
 		arg.Name,
 		arg.Type,
-		arg.FirstArea,
-		arg.SecondArea,
+		arg.MainArea,
+		arg.SecondaryArea,
 		arg.Link,
 		arg.Description,
 		arg.BasedOn,
@@ -606,8 +606,8 @@ WHERE
     d.user_id != u.user_id
     AND (up.preference % d.name
     OR up.preference % d.type
-    OR up.preference % d.first_area
-    OR up.preference % d.second_area
+    OR up.preference % d.main_area
+    OR up.preference % d.secondary_area
     OR up.preference % d.based_on
     OR up.preference % d.grantor)
 `

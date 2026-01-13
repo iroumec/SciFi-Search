@@ -54,13 +54,13 @@ ORDER BY count DESC
 LIMIT $1;
 
 -- name: AddDocument :one
-INSERT INTO documents(name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *;
+INSERT INTO documents(name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *;
 
 -- name: RemoveDocument :exec
 DELETE FROM documents WHERE id = $1;
 
 -- name: UpdateDocument :exec
-UPDATE documents SET name = $2, type = $3, first_area = $4, second_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, currency = $10, amount = $11, deadline = $12, user_id = $13 WHERE id = $1;
+UPDATE documents SET name = $2, type = $3, main_area = $4, secondary_area = $5, link = $6, description = $7, based_on = $8, grantor = $9, currency = $10, amount = $11, deadline = $12, user_id = $13 WHERE id = $1;
 
 -- name: GetDocumentByID :one
 SELECT * from documents WHERE id = $1;
@@ -86,8 +86,8 @@ WHERE
     d.user_id != u.user_id
     AND (up.preference % d.name
     OR up.preference % d.type
-    OR up.preference % d.first_area
-    OR up.preference % d.second_area
+    OR up.preference % d.main_area
+    OR up.preference % d.secondary_area
     OR up.preference % d.based_on
     OR up.preference % d.grantor)
 ;

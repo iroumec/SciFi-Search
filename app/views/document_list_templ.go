@@ -259,9 +259,9 @@ func documentItem(m map[string]any, name string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(converters.ToString(m["Nombre"]))
+		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(converters.ToString(m["Name"]))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/document_list.templ`, Line: 58, Col: 106}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/document_list.templ`, Line: 58, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -271,15 +271,15 @@ func documentItem(m map[string]any, name string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Tipo"]), "gray").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Type"]), "gray").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Gran area 1"]), "scifi").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Main area"]), "scifi").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Gran area 2"]), "scifi").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Secondary area"]), "scifi").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -287,15 +287,15 @@ func documentItem(m map[string]any, name string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Pais"]), "yellow").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Based on"]), "yellow").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Otorgante"]), "cyan").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem(converters.ToString(m["Grantor"]), "cyan").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem("("+converters.ToString(m["Moneda"])+") "+converters.ToString(m["Monto"]), "green").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem("("+converters.ToString(m["Currency"])+") "+converters.ToString(m["Amount"]), "green").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -303,13 +303,13 @@ func documentItem(m map[string]any, name string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if converters.ToString(m["Descripcion"]) != "" {
+		if converters.ToString(m["Description"]) != "" {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<p id=\"description\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(converters.ToString(m["Descripcion"]))
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(converters.ToString(m["Description"]))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/document_list.templ`, Line: 69, Col: 62}
 			}

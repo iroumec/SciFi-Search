@@ -148,15 +148,15 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 	var indexDocs []map[string]any
 	for _, doc := range documents {
 
-		nombre, ok := doc["name"].(string)
+		name, ok := doc["name"].(string)
 
 		// Si el documento tiene un nombre válido.
 		if ok {
-			tipo, _ := doc["type"].(string)
-			granArea1, _ := doc["main_area"].(string)
-			granArea2, _ := doc["secondary_area"].(string)
+			documentType, _ := doc["type"].(string)
+			mainArea, _ := doc["main_area"].(string)
+			secondaryArea, _ := doc["secondary_area"].(string)
 			link, _ := doc["link"].(string)
-			descripcion, _ := doc["description"].(string)
+			description, _ := doc["description"].(string)
 			basedOn, _ := doc["based_on"].(string)
 			grantor, _ := doc["grantor"].(string)
 			currency, _ := doc["currency"].(string)
@@ -165,18 +165,18 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 
 			// Añadido del documento a la base de datos.
 			document, err := queries.AddDocument(context.Background(), sqlc.AddDocumentParams{
-				Name:        nombre,
-				UserID:      sql.NullInt32{Valid: false}, // Indefinido en este caso.
-				Type:        tipo,
-				FirstArea:   granArea1,
-				SecondArea:  sql.NullString{String: granArea2, Valid: granArea2 != ""},
-				Link:        sql.NullString{String: link, Valid: link != ""},
-				Description: sql.NullString{String: descripcion, Valid: descripcion != ""},
-				BasedOn:     sql.NullString{String: basedOn, Valid: basedOn != ""},
-				Grantor:     sql.NullString{String: grantor, Valid: grantor != ""},
-				Currency:    currency,
-				Amount:      amount,
-				Deadline:    deadline,
+				Name:          name,
+				UserID:        sql.NullInt32{Valid: false}, // Indefinido en este caso.
+				Type:          documentType,
+				MainArea:      mainArea,
+				SecondaryArea: sql.NullString{String: secondaryArea, Valid: secondaryArea != ""},
+				Link:          sql.NullString{String: link, Valid: link != ""},
+				Description:   sql.NullString{String: description, Valid: description != ""},
+				BasedOn:       sql.NullString{String: basedOn, Valid: basedOn != ""},
+				Grantor:       sql.NullString{String: grantor, Valid: grantor != ""},
+				Currency:      currency,
+				Amount:        amount,
+				Deadline:      deadline,
 			})
 			if err != nil {
 				log.Fatal(err)
@@ -184,26 +184,26 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 
 			// Indexado del documento.
 			filtered := map[string]any{
-				"id":          document.ID,
-				"Usuario":     document.UserID,
-				"Nombre":      nombre,
-				"Tipo":        tipo,
-				"Gran area 1": granArea1,
-				"Gran area 2": granArea2,
-				"Link":        link,
-				"Descripcion": descripcion,
-				"Pais":        basedOn,
-				"Otorgante":   grantor,
-				"Moneda":      currency,
-				"Monto":       amount,
-				"Deadline":    deadline,
+				"id":             document.ID,
+				"User":           document.UserID,
+				"Name":           name,
+				"Type":           documentType,
+				"Main area":      mainArea,
+				"Secondary area": secondaryArea,
+				"Link":           link,
+				"Description":    description,
+				"Based on":       basedOn,
+				"Grantor":        grantor,
+				"Currency":       currency,
+				"Amount":         amount,
+				"Deadline":       deadline,
 			}
 
 			indexDocs = append(indexDocs, filtered)
 
-			structures.AddIfNotExists(documentTypes, tipo)
-			structures.AddIfNotExists(documentAreas, granArea1)
-			structures.AddIfNotExists(documentAreas, granArea2)
+			structures.AddIfNotExists(documentTypes, documentType)
+			structures.AddIfNotExists(documentAreas, mainArea)
+			structures.AddIfNotExists(documentAreas, secondaryArea)
 			structures.AddIfNotExists(documentCountriesBasedOn, basedOn)
 			structures.AddIfNotExists(documentGrantors, grantor)
 			structures.AddIfNotExists(documentCurrencies, currency)
@@ -237,12 +237,12 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 
 	// Configuración de atributos en los que se busca.
 	_, err := index.UpdateSearchableAttributes(&[]string{
-		"Nombre",
-		"Tipo",
-		"Gran area 1",
-		"Gran area 2",
-		"Descripcion",
-		"Otorgante",
+		"Name",
+		"Type",
+		"Main area",
+		"Secondary area",
+		"Description",
+		"Grantor",
 	})
 	if err != nil {
 		log.Println("Error configurando atributos de búsqueda:", err)
@@ -344,7 +344,7 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
 	filterBasedOn := r.URL.Query()["based-on"]
-	filterTipo := r.URL.Query()["tipo"]
+	filterType := r.URL.Query()["type"]
 	filterArea := r.URL.Query()["area"]
 	sortBy := r.URL.Query()["sortby"]
 	pageStr := r.URL.Query().Get("page")
@@ -354,16 +354,16 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	var filters []string
 
 	for _, t := range filterBasedOn {
-		filters = append(filters, fmt.Sprintf("Pais = '%s'", t))
+		filters = append(filters, fmt.Sprintf("Based on = '%s'", t))
 	}
 
-	for _, t := range filterTipo {
-		filters = append(filters, fmt.Sprintf("Tipo = '%s'", t))
+	for _, t := range filterType {
+		filters = append(filters, fmt.Sprintf("Type = '%s'", t))
 	}
 
 	for _, t := range filterArea {
 		filters = append(filters,
-			fmt.Sprintf("\"Gran area 1\" = '%s' OR \"Gran area 2\" = '%s'", t, t),
+			fmt.Sprintf("\"Main area\" = '%s' OR \"Secondary area\" = '%s'", t, t),
 		)
 	}
 
@@ -450,10 +450,10 @@ func getFilteredResponse(w http.ResponseWriter, filters []string, sortBy []strin
 func configureFilterableAttributes(index meilisearch.IndexManager) {
 
 	_, err := index.UpdateFilterableAttributes(&[]any{
-		"Tipo",
-		"Gran area 1",
-		"Gran area 2",
-		"Pais",
+		"Type",
+		"Main area",
+		"Secondary area",
+		"Based on",
 	})
 	if err != nil {
 		log.Println("Error configurando filtros:", err)
@@ -467,8 +467,8 @@ func configureSortableAttributes(index meilisearch.IndexManager) {
 	configureRankingRules(index)
 
 	_, err := index.UpdateSortableAttributes(&[]string{
-		"Nombre",
-		"Tipo",
+		"Name",
+		"Type",
 		"Deadline",
 	})
 	if err != nil {
@@ -500,7 +500,7 @@ func configureRankingRules(index meilisearch.IndexManager) {
 func sortResults(hits []map[string]any, sortByArray []string) {
 	sortBy := sortByArray[0] //el array siempre tiene un solo elemento
 
-	// Parseo del sortBy (ej: "Nombre:asc" o "Tipo:desc").
+	// Parseo del sortBy (ej: "Name:asc" o "Type:desc").
 	parts := splitSort(sortBy)
 	if len(parts) != 2 {
 		return

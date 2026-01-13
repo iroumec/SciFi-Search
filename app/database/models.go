@@ -10,19 +10,19 @@ import (
 )
 
 type Document struct {
-	ID          int32          `json:"id"`
-	UserID      sql.NullInt32  `json:"user_id"`
-	Name        string         `json:"name"`
-	Type        string         `json:"type"`
-	FirstArea   string         `json:"first_area"`
-	SecondArea  sql.NullString `json:"second_area"`
-	Link        sql.NullString `json:"link"`
-	Description sql.NullString `json:"description"`
-	BasedOn     sql.NullString `json:"based_on"`
-	Grantor     sql.NullString `json:"grantor"`
-	Currency    string         `json:"currency"`
-	Amount      string         `json:"amount"`
-	Deadline    string         `json:"deadline"`
+	ID            int32          `json:"id"`
+	UserID        sql.NullInt32  `json:"user_id"`
+	Name          string         `json:"name"`
+	Type          string         `json:"type"`
+	MainArea      string         `json:"main_area"`
+	SecondaryArea sql.NullString `json:"secondary_area"`
+	Link          sql.NullString `json:"link"`
+	Description   sql.NullString `json:"description"`
+	BasedOn       sql.NullString `json:"based_on"`
+	Grantor       sql.NullString `json:"grantor"`
+	Currency      string         `json:"currency"`
+	Amount        string         `json:"amount"`
+	Deadline      string         `json:"deadline"`
 }
 
 type HistoricSearch struct {

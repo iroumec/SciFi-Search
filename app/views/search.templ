@@ -65,11 +65,11 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 			</div>
 		</div>
 		<div class="dropdown">
-			<button class="dropbtn" name="tipo" onclick="toggleDropdown(event)">
+			<button class="dropbtn" name="type" onclick="toggleDropdown(event)">
 				{ translator("filter.type") }
 			</button>
 			<div id="document-type-menu" class="dropdown-content onlyone hidden">
-				@valuesCheckboxes("tipo", true, documentTypes)
+				@valuesCheckboxes("type", true, documentTypes)
 			</div>
 		</div>
 		<div class="dropdown">
@@ -106,7 +106,7 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 				typeMenu.classList.add("hidden");
 				areaMenu.classList.add("hidden");
 				sortbyMenu.classList.add("hidden");
-			} else if (e.currentTarget.name === "tipo") {
+			} else if (e.currentTarget.name === "type") {
 				menu = typeMenu;
 				basedOnMenu.classList.add("hidden");
 				areaMenu.classList.add("hidden");
@@ -173,17 +173,17 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 }
 
 templ sortingCheckboxes(translator languages.Translator) {
-	@sortingCheckboxesItem("Nombre", "name", "asc", translator)
-	@sortingCheckboxesItem("Nombre", "name", "desc", translator)
-	@sortingCheckboxesItem("Tipo", "type", "asc", translator)
-	@sortingCheckboxesItem("Tipo", "type", "desc", translator)
-	@sortingCheckboxesItem("Deadline", "Deadline", "asc", translator)
-	@sortingCheckboxesItem("Deadline", "Deadline", "desc", translator)
+	@sortingCheckboxesItem("Name", "asc", translator)
+	@sortingCheckboxesItem("Name", "desc", translator)
+	@sortingCheckboxesItem("Type", "asc", translator)
+	@sortingCheckboxesItem("Type", "desc", translator)
+	@sortingCheckboxesItem("Deadline", "asc", translator)
+	@sortingCheckboxesItem("Deadline", "desc", translator)
 }
 
-/*TODO: cambiar Tipo por Type y demás en todo el tratamiento de documentos, así también se deja inutil valueAux y se elimina*/
+// ------------------------------------------------------------------------------------------------
 
-templ sortingCheckboxesItem(value string, valueAux string, order string, translator languages.Translator) {
+templ sortingCheckboxesItem(value string, order string, translator languages.Translator) {
 	<label class="checkbox-item">
 		<input
 			type="checkbox"
@@ -195,7 +195,7 @@ templ sortingCheckboxesItem(value string, valueAux string, order string, transla
 			hx-swap="innerHTML"
 			hx-include="#all-filters"
 		/>
-		{ translator("sort-by." + valueAux + "-" + order) }
+		{ translator("sort-by." + value + "-" + order) }
 	</label>
 }
 

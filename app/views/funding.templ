@@ -56,8 +56,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 					id="name"
 					name="name"
 					required
-					if document["Nombre"] != nil && document["Nombre"].(string) != "" {
-						value={ document["Nombre"].(string) }
+					if document["Name"] != nil && document["Name"].(string) != "" {
+						value={ document["Name"].(string) }
 					}
 				/>
 			</div>
@@ -69,32 +69,32 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 					name="type"
 					list="types"
 					required
-					if document["Tipo"] != nil && document["Tipo"].(string) != "" {
-						value={ document["Tipo"].(string) }
+					if document["Type"] != nil && document["Type"].(string) != "" {
+						value={ document["Type"].(string) }
 					}
 				/>
 			</div>
 			<div class="labeled-input">
-				<label for="first-area">{ translator("areas") }</label>
+				<label for="main-area">{ translator("areas") }</label>
 				<input
 					type="text"
-					id="first-area"
-					placeholder={ translator("first-area") }
-					name="first-area"
+					id="main-area"
+					placeholder={ translator("main-area") }
+					name="main-area"
 					list="areas"
 					required
-					if document["Gran area 1"] != nil && document["Gran area 1"].(string) != "" {
-						value={ document["Gran area 1"].(string) }
+					if document["Main area"] != nil && document["Main area"].(string) != "" {
+						value={ document["Main area"].(string) }
 					}
 				/>
 				<input
 					type="text"
-					id="second-area"
-					placeholder={ translator("second-area") }
-					name="second-area"
+					id="secondary-area"
+					placeholder={ translator("secondary-area") }
+					name="secondary-area"
 					list="areas"
-					if document["Gran area 2"] != nil && document["Gran area 2"].(string) != "" {
-						value={ document["Gran area 2"].(string) }
+					if document["Secondary area"] != nil && document["Secondary area"].(string) != "" {
+						value={ document["Secondary area"].(string) }
 					}
 				/>
 			</div>
@@ -115,8 +115,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 					type="text"
 					id="description"
 					name="description"
-					if document["Descripcion"] != nil && document["Descripcion"].(string) != "" {
-						value={ document["Descripcion"].(string) }
+					if document["Description"] != nil && document["Description"].(string) != "" {
+						value={ document["Description"].(string) }
 					}
 				/>
 			</div>
@@ -128,8 +128,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 						id="based-on"
 						name="based-on"
 						list="based-on"
-						if document["Pais"] != nil && document["Pais"].(string) != "" {
-							value={ document["Pais"].(string) }
+						if document["Based on"] != nil && document["Based on"].(string) != "" {
+							value={ document["Based on"].(string) }
 						}
 					/>
 				</div>
@@ -140,8 +140,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 						id="grantor"
 						name="grantor"
 						list="grantors"
-						if document["Otorgante"] != nil && document["Otorgante"].(string) != "" {
-							value={ document["Otorgante"].(string) }
+						if document["Grantor"] != nil && document["Grantor"].(string) != "" {
+							value={ document["Grantor"].(string) }
 						}
 					/>
 				</div>
@@ -155,8 +155,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 						name="currency"
 						list="currencies"
 						required
-						if document["Moneda"] != nil && document["Moneda"].(string) != "" {
-							value={ document["Moneda"].(string) }
+						if document["Currency"] != nil && document["Currency"].(string) != "" {
+							value={ document["Currency"].(string) }
 						}
 					/>
 				</div>
@@ -168,8 +168,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 						placeholder="min - max"
 						name="amount"
 						required
-						if document["Monto"] != nil && document["Monto"].(string) != "" {
-							value={ document["Monto"].(string) }
+						if document["Amount"] != nil && document["Amount"].(string) != "" {
+							value={ document["Amount"].(string) }
 						}
 					/>
 				</div>
