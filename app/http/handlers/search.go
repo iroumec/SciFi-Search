@@ -38,6 +38,7 @@ var (
 	documentCountriesBasedOn = list.New()
 	documentGrantors         = list.New()
 	documentCurrencies       = list.New()
+	primaryKey               = "id"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ func indexarDatos() {
 	configureFilterableAttributes(index)
 	configureSortableAttributes(index)
 
-	_, err = index.AddDocuments(indexDocs, nil)
+	_, err = index.AddDocuments(indexDocs, &primaryKey)
 	if err != nil {
 		log.Fatal(err)
 	}
