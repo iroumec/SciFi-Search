@@ -82,7 +82,7 @@ func LoaderPage(authorizationLevel int, translator languages.Translator) templ.C
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = Layout(translator("loader.creation"), translator,
-			func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return loaderContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {

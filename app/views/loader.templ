@@ -22,7 +22,7 @@ templ loaderContent(translator languages.Translator) {
 
 templ LoaderPage(authorizationLevel int, translator languages.Translator) {
 	@Layout(translator("loader.creation"), translator,
-		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return loaderContent(translator) },
 	)
 }

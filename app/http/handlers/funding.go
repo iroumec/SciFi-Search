@@ -282,7 +282,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		"Moneda":      document.Currency,
 		"Monto":       document.Amount,
 		"Deadline":    document.Deadline,
-	}, nil)
+	}, &primaryKey)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -344,12 +344,13 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: ¿acá no deberían también desindexarse de MeiliSearch?
 	err = queries.RemoveDocument(r.Context(), int32(id))
 	if err != nil {
 		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	_, err = client.Index(indexName).DeleteDocument(idStr)
 
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(""))
@@ -361,6 +362,8 @@ func openAddNewFundingModal(w http.ResponseWriter, r *http.Request) {
 	component := views.FundingModal("new", nil, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
 	idStr := strings.TrimPrefix(r.URL.Path, "/funding/open-edit/")
@@ -395,6 +398,8 @@ func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
 	component := views.FundingModal("edit", document, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
+
+// ------------------------------------------------------------------------------------------------
 
 func editFundingModal(w http.ResponseWriter, r *http.Request) {
 
@@ -465,7 +470,7 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 		"Moneda":      currency,
 		"Monto":       amount,
 		"Deadline":    deadline,
-	}, nil)
+	}, &primaryKey)
 	if err != nil {
 		log.Fatal(err)
 	}
