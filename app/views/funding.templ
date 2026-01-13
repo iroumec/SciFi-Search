@@ -49,31 +49,10 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 		hx-on="htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''"
 	>
 		<div class="form-inputs">
-			<div class="labeled-input">
-				<label for="name">{ translator("name") }</label>
-				<input
-					type="text"
-					id="name"
-					name="name"
-					required
-					if document["Name"] != nil && document["Name"].(string) != "" {
-						value={ document["Name"].(string) }
-					}
-				/>
-			</div>
-			<div class="labeled-input">
-				<label for="type">{ translator("type") }</label>
-				<input
-					type="text"
-					id="type"
-					name="type"
-					list="types"
-					required
-					if document["Type"] != nil && document["Type"].(string) != "" {
-						value={ document["Type"].(string) }
-					}
-				/>
-			</div>
+
+			@labeledInput("name", translator("name"), "text", "", "", document["Name"], true)
+			@labeledInput("type", translator("type"), "text", "types", "", document["Type"], true)
+
 			<div class="labeled-input">
 				<label for="main-area">{ translator("areas") }</label>
 				<input
@@ -98,94 +77,23 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 					}
 				/>
 			</div>
-			<div class="labeled-input">
-				<label for="link">{ translator("link") }</label>
-				<input
-					type="url"
-					id="link"
-					name="link"
-					if document["Link"] != nil && document["Link"].(string) != "" {
-						value={ document["Link"].(string) }
-					}
-				/>
-			</div>
-			<div class="labeled-input">
-				<label for="description">{ translator("description") }</label>
-				<input
-					type="text"
-					id="description"
-					name="description"
-					if document["Description"] != nil && document["Description"].(string) != "" {
-						value={ document["Description"].(string) }
-					}
-				/>
-			</div>
+
+			@labeledInput("link", translator("link"), "url", "", "", document["Link"], false)
+			@labeledInput("description", translator("description"), "text", "", "", document["Description"], false)
+			
 			<div class="double-input">
-				<div class="labeled-input">
-					<label for="based-on">{ translator("based_on") }</label>
-					<input
-						type="text"
-						id="based-on"
-						name="based-on"
-						list="based-on"
-						if document["Based on"] != nil && document["Based on"].(string) != "" {
-							value={ document["Based on"].(string) }
-						}
-					/>
-				</div>
-				<div class="labeled-input">
-					<label for="grantor">{ translator("grantor") }</label>
-					<input
-						type="text"
-						id="grantor"
-						name="grantor"
-						list="grantors"
-						if document["Grantor"] != nil && document["Grantor"].(string) != "" {
-							value={ document["Grantor"].(string) }
-						}
-					/>
-				</div>
+				@labeledInput("based-on", translator("based_on"), "text", "based-on", "", document["Based on"], false)
+				@labeledInput("grantor", translator("grantor"), "text", "grantors", "", document["Grantor"], false)
 			</div>
+
 			<div class="double-input">
-				<div class="labeled-input">
-					<label for="currency">{ translator("currency") }</label>
-					<input
-						type="text"
-						id="currency"
-						name="currency"
-						list="currencies"
-						required
-						if document["Currency"] != nil && document["Currency"].(string) != "" {
-							value={ document["Currency"].(string) }
-						}
-					/>
-				</div>
-				<div class="labeled-input">
-					<label for="amount">{ translator("amount") }</label>
-					<input
-						type="text"
-						id="amount"
-						placeholder="min - max"
-						name="amount"
-						required
-						if document["Amount"] != nil && document["Amount"].(string) != "" {
-							value={ document["Amount"].(string) }
-						}
-					/>
-				</div>
+				@labeledInput("currency", translator("currency"), "text", "currencies", "", document["Currency"], true)
+				@labeledInput("amount", translator("amount"), "text", "", "min - max", document["Amount"], true)
 			</div>
-			<div class="labeled-input">
-				<label for="deadline">{ translator("deadline") }</label>
-				<input
-					type="date"
-					id="deadline"
-					name="deadline"
-					required
-					if document["Deadline"] != nil && document["Deadline"].(string) != "" {
-						value={ document["Deadline"].(string) }
-					}
-				/>
-			</div>
+
+			@labeledInput("deadline", translator("deadline"), "date", "", "", document["Deadline"], true)
+			
+			
 			@datalist("types", documentTypes)
 			@datalist("areas", documentAreas)
 			@datalist("based-on", documentBasedOn)
@@ -201,6 +109,35 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 			</button>
 		</div>
 	</form>
+}
+
+templ labeledInput(input string, label string, inputType string, list string, placeholder string, inputValue any, required bool) {
+	{{
+		if inputValue == nil {
+			inputValue = ""
+		}
+		inputString := inputValue.(string)
+	}}
+	<div class="labeled-input">
+		<label for={ input }>{ label }</label>
+		<input
+			type={ inputType }
+			id={ input }
+			name={ input }
+			if list != "" {
+				list={ list }
+			}
+			if placeholder != "" {
+				placeholder={ placeholder }
+			}
+			if inputValue != "" {
+				value={ inputString }
+			}
+			if required {
+				required
+			}
+		/>
+	</div>
 }
 
 templ datalist(name string, options *list.List) {
