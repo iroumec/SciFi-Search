@@ -6,9 +6,8 @@ A web application to search for science funding.
 
 ## Index
 
-- [How is the project structured?](resources/markdown/estructura.md)
-- [What do I need to run the application?](resources/markdown/requisitos.md)
-- [How do I run the application?](resources/markdown/ejecución.md)
+- [What do I need to run the application?](resources/markdown/requirements.md)
+- [How do I run the application?](resources/markdown/execution.md)
 
 ## Credits
 
