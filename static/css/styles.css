@@ -1195,3 +1195,10 @@ header {
 [hidden] {
 	display: none !important;
 }
+
+.funding-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+}

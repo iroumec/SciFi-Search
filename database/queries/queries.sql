@@ -92,3 +92,5 @@ WHERE
     OR up.preference % d.grantor)
 ;
 
+-- name: GetDocuments :many
+SELECT * FROM documents ORDER BY id;

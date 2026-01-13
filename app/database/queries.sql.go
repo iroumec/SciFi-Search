@@ -198,6 +198,47 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 	return i, err
 }
 
+const getDocuments = `-- name: GetDocuments :many
+SELECT id, user_id, name, type, first_area, second_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY id
+`
+
+func (q *Queries) GetDocuments(ctx context.Context) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, getDocuments)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Type,
+			&i.FirstArea,
+			&i.SecondArea,
+			&i.Link,
+			&i.Description,
+			&i.BasedOn,
+			&i.Grantor,
+			&i.Currency,
+			&i.Amount,
+			&i.Deadline,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getTrendingSearches = `-- name: GetTrendingSearches :many
 SELECT search_string, COUNT(*) AS count
 FROM historic_searches

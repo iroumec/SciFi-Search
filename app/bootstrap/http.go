@@ -40,6 +40,7 @@ func registerEndpoints(dependencies HTTPDependencies) {
 	handlers.RegisterFundingHandlers()
 	handlers.RegisterSettingsHandlers()
 	handlers.RegisterLanguageHandlers()
+	handlers.RegisterExportationHandlers()
 	handlers.RegisterAuthenticationHandlers()
 }
 

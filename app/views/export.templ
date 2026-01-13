@@ -1,0 +1,61 @@
+package views
+
+import "scifi-search/app/languages"
+
+templ exportButton(translator languages.Translator) {
+	<button
+		class="scifi-button"
+		type="button"
+		hx-get="/documents/open-export-modal"
+		hx-target="#modal-root"
+		hx-swap="innerHTML"
+	>
+		Export
+	</button>
+}
+
+templ ExportModal(translator languages.Translator) {
+	<div
+		class="modal-overlay"
+		x-data="{ open: true }"
+		x-show="open"
+		@click.self="open = false"
+	>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>{ translator("export.title") }</h2>
+				<button
+					class="close-button"
+					type="button"
+					@click="open = false"
+				>
+					&times;
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>{ translator("export.choose_format") }</p>
+				<div class="modal-actions">
+					<a
+						href="/documents/export?format=csv"
+						class="scifi-button"
+					>
+						CSV
+					</a>
+					<a
+						href="/documents/export?format=xlsx"
+						class="scifi-button"
+					>
+						Excel
+					</a>
+					<button
+						class="scifi-button secondary"
+						type="button"
+						@click="open = false"
+					>
+						{ translator("cancel") }
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}

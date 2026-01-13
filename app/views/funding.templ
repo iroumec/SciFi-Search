@@ -234,30 +234,46 @@ templ FundingAddedPage(translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 // ------------------------------------ Manage Funding --------------------------------------------
 // ------------------------------------------------------------------------------------------------
-templ manageFundingContent(fundings []map[string]any, totalFundings int, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
+templ manageFundingContent(
+	fundings []map[string]any,
+	totalFundings int,
+	documentTypes *list.List,
+	documentAreas *list.List,
+	documentBasedOn *list.List,
+	documentGrantors *list.List,
+	documentCurrencies *list.List,
+	translator languages.Translator,
+) {
 	<div class="centered-box-content">
 		<div id="left"></div>
 		<div id="manage-funding-content">
-			<div id="funding-title">Manage projects </div>
+			<div id="funding-title">Manage projects</div>
 			<div id="funding-content">
 				<div id="funding-list">
 					@FundingList(fundings, 1, totalFundings, translator)
 				</div>
 			</div>
 			<div id="funding-buttons">
-				<button
-					class="scifi-button"
-					type="button"
-					hx-get="/funding/open-add-new"
-					hx-target="#modal-root"
-					hx-swap="innerHTML"
-				>
-					Add new
-				</button>
+				@fundingActions(translator)
 			</div>
 		</div>
 		<div id="right"></div>
 		<div id="modal-root"></div>
+	</div>
+}
+
+templ fundingActions(translator languages.Translator) {
+	<div class="funding-actions">
+		<button
+			class="scifi-button"
+			type="button"
+			hx-get="/funding/open-add-new"
+			hx-target="#modal-root"
+			hx-swap="innerHTML"
+		>
+			Add new
+		</button>
+		@exportButton(translator)
 	</div>
 }
 
