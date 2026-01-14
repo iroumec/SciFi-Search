@@ -77,7 +77,11 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 				BASED ON
 			</button>
 			<div id="document-based-on-menu" class="dropdown-content onlyone hidden">
-				@valuesCheckboxes("based-on", true, documentCountriesBasedOn)
+				if documentCountriesBasedOn.Len() > 0 {
+					@valuesCheckboxes("based-on", true, documentCountriesBasedOn)
+				} else {
+					<p class="no-filters-message">{ translator("no-options-available") }</p>
+				}
 			</div>
 		</div>
 		<input type="hidden" name="query" value={ query }/>

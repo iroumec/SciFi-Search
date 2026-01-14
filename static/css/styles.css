@@ -537,8 +537,8 @@ header {
                     padding: 0.25rem;
                     z-index: 1000;
 
-                    overflow-y: auto;       /* habilita scroll vertical si hace falta */
-                    max-height: 25rem;       /* máximo al espacio disponible */
+                    overflow-y: auto;       
+                    max-height: 25rem;       
                 }
 
                     .checkbox-item {
@@ -551,6 +551,12 @@ header {
                     }
                     .checkbox-item input[type="checkbox"] {
                         accent-color: var(--scifi);
+                    }
+
+                    .no-filters-message {
+                        color: white;
+                        font-size: 0.8rem;
+                        padding-left: 1rem;
                     }
 
         #results {

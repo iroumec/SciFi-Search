@@ -201,6 +201,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 
 			indexDocs = append(indexDocs, filtered)
 
+			// These lists are solely used for autocomplete fields in the manage funding page.
 			structures.AddIfNotExists(documentTypes, documentType)
 			structures.AddIfNotExists(documentAreas, mainArea)
 			structures.AddIfNotExists(documentAreas, secondaryArea)
@@ -315,6 +316,9 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error unmarshal hits:", err)
 	}
 
+	// These lists are solely used for filters in the search results page.
+	types, areas, countriesBasedOn := getFilterValues(hitsMaps)
+
 	var authorizationLevel = auth.NoRole.Level
 
 	// De estar autenticado el usuario, se guarda la búsqueda
@@ -334,7 +338,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), documentTypes, documentAreas, documentCountriesBasedOn, authorizationLevel, languages.GetTranslatorFromRequest(r))
+	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), types, areas, countriesBasedOn, authorizationLevel, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 
@@ -538,3 +542,26 @@ func splitSort(sortBy string) []string {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func getFilterValues(hitsMaps []map[string]any) (*list.List, *list.List, *list.List) {
+	documentTypes := list.New()
+	documentAreas := list.New()
+	documentCountriesBasedOn := list.New()
+
+	for _, doc := range hitsMaps {
+		if documentType, ok := doc["Type"].(string); ok {
+			structures.AddIfNotExists(documentTypes, documentType)
+		}
+		if mainArea, ok := doc["Main area"].(string); ok {
+			structures.AddIfNotExists(documentAreas, mainArea)
+		}
+		if secondaryArea, ok := doc["Secondary area"].(string); ok {
+			structures.AddIfNotExists(documentAreas, secondaryArea)
+		}
+		if basedOn, ok := doc["Based on"].(string); ok {
+			structures.AddIfNotExists(documentCountriesBasedOn, basedOn)
+		}
+	}
+
+	return documentTypes, documentAreas, documentCountriesBasedOn
+}
