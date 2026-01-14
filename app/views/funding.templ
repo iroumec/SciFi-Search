@@ -7,34 +7,25 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// ------------------------------------ Modal Component -------------------------------------------
+// ----------------------------------------- Modals -----------------------------------------------
 // ------------------------------------------------------------------------------------------------
 templ FundingModal(mode string, document map[string]any, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
-	<div class="modal-overlay">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>
-					if mode == "edit" {
-						{ translator("funding.edit") }
-					} else {
-						{ translator("funding.new") }
-					}
-				</h2>
-				<button class="close-button" type="button" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-			</div>
-			@fundingForm(document, mode, documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator)
-		</div>
-	</div>
-	<script>
-		(function () {
-			document.addEventListener("click", (e) => {
-				if (e.target.classList.contains("modal-overlay")) {
-					e.target.remove()
-				}
-			})
-		})();
-	</script>
+	@Modal(translator("funding."+mode),
+		func() templ.Component {
+			return fundingForm(document, mode, documentTypes, documentAreas, documentBasedOn, documentGrantors, documentCurrencies, translator)
+		},
+	)
 }
+
+templ ExportModal(translator languages.Translator) {
+	@Modal(translator("export.title"), func() templ.Component {
+		return exportModalBody(translator)
+	})
+}
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------ Modal Bodies ----------------------------------------------
+// ------------------------------------------------------------------------------------------------
 
 templ fundingForm(document map[string]any, mode string, documentTypes *list.List, documentAreas *list.List, documentBasedOn *list.List, documentGrantors *list.List, documentCurrencies *list.List, translator languages.Translator) {
 	<form
@@ -46,7 +37,8 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 		}
 		hx-target="#funding-list"
 		hx-swap="innerHTML"
-		hx-on="htmx:afterRequest: if(event.detail.successful) document.getElementById('modal-root').innerHTML=''"
+		@htmx:after-request="if($event.detail.successful) { open = false; $refs.fundingForm.reset(); }"
+		x-ref="fundingForm"
 	>
 		<div class="form-inputs">
 
@@ -100,8 +92,13 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 			@datalist("grantors", documentGrantors)
 			@datalist("currencies", documentCurrencies)
 		</div>
-		<div class="modal-footer">
-			<button id="cancel-button" type="button" class="scifi-button secondary" onclick="this.closest('.modal-overlay').remove()">
+		<div class="form-footer">
+			<button 
+				id="cancel-button" 
+				type="button" 
+				class="scifi-button secondary" 
+				@click="open = false"
+			>
 				{ translator("cancel") }
 			</button>
 			<button type="submit" class="scifi-button">
@@ -109,6 +106,28 @@ templ fundingForm(document map[string]any, mode string, documentTypes *list.List
 			</button>
 		</div>
 	</form>
+}
+
+// ------------------------------------------------------------------------------------------------
+
+templ exportModalBody(translator languages.Translator) {
+	<div class="export-modal-body">
+		<p>{ translator("export.choose_format") + ": " }</p>
+		<div class="export-options">
+			<a
+				href="/documents/export?format=csv"
+				class="scifi-button"
+			>
+				CSV
+			</a>
+			<a
+				href="/documents/export?format=xlsx"
+				class="scifi-button"
+			>
+				Excel
+			</a>
+		</div>
+	</div>
 }
 
 templ labeledInput(input string, label string, inputType string, list string, placeholder string, inputValue any, required bool) {
@@ -195,7 +214,7 @@ templ manageFundingContent(
 			</div>
 		</div>
 		<div id="right"></div>
-		<div id="modal-root"></div>
+		@ModalRoot()
 	</div>
 }
 
@@ -210,7 +229,15 @@ templ fundingActions(translator languages.Translator) {
 		>
 			Add new
 		</button>
-		@exportButton(translator)
+		<button
+			class="scifi-button"
+			type="button"
+			hx-get="/documents/open-export-modal"
+			hx-target="#modal-root"
+			hx-swap="innerHTML"
+		>
+			Export
+		</button>
 	</div>
 }
 

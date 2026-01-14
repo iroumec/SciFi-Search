@@ -1,0 +1,33 @@
+package views
+
+// ------------------------------------------------------------------------------------------------
+// ------------------------------------ Modal Component -------------------------------------------
+// ------------------------------------------------------------------------------------------------
+templ ModalRoot() {
+    <div id="modal-root"></div>
+}
+
+templ Modal(modalTitle string, modalBody func() templ.Component) {
+    <div 
+		class="modal-overlay"
+		x-data="{ open: true }"
+		x-show="open"
+		@click.self="open = false"
+	>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>
+					{ modalTitle }
+				</h2>
+				<button 
+					class="close-button" 
+					type="button" 
+					@click="open = false"
+				>
+					&times;
+				</button>
+			</div>
+			@modalBody()
+		</div>
+	</div>
+}

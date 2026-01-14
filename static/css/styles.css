@@ -1179,7 +1179,22 @@ header {
     color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-footer {
+.export-modal-body {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+    .export-options {
+        gap: 0.5rem;
+        display: flex;
+    }
+
+.form-footer {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
