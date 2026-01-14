@@ -22,7 +22,7 @@ type Translator func(key string, args ...any) string
 // ------------------------------------------------------------------------------------------------
 
 func GetTranslatorFromRequest(r *http.Request) Translator {
-	tag := detectLanguage(r)
+	tag := DetectLanguage(r)
 	p := message.NewPrinter(tag)
 	return func(key string, args ...any) string {
 		return p.Sprintf(key, args...)
@@ -33,7 +33,7 @@ func GetTranslatorFromRequest(r *http.Request) Translator {
 // Functions
 // ------------------------------------------------------------------------------------------------
 
-func detectLanguage(r *http.Request) language.Tag {
+func DetectLanguage(r *http.Request) language.Tag {
 
 	// If the request es nil...
 	if r == nil {

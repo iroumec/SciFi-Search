@@ -52,13 +52,14 @@ func setLanguageHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Se vuelve a la página previa.
 	referer := r.Header.Get("Referer")
-	if referer != "" {
-		http.Redirect(w, r, referer, http.StatusSeeOther)
-		return
-	}
 
 	// Si no hay referer, fallback a página principal.
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	if referer == "" {
+		referer = "/"
+	}
+
+	w.Header().Set("HX-Redirect", referer)
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -1,4 +1,6 @@
 {
+    "language": "Idioma",
+    "current-lang": "ES",
     "redirect.main_page": "Ir a la página principal",
     "funding.added": "Financiamiento añadido",
     "sign-up.tag": "Registrarse",

@@ -16,5 +16,3 @@ type User struct {
 	AvatarURLValid  bool
 	Email           string
 }
-
-//TODO: estos HSV y User se podrían reemplazar con map[string]any y nos ahorramos este archivo
