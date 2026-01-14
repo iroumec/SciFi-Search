@@ -25,7 +25,7 @@ templ SettingsForm(user structures.User, preferences []string, authorizationLeve
 		enctype="multipart/form-data"
 	>
 		<div class="profile-settings">
-			<p class="subtitle" id="profile">{ translator("profile.tag") }</p>
+			<p class="subtitle" id="profile">{ translator("profile") }</p>
 			<p id="fullname">{ user.Name } { user.Surname } </p>
 			<div class="info-section">
 				<div class="centered-container">
@@ -40,7 +40,7 @@ templ SettingsForm(user structures.User, preferences []string, authorizationLeve
 			@AvatarSettings(user, translator)
 		</div>
 		<div class="preferences-settings">
-			<p class="subtitle" id="preference">{ translator("settings.preferences") }</p>
+			<p class="subtitle" id="preference">{ translator("preferences") }</p>
 			<div id="preferences-list">
 				for _, p := range preferences {
 					@PreferenceItem(p)
@@ -237,7 +237,7 @@ templ PreferenceItem(preference string) {
 
 // ------------------------------------------------------------------------------------------------
 templ SettingsPage(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
-	@Layout("Settings", translator,
+	@Layout(translator("settings"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return settingsContent(user, preferences, authorizationLevel, translator) },
 	)

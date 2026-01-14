@@ -136,7 +136,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("unexpected-error-ocurrence"))
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, 0, err
@@ -247,7 +247,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("unexpected-error-ocurrence"))
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
 		return

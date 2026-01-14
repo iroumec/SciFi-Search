@@ -42,7 +42,7 @@ templ headerBuilder(backgroundColor string, logo string, query bool, showOptions
 						type="text"
 						name="query"
 						id="query"
-						placeholder="Search for SCIENCE!!!"
+						placeholder={ translator("search_for_science") }
 						hx-trigger="keyup[key=='Enter']"
 						hx-get="/search"
 						hx-target="body"

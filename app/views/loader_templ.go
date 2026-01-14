@@ -81,7 +81,7 @@ func LoaderPage(authorizationLevel int, translator languages.Translator) templ.C
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout(translator("loader.creation"), translator,
+		templ_7745c5c3_Err = Layout(translator("new-loader"), translator,
 			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return loaderContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)

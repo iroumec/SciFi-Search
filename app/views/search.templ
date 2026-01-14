@@ -74,7 +74,7 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 		</div>
 		<div class="dropdown">
 			<button class="dropbtn" name="based-on" onclick="toggleDropdown(event)">
-				BASED ON
+				{ translator("filter.based-on") }
 			</button>
 			<div id="document-based-on-menu" class="dropdown-content onlyone hidden">
 				if documentCountriesBasedOn.Len() > 0 {

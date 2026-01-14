@@ -14,8 +14,8 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 				</div>
 				<div class="chart-wrapper">
 					<div class="chart">
-						@templ.Raw(string(htmlChart))
-					</div>
+						@templ.Raw(string(htmlChart)) 
+					</div> // TODO: ver la traduccion de htmlChart
 				</div>
 			</div>
 		</div>
@@ -24,7 +24,7 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 }
 
 templ TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) {
-	@Layout("Trending", translator,
+	@Layout(translator("trends"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return trendsContent(htmlChart, translator) },
 	)

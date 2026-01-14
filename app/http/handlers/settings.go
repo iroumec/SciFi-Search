@@ -138,7 +138,6 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
-			log.Println("ListPreferencesFromUser:", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}

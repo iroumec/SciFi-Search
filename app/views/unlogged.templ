@@ -4,7 +4,7 @@ import "scifi-search/app/languages"
 
 templ UnloggedContent(translator languages.Translator) {
 	<div id="no-session">
-		<p>{ translator("no-session") }</p>
+		<p>{ translator("no-session-msg") }</p>
 		<div id="buttons">
 			<button
 				class="scifi-button"
@@ -27,7 +27,7 @@ templ UnloggedContent(translator languages.Translator) {
 }
 
 templ UnloggedPage(authorizationLevel int, translator languages.Translator) {
-	@Layout("No session", translator,
+	@Layout(translator("no-session"), translator,
 		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 		func() templ.Component { return UnloggedContent(translator) },
 	)

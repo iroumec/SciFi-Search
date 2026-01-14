@@ -36,9 +36,9 @@ func UnloggedContent(translator languages.Translator) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(translator("no-session"))
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(translator("no-session-msg"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/unlogged.templ`, Line: 7, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/unlogged.templ`, Line: 7, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -99,7 +99,7 @@ func UnloggedPage(authorizationLevel int, translator languages.Translator) templ
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("No session", translator,
+		templ_7745c5c3_Err = Layout(translator("no-session"), translator,
 			func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 			func() templ.Component { return UnloggedContent(translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)

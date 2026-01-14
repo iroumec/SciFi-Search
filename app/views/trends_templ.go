@@ -83,7 +83,7 @@ func TrendsPage(htmlChart template.HTML, authorizationLevel int, translator lang
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout("Trending", translator,
+		templ_7745c5c3_Err = Layout(translator("trends"), translator,
 			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return trendsContent(htmlChart, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)

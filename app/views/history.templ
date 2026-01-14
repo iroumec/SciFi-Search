@@ -9,7 +9,7 @@ templ historyContent(searches []structures.HistoricSearchView, translator langua
 	<div class="centered-box-content">
 		<div id="left"></div>
 		<div id="history-content">
-			<div id="history-title">History</div>
+			<div id="history-title">{ translator("history") }</div>
 			<div id="history-list">
 				for _, search := range searches {
 					<div class="historic-query">
@@ -28,7 +28,7 @@ templ historyContent(searches []structures.HistoricSearchView, translator langua
 }
 
 templ HistoryPage(searches []structures.HistoricSearchView, authorizationLevel int, translator languages.Translator) {
-	@Layout("History", translator,
+	@Layout(translator("history"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return historyContent(searches, translator) },
 	)
