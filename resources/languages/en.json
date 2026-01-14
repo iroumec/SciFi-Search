@@ -20,8 +20,8 @@
     "log-in": "Log In",
     "email-verification.sent": "Email verification sent!",
     "areas": "Areas",
-    "first-area": "Main area",
-    "second-area": "Secondary area",
+    "main-area": "Main area",
+    "secondary-area": "Secondary area",
     "description": "Description",
     "based_on": "Based on",
     "grantor": "Grantor",
@@ -63,5 +63,13 @@
     "new-password": "New password",
     "repeat-new-password": "Repeat new password",
     "search-trends": "Search Trends",
-    "not-especified": "Not specified"
+    "not-especified": "Not specified",
+    "export.title": "Export documents",
+    "export.choose_format": "Choose a format",
+    "manage-projects": "Manage projects",
+    "export": "Export",
+    "funding.deletion.confirmation": "Do you want to delete the funding? This decision cannot be undone!",
+    "menu.loader": "New loader",
+    "no-description": "No description",
+    "no-options-available": "No options available"
 }

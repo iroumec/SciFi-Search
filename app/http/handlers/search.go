@@ -391,7 +391,7 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 
 	// Sin resultados reales.
 	if res == nil || len(res.Hits) == 0 {
-		component := views.SearchResults([]map[string]any{}, 0, page)
+		component := views.SearchResults([]map[string]any{}, 0, page, languages.GetTranslatorFromRequest(r))
 		component.Render(r.Context(), w)
 		return
 	}
@@ -423,7 +423,7 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 		total = len(allHits.Hits)
 	}
 
-	component := views.SearchResults(hitsMaps, total, page)
+	component := views.SearchResults(hitsMaps, total, page, languages.GetTranslatorFromRequest(r))
 	component.Render(r.Context(), w)
 }
 

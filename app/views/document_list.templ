@@ -1,6 +1,9 @@
 package views
 
-import "scifi-search/app/utils/converters"
+import (
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/converters"
+)
 
 templ pagination(totalHits int, currentPage int, get string, include string, target string) {
 	{{
@@ -53,7 +56,7 @@ templ navigationButton(page int, button string, get string, include string, targ
 	</a>
 }
 
-templ documentItem(m map[string]any, name string) {
+templ documentItem(m map[string]any, name string, translator languages.Translator) {
 	<div id={ name + "-" + converters.ToString(m["id"]) }>
 		<a id="title" href={ converters.ToString(m["Link"]) } target="_blank">{ converters.ToString(m["Name"]) }</a>
 		<div class="extra-info">
@@ -68,7 +71,7 @@ templ documentItem(m map[string]any, name string) {
 		if converters.ToString(m["Description"]) != "" {
 			<p id="description">{ converters.ToString(m["Description"]) }</p>
 		} else {
-			<p>No description. </p>
+			<p>{ translator("no-description") }.</p>
 		}
 	</div>
 }
