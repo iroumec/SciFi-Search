@@ -5,11 +5,21 @@ import "html/template"
 import "scifi-search/app/languages"
 
 templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
-	<div class="trends-container">
-		<h1>{ translator("search-trends") }</h1>
-		<div class="chart-wrapper">
-			@templ.Raw(string(htmlChart))
+	<div class="centered-box-content trends">
+		<div id="left"></div>
+		<div id="trends-content">
+			<div id="trends-container">
+				<div id="trends-header">
+					<p>{ translator("search-trends") }</p>
+				</div>
+				<div class="chart-wrapper">
+					<div class="chart">
+						@templ.Raw(string(htmlChart))
+					</div>
+				</div>
+			</div>
 		</div>
+		<div id="right"></div>
 	</div>
 }
 
