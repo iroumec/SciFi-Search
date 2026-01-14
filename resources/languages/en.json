@@ -71,5 +71,11 @@
     "funding.deletion.confirmation": "Do you want to delete the funding? This decision cannot be undone!",
     "menu.loader": "New loader",
     "no-description": "No description",
-    "no-options-available": "No options available"
+    "no-options-available": "No options available",
+    "verification-email.subject": "Verify your email",
+    "verification-email.body": "Please, verify your email accesing the link below.",
+    "verification-email.body-after-update": "Your email has been updated. Verify your new email accesing the link below.",
+    "searches": "Searches",
+    "new-funding.email.subject": "New funding added",
+    "funding.deleted": "Funding deleted"
 }

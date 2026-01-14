@@ -52,7 +52,7 @@ func createNewLoader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := createUser(name, surname, email, password, auth.LoaderRole)
+	_, err := createUser(name, surname, email, password, auth.LoaderRole, languages.GetTranslatorFromRequest(r))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

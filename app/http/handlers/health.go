@@ -11,7 +11,7 @@ import "net/http"
 // ------------------------------------------------------------------------------------------------
 
 const (
-	BrowserSimpleMessage = "Servidor OK"
+	browserSimpleMessage = "OK"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -22,18 +22,17 @@ func RegisterHealth() {
 
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 
-		// Solo se responde a peticiones GET.
 		if r.Method != http.MethodGet {
 			http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 			return
 		}
 
-		// Se establece el código de estado 200 OK.
-		// A esto lo busca `curl -f` cuando se levanta el servidor.
+		// Status Code: 200 OK.
+		// This is request by `curl -f` when the server is initiated.
 		w.WriteHeader(http.StatusOK)
 
-		// Cuerpo simple para saber que funciona si se abre desde un navegador.
-		w.Write([]byte(BrowserSimpleMessage))
+		// Simple body in case the page is opened in a browser.
+		w.Write([]byte(browserSimpleMessage))
 	})
 }
 

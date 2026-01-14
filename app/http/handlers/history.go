@@ -1,6 +1,8 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"net/http"
@@ -11,6 +13,8 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
 
 // Registra los endpoint asociados al historial.
 func RegisterHistoryHandlers() {
@@ -18,6 +22,8 @@ func RegisterHistoryHandlers() {
 	http.HandleFunc("/history", historyHandler)
 }
 
+// ------------------------------------------------------------------------------------------------
+// Handlers
 // ------------------------------------------------------------------------------------------------
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,6 +36,8 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func showHistory(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +61,11 @@ func showHistory(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		component := views.HistoryPage(searches, auth.GetAuthenticationLevel(user.AuthID), languages.GetTranslatorFromRequest(r))
+		component := views.HistoryPage(
+			searches,
+			auth.GetAuthenticationLevel(user.AuthID),
+			languages.GetTranslatorFromRequest(r),
+		)
 		component.Render(r.Context(), w)
 	}
 }

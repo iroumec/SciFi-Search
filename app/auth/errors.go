@@ -1,7 +1,7 @@
 package auth
 
 // ------------------------------------------------------------------------------------------------
-//  Importaciones
+//  Imports
 // ------------------------------------------------------------------------------------------------
 
 import "errors"
@@ -23,12 +23,13 @@ var (
 	Forbidden                   = errors.New("Forbidden")    // 403 -> No autorizado
 
 	// Validation of email
-	ErrInvalidOrExpiredToken = errors.New("invalid or expired token")
+	InvalidOrExpiredTokenError = errors.New("invalid or expired token")
 
-	// Generales
-	UnknownError = errors.New("Unknown error")
-
+	// Session
 	NoSessionError = errors.New("No session")
+
+	// Generals
+	UnknownError = errors.New("Unknown error")
 )
 
 // ------------------------------------------------------------------------------------------------

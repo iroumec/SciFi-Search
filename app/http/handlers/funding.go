@@ -1,7 +1,7 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -287,22 +287,27 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifyFundingAddition(r.Context(), document)
+	translator := languages.GetTranslatorFromRequest(r)
 
-	notifications.ShowFlash(w, r, "New funding added successfully!")
+	notifyFundingAddition(r.Context(), document, translator)
+
+	notifications.ShowFlash(w, r, translator("funding.added"))
 
 	updateFundingList(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func notifyFundingAddition(ctx context.Context, document sqlc.Document) {
+func notifyFundingAddition(
+	ctx context.Context, document sqlc.Document, translator languages.Translator,
+) {
 
 	users, err := queries.UsersInterestedInFunding(ctx, document.ID)
 	if err != nil {
-		log.Println("Error obteniendo usuarios interesados:", err)
 		return
 	}
+
+	emailSubject := translator("new-funding.email.subject")
 
 	emailBody := strings.Join([]string{
 		"Se ha publicado un nuevo financiamiento que podría interesarte de acuerdo a tus preferencias: \n\n",
@@ -313,23 +318,31 @@ func notifyFundingAddition(ctx context.Context, document sqlc.Document) {
 	}, "")
 
 	for _, user := range users {
-
-		emailVerified, err := auth.IsEmailVerified(user.AuthID)
-		if err != nil || !*emailVerified {
-			continue
-		}
-
-		userEmail := auth.GetUserEmail(user.AuthID)
-		if userEmail == nil {
-			continue
-		}
-
-		emailService.Send(
-			*userEmail,
-			"Nuevo financiamiento disponible",
-			emailBody,
-		)
+		notifyFundingAdditionViaEmail(user, emailSubject, emailBody)
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func notifyFundingAdditionViaEmail(
+	user database.UsersInterestedInFundingRow, emailSubject, emailBody string,
+) {
+
+	emailVerified, err := auth.IsEmailVerified(user.AuthID)
+	if err != nil || !*emailVerified {
+		return
+	}
+
+	userEmail := auth.GetUserEmail(user.AuthID)
+	if userEmail == nil {
+		return
+	}
+
+	emailService.Send(
+		*userEmail,
+		emailSubject,
+		emailBody,
+	)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -352,8 +365,11 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 
 	_, err = client.Index(indexName).DeleteDocument(idStr)
 
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(""))
+	translator := languages.GetTranslatorFromRequest(r)
+
+	notifications.ShowFlash(w, r, translator("funding.deleted"))
+
+	updateFundingList(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -430,7 +446,7 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("Ha ocurrido un error inesperado."))
+		cookies.AddFlashCookie(w, UnknownError.Error())
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -1,12 +1,12 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
-	"context"
 	"database/sql"
+	"errors"
 	"log"
 	"net/http"
 	"strings"
@@ -23,7 +23,18 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Registro de endpoints
+// Variables
+// ------------------------------------------------------------------------------------------------
+
+// Errors.
+var (
+	InvalidFieldError      = errors.New("error.invalid-field")
+	InvalidFormError       = errors.New("error.invalid-form")
+	MissingPreferenceError = errors.New("error.missing-preference")
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func RegisterSettingsHandlers() {
@@ -39,7 +50,7 @@ func RegisterSettingsHandlers() {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Definición de handlers
+// Handlers
 // ------------------------------------------------------------------------------------------------
 
 func handleSettings(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +59,7 @@ func handleSettings(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		showSettings(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -60,7 +71,7 @@ func handleEditField(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		editField(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -72,7 +83,7 @@ func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		views.EditPasswordSection(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -80,72 +91,40 @@ func handlePasswordEdit(w http.ResponseWriter, r *http.Request) {
 
 func handlePreferences(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-		r.ParseForm()
-
-		prefs := r.Form["preferences[]"]
-		if len(prefs) == 0 {
-			http.Error(w, "Missing preference", http.StatusBadRequest)
-			return
-		}
-
-		views.PreferenceItem(prefs[0]).Render(r.Context(), w)
-	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+		return
 	}
+
+	addPreference(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
 
 func handleAvatarModification(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-		views.AvatarOptions(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
-	default:
-		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+		return
 	}
 
+	views.AvatarOptions(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 }
 
 // ------------------------------------------------------------------------------------------------
 
 func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-
-		currentUser, err := getCurrentUser(w, r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
-		if err != nil {
-			log.Println("ListPreferencesFromUser:", err)
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-
-		user := structures.User{
-			Name:            currentUser.Name,
-			Surname:         currentUser.Surname,
-			AvatarURLString: currentUser.AvatarUrl.String,
-			AvatarURLValid:  currentUser.AvatarUrl.Valid,
-			Email:           *auth.GetCurrentUserEmail(w, r),
-		}
-
-		views.SettingsForm(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
-	default:
-		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+		return
 	}
 
+	cancelSettingEdition(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Definición de funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 // Muestra la página de configuración.
@@ -172,7 +151,12 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 			Email:           *auth.GetCurrentUserEmail(w, r),
 		}
 
-		component := views.SettingsPage(user, preferences, auth.GetAuthenticationLevel(currentUser.AuthID), languages.GetTranslatorFromRequest(r))
+		component := views.SettingsPage(
+			user,
+			preferences,
+			auth.GetAuthenticationLevel(currentUser.AuthID),
+			languages.GetTranslatorFromRequest(r),
+		)
 		component.Render(r.Context(), w)
 	}
 }
@@ -203,7 +187,7 @@ func editField(w http.ResponseWriter, r *http.Request) {
 		value = *email
 		typeStr = "email"
 	default:
-		http.Error(w, "invalid field", http.StatusBadRequest)
+		http.Error(w, InvalidIDError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -215,7 +199,7 @@ func editField(w http.ResponseWriter, r *http.Request) {
 
 func saveSettings(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		http.Error(w, "Invalid form", http.StatusBadRequest)
+		http.Error(w, InvalidFormError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -225,7 +209,7 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emailUpdated, err := updateUserData(r.Context(), user, w, r)
+	emailUpdated, err := updateUserData(w, r, user)
 	if err != nil {
 		log.Println(err)
 		return
@@ -236,12 +220,12 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter, r *http.Request) (bool, error) {
+func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bool, error) {
 	// Actualizar nombre y apellido
 	name := getters.GetOrDefault(r.Form.Get("name"), user.Name)
 	surname := getters.GetOrDefault(r.Form.Get("surname"), user.Surname)
 
-	queries.UpdateUser(ctx, sqlc.UpdateUserParams{
+	queries.UpdateUser(r.Context(), sqlc.UpdateUserParams{
 		UserID:  user.UserID,
 		Name:    name,
 		Surname: surname,
@@ -250,8 +234,8 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 	// Actualización de avatar.
 	saveAvatar(user, w, r)
 	if r.Form.Get("delete-avatar") == "true" {
-		if err := avatarService.Delete(ctx, user.UserID); err != nil {
-			http.Error(w, "Error deleting avatar", http.StatusInternalServerError)
+		if err := avatarService.Delete(r.Context(), user.UserID); err != nil {
+			http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 			return false, err
 		}
 	}
@@ -266,7 +250,10 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 			return false, err
 		}
 		emailUpdated = true
-		auth.SendVerificationEmail(emailService, user.AuthID, newEmail)
+		translator := languages.GetTranslatorFromRequest(r)
+		emailSubject := translator("verification-email.subject")
+		emailBody := translator("verification-email.body")
+		auth.SendVerificationEmail(emailService, user.AuthID, newEmail, emailSubject, emailBody)
 	}
 
 	// Actualización de contraseña.
@@ -274,7 +261,7 @@ func updateUserData(ctx context.Context, user *sqlc.User, w http.ResponseWriter,
 	newPwd := r.Form.Get("new-password")
 	if currentPwd != "" && newPwd != "" {
 		if err := auth.UpdatePassword(user.AuthID, currentPwd, newPwd); err != nil {
-			cookies.AddFlashCookie(w, "Error interno del servidor.")
+			cookies.AddFlashCookie(w, InternalServerError.Error())
 			return false, err
 		}
 	}
@@ -388,10 +375,63 @@ func updatePreferences(user *sqlc.User, r *http.Request) []string {
 func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		views.InfoField("password", "password", "********", languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+		views.InfoField(
+			"password",
+			"password",
+			"********",
+			languages.GetTranslatorFromRequest(r),
+		).Render(r.Context(), w)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func addPreference(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+
+	prefs := r.Form["preferences[]"]
+	if len(prefs) == 0 {
+		http.Error(w, MissingPreferenceError.Error(), http.StatusBadRequest)
+		return
+	}
+
+	views.PreferenceItem(prefs[0]).Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func cancelSettingEdition(w http.ResponseWriter, r *http.Request) {
+
+	currentUser, err := getCurrentUser(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
+	if err != nil {
+		log.Println("ListPreferencesFromUser:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	user := structures.User{
+		Name:            currentUser.Name,
+		Surname:         currentUser.Surname,
+		AvatarURLString: currentUser.AvatarUrl.String,
+		AvatarURLValid:  currentUser.AvatarUrl.Valid,
+		Email:           *auth.GetCurrentUserEmail(w, r),
+	}
+
+	views.SettingsForm(
+		user,
+		preferences,
+		auth.GetAuthenticationLevel(currentUser.AuthID),
+		languages.GetTranslatorFromRequest(r),
+	).Render(r.Context(), w)
 }
 
 // ------------------------------------------------------------------------------------------------

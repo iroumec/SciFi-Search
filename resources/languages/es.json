@@ -71,5 +71,10 @@
     "funding.deletion.confirmation": "¿Desea eliminar el financiamiento? ¡Esta decisión no puede deshacerse!",
     "menu.loader": "Nuevo cargador",
     "no-description": "Sin descripción",
-    "no-options-available": "Sin opciones disponibles"
+    "no-options-available": "Sin opciones disponibles",
+    "verification-email.subject": "Verifica tu email",
+    "verification-email.body": "Por favor, verifica tu email accediendo al enlace debajo.",
+    "verification": "Búsquedas",
+    "new-funding.email.subject": "Nuevo financiamiento añadido",
+    "funding.deleted": "Financiamiento eliminado"
 }

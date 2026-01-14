@@ -1,10 +1,11 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"net/http"
 	"scifi-search/app/auth"
 	"scifi-search/app/languages"
@@ -14,15 +15,24 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constantes
+// Variables
 // ------------------------------------------------------------------------------------------------
 
-const (
-	maxResultsShown = 15 // Cantidad máxima de términos que se presentarán en el gráfico.
+// Errors.
+var (
+	ChartGenerationFailerError = errors.New("error.chart-generation-failed")
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Constants
+// ------------------------------------------------------------------------------------------------
+
+const (
+	maxResultsShown = 15 // Max ammount of terms showed in the graph.
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
 // ------------------------------------------------------------------------------------------------
 
 // Registra los handlers correspondientes a las tendencias.
@@ -37,42 +47,46 @@ func RegisterTrendsHandlers() {
 // Maneja la petición de la página de tendencias.
 func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case http.MethodGet:
-		showTrendingsGraph(w, r)
-	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+	if r.Method != http.MethodGet {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
+		return
 	}
+
+	showTrendingsGraph(w, r)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 // Renderiza y muestra el gráfico de las tendencias.
 func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 
-	// Se obtienen las N búsquedas más relevantes de las últimas 24 horas.
+	// Obtention of the N more relevants searches from the last 24 hours.
 	trendingSearches, err := queries.GetTrendingSearches(r.Context(), maxResultsShown)
 	if err != nil {
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Se genera el gráfico en HTML y se almacena en un buffer.
+	// Generation of the HTML graph and storage in a buffer.
 	buffer, err := graphs.GenerateBarChart(trendingSearches)
 	if err != nil {
-		http.Error(w, "Error al generar gráfico", http.StatusInternalServerError)
+		http.Error(w, ChartGenerationFailerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Se extrae el "body" del contenido HTML.
-	// Interesa únicamente el "body" ya que es el contenido del gráfico.
-	// El layout y demás se establece independientemente.
+	// Extraction of the body of the HTML content.
+	// The body corresponds to the graph content.
+	// The layout and other things are established independently.
 	htmlChart := extractors.ExtractBodyContent(buffer.String())
 
-	// Se renderiza la página resultante.
-	component := views.TrendsPage(htmlChart, auth.GetCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
+	// Rendering of the page.
+	component := views.TrendsPage(
+		htmlChart,
+		auth.GetCurrentAuthorizationLevel(w, r),
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 

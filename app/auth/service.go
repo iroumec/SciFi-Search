@@ -1,12 +1,11 @@
 package auth
 
 // --------------------------------------------------------------------------------------------- //
-// Importaciones
+// Imports
 // --------------------------------------------------------------------------------------------- //
 
 import (
 	"fmt"
-	"log"
 	"slices"
 	"strings"
 
@@ -19,7 +18,15 @@ import (
 )
 
 // --------------------------------------------------------------------------------------------- //
-// Servicios
+// Constants
+// --------------------------------------------------------------------------------------------- //
+
+const (
+	tokenVerificationPath = "/auth/verify-email?token="
+)
+
+// --------------------------------------------------------------------------------------------- //
+// Services
 // --------------------------------------------------------------------------------------------- //
 
 func GetAuthenticationLevel(userID string) int {
@@ -40,22 +47,20 @@ func GetAuthenticationLevel(userID string) int {
 
 // --------------------------------------------------------------------------------------------- //
 
-func SendVerificationEmail(emailService *email.Service, userID, email string) {
+func SendVerificationEmail(emailService *email.Service, userID, email, emailSubject, emailBody string) error {
 
 	tokenResponse, err := emailverification.CreateEmailVerificationToken("", userID, &email, nil)
 	if err != nil {
-		log.Println("Error creando token de verificación:", err)
-		// TODO: implementar reintento.
+		return err
 	} else if tokenResponse.OK != nil {
-		verificationLink := supertokens.WebsiteDomain + "/auth/verify-email?token=" + tokenResponse.OK.Token
 
-		// Se construye el cuerpo del email.
-		subject := "Verifica tu email"
-		body := fmt.Sprintf("Por favor. Verifica tu email entrando en el siguiente enlace:\n%s", verificationLink)
+		verificationLink := supertokens.WebsiteDomain + tokenVerificationPath + tokenResponse.OK.Token
+		body := fmt.Sprintf("%s\n%s", emailBody, verificationLink)
 
-		// Envío asíncrono del email (no bloquea la respuesta HTTP).
-		emailService.Send(email, subject, body)
+		emailService.Send(email, emailSubject, body)
 	}
+
+	return nil
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -211,7 +216,7 @@ func VerifyEmail(token string) error {
 	if response.OK != nil {
 		return nil
 	} else if response.EmailVerificationInvalidTokenError != nil {
-		return ErrInvalidOrExpiredToken
+		return InvalidOrExpiredTokenError
 	} else {
 		return UnknownError
 	}

@@ -27,7 +27,7 @@ import (
 )
 
 // ---------------------------------------------------------------------
-// Constantes
+// Services
 // ---------------------------------------------------------------------
 
 func RegisterAuthenticationHandlers() {
@@ -158,7 +158,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUser, err := createUser(name, surname, email, password, auth.UserRole)
+	newUser, err := createUser(name, surname, email, password, auth.UserRole, languages.GetTranslatorFromRequest(r))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -184,7 +184,7 @@ func createAdmin() {
 	email := utils.GetEnv("ADMIN_EMAIL", "admin@scifi-search.com")
 	password := utils.GetEnv("ADMIN_PASSWORD", "admin")
 
-	_, err := createUser(name, surname, email, password, auth.AdminRole)
+	_, err := createUser(name, surname, email, password, auth.AdminRole, languages.GetTranslatorFromRequest(nil))
 	if err != nil {
 		if !errors.Is(err, auth.EmailAlreadyInUseError) {
 			log.Fatal(UnknownError.Error())
@@ -194,7 +194,7 @@ func createAdmin() {
 
 // ------------------------------------------------------------------------------------------------
 
-func createUser(name, surname, email, password string, role auth.Role) (*sqlc.User, error) {
+func createUser(name, surname, email, password string, role auth.Role, translator languages.Translator) (*sqlc.User, error) {
 
 	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
@@ -211,7 +211,10 @@ func createUser(name, surname, email, password string, role auth.Role) (*sqlc.Us
 		return nil, err
 	}
 
-	auth.SendVerificationEmail(emailService, *userID, email)
+	emailSubject := translator("verification-email.subject")
+	emailBody := translator("verification-email.body")
+
+	auth.SendVerificationEmail(emailService, *userID, email, emailSubject, emailBody)
 	auth.AssignRoleToUser(role, *userID)
 
 	return &user, nil
