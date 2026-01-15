@@ -1,7 +1,7 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -14,46 +14,66 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	InvalidLanguageError = errors.New("Invalid language")
+	InvalidLanguageError = errors.New("error.invalid-language")
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Registro de endpoints.
+// Endpoints.
 func RegisterLanguageHandlers() {
 
-	http.HandleFunc("/language", setLanguageHandler)
+	http.HandleFunc("/language", languageHandler)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
-// Establece el lenguaje de la aplicación.
-func setLanguageHandler(w http.ResponseWriter, r *http.Request) {
+func languageHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Obtención del lenguaje de la URL.
-	language := r.URL.Query().Get("language")
-
-	// Validación del lenguaje.
-	if language != "es" && language != "en" {
-		http.Error(w, InvalidLanguageError.Error(), http.StatusBadRequest)
+	if r.Method != http.MethodGet {
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Seteo de cookie.
+	err := setLanguage(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	goBackToPreviousPage(w, r)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func setLanguage(w http.ResponseWriter, r *http.Request) error {
+
+	language := r.URL.Query().Get("language")
+
+	// Language validation.
+	if language != "es" && language != "en" {
+		return InvalidLanguageError
+	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:  "language",
 		Value: language,
 		Path:  "/",
 	})
 
-	// Se vuelve a la página previa.
+	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func goBackToPreviousPage(w http.ResponseWriter, r *http.Request) {
+
 	referer := r.Header.Get("Referer")
 
-	// Si no hay referer, fallback a página principal.
+	// Fallback.
 	if referer == "" {
 		referer = "/"
 	}

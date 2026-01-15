@@ -1,7 +1,7 @@
 package notifications
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -11,18 +11,18 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Retorna el tipo de notificación que se agregó.
+// Returns the type of notification added.
 func ShowFlash(w http.ResponseWriter, r *http.Request, message string) Notifications {
 
-	// Si es petición HTMX, se envia un trigger para mostrar popup.
+	// HTMX -> Popup activated via trigger.
 	if triggerAdded := triggers.AddHXTrigger(w, r, message); triggerAdded {
 		return HXTriggerNotification
 	}
 
-	// Si no es HTMX, simplemente se redirige.
+	// No HTMX -> Cookie.
 	cookies.AddFlashCookie(w, message)
 	return CookieNotification
 }

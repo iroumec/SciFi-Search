@@ -1,7 +1,7 @@
 package notifications
 
 // ------------------------------------------------------------------------------------------------
-// Estructuras
+// Structures
 // ------------------------------------------------------------------------------------------------
 
 type Notifications struct {
@@ -12,7 +12,7 @@ type Notifications struct {
 // Variables
 // ------------------------------------------------------------------------------------------------
 
-// Tipos de notificaciones.
+// Notification types.
 var (
 	CookieNotification    = Notifications{Name: "Cookie"}
 	HXTriggerNotification = Notifications{Name: "HXTrigger"}

@@ -28,9 +28,13 @@ import (
 
 // Errors.
 var (
-	InvalidFieldError      = errors.New("error.invalid-field")
-	InvalidFormError       = errors.New("error.invalid-form")
-	MissingPreferenceError = errors.New("error.missing-preference")
+	InvalidFieldError               = errors.New("error.invalid-field")
+	InvalidFormError                = errors.New("error.invalid-form")
+	MissingPreferenceError          = errors.New("error.missing-preference")
+	FileReadingError                = errors.New("error.file-reading")
+	ImageProcessingError            = errors.New("error.image-processing")
+	AvatarServiceNotConfiguredError = errors.New("error.avatar-service-not-configured")
+	AvatarUploadingError            = errors.New("error.avatar-uploading")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -138,7 +142,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 		preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -162,7 +166,7 @@ func showSettings(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Renderiza el campo que está siendo editado.
+// Renders the fields that is being edited.
 func editField(w http.ResponseWriter, r *http.Request) {
 
 	user, err := getCurrentUser(w, r)
@@ -278,10 +282,10 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 		return
 	}
 
-	t := languages.GetTranslatorFromRequest(r)
-	message := t("Cambios guardados con éxito.")
+	translator := languages.GetTranslatorFromRequest(r)
+	message := translator("changes-saved")
 	if emailUpdated {
-		message += " " + t("Verifique su nuevo correo.")
+		message += " " + translator("verify-your-new-email")
 	}
 
 	triggers.AddHXTrigger(w, r, message)
@@ -296,7 +300,7 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 		},
 		updatePreferences(user, r),
 		auth.GetAuthenticationLevel(user.AuthID),
-		t,
+		translator,
 	)
 	component.Render(r.Context(), w)
 }
@@ -307,7 +311,7 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("avatar")
 	if err != nil && err != http.ErrMissingFile {
-		http.Error(w, "No se pudo leer el archivo", http.StatusBadRequest)
+		http.Error(w, FileReadingError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -319,18 +323,18 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 	resizedFile, err := avatars.ResizeImageToAvatar(file)
 	if err != nil {
-		http.Error(w, "Error procesando imagen", http.StatusInternalServerError)
+		http.Error(w, ImageProcessingError.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if avatarService == nil {
-		http.Error(w, "Avatar service not configured", http.StatusInternalServerError)
+		http.Error(w, AvatarServiceNotConfiguredError.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	url, err := avatarService.Upload(r.Context(), user.UserID, resizedFile)
 	if err != nil {
-		http.Error(w, "Error subiendo avatar", http.StatusInternalServerError)
+		http.Error(w, AvatarUploadingError.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -413,7 +417,7 @@ func cancelSettingEdition(w http.ResponseWriter, r *http.Request) {
 	preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 	if err != nil {
 		log.Println("ListPreferencesFromUser:", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 

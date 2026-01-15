@@ -22,14 +22,13 @@ const (
 // Services
 // ------------------------------------------------------------------------------------------------
 
-// Registra la ruta que sirve los archivos estáticos.
+// Endpoints.
 func RegisterStatic() {
 
-	// Se crea un manejador (handler) de servidor de archivos.
+	// Static files routes handler.
 	fileServer := http.FileServer(http.Dir(StaticFilesRoute))
 
-	// Se sirven archivos estáticos en /static/,
-	// comprimidos en gzip si el navegador así lo acepta.
+	// The files are compressed if the browser accepts it.
 	http.Handle(
 		StaticFilesDirectory,
 		http.StripPrefix(

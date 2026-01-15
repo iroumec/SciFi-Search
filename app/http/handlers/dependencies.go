@@ -34,11 +34,12 @@ var (
 
 // Errors.
 var (
-	MethodNotAllowedError = errors.New("error.method-not-allowed")
-	FormParsingError      = errors.New("error.form-parsing")
-	UnexpectedError       = errors.New("error.unexpected")
-	UnknownError          = errors.New("error.unknown")
-	InternalServerError   = errors.New("error.internal-server")
+	MethodNotAllowedError    = errors.New("error.method-not-allowed")
+	FormParsingError         = errors.New("error.form-parsing")
+	UnexpectedError          = errors.New("error.unexpected")
+	UnknownError             = errors.New("error.unknown")
+	InternalServerError      = errors.New("error.internal-server")
+	RequiredDataNotSpecified = errors.New("error.required-data-not-specified")
 )
 
 // ------------------------------------------------------------------------------------------------

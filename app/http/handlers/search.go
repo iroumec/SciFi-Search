@@ -1,7 +1,7 @@
 package handlers
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -9,6 +9,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,8 +42,21 @@ var (
 	primaryKey               = "id"
 )
 
+// Errors.
+var (
+	SearchableAttributesConfigurationError = errors.New(
+		"error.searchable-attributes-configuration",
+	)
+	TypoToleranceConfigurationError = errors.New("error.typo-tolerance-configuration")
+	SynonymsConfigurationError      = errors.New("error.synonyms-configuration")
+	FiltersConfigurationError       = errors.New("error.filters-configuration")
+	OrderingConfigurationError      = errors.New("error.ordering-configuration")
+	RankingConfigurationError       = errors.New("error.ranking-configuration")
+	MissingQueryParameterError      = errors.New("error.missing-query-parameter")
+)
+
 // ------------------------------------------------------------------------------------------------
-// Constantes
+// Constants
 // ------------------------------------------------------------------------------------------------
 
 const (
@@ -52,7 +66,7 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Estructuras
+// Structures
 // ------------------------------------------------------------------------------------------------
 
 type SearchResponse struct {
@@ -60,19 +74,20 @@ type SearchResponse struct {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Registro de endpoints
+// Services
 // ------------------------------------------------------------------------------------------------
 
+// Endpoints.
 func RegisterSearchHandlers() {
 
 	host := utils.GetEnv("MEILI_HOST", "http://meilisearch:7700")
 	apiKey := utils.GetEnv("MEILI_API_KEY", "meili")
 
-	// Creación del cliente de Meilisearch.
+	// Client creation.
 	client = meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
 
-	// Se indexan los datos.
-	indexarDatos()
+	// Data indexation.
+	indexData()
 
 	// Se registra el handler.
 	http.HandleFunc("/search", searchHandler)
@@ -90,7 +105,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		showSearchResults(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
@@ -102,15 +117,15 @@ func filtersHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		updateResults(w, r)
 	default:
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func indexarDatos() {
+func indexData() {
 
-	// Si los datos ya fueron indexados, se retorna...
+	// In case data has already been indexed...
 	if indexContainsDocuments(indexName) {
 		return
 	}
@@ -138,7 +153,7 @@ func indexarDatos() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Datos indexados correctamente.")
+	log.Printf("index.successfully")
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -150,7 +165,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 
 		name, ok := doc["name"].(string)
 
-		// Si el documento tiene un nombre válido.
+		// If the document name is valid...
 		if ok {
 			documentType, _ := doc["type"].(string)
 			mainArea, _ := doc["main_area"].(string)
@@ -163,10 +178,10 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 			amount, _ := doc["amount"].(string)
 			deadline, _ := doc["deadline"].(string)
 
-			// Añadido del documento a la base de datos.
+			// The document is added to the database.
 			document, err := queries.AddDocument(context.Background(), sqlc.AddDocumentParams{
 				Name:          name,
-				UserID:        sql.NullInt32{Valid: false}, // Indefinido en este caso.
+				UserID:        sql.NullInt32{Valid: false}, // Undefined.
 				Type:          documentType,
 				MainArea:      mainArea,
 				SecondaryArea: sql.NullString{String: secondaryArea, Valid: secondaryArea != ""},
@@ -182,7 +197,7 @@ func indexDocuments(documents []map[string]any) []map[string]any {
 				log.Fatal(err)
 			}
 
-			// Indexado del documento.
+			// Document indexing.
 			filtered := map[string]any{
 				"id":             document.ID,
 				"User":           document.UserID,
@@ -222,11 +237,11 @@ func indexContainsDocuments(indexName string) bool {
 
 	stats, err := index.GetStats()
 	if err != nil {
-		// Si el índice no existe...
+		// In case the index doesn't exist...
 		if strings.Contains(err.Error(), "index_not_found") {
 			return false
 		}
-		log.Fatal(err)
+		log.Fatal(UnknownError)
 	}
 
 	return stats.NumberOfDocuments > 0
@@ -236,7 +251,7 @@ func indexContainsDocuments(indexName string) bool {
 
 func configureSearchSettings(index meilisearch.IndexManager) {
 
-	// Configuración de atributos en los que se busca.
+	// Searchable attributes.
 	_, err := index.UpdateSearchableAttributes(&[]string{
 		"Name",
 		"Type",
@@ -246,22 +261,22 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 		"Grantor",
 	})
 	if err != nil {
-		log.Println("Error configurando atributos de búsqueda:", err)
+		log.Println(SearchableAttributesConfigurationError)
 	}
 
-	// Configuración de typo tolerance (tolerancia a errores tipográficos).
+	// Typo tolerance.
 	_, err = index.UpdateTypoTolerance(&meilisearch.TypoTolerance{
 		Enabled: true,
 		MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
-			OneTypo:  4, // Palabras de 4+ letras: 1 error permitido.
-			TwoTypos: 8, // Palabras de 8+ letras: 2 errores permitidos.
+			OneTypo:  4, // 4+ letters words: 1 typo allowed.
+			TwoTypos: 8, // 8+ letters words: 2 typos allowed.
 		},
 	})
 	if err != nil {
-		log.Println("Error configurando tolerancia de typos:", err)
+		log.Println(TypoToleranceConfigurationError)
 	}
 
-	// Configuración de sinónimos comunes.
+	// Commun synonyms.
 	_, err = index.UpdateSynonyms(&map[string][]string{
 		"engineering": {"ingenieria", "ingeniería"},
 		"ingenieria":  {"engineering", "ingeniería"},
@@ -271,7 +286,7 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 		"tecnologia":  {"tech", "technology"},
 	})
 	if err != nil {
-		log.Println("Error configurando sinónimos:", err)
+		log.Println(SynonymsConfigurationError)
 	}
 }
 
@@ -279,16 +294,16 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 
 func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
-	// Obtención de la query
+	// Query obtention.
 	query := r.URL.Query().Get("query")
 	if query == "" {
-		http.Error(w, "missing query parameter 'query'", http.StatusBadRequest)
+		http.Error(w, MissingQueryParameterError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Construcción de la búsqueda.
+	// Search construction.
 	searchRequest := &meilisearch.SearchRequest{
-		ShowRankingScore: true, // Se muestra el score de relevancia.
+		ShowRankingScore: true, // Relevance score.
 		Limit:            1000,
 	}
 
@@ -298,22 +313,22 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// No puedo utilizar res.Hist directamnete porque es un slice reservado
-	// de Meilisearch. Debo almacenarlo en una variable local.
 	hits := make([]any, 0, resultsPerPage)
 	for i := 0; i < len(res.Hits) && i < resultsPerPage; i++ {
 		hits = append(hits, res.Hits[i])
 	}
 
-	// Convertir a []map[string]any de forma segura
+	// []map[string]any convetion.
 	data, err := json.Marshal(hits)
 	if err != nil {
-		log.Println("Error marshal hits:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	var hitsMaps []map[string]any
 	if err := json.Unmarshal(data, &hitsMaps); err != nil {
-		log.Println("Error unmarshal hits:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	// These lists are solely used for filters in the search results page.
@@ -321,8 +336,7 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
 	var authorizationLevel = auth.NoRole.Level
 
-	// De estar autenticado el usuario, se guarda la búsqueda
-	// en su historial.
+	// If the user is authenticated, the search is saved in their history.
 	if auth.IsUserAuthenticated(w, r) {
 
 		user, err := getCurrentUser(w, r)
@@ -337,8 +351,16 @@ func showSearchResults(w http.ResponseWriter, r *http.Request) {
 		queries.CreateHistoricSearch(r.Context(), params)
 	}
 
-	// Pasar maps al templ.
-	component := views.SearchResultsPage(query, hitsMaps, len(res.Hits), types, areas, countriesBasedOn, authorizationLevel, languages.GetTranslatorFromRequest(r))
+	component := views.SearchResultsPage(
+		query,
+		hitsMaps,
+		len(res.Hits),
+		types,
+		areas,
+		countriesBasedOn,
+		authorizationLevel,
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 
@@ -389,28 +411,35 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	allHits := getFilteredResponse(w, filters, sortBy, query, fullSearchRequest)
 	res := getFilteredResponse(w, filters, sortBy, query, searchRequest)
 
-	// Sin resultados reales.
+	// No results.
 	if res == nil || len(res.Hits) == 0 {
-		component := views.SearchResults([]map[string]any{}, 0, page, languages.GetTranslatorFromRequest(r))
+		component := views.SearchResults(
+			[]map[string]any{},
+			0,
+			page,
+			languages.GetTranslatorFromRequest(r),
+		)
 		component.Render(r.Context(), w)
 		return
 	}
 
-	// Construcción dinámica del slice.
+	// Dynamic slice construction.
 	hits := make([]any, 0, len(res.Hits))
 	for _, h := range res.Hits {
 		hits = append(hits, h)
 	}
 
-	// Conversión a []map[string]any.
+	// []map[string]any convetions.
 	data, err := json.Marshal(hits)
 	if err != nil {
-		log.Println("Error marshal hits:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	var hitsMaps []map[string]any
 	if err := json.Unmarshal(data, &hitsMaps); err != nil {
-		log.Println("Error unmarshal hits:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	// Ordenamiento.
@@ -429,16 +458,22 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func getFilteredResponse(w http.ResponseWriter, filters []string, sortBy []string, query string, searchRequest *meilisearch.SearchRequest) *meilisearch.SearchResponse {
+func getFilteredResponse(
+	w http.ResponseWriter,
+	filters []string,
+	sortBy []string,
+	query string,
+	searchRequest *meilisearch.SearchRequest,
+) *meilisearch.SearchResponse {
 	if len(filters) > 0 {
 		searchRequest.Filter = filters
 	}
 
-	// Aplicación de ordenamiento.
+	// Ordering application.
 	if len(sortBy) > 0 {
 		searchRequest.Sort = sortBy
 	}
-	// El anterior es un ordenamiento previo a la relevancia.
+	// This ordering is previous to the relevance.
 
 	res, err := client.Index(indexName).Search(query, searchRequest)
 	if err != nil {
@@ -460,7 +495,7 @@ func configureFilterableAttributes(index meilisearch.IndexManager) {
 		"Based on",
 	})
 	if err != nil {
-		log.Println("Error configurando filtros:", err)
+		log.Println(FiltersConfigurationError)
 	}
 }
 
@@ -476,7 +511,7 @@ func configureSortableAttributes(index meilisearch.IndexManager) {
 		"Deadline",
 	})
 	if err != nil {
-		log.Println("Error configurando ordenamiento:", err)
+		log.Println(OrderingConfigurationError)
 	}
 }
 
@@ -494,17 +529,16 @@ func configureRankingRules(index meilisearch.IndexManager) {
 		"exactness",
 	})
 	if err != nil {
-		log.Println("Error configurando ranking:", err)
+		log.Println(RankingConfigurationError)
 	}
 }
 
 // ------------------------------------------------------------------------------------------------
 
-// Función auxiliar para ordenar resultados
 func sortResults(hits []map[string]any, sortByArray []string) {
-	sortBy := sortByArray[0] //el array siempre tiene un solo elemento
+	sortBy := sortByArray[0] // It always has a unique element.
 
-	// Parseo del sortBy (ej: "Name:asc" o "Type:desc").
+	// `sortBy` parsing (for example, "Name:asc" o "Type:desc").
 	parts := splitSort(sortBy)
 	if len(parts) != 2 {
 		return
@@ -513,7 +547,7 @@ func sortResults(hits []map[string]any, sortByArray []string) {
 	field := parts[0]
 	order := parts[1]
 
-	// Ordenamiento.
+	// Ordering.
 	sort.Slice(hits, func(i, j int) bool {
 		valI, okI := hits[i][field].(string)
 		valJ, okJ := hits[j][field].(string)
@@ -531,7 +565,7 @@ func sortResults(hits []map[string]any, sortByArray []string) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Función auxiliar para dividir el parámetro sort.
+// It divides the sort parameter.
 func splitSort(sortBy string) []string {
 	for i, char := range sortBy {
 		if char == ':' {

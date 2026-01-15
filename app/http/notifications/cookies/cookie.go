@@ -1,7 +1,7 @@
 package cookies
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -10,16 +10,16 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Añade una cookie flash (de muy corta duración).
+// Adds a flash cookie (short duration).
 func AddFlashCookie(w http.ResponseWriter, message string) {
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "flash",
 		Value:    base64.StdEncoding.EncodeToString([]byte(message)),
-		Path:     "/", // Para que la cookie esté disponible en toda la app.
+		Path:     "/", // Allows the cookie to be available across all the application.
 		MaxAge:   10,
 		HttpOnly: false,
 	})

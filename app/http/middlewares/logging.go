@@ -1,7 +1,7 @@
 package middlewares
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -11,7 +11,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Estructuras
+// Structures
 // ------------------------------------------------------------------------------------------------
 
 type LoggingResponseWriter struct {
@@ -21,39 +21,38 @@ type LoggingResponseWriter struct {
 
 // ------------------------------------------------------------------------------------------------
 
-// WriteHeader implementa la interfaz http.ResponseWriter.
+// WriteHeader implements the interface http.ResponseWriter.
 func (lrw *LoggingResponseWriter) WriteHeader(code int) {
 	lrw.statusCode = code
 	lrw.ResponseWriter.WriteHeader(code)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Muestra información de logging acerca de las solicitudes entrantes.
+// It shows logging information about the entering requests.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		// Tiempo de inicio, para medir la duración de la petición.
+		// Start time, so the time of completion of the request can be measure.
 		start := time.Now()
 
-		// Se envuelve el Response Writer para no modificar las acciones
-		// de los middlewares exteriores.
+		// The `ResponseWriter` is wrapped so the external middlewares responses
+		// are not modified.
 		wrappedResponseWriter := newLoggingResponseWriter(w)
 
-		// Se imprime la información de la petición en la consola.
-		// r.Method es el método HTTP (GET, POST, etc.).
-		// r.URL.Path es la ruta solicitada.
-		// r.RemoteAddr es la dirección IP del cliente.
+		// Request information is printed in the console.
+		// r.Method -> HTTP method (GET, POST, etc.).
+		// r.URL.Path -> Path requested.
+		// r.RemoteAddr -> Client's IP direction.
 		log.Printf("--> %s %s from %s", r.Method, r.URL.Path, r.RemoteAddr)
 
-		// Se invoca al siguiente handler en la cadena, el que
-		// realmente trata la solicitud.
+		// The next handlers is invoked.
 		next.ServeHTTP(wrappedResponseWriter, r)
 
-		// Finalizado el anterior handler, se muestra el tiempo que tardó en
-		// responder la solicitud.
+		// The request has finished.
+		// The total time passed is shown.
 		log.Printf("<-- %s %s completed in %v", r.Method, r.URL.Path, time.Since(start))
 	})
 }
@@ -63,7 +62,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 // ------------------------------------------------------------------------------------------------
 
 func newLoggingResponseWriter(w http.ResponseWriter) *LoggingResponseWriter {
-	// Inicializa el status code por defecto como HTTP 200 OK.
+	// Status is initialized, by default, with HTTP 200 OK.
 	return &LoggingResponseWriter{w, http.StatusOK}
 }
 

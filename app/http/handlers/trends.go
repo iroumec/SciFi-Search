@@ -35,7 +35,7 @@ const (
 // Services
 // ------------------------------------------------------------------------------------------------
 
-// Registra los handlers correspondientes a las tendencias.
+// Endpoints.
 func RegisterTrendsHandlers() {
 	http.HandleFunc("/trends", trendsHandler)
 }
@@ -44,7 +44,6 @@ func RegisterTrendsHandlers() {
 // Handlers
 // ------------------------------------------------------------------------------------------------
 
-// Maneja la petición de la página de tendencias.
 func trendsHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
@@ -59,7 +58,6 @@ func trendsHandler(w http.ResponseWriter, r *http.Request) {
 // Functions
 // ------------------------------------------------------------------------------------------------
 
-// Renderiza y muestra el gráfico de las tendencias.
 func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 
 	// Obtention of the N more relevants searches from the last 24 hours.
