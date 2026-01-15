@@ -1,8 +1,8 @@
 package handlers
 
-// ---------------------------------------------------------------------
-// Importaciones
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
 import (
 	"context"
@@ -26,14 +26,22 @@ import (
 	"github.com/supertokens/supertokens-golang/recipe/session"
 )
 
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Variables
+// ------------------------------------------------------------------------------------------------
+
+// Errors.
+var (
+	TokenNotProvidedError = errors.New("error.token-not-provided")
+)
+
+// ------------------------------------------------------------------------------------------------
 // Services
-// ---------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 
 func RegisterAuthenticationHandlers() {
 
-	// Creación de la cuenta de administración.
-	createAdmin()
+	createAdministratorAccount()
 
 	http.HandleFunc("/signup", signUpHandler)
 	http.HandleFunc("/login", logInHandler)
@@ -50,16 +58,12 @@ func RegisterAuthenticationHandlers() {
 		),
 	)
 
-	// Handler de verificación de email.
 	http.HandleFunc("/auth/verify-email", verifyEmailHandler)
 
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
 	})
 
-	// TODO: refactorizar.
-	// Al usar VerifySession, la sesión ya está garantizada y puesta en el contexto
-	// si las cookies de sesión son válidas.
 	http.HandleFunc("/auth/sessioninfo", func(w http.ResponseWriter, r *http.Request) {
 
 		payload, err := auth.GetSessionInfo(w, r)
@@ -81,7 +85,11 @@ func signUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		component := views.SignUpPage("", auth.GetCurrentAuthorizationLevel(w, r), languages.GetTranslatorFromRequest(r))
+		component := views.SignUpPage(
+			"",
+			auth.GetCurrentAuthorizationLevel(w, r),
+			languages.GetTranslatorFromRequest(r),
+		)
 		templ.Handler(component).ServeHTTP(w, r)
 	case http.MethodPost:
 		signUp(w, r)
@@ -117,7 +125,7 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 
 	auth.RevokeSession(w, r)
 
-	cookies.AddFlashCookie(w, "Successful signout!")
+	cookies.AddFlashCookie(w, "sign-out.successful")
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
@@ -135,30 +143,37 @@ func deleteUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func signUp(w http.ResponseWriter, r *http.Request) {
 
-	// Parseo del formulario enviado por POST.
+	// Form parsing.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, FormParsingError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Obtención de los datos del usuario.
+	// User data.
 	name := r.Form.Get("name")
 	surname := r.Form.Get("surname")
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
 
-	// Validación.
+	// Validation.
 	if checkers.IsThereAnEmptyField(name, surname, email, password) {
 		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
 		return
 	}
 
-	newUser, err := createUser(name, surname, email, password, auth.UserRole, languages.GetTranslatorFromRequest(r))
+	newUser, err := createUser(
+		name,
+		surname,
+		email,
+		password,
+		auth.UserRole,
+		languages.GetTranslatorFromRequest(r),
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -176,15 +191,22 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func createAdmin() {
+func createAdministratorAccount() {
 
-	// Obtención de los datos del administrador.
+	// Administrator data.
 	name := utils.GetEnv("ADMIN_NAME", "admin")
 	surname := utils.GetEnv("ADMIN_SURNAME", "full-access")
 	email := utils.GetEnv("ADMIN_EMAIL", "admin@scifi-search.com")
 	password := utils.GetEnv("ADMIN_PASSWORD", "admin")
 
-	_, err := createUser(name, surname, email, password, auth.AdminRole, languages.GetTranslatorFromRequest(nil))
+	_, err := createUser(
+		name,
+		surname,
+		email,
+		password,
+		auth.AdminRole,
+		languages.GetTranslatorFromRequest(nil),
+	)
 	if err != nil {
 		if !errors.Is(err, auth.EmailAlreadyInUseError) {
 			log.Fatal(UnknownError.Error())
@@ -194,14 +216,16 @@ func createAdmin() {
 
 // ------------------------------------------------------------------------------------------------
 
-func createUser(name, surname, email, password string, role auth.Role, translator languages.Translator) (*sqlc.User, error) {
+func createUser(
+	name, surname, email, password string, role auth.Role, translator languages.Translator,
+) (*sqlc.User, error) {
 
 	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
 		return nil, err
 	}
 
-	// Se crea el usuario en la base de datos.
+	// User is created in the database.
 	user, err := queries.CreateUser(context.TODO(), sqlc.CreateUserParams{
 		Name:    name,
 		Surname: surname,

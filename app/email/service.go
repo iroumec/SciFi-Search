@@ -1,7 +1,7 @@
 package email
 
 // ------------------------------------------------------------------------------------------------
-// Estructuras
+// Structures
 // ------------------------------------------------------------------------------------------------
 
 type Service struct {
@@ -10,7 +10,7 @@ type Service struct {
 
 // ------------------------------------------------------------------------------------------------
 
-// Método genérico
+// Generic method.
 func (s *Service) Send(to, subject, body string) error {
 	return s.provider.Send(to, subject, body)
 }

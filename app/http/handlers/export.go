@@ -1,5 +1,9 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"fmt"
 	"log"
@@ -10,12 +14,20 @@ import (
 	"scifi-search/app/views"
 )
 
-// Registra los endpoint asociados a la exportación.
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+
+// Endpoints.
 func RegisterExportationHandlers() {
 
 	http.HandleFunc("/documents/export", exportDocumentsHandler)
 	http.HandleFunc("/documents/open-export-modal", openExportModal)
 }
+
+// ------------------------------------------------------------------------------------------------
+// Handlers
+// ------------------------------------------------------------------------------------------------
 
 func exportDocumentsHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -27,9 +39,13 @@ func exportDocumentsHandler(w http.ResponseWriter, r *http.Request) {
 	exportDocuments(w, r)
 }
 
+// ------------------------------------------------------------------------------------------------
+// Functions.
+// ------------------------------------------------------------------------------------------------
+
 func exportDocuments(w http.ResponseWriter, r *http.Request) {
 
-	format := r.URL.Query().Get("format") // csv | xlsx
+	format := r.URL.Query().Get("format")
 
 	documents, err := queries.GetDocuments(r.Context())
 	if err != nil {

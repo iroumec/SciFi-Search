@@ -108,5 +108,9 @@
     "new-loader-created": "New loader created successfuly!",
 
     
-    "verification-email.body-after-update": "Your email has been updated. Verify your new email accesing the link below."
+    "verification-email.body-after-update": "Your email has been updated. Verify your new email accesing the link below.",
+
+    "email.body.funding.added": "A new funding, which could be of interest for you according to your preferences, has been published",
+    "email.body.access.scifi": "Access SciFI for more details!",
+    "email.body.funding.not-interesting": "If the document is not interesting for you, change your preferences in your configuration."
 }

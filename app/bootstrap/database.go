@@ -1,7 +1,7 @@
 package bootstrap
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -13,12 +13,12 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func initializeDatabase() (*sql.DB, error) {
 
-	// Obtencióm de valores necesarios.
+	// Obtention of neccessary values.
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		utils.GetEnv("DB_HOST", "db"),

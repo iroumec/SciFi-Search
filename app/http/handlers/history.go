@@ -16,7 +16,7 @@ import (
 // Services
 // ------------------------------------------------------------------------------------------------
 
-// Registra los endpoint asociados al historial.
+// Endpoints.
 func RegisterHistoryHandlers() {
 
 	http.HandleFunc("/history", historyHandler)

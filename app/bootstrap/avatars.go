@@ -1,7 +1,7 @@
 package bootstrap
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -13,7 +13,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func getAvatarsService() *avatars.Service {
@@ -23,7 +23,7 @@ func getAvatarsService() *avatars.Service {
 		log.Fatal(err)
 	}
 
-	// SetUp de Bucket.
+	// Bucket setup.
 	if err := minio.EnsurePublicBucket(
 		context.Background(),
 		minioClient,
@@ -35,7 +35,7 @@ func getAvatarsService() *avatars.Service {
 	// Storage provider.
 	objectStore := minio.New(minioClient)
 
-	// Dominio.
+	// Domain.
 	avatarService := avatars.New(
 		objectStore,
 		"avatars",

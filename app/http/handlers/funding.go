@@ -29,17 +29,16 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	InvalidIDError      = errors.New("Invalid ID")
-	UnknownError        = errors.New("Unknown error")
-	InternalServerError = errors.New("Internal server error")
-	UserNotFoundError   = errors.New("User not found")
+	InvalidIDError         = errors.New("Invalid ID")
+	UserNotFoundError      = errors.New("User not found")
+	CountingDocumentsError = errors.New("error.counting-documents")
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Registro de endpoints.
+// Endpoints.
 func RegisterFundingHandlers() {
 
 	http.HandleFunc(
@@ -122,7 +121,17 @@ func showFundingsManagementPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component := views.ManageFundingPage(fundings, totalFundings, auth.GetCurrentAuthorizationLevel(w, r), documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
+	component := views.ManageFundingPage(
+		fundings,
+		totalFundings,
+		auth.GetCurrentAuthorizationLevel(w, r),
+		documentTypes,
+		documentAreas,
+		documentCountriesBasedOn,
+		documentGrantors,
+		documentCurrencies,
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 
@@ -136,7 +145,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("unexpected-error-ocurrence"))
+		cookies.AddFlashCookie(w, UnexpectedError.Error())
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
 		return nil, 0, err
@@ -152,7 +161,10 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 		totalFundings, err = queries.CountAllDocuments(r.Context())
 		if err != nil {
-			log.Fatal("Error al contar los documentos")
+			cookies.AddFlashCookie(w, CountingDocumentsError.Error())
+			w.Header().Set("HX-Redirect", "/")
+			w.WriteHeader(http.StatusInternalServerError)
+			return nil, 0, err
 		}
 
 	} else {
@@ -166,7 +178,10 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 		totalFundings, err = queries.CountDocumentsByUser(r.Context(), sql.NullInt32{Int32: user.UserID, Valid: true})
 		if err != nil {
-			log.Fatal("Error al contar los documentos")
+			cookies.AddFlashCookie(w, CountingDocumentsError.Error())
+			w.Header().Set("HX-Redirect", "/")
+			w.WriteHeader(http.StatusInternalServerError)
+			return nil, 0, err
 		}
 	}
 	if err != nil {
@@ -205,7 +220,12 @@ func updateFundingList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	component := views.FundingList(fundings, page, totalFundings, languages.GetTranslatorFromRequest(r))
+	component := views.FundingList(
+		fundings,
+		page,
+		totalFundings,
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 
@@ -226,13 +246,13 @@ func getPage(r *http.Request) int {
 
 func addFunding(w http.ResponseWriter, r *http.Request) {
 
-	// Parsing del formulario.
+	// Form parsing.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, FormParsingError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Obtención de los datos del formulario.
+	// Form data obtention.
 	name := r.Form.Get("name")
 	fundingType := r.Form.Get("type")
 	mainArea := r.Form.Get("main-area")
@@ -247,7 +267,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	user, err := getCurrentUser(w, r)
 	if err != nil {
-		cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("unexpected-error-ocurrence"))
+		cookies.AddFlashCookie(w, UnknownError.Error())
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -310,11 +330,11 @@ func notifyFundingAddition(
 	emailSubject := translator("new-funding.email.subject")
 
 	emailBody := strings.Join([]string{
-		"Se ha publicado un nuevo financiamiento que podría interesarte de acuerdo a tus preferencias: \n\n",
-		"Nombre: " + document.Name + "\n\n",
-		"Descripción: " + document.Description.String + "\n",
-		"\n¡Accede a SciFi para ver sus detalles!\n",
-		"\nSi el documento no te interesa, puedes ajustar tus preferencias en la configuración de tu perfil",
+		translator("email.body.funding.added") + ": \n\n",
+		translator("name") + ": " + document.Name + "\n\n",
+		translator("description") + ": " + document.Description.String + "\n\n",
+		translator("email.body.access.scifi") + "\n\n",
+		translator("email.body.funding.not-interesting"),
 	}, "")
 
 	for _, user := range users {
@@ -375,7 +395,16 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func openAddNewFundingModal(w http.ResponseWriter, r *http.Request) {
-	component := views.FundingModal("new", nil, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
+	component := views.FundingModal(
+		"new",
+		nil,
+		documentTypes,
+		documentAreas,
+		documentCountriesBasedOn,
+		documentGrantors,
+		documentCurrencies,
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 
@@ -411,7 +440,16 @@ func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
 		"Deadline":       sqlcDocument.Deadline,
 	}
 
-	component := views.FundingModal("edit", document, documentTypes, documentAreas, documentCountriesBasedOn, documentGrantors, documentCurrencies, languages.GetTranslatorFromRequest(r))
+	component := views.FundingModal(
+		"edit",
+		document,
+		documentTypes,
+		documentAreas,
+		documentCountriesBasedOn,
+		documentGrantors,
+		documentCurrencies,
+		languages.GetTranslatorFromRequest(r),
+	)
 	component.Render(r.Context(), w)
 }
 
@@ -428,7 +466,7 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, FormParsingError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -491,7 +529,9 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifications.ShowFlash(w, r, "Funding edited successfully!")
+	notifications.ShowFlash(w, r, languages.GetTranslatorFromRequest(r)("funding.edited"))
 
 	updateFundingList(w, r)
 }
+
+// ------------------------------------------------------------------------------------------------

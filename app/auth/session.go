@@ -1,11 +1,10 @@
 package auth
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"scifi-search/app/utils/converters"
@@ -15,22 +14,17 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func GetCurrentAuthorizationLevel(w http.ResponseWriter, r *http.Request) int {
 
-	authorizationLevel := NoRole.Level
 	authID, err := GetCurrentUserID(w, r)
 	if err != nil {
-		if !errors.Is(err, ErrNotAuthenticated) {
-			return NoRole.Level
-		}
-	} else {
-		authorizationLevel = GetAuthenticationLevel(*authID)
+		return NoRole.Level
 	}
 
-	return authorizationLevel
+	return GetAuthenticationLevel(*authID)
 }
 
 // ------------------------------------------------------------------------------------------------

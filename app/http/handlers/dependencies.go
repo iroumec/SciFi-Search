@@ -1,5 +1,9 @@
 package handlers
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"errors"
 	"scifi-search/app/avatars"
@@ -8,10 +12,9 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constantes
+// Constants
 // ------------------------------------------------------------------------------------------------
 
-// Ruta a partir de la cual se servirán los archivos estáticos.
 const (
 	debug = false
 )
@@ -29,9 +32,13 @@ var (
 
 // ------------------------------------------------------------------------------------------------
 
-// Errores.
+// Errors.
 var (
-	MethodNotAllowedError = errors.New("Method not allowed")
+	MethodNotAllowedError = errors.New("error.method-not-allowed")
+	FormParsingError      = errors.New("error.form-parsing")
+	UnexpectedError       = errors.New("error.unexpected")
+	UnknownError          = errors.New("error.unknown")
+	InternalServerError   = errors.New("error.internal-server")
 )
 
 // ------------------------------------------------------------------------------------------------

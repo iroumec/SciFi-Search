@@ -1,11 +1,15 @@
 package auth
 
+// ---------------------------------------------------------------------
+// Imports
+// ---------------------------------------------------------------------
+
 import (
 	"scifi-search/app/infra/auth/supertokens"
 )
 
 // ---------------------------------------------------------------------
-// Estructuras
+// Structures
 // ---------------------------------------------------------------------
 
 // Rol del sistema, con su nombre y nivel de autorización.
@@ -18,7 +22,7 @@ type Role struct {
 //  Variables
 // ---------------------------------------------------------------------
 
-// Roles predefinidos del sistema.
+// Predefined roles.
 var (
 	NoRole     = Role{Name: "no-role", Level: -1}
 	AdminRole  = Role{Name: "admin", Level: 2}
@@ -27,7 +31,7 @@ var (
 )
 
 // ---------------------------------------------------------------------
-//  Funciones
+//  Functions
 // ---------------------------------------------------------------------
 
 func AssignRoleToUser(role Role, userID string) {

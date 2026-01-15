@@ -13,23 +13,23 @@ import "errors"
 var (
 
 	// Authentication of user
-	ErrNotAuthenticated         = errors.New("user not authenticated")
-	UserNotFoundError           = errors.New("User not found")
-	WrongCredentialsError       = errors.New("Wrong credentials")
-	EmailAlreadyInUseError      = errors.New("Email already in use")
-	RequiredDataNotSpecified    = errors.New("Required data was not specified")
-	PasswordPolicyViolatedError = errors.New("Password policy violated")
-	Unauthorized                = errors.New("Unauthorized") // 401 -> No autenticado
-	Forbidden                   = errors.New("Forbidden")    // 403 -> No autorizado
+	ErrNotAuthenticated         = errors.New("error.user-not-authenticated")
+	UserNotFoundError           = errors.New("error.user-not-found")
+	WrongCredentialsError       = errors.New("error.wrong-credentials")
+	EmailAlreadyInUseError      = errors.New("error.email-already-in-use")
+	RequiredDataNotSpecified    = errors.New("error.required-data-not-specified")
+	PasswordPolicyViolatedError = errors.New("error.password-policy-violated")
+	Unauthorized                = errors.New("error.unauthorized") // 401 -> No authenticated
+	Forbidden                   = errors.New("error.forbidden")    // 403 -> No authorized
 
 	// Validation of email
-	InvalidOrExpiredTokenError = errors.New("invalid or expired token")
+	InvalidOrExpiredTokenError = errors.New("error.invalid-or-expired-token")
 
 	// Session
-	NoSessionError = errors.New("No session")
+	NoSessionError = errors.New("error.no-session")
 
 	// Generals
-	UnknownError = errors.New("Unknown error")
+	UnknownError = errors.New("error.unknown")
 )
 
 // ------------------------------------------------------------------------------------------------

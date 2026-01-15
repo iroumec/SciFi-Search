@@ -105,5 +105,9 @@
     "funding.deleted": "Financiamiento eliminado",
 
     "__loader.go":    "-------------------------------- loader.go -------------------------------",
-    "new-loader-created": "Loader creado con éxito"
+    "new-loader-created": "Loader creado con éxito",
+
+    "email.body.funding.added": "Se ha añadido un nuevo financiamiento que podría interesarte de acuerdo a tus preferencias",
+    "email.body.access.scifi": "¡Accede a SciFi para ver más detalles!",
+    "email.body.funding.not-interesting": "Si el documento no te resulta de interés, puedes ajustar tus preferencias en la configuración de tu perfil."
 }

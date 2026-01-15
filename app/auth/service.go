@@ -191,7 +191,7 @@ func RegisterUser(email, password string) (*string, error) {
 		return nil, UnknownError
 	}
 
-	// Verificación de email ya registrado.
+	// Email already in use validation.
 	if resp.EmailAlreadyExistsError != nil {
 		return nil, EmailAlreadyInUseError
 	}
@@ -207,7 +207,7 @@ func RegisterUser(email, password string) (*string, error) {
 
 func VerifyEmail(token string) error {
 
-	// Se verifica el token.
+	// Token verification.
 	response, err := emailverification.VerifyEmailUsingToken("", token, nil)
 	if err != nil {
 		return err
@@ -227,18 +227,16 @@ func VerifyEmail(token string) error {
 // Retorna la ID del usuario al que corresponden las credenciales.
 func VerifyCredentials(email, password string) (*string, error) {
 
-	// Se intenta realizar un log in.
+	// Log in try.
 	resp, err := emailpassword.SignIn("", email, password)
 	if err != nil {
 		return nil, err
 	}
 
-	// Credenciales incorrectas.
 	if resp.WrongCredentialsError != nil {
 		return nil, WrongCredentialsError
 	}
 
-	// Login exitoso: se crea la sesión y se redirige.
 	if resp.OK != nil {
 		return &resp.OK.User.ID, nil
 	}

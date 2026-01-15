@@ -1,7 +1,7 @@
 package bootstrap
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -12,13 +12,13 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func initializeAuthorizationMechanisms() {
 
-	mailProvider := mailhog.New()
-	emailService := email.New(mailProvider)
+	emailProvider := mailhog.New()
+	emailService := email.New(emailProvider)
 
 	supertokens.Initialize(emailService)
 
@@ -27,23 +27,23 @@ func initializeAuthorizationMechanisms() {
 
 // ------------------------------------------------------------------------------------------------
 
+// Roles creations.
 func defineRolesInProvider() {
 
-	// Creación de roles.
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.AdminRole.Name,
 		[]string{"full-access"},
-	) // Administrador.
+	) // Administrator.
 
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.LoaderRole.Name,
 		[]string{"manage-own-financings"},
-	) // Entidades que cargan financiamiento.
+	) // Loaders.
 
 	supertokens.CreateNewRoleOrAddPermissions(
 		auth.UserRole.Name,
 		[]string{"view-only"},
-	) // Usuarios normales.
+	) // Users.
 }
 
 // ------------------------------------------------------------------------------------------------
