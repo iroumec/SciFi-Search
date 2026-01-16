@@ -1,10 +1,17 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/converters"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ pagination(totalHits int, currentPage int, get string, include string, target string) {
 	{{
 		itemsPerPage := 10
@@ -41,6 +48,7 @@ templ pagination(totalHits int, currentPage int, get string, include string, tar
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ navigationButton(page int, button string, get string, include string, target string) {
 	<a
 		class="page"
@@ -56,9 +64,16 @@ templ navigationButton(page int, button string, get string, include string, targ
 	</a>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ documentItem(m map[string]any, name string, translator languages.Translator) {
 	<div id={ name + "-" + converters.ToString(m["id"]) }>
-		<a id="title" href={ converters.ToString(m["Link"]) } target="_blank">{ converters.ToString(m["Name"]) }</a>
+		<a
+			id="title"
+			href={ converters.ToString(m["Link"]) }
+			target="_blank"
+		>
+			{ converters.ToString(m["Name"]) }
+		</a>
 		<div class="extra-info">
 			@extraInfoItem(converters.ToString(m["Type"]), "gray")
 			@extraInfoItem(converters.ToString(m["Main area"]), "scifi")
@@ -76,6 +91,7 @@ templ documentItem(m map[string]any, name string, translator languages.Translato
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ extraInfoItem(item string, color string) {
 	if item != "" {
 		<span class={ color }>{ item } </span>

@@ -1,7 +1,7 @@
 ﻿package main
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -20,22 +20,21 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Punto de Entrada de la Aplicación
+// Entry Point
 // ------------------------------------------------------------------------------------------------
 
 func main() {
 
-	// Obtención del puerto de la aplicación.
 	appPort := utils.GetEnv("APP_PORT", "8080")
 
-	// Booteo de la aplicación.
+	// Boot.
 	app, err := bootstrap.Boot()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Contexto de shutdown.
-	// Asegura el cierre de todo ante un Ctrl + C, Docker Down, etc.
+	// Shutdown context.
+	// It ensures the shutdown of everything in case of: Ctrl + C, Docker Down, etc.
 	ctx, stop := signal.NotifyContext(
 		context.Background(),
 		os.Interrupt,
@@ -55,11 +54,10 @@ func main() {
 		os.Exit(0)
 	}()
 
-	// Se notifica que el servicio fue iniciado.
-	log.Println("Servidor iniciado")
-	log.Printf("Escuchando en http://localhost:%s\n", appPort)
+	log.Println("Server running")
+	log.Printf("Listening on http://localhost:%s\n", appPort)
 
-	// El servidor queda a la espera de solicitudes, trabajando en conjunto con los middlewares.
+	// The server waits for requests.
 	err = http.ListenAndServe(
 		":"+appPort,
 		supertokens.Middleware(
@@ -67,8 +65,7 @@ func main() {
 		),
 	)
 
-	// Nada de lo que esté acá debajo se ejecuta mientras el servidor espere solicitudes.
-
+	// The following lines are only executed when the server is no longer awaiting for requests.
 	if err != nil {
 		log.Println("Servidor detenido:", err)
 	}

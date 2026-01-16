@@ -1,7 +1,7 @@
 package minio
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -15,12 +15,12 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func NewClient() (*s3.Client, error) {
 
-	// Carga de configuración.
+	// Configuration loading.
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(
@@ -35,7 +35,7 @@ func NewClient() (*s3.Client, error) {
 		return nil, err
 	}
 
-	// Devolución de cliente con la configuración definida.
+	// A client with the specified configuration is returned.
 	return s3.NewFromConfig(cfg, func(o *s3.Options) {
 		o.BaseEndpoint = aws.String(os.Getenv("MINIO_HOST"))
 		o.UsePathStyle = true

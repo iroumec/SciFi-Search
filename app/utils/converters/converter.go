@@ -1,16 +1,16 @@
 package converters
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import "fmt"
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Realiza la conversión de un valor a string.
+// Value to string convertion.
 func ToString(v any) string {
 	if v == nil {
 		return ""
@@ -20,8 +20,8 @@ func ToString(v any) string {
 
 // ------------------------------------------------------------------------------------------------
 
-// Realiza la conversión de un booleano a un puntero a un booleano.
-// Esto es requerido, por ejemplo, por Supertokens.
+// Boolean to boolean pointer.
+// Required by Supertokens.
 func ToBoolPointer(b bool) *bool {
 	return &b
 }

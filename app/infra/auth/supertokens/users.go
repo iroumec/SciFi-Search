@@ -1,6 +1,14 @@
 package supertokens
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import "github.com/supertokens/supertokens-golang/supertokens"
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
 
 func DeleteUser(authID string) error {
 	err := supertokens.DeleteUser(authID)
@@ -9,6 +17,8 @@ func DeleteUser(authID string) error {
 		return err
 	}
 
-	// Usuario eliminado exitosamente.
+	// User deleted successfully.
 	return nil
 }
+
+// ------------------------------------------------------------------------------------------------

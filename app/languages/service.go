@@ -1,15 +1,19 @@
-package getters
+package languages
 
 // ------------------------------------------------------------------------------------------------
-// Services
+// Service
 // ------------------------------------------------------------------------------------------------
 
-// Returns the value if it's not empty. If it's, returns the default value.
-func GetOrDefault(value, defaultValue string) string {
-	if value != "" {
-		return value
+func LoadAllMessages() error {
+	for code, tag := range SupportedLanguages {
+		messages, err := loadLanguageFile(code)
+		if err != nil {
+			return err
+		}
+
+		registerMessages(tag, messages)
 	}
-	return defaultValue
+	return nil
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -1,37 +1,27 @@
-package storage
+package languages
 
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
 
-import "context"
+import (
+	"fmt"
+	"scifi-search/app/utils/loaders"
+)
 
 // ------------------------------------------------------------------------------------------------
-// Structures
+// Constants
 // ------------------------------------------------------------------------------------------------
 
-type Service struct {
-	store ObjectStore
-}
+const languagesDirectory = "resources/languages/"
 
 // ------------------------------------------------------------------------------------------------
-
-func (s *Service) StoreAvatar(ctx context.Context, userID string, data []byte) error {
-	return s.store.Put(
-		ctx,
-		"avatars",
-		userID+".png",
-		data,
-		"image/png",
-	)
-}
-
-// ------------------------------------------------------------------------------------------------
-// Services
+// Functions
 // ------------------------------------------------------------------------------------------------
 
-func New(store ObjectStore) *Service {
-	return &Service{store: store}
+func loadLanguageFile(code string) (map[string]string, error) {
+	path := fmt.Sprintf("%s%s.json", languagesDirectory, code)
+	return loaders.LoadJSON(path)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -2,6 +2,19 @@ package views
 
 import "scifi-search/app/languages"
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ LoaderPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("new-loader"), translator,
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
+		func() templ.Component { return loaderContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ loaderContent(translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
@@ -20,9 +33,4 @@ templ loaderContent(translator languages.Translator) {
 	</div>
 }
 
-templ LoaderPage(authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("new-loader"), translator,
-		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return loaderContent(translator) },
-	)
-}
+// ------------------------------------------------------------------------------------------------

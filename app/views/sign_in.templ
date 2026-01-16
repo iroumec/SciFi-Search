@@ -2,6 +2,19 @@ package views
 
 import "scifi-search/app/languages"
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ LoginPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("log-in"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return loginContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funcions
+// ------------------------------------------------------------------------------------------------
 templ loginContent(translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
@@ -36,9 +49,3 @@ templ loginContent(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ LoginPage(authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("log-in"), translator,
-		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
-		func() templ.Component { return loginContent(translator) },
-	)
-}

@@ -3,6 +3,18 @@ package views
 import "scifi-search/app/languages"
 
 // ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ IndexPage(authorizationLevel int, translator languages.Translator) {
+	@Layout("SciFi Search", translator,
+		func() templ.Component { return IndexHeader(authorizationLevel, translator) },
+		func() templ.Component { return indexContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ indexContent(translator languages.Translator) {
 	<main class="index-content">
 		<div class="index-top">
@@ -29,9 +41,3 @@ templ indexContent(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ IndexPage(authorizationLevel int, translator languages.Translator) {
-	@Layout("SciFi Search", translator,
-		func() templ.Component { return IndexHeader(authorizationLevel, translator) },
-		func() templ.Component { return indexContent(translator) },
-	)
-}

@@ -1,17 +1,17 @@
 package utils
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import "os"
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
-// Permite obtener el valor de una variable de ambiente
-// o un valor por defecto, en caso de no hallar la primera.
+// Returns the value of an enviroment variable or a default value,
+// in case the former is not defined.
 func GetEnv(key, fallback string) string {
 	val := os.Getenv(key)
 	if val == "" {

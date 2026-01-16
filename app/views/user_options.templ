@@ -1,10 +1,16 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"scifi-search/app/auth"
 	"scifi-search/app/languages"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Functions
 // ------------------------------------------------------------------------------------------------
 templ userOptions(authorizationLevel int, translator languages.Translator) {
 	if authorizationLevel <= auth.NoRole.Level {
@@ -40,16 +46,58 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 			</button>
 			<div id="menu" class="menu-content" x-show="open" style="display: none;">
 				<div id="close-menu">{ translator("menu") } </div>
-				<button class="menu-button" hx-get="/settings" hx-target="body" hx-push-url="true">{ translator("settings") }</button>
-				<button class="menu-button" hx-get="/history" hx-target="body" hx-push-url="true">{ translator("history") }</button>
-				<button class="menu-button" hx-get="/trends" hx-target="body" hx-push-url="true">{ translator("trends") }</button>
+				<button
+					class="menu-button"
+					hx-get="/settings"
+					hx-target="body"
+					hx-push-url="true"
+				>
+					{ translator("settings") }
+				</button>
+				<button
+					class="menu-button"
+					hx-get="/history"
+					hx-target="body"
+					hx-push-url="true"
+				>
+					{ translator("history") }
+				</button>
+				<button
+					class="menu-button"
+					hx-get="/trends"
+					hx-target="body"
+					hx-push-url="true"
+				>
+					{ translator("trends") }
+				</button>
 				if authorizationLevel >= auth.AdminRole.Level {
-					<button class="menu-button" hx-get="/loader" hx-target="body" hx-push-url="true">{ translator("new-loader") }</button>
+					<button
+						class="menu-button"
+						hx-get="/loader"
+						hx-target="body"
+						hx-push-url="true"
+					>
+						{ translator("new-loader") }
+					</button>
 				}
 				if authorizationLevel >= auth.LoaderRole.Level {
-					<button class="menu-button" hx-get="/funding" hx-target="body" hx-push-url="true">{ translator("manage-fundings") }</button>
+					<button
+						class="menu-button"
+						hx-get="/funding"
+						hx-target="body"
+						hx-push-url="true"
+					>
+						{ translator("manage-fundings") }
+					</button>
 				}
-				<button class="menu-button" hx-get="/signout" hx-target="body" hx-push-url="true">{ translator("log-out") }</button>
+				<button
+					class="menu-button"
+					hx-get="/signout"
+					hx-target="body"
+					hx-push-url="true"
+				>
+					{ translator("log-out") }
+				</button>
 			</div>
 		</div>
 	}

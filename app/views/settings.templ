@@ -1,6 +1,8 @@
 package views 
 
 // ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 import (
 	"fmt"
 	"scifi-search/app/auth"
@@ -10,16 +12,12 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-templ settingsContent(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
-	<div class="centered-box-content">
-		<div id="left"></div>
-		@SettingsForm(user, preferences, authorizationLevel, translator)
-		<div id="right"></div>
-	</div>
-}
-
+// Services
 // ------------------------------------------------------------------------------------------------
-templ SettingsForm(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
+templ SettingsForm(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
 	<form
 		id="settings-section"
 		enctype="multipart/form-data"
@@ -69,7 +67,7 @@ templ SettingsForm(user structures.User, preferences []string, authorizationLeve
 						class="scifi-button"
 						id="delete-account-btn"
 						hx-delete="/delete-account"
-						hx-confirm="¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible."
+						hx-confirm={ translator("account-deletion-confirmation") }
 						hx-target="body"
 					>
 						{ translator("delete-account") }
@@ -81,7 +79,7 @@ templ SettingsForm(user structures.User, preferences []string, authorizationLeve
 					type="button"
 					class="scifi-button"
 					hx-get="/settings/cancel"
-					hx-confirm="Are you sure you want to cancel the changes? This action is irreversible."
+					hx-confirm={ translator("account-edition-cancelation-confirmation") }
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
@@ -139,9 +137,24 @@ templ EditableInfoField(name string, typeStr string, value string) {
 templ EditPasswordSection(translator languages.Translator) {
 	<div id="edit-password-section">
 		<div id="password-inputs">
-			<input type="password" name="current-password" placeholder={ translator("current-password") } style="width: 100%;"/>
-			<input type="password" name="new-password" placeholder={ translator("new-password") } style="width: 100%;"/>
-			<input type="password" name="repeat-password" placeholder={ translator("repeat-new-password") } style="width: 100%;"/>
+			<input
+				type="password"
+				name="current-password"
+				placeholder={ translator("current-password") }
+				style="width: 100%;"
+			/>
+			<input
+				type="password"
+				name="new-password"
+				placeholder={ translator("new-password") }
+				style="width: 100%;"
+			/>
+			<input
+				type="password"
+				name="repeat-password"
+				placeholder={ translator("repeat-new-password") }
+				style="width: 100%;"
+			/>
 		</div>
 		<div id="password-button">
 			<button
@@ -203,7 +216,14 @@ templ AvatarOptions(translator languages.Translator) {
 				document.getElementById('avatar-preview').src = URL.createObjectURL(file);
 			}"
 	/>
-	<label for="avatar" class="scifi-button" id="upload-avatar" style="user-select: none;">{ translator("upload-new-avatar") } </label>
+	<label
+		for="avatar"
+		class="scifi-button"
+		id="upload-avatar"
+		style="user-select: none;"
+	>
+		{ translator("upload-new-avatar") }
+	</label>
 	<input
 		type="hidden"
 		id="delete-avatar-flag"
@@ -224,7 +244,11 @@ templ AvatarOptions(translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 templ PreferenceItem(preference string) {
 	<div class="preference">
-		<button type="button" class="remove-preference" onclick="this.parentElement.remove()"></button>
+		<button
+			type="button"
+			class="remove-preference"
+			onclick="this.parentElement.remove()"
+		></button>
 		<input
 			type="text"
 			name="preferences[]"
@@ -236,11 +260,32 @@ templ PreferenceItem(preference string) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SettingsPage(user structures.User, preferences []string, authorizationLevel int, translator languages.Translator) {
+templ SettingsPage(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
 	@Layout(translator("settings"), translator,
-		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return settingsContent(user, preferences, authorizationLevel, translator) },
+		func() templ.Component {
+			return Header(true, authorizationLevel, translator)
+		},
+		func() templ.Component {
+			return settingsContent(user, preferences, authorizationLevel, translator)
+		},
 	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ settingsContent(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
+	<div class="centered-box-content">
+		<div id="left"></div>
+		@SettingsForm(user, preferences, authorizationLevel, translator)
+		<div id="right"></div>
+	</div>
 }
 
 // ------------------------------------------------------------------------------------------------

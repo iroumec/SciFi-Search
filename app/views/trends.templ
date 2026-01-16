@@ -1,9 +1,27 @@
 package views
 
-import "html/template"
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
 
-import "scifi-search/app/languages"
+import (
+	"html/template"
+	"scifi-search/app/languages"
+)
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("trends"), translator,
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
+		func() templ.Component { return trendsContent(htmlChart, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 	<div class="centered-box-content trends">
 		<div id="left"></div>
@@ -14,7 +32,7 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 				</div>
 				<div class="chart-wrapper">
 					<div class="chart">
-						@templ.Raw(string(htmlChart)) 
+						@templ.Raw(string(htmlChart))
 					</div> // TODO: ver la traduccion de htmlChart
 				</div>
 			</div>
@@ -23,9 +41,4 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 	</div>
 }
 
-templ TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("trends"), translator,
-		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return trendsContent(htmlChart, translator) },
-	)
-}
+// ------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 package minio
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -13,20 +13,20 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func EnsurePublicBucket(ctx context.Context, client *s3.Client, bucket string) error {
 
-	// Creación del bucket.
+	// Bucket creation.
 	_, err := client.CreateBucket(ctx, &s3.CreateBucketInput{
 		Bucket: aws.String(bucket),
 	})
 	if err != nil {
-		return nil // Ya existe.
+		return nil // It already exists.
 	}
 
-	// Definición de política.
+	// Policy definition.
 	policy := fmt.Sprintf(`{
 		"Version": "2012-10-17",
 		"Statement": [{
@@ -37,7 +37,7 @@ func EnsurePublicBucket(ctx context.Context, client *s3.Client, bucket string) e
 		}]
 	}`, bucket)
 
-	// Asignación de política.
+	// Policy assignment.
 	_, err = client.PutBucketPolicy(ctx, &s3.PutBucketPolicyInput{
 		Bucket: aws.String(bucket),
 		Policy: aws.String(policy),

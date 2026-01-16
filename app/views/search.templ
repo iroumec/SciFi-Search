@@ -1,14 +1,60 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"container/list"
 	"scifi-search/app/languages"
 )
 
 // ------------------------------------------------------------------------------------------------
-// Search Results Content
+// Services
 // ------------------------------------------------------------------------------------------------
-templ searchResultsContent(query string, hits []map[string]any, totalHits int, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator) {
+templ SearchResults(
+	hits []map[string]any, totalHits int,
+	page int, translator languages.Translator,
+) {
+	<div class="documents-section">
+		for i := 0; i < len(hits); i++ {
+			<div class="result">
+				@documentItem(hits[i], "item", translator)
+			</div>
+		}
+	</div>
+	@pagination(totalHits, page, "/search/update-results", "#all-filters", "#results")
+}
+
+// ------------------------------------------------------------------------------------------------
+templ SearchResultsPage(
+	query string, hits []map[string]any, totalHits int, documentTypes *list.List,
+	documentAreas *list.List, documentCountriesBasedOn *list.List, authorizationLevel int,
+	translator languages.Translator,
+) {
+	@Layout(query+" - SciFi Search", translator,
+		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
+		func() templ.Component {
+			return searchResultsContent(
+				query,
+				hits,
+				totalHits,
+				documentTypes,
+				documentAreas,
+				documentCountriesBasedOn,
+				translator,
+			)
+		},
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ searchResultsContent(
+	query string, hits []map[string]any, totalHits int, documentTypes *list.List,
+	documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator,
+) {
 	<main>
 		<div class="search-container-grid">
 			<div class="top"></div>
@@ -23,7 +69,8 @@ templ searchResultsContent(query string, hits []map[string]any, totalHits int, d
 						<p>{ translator("results-for") + " \"" + query + "\"." }</p>
 					</div>
 					<div class="filters">
-						@searchFilters(query, documentTypes, documentAreas, documentCountriesBasedOn, translator)
+						@searchFilters(query, documentTypes, documentAreas,
+							documentCountriesBasedOn, translator)
 					</div>
 					<div id="results">
 						@SearchResults(hits, totalHits, 1, translator)
@@ -35,18 +82,11 @@ templ searchResultsContent(query string, hits []map[string]any, totalHits int, d
 	</main>
 }
 
-templ SearchResults(hits []map[string]any, totalHits int, page int, translator languages.Translator) {
-	<div class="documents-section">
-		for i := 0; i < len(hits); i++ {
-			<div class="result">
-				@documentItem(hits[i], "item", translator)
-			</div>
-		}
-	</div>
-	@pagination(totalHits, page, "/search/update-results", "#all-filters", "#results")
-}
-
-templ searchFilters(query string, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator) {
+// ------------------------------------------------------------------------------------------------
+templ searchFilters(
+	query string, documentTypes *list.List, documentAreas *list.List,
+	documentCountriesBasedOn *list.List, translator languages.Translator,
+) {
 	<div id="all-filters">
 		<div class="dropdown">
 			<button class="dropbtn" name="sortby" onclick="toggleDropdown(event)">
@@ -156,6 +196,7 @@ templ searchFilters(query string, documentTypes *list.List, documentAreas *list.
 	</script>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 	for e := values.Front(); e != nil; e = e.Next() {
 		<label class="checkbox-item">
@@ -176,6 +217,7 @@ templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
 	}
 }
 
+// ------------------------------------------------------------------------------------------------
 templ sortingCheckboxes(translator languages.Translator) {
 	@sortingCheckboxesItem("Name", "asc", translator)
 	@sortingCheckboxesItem("Name", "desc", translator)
@@ -200,18 +242,6 @@ templ sortingCheckboxesItem(value string, order string, translator languages.Tra
 		/>
 		{ translator("sort-by." + value + "-" + order) }
 	</label>
-}
-
-// ------------------------------------------------------------------------------------------------
-// Search Results Page
-// ------------------------------------------------------------------------------------------------
-templ SearchResultsPage(query string, hits []map[string]any, totalHits int, documentTypes *list.List, documentAreas *list.List, documentCountriesBasedOn *list.List, authorizationLevel int, translator languages.Translator) {
-	@Layout(query+" - SciFi Search", translator,
-		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
-		func() templ.Component {
-			return searchResultsContent(query, hits, totalHits, documentTypes, documentAreas, documentCountriesBasedOn, translator)
-		},
-	)
 }
 
 // ------------------------------------------------------------------------------------------------

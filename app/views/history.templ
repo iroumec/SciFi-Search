@@ -1,10 +1,31 @@
 package views 
 
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
 import (
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/structures"
 )
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ HistoryPage(
+	searches []structures.HistoricSearchView,
+	authorizationLevel int,
+	translator languages.Translator,
+) {
+	@Layout(translator("history"), translator,
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
+		func() templ.Component { return historyContent(searches, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ historyContent(searches []structures.HistoricSearchView, translator languages.Translator) {
 	<div class="centered-box-content">
 		<div id="left"></div>
@@ -27,9 +48,4 @@ templ historyContent(searches []structures.HistoricSearchView, translator langua
 	</div>
 }
 
-templ HistoryPage(searches []structures.HistoricSearchView, authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("history"), translator,
-		func() templ.Component { return Header(true, authorizationLevel, translator) },
-		func() templ.Component { return historyContent(searches, translator) },
-	)
-}
+// ------------------------------------------------------------------------------------------------

@@ -1,11 +1,15 @@
 package views
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
 templ ModalRoot() {
-    <div id="modal-root"></div>
+	<div id="modal-root"></div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ Modal(modalTitle string, modalBody func() templ.Component) {
-    <div 
+	<div
 		class="modal-overlay"
 		x-data="{ open: true }"
 		x-show="open"
@@ -16,9 +20,9 @@ templ Modal(modalTitle string, modalBody func() templ.Component) {
 				<h2>
 					{ modalTitle }
 				</h2>
-				<button 
-					class="close-button" 
-					type="button" 
+				<button
+					class="close-button"
+					type="button"
 					@click="open = false"
 				>
 					&times;
@@ -28,3 +32,5 @@ templ Modal(modalTitle string, modalBody func() templ.Component) {
 		</div>
 	</div>
 }
+
+// ------------------------------------------------------------------------------------------------

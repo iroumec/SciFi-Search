@@ -2,7 +2,20 @@ package views
 
 import "scifi-search/app/languages"
 
-templ UnloggedContent(translator languages.Translator) {
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ UnloggedPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("no-session"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return unloggedContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ unloggedContent(translator languages.Translator) {
 	<div id="no-session">
 		<p>{ translator("no-session-msg") }</p>
 		<div id="buttons">
@@ -26,9 +39,4 @@ templ UnloggedContent(translator languages.Translator) {
 	</div>
 }
 
-templ UnloggedPage(authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("no-session"), translator,
-		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
-		func() templ.Component { return UnloggedContent(translator) },
-	)
-}
+// ------------------------------------------------------------------------------------------------

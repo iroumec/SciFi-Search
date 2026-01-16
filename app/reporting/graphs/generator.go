@@ -1,7 +1,7 @@
 package graphs
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -17,13 +17,13 @@ import (
 // Interfaces
 // ------------------------------------------------------------------------------------------------
 
-// Interfaz que define el contrato para cualquier tipo de gráfico
+// Contract for any type of chart.
 type ChartRenderer interface {
 	Render(xValues []string, yValues []int) (bytes.Buffer, error)
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func generateGraph(renderer ChartRenderer, values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
@@ -35,13 +35,12 @@ func generateGraph(renderer ChartRenderer, values []database.GetTrendingSearches
 		yValues[i] = int(row.Count)
 	}
 
-	// Usar el renderer configurado (polimorfismo)
 	return renderer.Render(xValues, yValues)
 }
 
 // ------------------------------------------------------------------------------------------------
 
-// Opciones globales compartidas por todos los tipos de gráficos.
+// Global options, shared by all charts.
 func getGlobalOptions() []charts.GlobalOpts {
 	return []charts.GlobalOpts{
 		charts.WithInitializationOpts(opts.Initialization{
@@ -50,13 +49,13 @@ func getGlobalOptions() []charts.GlobalOpts {
 			Theme:  types.ThemeWesteros,
 		}),
 		charts.WithXAxisOpts(opts.XAxis{
-			//Name:         "Términos de búsqueda", // Comentado ya que se solapa con los nombres de las barras.
+			//Name:         "Términos de búsqueda", // It overlaps with the x-axis names.
 			NameLocation: "middle",
 			NameGap:      30,
 			AxisLabel: &opts.AxisLabel{
 				Show:     opts.Bool(true),
-				Interval: "0", // Se muestran todas las etiquetas.
-				Rotate:   -45, // Se rotan las etiquetas para evitar solapamiento.
+				Interval: "0", // All tags are shown.
+				Rotate:   -45, // Tags are rotated so they don't overlap.
 				FontSize: 12,
 			},
 		}),
@@ -73,9 +72,9 @@ func getGlobalOptions() []charts.GlobalOpts {
 			SplitLine: &opts.SplitLine{
 				Show: opts.Bool(true),
 				LineStyle: &opts.LineStyle{
-					Color: "#333333", // "000000" para negro puro.
+					Color: "#333333",
 					Width: 1,
-					Type:  "solid", // "dashed" para líneas punteadas.
+					Type:  "solid", // Another option: "dashed".
 				},
 			},
 		}),
@@ -86,7 +85,7 @@ func getGlobalOptions() []charts.GlobalOpts {
 		charts.WithGridOpts(opts.Grid{
 			Left:         "10%",
 			Right:        "5%",
-			Bottom:       "15%", // Más espacio abajo para las etiquetas rotadas.
+			Bottom:       "15%", // More space below the rotated tags.
 			Top:          "10%",
 			ContainLabel: opts.Bool(true),
 		}),

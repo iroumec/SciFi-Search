@@ -2,6 +2,9 @@ package views
 
 import "scifi-search/app/languages"
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
 templ Header(showOptions bool, authorizationLevel int, translator languages.Translator) {
 	@headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator)
 }
@@ -22,7 +25,16 @@ templ SearchHeader(authorizationLevel int, translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ headerBuilder(backgroundColor string, logo string, query bool, showOptions bool, authorizationLevel int, translator languages.Translator) {
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ headerBuilder(
+	backgroundColor string,
+	logo string,
+	query bool,
+	showOptions bool,
+	authorizationLevel int,
+	translator languages.Translator,
+) {
 	<header style={ "background-color: " + backgroundColor + ";" }>
 		<div class="header-left">
 			if logo != "" {
@@ -59,3 +71,5 @@ templ headerBuilder(backgroundColor string, logo string, query bool, showOptions
 		</div>
 	</header>
 }
+
+// ------------------------------------------------------------------------------------------------

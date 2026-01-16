@@ -1,26 +1,20 @@
-package extractors
+package languages
 
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
 
-import (
-	"html/template"
-	"regexp"
-)
+import "golang.org/x/text/language"
 
 // ------------------------------------------------------------------------------------------------
-// Services
+// Variables
 // ------------------------------------------------------------------------------------------------
 
-// Given an HTML text, it extracts the content between <body> and </body>.
-func ExtractBodyContent(html string) template.HTML {
-	re := regexp.MustCompile(`(?s)<body[^>]*>(.*?)</body>`)
-	matches := re.FindStringSubmatch(html)
-	if len(matches) > 1 {
-		return template.HTML(matches[1])
-	}
-	return template.HTML(html)
+var SupportedLanguages = map[string]language.Tag{
+	"es": language.Spanish,
+	"en": language.English,
+	// If a new language wants to be added, just add it here
+	// and the create a json file for it.
 }
 
 // ------------------------------------------------------------------------------------------------

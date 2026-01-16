@@ -1,10 +1,11 @@
 package supertokens
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,7 +24,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constantes
+// Constants
 // ------------------------------------------------------------------------------------------------
 
 const (
@@ -31,7 +32,15 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Variables
+// ------------------------------------------------------------------------------------------------
+
+var (
+	PasswordEmptyError = errors.New("error.password-empty")
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func Initialize(emailService *email.Service) {
@@ -53,20 +62,20 @@ func Initialize(emailService *email.Service) {
 
 		RecipeList: []supertokens.Recipe{
 
-			// Se especifica la utilización de distintos roles de usuarios.
+			// The pressence of different roles is specified.
 			userroles.Init(nil),
 
-			// Se permite inicio de sesión mediante email/password.
+			// Email/Password sign-up and log-in is enabled.
 			emailpassword.Init(&epmodels.TypeInput{
 				SignUpFeature: &epmodels.TypeInputSignUp{
 					FormFields: []epmodels.TypeInputFormField{
 						{
 							ID: "password",
-							// Validación muy permisiva para probar rápido.
+							// Password validation.
 							Validate: func(value interface{}, tenantId string) *string {
 								password := value.(string)
 								if len(password) < 1 {
-									err := "La contraseña no puede estar vacía"
+									err := PasswordEmptyError.Error()
 									return &err
 								}
 								return nil // Se acepta todo lo demás.
@@ -78,14 +87,11 @@ func Initialize(emailService *email.Service) {
 
 			// Email verification configuration.
 			emailverification.Init(evmodels.TypeInput{
-				// El siguiente modo permite que el usuario use la página normalmente
-				// aunque no haya verificado su email, aunque se le pueden prohibir ciertas
-				// accioens manualmente.
-				Mode: evmodels.ModeOptional,
 
-				// El siguiente estado inhabilita la sesión a menos de que el email se
-				// encuentre verificado. Es el más estricto.
-				// Mode: evmodels.ModeRequired,
+				// This mode allows the user to use some functionalities of the page
+				// despict not having its email verified.
+				// If a mode restrictive mode is required, use `evmodels.ModeRequired`.
+				Mode: evmodels.ModeOptional,
 
 				EmailDelivery: &emaildelivery.TypeInput{
 					Service: EmailDelivery(emailService),

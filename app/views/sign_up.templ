@@ -2,6 +2,19 @@ package views
 
 import "scifi-search/app/languages"
 
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("sign-up"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return signUpContent(errorMessage, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
 templ signUpFields(translator languages.Translator) {
 	<div id="form-inputs">
 		<input
@@ -35,6 +48,7 @@ templ signUpFields(translator languages.Translator) {
 	</div>
 }
 
+// ------------------------------------------------------------------------------------------------
 templ signUpContent(errorMessage string, translator languages.Translator) {
 	<div class="only-form-content">
 		<div class="centered-container">
@@ -54,9 +68,3 @@ templ signUpContent(errorMessage string, translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("sign-up"), translator,
-		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
-		func() templ.Component { return signUpContent(errorMessage, translator) },
-	)
-}
