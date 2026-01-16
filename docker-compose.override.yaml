@@ -1,4 +1,4 @@
-services: # Desarrolo.
+services: # Development.
   app:
     build:
       target: dev
@@ -9,5 +9,5 @@ services: # Desarrolo.
 
   db:
     volumes:
-      # Base de datos utilizada por atlas.
+      # Database used by Atlas.
       - ./database/init:/docker-entrypoint-initdb.d

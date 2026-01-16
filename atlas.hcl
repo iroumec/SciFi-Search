@@ -1,59 +1,42 @@
 # atlas.hcl
 
 # Variables de entorno.
-variable "db_user" {
+variable "db_url" {
   type    = string
-  default = getenv("DB_USER")
+  default = getenv("DB_URL")
 }
 
-variable "db_password" {
+variable "atlas_db_url" {
   type    = string
-  default = getenv("DB_PASSWORD")
+  default = getenv("ATLAS_DB_URL")
 }
 
-variable "db_name" {
-  type    = string
-  default = getenv("DB_NAME")
-}
-
-variable "db_port" {
-  type    = string
-  default = getenv("DB_PORT")
-}
-
-variable "db_host" {
-  type    = string
-  default = getenv("DB_HOST")
-}
-
-# Entorno Docker (dentro del contenedor).
+# Docker enviroment (inside container).
 env "docker" {
 
-  # URL de la base de datos principal.
-  url = "postgres://${var.db_user}:${var.db_password}@${var.db_host}:${var.db_port}/${var.db_name}?sslmode=disable"
+  # Main database URL.
+  url = "${var.db_url}"
 
-  # Atlas requiere que se le especifique una base de datos
-  # temporal para calcular diferencias en el schema.
-  dev = "postgres://${var.db_user}:${var.db_password}@${var.db_host}:${var.db_port}/atlas_temp?sslmode=disable"
+  # Atlas database.
+  # It is required so Atlas can calculate temporal differences in the scheme.
+  dev = "${var.atlas_db_url}"
   
-  # Directorio donde se guardan las migraciones.
+  # Migrations directory.
   migration {
     dir = "file://database/migrations"
   }
   
-  # Schema fuente (lo que se edita).
-  # Las queries no requieren de migración.
+  # Source scheme (what it is edited).
+  # Queries don't require migrations.
   src = "file://database/schema/schema.sql"
 }
 
-# Entorno local (fuera del contenedor).
+# Local environment(outside contenedor).
 env "local" {
 
-  url = "postgres://${var.db_user}:${var.db_password}@localhost:${var.db_port}/${var.db_name}?sslmode=disable"
+  url = "${var.db_url}"
 
-  # Atlas requiere que se le especifique una base de datos
-  # temporal para calcular diferencias en el schema.
-  dev = "postgres://${var.db_user}:${var.db_password}@${var.db_host}:${var.db_port}/atlas_temp?sslmode=disable"
+  dev = "${var.atlas_db_url}"
   
   migration {
     dir = "file://database/migrations"

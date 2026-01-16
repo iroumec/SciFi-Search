@@ -1,11 +1,15 @@
-# ==============================================================================
+# =================================================================================================
 # Makefile para levantar un entorno Docker, ejecutar pruebas Hurl y limpiar.
-# ==============================================================================
+# =================================================================================================
 
 # Target por defecto que se ejecuta al correr `make`.
 all: help
 
+# =================================================================================================
+
 run: up ## Construye y levanta los contenedores, esperando a que el servidor avise.
+
+# =================================================================================================
 
 up: create-env ## Construye y levanta los contenedores, esperando a que el servidor avise.
 	@echo
@@ -29,7 +33,8 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@echo
 
 	@echo "Aplicando migraciones..."
-	@docker exec -i scifi-search-db psql -U postgres -d postgres  < database/schema/schema.sql > /dev/null 2>&1
+	@docker exec -i scifi-search-db psql -U postgres -d postgres  < database/schema/schema.sql \
+		> /dev/null 2>&1
 	@echo
 
 	@echo "Base de datos lista. Esperando a que el servidor esté listo..."
@@ -41,24 +46,41 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@echo "Servidor corriendo en http://localhost:8080."
 	@echo
 
-development: create-env ## Construye y levanta los contenedores en modo desarrollador (con air activo).
+# =================================================================================================
+
+development: create-env ## Construye y levanta los contenedores en modo desarrollador.
 	@docker compose up --build
+
+# =================================================================================================
 
 down: ## Detiene los contenedores y redes, sin eliminar volúmenes.
 	@echo "Deteniendo el servidor..."
 	@ #Se detiene la versión de producción. La versión no sobrescritra.
 	@docker compose -f docker-compose.yml down
 
+# =================================================================================================
+
 clean: down ## Elimina la imagen y los volúmenes.
 	@docker compose -f docker-compose.yml down -v --rmi all
 	@docker volume prune -f
 
+# =================================================================================================
+
 is-running: ## Verifica que el servidor esté corriendo.
-	@curl -f -s http://localhost:8080/health > /dev/null || (echo "\033[31mERROR: El servidor no está corriendo. Usa 'make up' primero.\033[0m" && exit 1)
+	@curl -f -s http://localhost:8080/health > /dev/null \
+		|| (echo "\033[31mERROR: El servidor no está corriendo. Usa 'make up' primero.\033[0m" \
+			&& exit 1)
+
+# =================================================================================================
 
 create-env: ## Crea un archivo `.env` con valores por defecto para las variables de ambiente.
 	@cp resources/.env.example .env
 
+# =================================================================================================
+
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
+# =================================================================================================
