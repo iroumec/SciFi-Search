@@ -12,7 +12,7 @@ import (
 // Structures
 // ---------------------------------------------------------------------
 
-// Rol del sistema, con su nombre y nivel de autorización.
+// Role in the system, with its name and auth level.
 type Role struct {
 	Name  string
 	Level int

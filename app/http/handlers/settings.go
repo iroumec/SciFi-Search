@@ -416,7 +416,6 @@ func cancelSettingEdition(w http.ResponseWriter, r *http.Request) {
 
 	preferences, err := queries.ListPreferencesFromUser(r.Context(), currentUser.UserID)
 	if err != nil {
-		log.Println("ListPreferencesFromUser:", err)
 		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}

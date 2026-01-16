@@ -1,7 +1,7 @@
 package supertokens
 
 // ------------------------------------------------------------------------------------------------
-// Importaciones
+// Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
@@ -23,7 +23,7 @@ import (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Constantes
+// Constants
 // ------------------------------------------------------------------------------------------------
 
 const (
@@ -31,7 +31,7 @@ const (
 )
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func Initialize(emailService *email.Service) {
@@ -53,23 +53,23 @@ func Initialize(emailService *email.Service) {
 
 		RecipeList: []supertokens.Recipe{
 
-			// Se especifica la utilización de distintos roles de usuarios.
+			// Specifying the use of different user roles.
 			userroles.Init(nil),
 
-			// Se permite inicio de sesión mediante email/password.
+			// Allowing log-in through email/password
 			emailpassword.Init(&epmodels.TypeInput{
 				SignUpFeature: &epmodels.TypeInputSignUp{
 					FormFields: []epmodels.TypeInputFormField{
 						{
 							ID: "password",
-							// Validación muy permisiva para probar rápido.
+							// Quick and small validation
 							Validate: func(value interface{}, tenantId string) *string {
 								password := value.(string)
 								if len(password) < 1 {
-									err := "La contraseña no puede estar vacía"
+									err := "The password cannot be empty." //TODO: como se usaria el traductor aca?
 									return &err
 								}
-								return nil // Se acepta todo lo demás.
+								return nil // Allows everything else.
 							},
 						},
 					},

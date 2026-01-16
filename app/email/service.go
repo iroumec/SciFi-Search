@@ -31,7 +31,7 @@ func (s *Service) SendVerification(to, link string) error {
 // Servicios
 // ------------------------------------------------------------------------------------------------
 
-// A partir de un proveedor, retorna un servicio que depende de dicho proveedor.
+// Given a provider, the function returns the service it depends on.
 func New(provider Provider) *Service {
 	return &Service{provider: provider}
 }

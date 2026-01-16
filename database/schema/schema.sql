@@ -1,6 +1,6 @@
--- CREACIÓN DE TABLAS
+-- TABLE CREATION
 CREATE TABLE IF NOT EXISTS users(
-    user_id SERIAL, -- Podría sacarse este y usar el de autenticación únicamente después de la entrega del TP6.
+    user_id SERIAL,
     name VARCHAR(32) NOT NULL,
     surname VARCHAR(32) NOT NULL,
     auth_id TEXT UNIQUE NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS documents (
     deadline TEXT NOT NULL
 );
 
--- ASIGNACION DE CLAVES FORÁNEAS 
+-- FOREIGN KEY ASIGNATION 
 ALTER TABLE user_preferences 
 ADD CONSTRAINT fk_user_preferences_users 
 FOREIGN KEY (user_id) 
