@@ -8,8 +8,8 @@ import (
 	"errors"
 	"net/http"
 	"scifi-search/app/auth"
+	"scifi-search/app/charts"
 	"scifi-search/app/languages"
-	"scifi-search/app/reporting/graphs"
 	"scifi-search/app/utils/extractors"
 	"scifi-search/app/views"
 )
@@ -68,7 +68,7 @@ func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generation of the HTML graph and storage in a buffer.
-	buffer, err := graphs.GenerateBarChart(trendingSearches)
+	buffer, err := charts.GenerateBarChart(trendingSearches)
 	if err != nil {
 		http.Error(w, ChartGenerationFailerError.Error(), http.StatusInternalServerError)
 		return

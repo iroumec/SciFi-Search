@@ -1,4 +1,4 @@
-package graphs
+package charts
 
 // ------------------------------------------------------------------------------------------------
 // Imports
@@ -16,27 +16,27 @@ import (
 // Structures
 // ------------------------------------------------------------------------------------------------
 
-// Line chart implementation.
-type LineChartRenderer struct{}
+// Bar chart implementations.
+type BarChartRenderer struct{}
 
 // ------------------------------------------------------------------------------------------------
 
-func (l *LineChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
-	line := charts.NewLine()
-	line.SetGlobalOptions(getGlobalOptions()...)
-	line.SetXAxis(xValues).AddSeries("Búsquedas", l.generateItems(yValues))
+func (b *BarChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
+	bar := charts.NewBar()
+	bar.SetGlobalOptions(getGlobalOptions()...)
+	bar.SetXAxis(xValues).AddSeries("Búsquedas", b.generateItems(yValues))
 
 	var buffer bytes.Buffer
-	err := line.Render(&buffer)
+	err := bar.Render(&buffer)
 	return buffer, err
 }
 
 // ------------------------------------------------------------------------------------------------
 
-func (l *LineChartRenderer) generateItems(values []int) []opts.LineData {
-	items := make([]opts.LineData, len(values))
+func (b *BarChartRenderer) generateItems(values []int) []opts.BarData {
+	items := make([]opts.BarData, len(values))
 	for i, v := range values {
-		items[i] = opts.LineData{Value: v}
+		items[i] = opts.BarData{Value: v}
 	}
 	return items
 }
@@ -45,9 +45,9 @@ func (l *LineChartRenderer) generateItems(values []int) []opts.LineData {
 // Services
 // ------------------------------------------------------------------------------------------------
 
-func GenerateLineChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+func GenerateBarChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
 
-	return generateGraph(&LineChartRenderer{}, values)
+	return generateGraph(&BarChartRenderer{}, values)
 }
 
 // ------------------------------------------------------------------------------------------------
