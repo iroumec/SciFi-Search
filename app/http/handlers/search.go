@@ -375,8 +375,6 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	sortBy := r.URL.Query()["sortby"]
 	pageStr := r.URL.Query().Get("page")
 
-	log.Println(sortBy)
-
 	var filters []string
 
 	for _, t := range filterBasedOn {

@@ -102,15 +102,20 @@
     "unexpected-error-ocurrence": "An unexpected error has occurred.",
     "funding.added": "Funding added",
     "new-funding.email.subject": "New funding added",
+    "email.body.funding.added": "A new funding, which could be of interest for you according to your preferences, has been published",
+    "email.body.access.scifi": "Access SciFI for more details!",
+    "email.body.funding.not-interesting": "If the document is not interesting for you, change your preferences in your configuration.",
     "funding.deleted": "Funding deleted",
 
     "__loader.go":    "-------------------------------- loader.go -------------------------------",
     "new-loader-created": "New loader created successfuly!",
 
-    
-    "verification-email.body-after-update": "Your email has been updated. Verify your new email accesing the link below.",
+    "__setings.go":   "------------------------------- settings.go ------------------------------",
+    "changes-saved": "Changes successfuly saved.",
+    "verify-your-new-email": "Please, verify your new email.",
 
-    "email.body.funding.added": "A new funding, which could be of interest for you according to your preferences, has been published",
-    "email.body.access.scifi": "Access SciFI for more details!",
-    "email.body.funding.not-interesting": "If the document is not interesting for you, change your preferences in your configuration."
+
+    "__middleware/auth.go": "------------------------------- middleware/auth.go ------------------------------",
+    "suggestion.email-not-verified": "To access this, you must first verify your email.",
+    "suggestion.not-enough-permissions": "Insufficient permissions."
 }

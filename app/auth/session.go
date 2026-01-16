@@ -47,7 +47,7 @@ func GetCurrentUserEmail(w http.ResponseWriter, r *http.Request) *string {
 
 // ------------------------------------------------------------------------------------------------
 
-// Retorna si el usuario está autenticado.
+// Returns true if the user is authenticated.
 func IsUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 	// Intentar obtener la sesión sin requerirla
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{

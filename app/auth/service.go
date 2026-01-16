@@ -41,7 +41,7 @@ func GetAuthenticationLevel(userID string) int {
 		return UserRole.Level
 	}
 
-	// Usuario sin autenticar.
+	// Unauthenticated user.
 	return NoRole.Level
 }
 
@@ -65,11 +65,11 @@ func SendVerificationEmail(emailService *email.Service, userID, email, emailSubj
 
 // --------------------------------------------------------------------------------------------- //
 
-// Actualiza el email del usuario y solicita re-verificación si el email cambió.
+// Updates the user's email and asks for re-verification if the email was changed.
 func UpdateEmail(authID, newEmail string) error {
 	newEmail = strings.TrimSpace(newEmail)
 
-	// Obtención del email actual del usuario.
+	// Obtaining the current user's email
 	currentUser, err := emailpassword.GetUserByID(authID)
 	if err != nil || currentUser == nil {
 		return err
@@ -77,12 +77,12 @@ func UpdateEmail(authID, newEmail string) error {
 
 	currentEmail := currentUser.Email
 
-	// Si el email es el mismo, no se hace nada.
+	// If there's no change, nothing is made.
 	if strings.EqualFold(currentEmail, newEmail) {
 		return nil
 	}
 
-	// Se verifica si el nuevo emaul ya está en uso por otro usuario.
+	// If there exists a user with that email.
 	existingUser, err := emailpassword.GetUserByEmail("", newEmail)
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func UpdateEmail(authID, newEmail string) error {
 		return EmailAlreadyInUseError
 	}
 
-	// Se actualiza el email en SuperTokens.
+	// Email update on SuperTokens.
 	updateResp, err := emailpassword.UpdateEmailOrPassword(authID, &newEmail, nil, nil, nil)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func UpdateEmail(authID, newEmail string) error {
 		return err
 	}
 
-	// Se desverifica el email (forzando re-verificación).
+	// Email unverification (forcing re-verification).
 	_, err = emailverification.UnverifyEmail(authID, &newEmail, nil)
 	if err != nil {
 		return err
@@ -118,14 +118,14 @@ func UpdateEmail(authID, newEmail string) error {
 
 // --------------------------------------------------------------------------------------------- //
 
-// Actualiza la contraseña del usuario.
+// Updates the user's password.
 func UpdatePassword(authID, currentPassword, newPassword string) error {
-	// Se valida que se proporcionaron ambas contraseñas.
+	// Checking if both password were given.
 	if currentPassword == "" || newPassword == "" {
 		return nil
 	}
 
-	// Se obtiene el email actual para verificar la contraseña.
+	// Obtaining email to verify the password.
 	currentUser, err := emailpassword.GetUserByID(authID)
 	if err != nil || currentUser == nil {
 		return err
@@ -136,7 +136,7 @@ func UpdatePassword(authID, currentPassword, newPassword string) error {
 		return err
 	}
 
-	// Se actualiza la contraseña.
+	// Password update.
 	updateResp, err := emailpassword.UpdateEmailOrPassword(authID, nil, &newPassword, nil, nil)
 	if err != nil {
 		return err
@@ -173,7 +173,7 @@ func GetUserEmail(userID string) *string {
 
 func DeleteUser(userID string) error {
 
-	// Se elimina el usuario de supertokens.
+	// User deletion in Supertokens
 	err := supertokens.DeleteUser(userID)
 	if err != nil {
 		return err
@@ -224,10 +224,10 @@ func VerifyEmail(token string) error {
 
 // --------------------------------------------------------------------------------------------- //
 
-// Retorna la ID del usuario al que corresponden las credenciales.
+// Returns the user's ID matching the credentials.
 func VerifyCredentials(email, password string) (*string, error) {
 
-	// Log in try.
+	// Log-in attempt.
 	resp, err := emailpassword.SignIn("", email, password)
 	if err != nil {
 		return nil, err
