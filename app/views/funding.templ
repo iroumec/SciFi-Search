@@ -167,8 +167,10 @@ templ fundingForm(
 				@labeledInput("grantor", translator("grantor"), "text", "grantors", "", document["Grantor"], false)
 			</div>
 			<div class="double-input">
-				@labeledInput("currency", translator("currency"), "text", "currencies", "", document["Currency"], true)
-				@labeledInput("amount", translator("amount"), "text", "", "min - max", document["Amount"], true)
+				@labeledInput("currency", translator("currency"), "text", "currencies", "",
+					document["Currency"], true)
+				@labeledInput("amount", translator("amount"), "text", "", "min - max",
+					document["Amount"], true)
 			</div>
 			@labeledInput("deadline", translator("deadline"), "date", "", "", document["Deadline"], true)
 			@datalist("types", documentTypes)

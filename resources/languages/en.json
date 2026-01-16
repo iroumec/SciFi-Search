@@ -117,5 +117,7 @@
 
     "__middleware/auth.go": "------------------------------- middleware/auth.go ------------------------------",
     "suggestion.email-not-verified": "To access this, you must first verify your email.",
-    "suggestion.not-enough-permissions": "Insufficient permissions."
+    "suggestion.not-enough-permissions": "Insufficient permissions.",
+
+    "not-specified": "Not specified"
 }

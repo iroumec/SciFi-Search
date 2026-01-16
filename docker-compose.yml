@@ -32,7 +32,7 @@ services:
     build:
       context: .
       target: production
-    container_name: tpe-app-1
+    container_name: scifi
     ports:
       - "${APP_PORT}:${APP_PORT}"
     depends_on:

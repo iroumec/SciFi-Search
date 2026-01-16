@@ -307,7 +307,7 @@ func documentItem(m map[string]any, name string, translator languages.Translator
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = extraInfoItem("("+converters.ToString(m["Currency"])+") "+converters.ToString(m["Amount"]), "green").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = extraInfoItem("("+converters.ToString(m["Currency"])+") "+translator(converters.ToString(m["Amount"])), "green").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

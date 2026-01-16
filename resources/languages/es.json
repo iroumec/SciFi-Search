@@ -117,5 +117,7 @@
 
     "__middleware/auth.go": "------------------------------- middleware/auth.go ------------------------------",
     "suggestion.email-not-verified": "Debe verificar su email antes de acceder a esta funcionalidad.",
-    "suggestion.not-enough-permissions": "No cuenta con los permisos suficientes."
+    "suggestion.not-enough-permissions": "No cuenta con los permisos suficientes.",
+
+    "not-specified": "No especificado"
 }
