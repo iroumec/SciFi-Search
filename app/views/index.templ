@@ -27,7 +27,7 @@ templ indexContent(translator languages.Translator) {
 						type="text"
 						id="first-query"
 						name="query"
-						placeholder={ translator("search_for_science") }
+						placeholder={ translator("search") }
 						hx-get="/search"
 						hx-trigger="keyup[key=='Enter' && this.value.trim()!='']"
 						hx-target="body"

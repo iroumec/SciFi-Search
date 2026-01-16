@@ -73,8 +73,8 @@ is-running: ## Verifica que el servidor esté corriendo.
 
 # =================================================================================================
 
-create-env: ## Crea un archivo `.env` con valores por defecto para las variables de ambiente.
-	@cp resources/.env.example .env
+create-env: ## Crea un archivo `.env` con valores por defecto si no existe.
+	@test -f .env || cp resources/.env.example .env
 
 # =================================================================================================
 

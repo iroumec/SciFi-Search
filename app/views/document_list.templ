@@ -81,8 +81,8 @@ templ documentItem(m map[string]any, name string, translator languages.Translato
 			@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
 			@extraInfoItem(converters.ToString(m["Based on"]), "yellow")
 			@extraInfoItem(converters.ToString(m["Grantor"]), "cyan")
-			@extraInfoItem("("+converters.ToString(m["Currency"])+") "
-				+translator(converters.ToString(m["Amount"])), "green")
+			@extraInfoItem("("+converters.ToString(m["Currency"])+") "+
+				translator(converters.ToString(m["Amount"])), "green")
 		</div>
 		if converters.ToString(m["Description"]) != "" {
 			<p id="description">{ converters.ToString(m["Description"]) }</p>
@@ -98,3 +98,5 @@ templ extraInfoItem(item string, color string) {
 		<span class={ color }>{ item } </span>
 	}
 }
+
+// ------------------------------------------------------------------------------------------------
