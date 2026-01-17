@@ -7,6 +7,7 @@ package structures
 import (
 	"container/list"
 	"scifi-search/app/utils/converters"
+	"slices"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -35,12 +36,7 @@ func AddIfNotExists(l *list.List, value any) {
 
 // Array
 func Exists[T comparable](a []T, value T) bool {
-	for _, v := range a {
-		if v == value {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(a, value)
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -65,7 +65,7 @@ body {
     margin: 0px;
 }
 
-.contenedor-grid {
+.container-grid {
     display: grid;
     height: 100vh;
     
@@ -247,7 +247,7 @@ header {
         /*border: 1px solid red;*/
     }
 
-        #logo-unicen {
+        #unicen-logo {
             height: 7.5rem;
             border-right: solid 3px white;
             border-left: solid 3px white;
@@ -343,7 +343,7 @@ header {
                 border: 1px solid rgb(255, 0, 0);*/
             }
 
-                #logo_scifi {
+                #scifi_logo {
                     height: 100%;
                 }
 
