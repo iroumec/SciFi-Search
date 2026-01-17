@@ -1,6 +1,6 @@
 # SciFi Search
 
-![logo](static/img/logo_negro.png)
+![logo](static/img/logotypes/scifi-black.png)
 
 A web application to search for science funding.
 
