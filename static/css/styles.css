@@ -59,7 +59,7 @@ body {
     font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 400; /*peso regular de fuente (700 Implica Bold) */
     background-color: var(--background);
-    background-image: url('../img/fondo.png');
+    background-image: url('../img/backgrounds/main.png');
     background-size: cover;
     color: black;
     margin: 0px;
@@ -113,7 +113,7 @@ header {
 
             background-color: var(--scifi30);
 
-            background-image: url('../img/icono_busqueda_blanco.svg');
+            background-image: url('../img/icons/search-white.svg');
             background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
             background-position: 10px 10px; /*Ubica la imagen centrada*/
             padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
@@ -368,7 +368,7 @@ header {
 
                     background-color: var(--scifi30);
 
-                    background-image: url('../img/icono_busqueda_blanco.svg');
+                    background-image: url('../img/icons/search-white.svg');
                     background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
                     background-position: 10px 10px; /*Ubica la imagen centrada*/
                     padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
@@ -518,7 +518,7 @@ header {
                 .filters .dropbtn {
                     background-color: transparent;
                     background-repeat: no-repeat;
-                    background-image: url('../img/icono_desplegar.svg');
+                    background-image: url('../img/icons/display-blue.svg');
                     background-position: right; 
 
                     color: var(--scifi);      
@@ -1038,19 +1038,19 @@ header {
             }
             .edit-button {
                 background-color: var(--scifi);
-                background-image: url('../img/edit.svg');
+                background-image: url('../img/icons/edit-white.svg');
             }
             .edit-button:hover {
                 background-color: white;
-                background-image: url(../img/edit-color.svg);   
+                background-image: url('../img/icons/edit-blue.svg');   
             }
             .delete-button {
                 background-color: darkred;
-                background-image: url('../img/delete.svg');
+                background-image: url('../img/icons/delete-white.svg');
             }
             .delete-button:hover {
                 background-color: white;
-                background-image: url(../img/delete-red.svg);   
+                background-image: url('../img/icons/delete-red.svg');   
             }
             .funding-item-button {
                 cursor: pointer;

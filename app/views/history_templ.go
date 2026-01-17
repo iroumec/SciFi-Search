@@ -111,7 +111,7 @@ func historyContent(searches []structures.HistoricSearchView, translator languag
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" style=\"display: inherit;\"><img src=\"static/img/history-white.svg\" alt=\"Search history\"></a><p class=\"query-date\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" style=\"display: inherit;\"><img src=\"static/img/icons/history-white.svg\" alt=\"Search history\"></a><p class=\"query-date\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

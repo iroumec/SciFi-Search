@@ -35,7 +35,7 @@ templ historyContent(searches []structures.HistoricSearchView, translator langua
 				for _, search := range searches {
 					<div class="historic-query">
 						<a href={ "/search?query=" + search.Query } style="display: inherit;">
-							<img src="static/img/history-white.svg" alt="Search history"/>
+							<img src="static/img/icons/history-white.svg" alt="Search history"/>
 						</a>
 						<p class="query-date">{ search.Date.Format("2006-01-02") } </p>
 						<p class="query-time">{ search.Date.Format("15:04:05") } </p>

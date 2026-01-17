@@ -184,7 +184,7 @@ templ AvatarSettings(user structures.User, translator languages.Translator) {
 			<img
 				id="avatar-preview"
 				class="avatar-img"
-				src="static/img/default-avatar.jpg"
+				src="static/img/avatars/default.jpg"
 				alt="User avatar"
 			/>
 		}
@@ -235,7 +235,7 @@ templ AvatarOptions(translator languages.Translator) {
 		class="scifi-button"
 		hx-on="click:
 			document.getElementById('delete-avatar-flag').value='true';
-			document.getElementById('avatar-preview').src='static/img/default-avatar.jpg';"
+			document.getElementById('avatar-preview').src='static/img/avatars/default.jpg';"
 	>
 		{ translator("delete-avatar") }
 	</button>

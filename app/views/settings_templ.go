@@ -562,7 +562,7 @@ func AvatarSettings(user structures.User, translator languages.Translator) templ
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<img id=\"avatar-preview\" class=\"avatar-img\" src=\"static/img/default-avatar.jpg\" alt=\"User avatar\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<img id=\"avatar-preview\" class=\"avatar-img\" src=\"static/img/avatars/default.jpg\" alt=\"User avatar\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -623,7 +623,7 @@ func AvatarOptions(translator languages.Translator) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</label> <input type=\"hidden\" id=\"delete-avatar-flag\" name=\"delete-avatar\" value=\"false\"> <button type=\"button\" class=\"scifi-button\" hx-on=\"click:\n\t\t\tdocument.getElementById('delete-avatar-flag').value='true';\n\t\t\tdocument.getElementById('avatar-preview').src='static/img/default-avatar.jpg';\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</label> <input type=\"hidden\" id=\"delete-avatar-flag\" name=\"delete-avatar\" value=\"false\"> <button type=\"button\" class=\"scifi-button\" hx-on=\"click:\n\t\t\tdocument.getElementById('delete-avatar-flag').value='true';\n\t\t\tdocument.getElementById('avatar-preview').src='static/img/avatars/default.jpg';\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

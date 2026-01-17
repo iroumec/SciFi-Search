@@ -34,7 +34,7 @@ func Header(showOptions bool, authorizationLevel int, translator languages.Trans
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("transparent", "scifi-blue.png", false, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -64,7 +64,7 @@ func AuthHeader(authorizationLevel int, translator languages.Translator) templ.C
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("transparent", "logo.png", false, false, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("transparent", "scifi-blue.png", false, false, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -124,7 +124,7 @@ func SearchHeader(authorizationLevel int, translator languages.Translator) templ
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = headerBuilder("var(--scifi30)", "white-logo.png", true, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = headerBuilder("var(--scifi30)", "scifi-white.png", true, true, authorizationLevel, translator).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -186,9 +186,9 @@ func headerBuilder(
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("static/img/" + logo)
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("static/img/logotypes/" + logo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 42, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 42, Col: 41}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -205,9 +205,9 @@ func headerBuilder(
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(translator("search_for_science"))
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(translator("search"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 57, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/headers.templ`, Line: 57, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

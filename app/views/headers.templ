@@ -6,12 +6,12 @@ import "scifi-search/app/languages"
 // Services
 // ------------------------------------------------------------------------------------------------
 templ Header(showOptions bool, authorizationLevel int, translator languages.Translator) {
-	@headerBuilder("transparent", "logo.png", false, true, authorizationLevel, translator)
+	@headerBuilder("transparent", "scifi-blue.png", false, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
 templ AuthHeader(authorizationLevel int, translator languages.Translator) {
-	@headerBuilder("transparent", "logo.png", false, false, authorizationLevel, translator)
+	@headerBuilder("transparent", "scifi-blue.png", false, false, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ templ IndexHeader(authorizationLevel int, translator languages.Translator) {
 
 // ------------------------------------------------------------------------------------------------
 templ SearchHeader(authorizationLevel int, translator languages.Translator) {
-	@headerBuilder("var(--scifi30)", "white-logo.png", true, true, authorizationLevel, translator)
+	@headerBuilder("var(--scifi30)", "scifi-white.png", true, true, authorizationLevel, translator)
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ templ headerBuilder(
 		<div class="header-left">
 			if logo != "" {
 				<img
-					src={ "static/img/" + logo }
+					src={ "static/img/logotypes/" + logo }
 					alt="Scifi Search Logo"
 					id="header-logo"
 					hx-get="/"
@@ -54,7 +54,7 @@ templ headerBuilder(
 						type="text"
 						name="query"
 						id="query"
-						placeholder={ translator("search_for_science") }
+						placeholder={ translator("search") }
 						hx-trigger="keyup[key=='Enter']"
 						hx-get="/search"
 						hx-target="body"
