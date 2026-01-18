@@ -28,13 +28,13 @@ import (
 
 // Errors.
 var (
-	InvalidFieldError               = errors.New("error.invalid-field")
-	InvalidFormError                = errors.New("error.invalid-form")
-	MissingPreferenceError          = errors.New("error.missing-preference")
-	FileReadingError                = errors.New("error.file-reading")
-	ImageProcessingError            = errors.New("error.image-processing")
-	AvatarServiceNotConfiguredError = errors.New("error.avatar-service-not-configured")
-	AvatarUploadingError            = errors.New("error.avatar-uploading")
+	InvalidFieldError               = errors.New("errors.invalid-field")
+	InvalidFormError                = errors.New("errors.invalid-form")
+	MissingPreferenceError          = errors.New("errors.missing-preference")
+	FileReadingError                = errors.New("errors.file-reading")
+	ImageProcessingError            = errors.New("errors.image-processing")
+	AvatarServiceNotConfiguredError = errors.New("errors.avatar-service-not-configured")
+	AvatarUploadingError            = errors.New("errors.avatar-uploading")
 )
 
 // ------------------------------------------------------------------------------------------------

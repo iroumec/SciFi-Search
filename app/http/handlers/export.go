@@ -61,7 +61,7 @@ func exportDocuments(w http.ResponseWriter, r *http.Request) {
 	case "xlsx", "excel":
 		exporter = export.ExcelExporter[database.Document]{}
 	default:
-		http.Error(w, "unsupported export format", http.StatusBadRequest)
+		http.Error(w, UnsupportedExportFormatError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -79,6 +79,10 @@ func exportDocuments(w http.ResponseWriter, r *http.Request) {
 	log.Printf("An exportation of the documents to %s was executed.", format)
 }
 
+// ------------------------------------------------------------------------------------------------
+
 func openExportModal(w http.ResponseWriter, r *http.Request) {
 	views.ExportModal(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
 }
+
+// ------------------------------------------------------------------------------------------------

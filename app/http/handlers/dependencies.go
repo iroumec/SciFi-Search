@@ -34,12 +34,14 @@ var (
 
 // Errors.
 var (
-	MethodNotAllowedError    = errors.New("error.method-not-allowed")
-	FormParsingError         = errors.New("error.form-parsing")
-	UnexpectedError          = errors.New("error.unexpected")
-	UnknownError             = errors.New("error.unknown")
-	InternalServerError      = errors.New("error.internal-server")
-	RequiredDataNotSpecified = errors.New("error.required-data-not-specified")
+	MethodNotAllowedError        = errors.New("errors.method-not-allowed")
+	FormParsingError             = errors.New("errors.form-parsing")
+	UnexpectedError              = errors.New("errors.unexpected")
+	UnknownError                 = errors.New("errors.unknown")
+	InternalServerError          = errors.New("errors.internal-server")
+	RequiredDataNotSpecified     = errors.New("errors.required-data-not-specified")
+	MissingRequiredFieldsError   = errors.New("errors.missing-required-fields")
+	UnsupportedExportFormatError = errors.New("errors.unsupported-export-format")
 )
 
 // ------------------------------------------------------------------------------------------------

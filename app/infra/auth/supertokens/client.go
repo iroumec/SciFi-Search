@@ -38,7 +38,7 @@ const (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	PasswordEmptyError = errors.New("error.password-empty")
+	EmptyPasswordError = errors.New("errors.empty-password")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ func Initialize(emailService *email.Service) {
 							Validate: func(value interface{}, tenantId string) *string {
 								password := value.(string)
 								if len(password) < 1 {
-									err := PasswordEmptyError.Error()
+									err := EmptyPasswordError.Error()
 									return &err
 								}
 								return nil // Allows everything else.

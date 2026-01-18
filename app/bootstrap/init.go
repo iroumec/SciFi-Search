@@ -40,7 +40,7 @@ func Boot() (*App, error) {
 		EmailService:  emailService,
 	})
 
-	languages.LoadAllMessages()
+	languages.LoadAllMessagesFromFolders()
 
 	return &App{
 		Resources: &Resources{

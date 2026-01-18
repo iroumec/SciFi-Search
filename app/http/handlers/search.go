@@ -45,14 +45,14 @@ var (
 // Errors.
 var (
 	SearchableAttributesConfigurationError = errors.New(
-		"error.searchable-attributes-configuration",
+		"errors.searchable-attributes-configuration",
 	)
-	TypoToleranceConfigurationError = errors.New("error.typo-tolerance-configuration")
-	SynonymsConfigurationError      = errors.New("error.synonyms-configuration")
-	FiltersConfigurationError       = errors.New("error.filters-configuration")
-	OrderingConfigurationError      = errors.New("error.ordering-configuration")
-	RankingConfigurationError       = errors.New("error.ranking-configuration")
-	MissingQueryParameterError      = errors.New("error.missing-query-parameter")
+	TypoToleranceConfigurationError = errors.New("errors.typo-tolerance-configuration")
+	SynonymsConfigurationError      = errors.New("errors.synonyms-configuration")
+	FiltersConfigurationError       = errors.New("errors.filters-configuration")
+	OrderingConfigurationError      = errors.New("errors.ordering-configuration")
+	RankingConfigurationError       = errors.New("errors.ranking-configuration")
+	MissingQueryParameterError      = errors.New("errors.missing-query-parameter")
 )
 
 // ------------------------------------------------------------------------------------------------

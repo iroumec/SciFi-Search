@@ -29,9 +29,9 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 var (
-	InvalidIDError         = errors.New("Invalid ID")
-	UserNotFoundError      = errors.New("User not found")
-	CountingDocumentsError = errors.New("error.counting-documents")
+	InvalidIDError         = errors.New("errors.invalid-ID")
+	UserNotFoundError      = errors.New("errors.user-not-found")
+	CountingDocumentsError = errors.New("errors.counting-documents")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ func addFundingHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		deleteFunding(w, r)
 	case http.MethodPut:
-		editFundingModal(w, r)
+		editFunding(w, r)
 	default:
 		http.Error(w, MethodNotAllowedError.Error(), http.StatusMethodNotAllowed)
 	}
@@ -236,7 +236,7 @@ func getPage(r *http.Request) int {
 
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
-		page = 1 // TODO: dejarlo así o levantamos error?
+		page = 1
 	}
 
 	return page
@@ -311,7 +311,7 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 
 	notifyFundingAddition(r.Context(), document, translator)
 
-	notifications.ShowFlash(w, r, translator("funding.added"))
+	notifications.ShowFlash(w, r, translator("messages.funding-added"))
 
 	updateFundingList(w, r)
 }
@@ -327,14 +327,14 @@ func notifyFundingAddition(
 		return
 	}
 
-	emailSubject := translator("new-funding.email.subject")
+	emailSubject := translator("messages.new-funding-email-subject")
 
 	emailBody := strings.Join([]string{
-		translator("email.body.funding.added") + ": \n\n",
+		translator("messages.new-funding-email-body-part-1") + ": \n\n",
 		translator("name") + ": " + document.Name + "\n\n",
 		translator("description") + ": " + document.Description.String + "\n\n",
-		translator("email.body.access.scifi") + "\n\n",
-		translator("email.body.funding.not-interesting"),
+		translator("messages.new-funding-email-body-part-2") + "\n\n",
+		translator("messages.new-funding-email-body-part-3"),
 	}, "")
 
 	for _, user := range users {
@@ -387,7 +387,7 @@ func deleteFunding(w http.ResponseWriter, r *http.Request) {
 
 	translator := languages.GetTranslatorFromRequest(r)
 
-	notifications.ShowFlash(w, r, translator("funding.deleted"))
+	notifications.ShowFlash(w, r, translator("messages.funding-deleted"))
 
 	updateFundingList(w, r)
 }
@@ -455,7 +455,7 @@ func openEditFundingModal(w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-func editFundingModal(w http.ResponseWriter, r *http.Request) {
+func editFunding(w http.ResponseWriter, r *http.Request) {
 
 	idStr := strings.TrimPrefix(r.URL.Path, "/funding/")
 
@@ -529,7 +529,7 @@ func editFundingModal(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifications.ShowFlash(w, r, languages.GetTranslatorFromRequest(r)("funding.edited"))
+	notifications.ShowFlash(w, r, languages.GetTranslatorFromRequest(r)("messages.funding-edited"))
 
 	updateFundingList(w, r)
 }

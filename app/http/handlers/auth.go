@@ -32,7 +32,7 @@ import (
 
 // Errors.
 var (
-	TokenNotProvidedError = errors.New("error.token-not-provided")
+	TokenNotProvidedError = errors.New("errors.token-not-provided")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 
 	auth.RevokeSession(w, r)
 
-	cookies.AddFlashCookie(w, "sign-out.successful")
+	cookies.AddFlashCookie(w, "messages.sign-out")
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
@@ -162,7 +162,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	// Validation.
 	if checkers.IsThereAnEmptyField(name, surname, email, password) {
-		http.Error(w, "Faltan campos obligatorios", http.StatusBadRequest)
+		http.Error(w, MissingRequiredFieldsError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -185,7 +185,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("email-verification.sent"))
+	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("verification-email-sent"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -235,8 +235,8 @@ func createUser(
 		return nil, err
 	}
 
-	emailSubject := translator("verification-email.subject")
-	emailBody := translator("verification-email.body")
+	emailSubject := translator("messages.verification-email-subject")
+	emailBody := translator("messages.verification-email-body")
 
 	auth.SendVerificationEmail(emailService, *userID, email, emailSubject, emailBody)
 	auth.AssignRoleToUser(role, *userID)
@@ -250,7 +250,7 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("token")
 
 	if token == "" {
-		http.Error(w, "Token no proporcionado", http.StatusBadRequest)
+		http.Error(w, TokenNotProvidedError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -260,7 +260,7 @@ func verifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookies.AddFlashCookie(w, "¡Email verificado exitosamente!")
+	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("messages.email-verified"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -279,30 +279,30 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Se parsean y obtienen las credenciales.
+	// Form parsing.
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, "Error al parsear formulario", http.StatusBadRequest)
+		http.Error(w, FormParsingError.Error(), http.StatusBadRequest)
 		return
 	}
 
 	email := r.Form.Get("email")
 	password := r.Form.Get("password")
 
-	// Se validan las credenciales.
+	// Credentials validation.
 	userID, err := auth.VerifyCredentials(email, password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Se intenta crear la sesión.
+	// Session creation.
 	err = auth.CreateSession(w, r, *userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	cookies.AddFlashCookie(w, "Welcome back!")
+	cookies.AddFlashCookie(w, "messages.welcome-back")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -328,41 +328,41 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Se elimina el avatar del usuario (si tiene).
+	// User's avatar is deleted.
 	err = avatarService.Delete(r.Context(), user.UserID)
 	if err != nil {
 		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Se elimina el usuario de la base de datos.
+	// User is deleted from the database.
 	err = queries.DeleteUser(r.Context(), user.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// Error 404: El usuario no existe.
+			// Error 404: User doesn't exist.
 			http.Error(w, UserNotFoundError.Error(), http.StatusNotFound)
 		} else {
-			// Error 500: Hubo un problema con la base de datos u otro error inesperado.
-			log.Printf("Error al obtener usuario por ID %d: %v", user.UserID, err)
-			http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+			// Error 500: Unexpected Internal Error.
+			http.Error(w, UnexpectedError.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Se cierra la sesión del usuario.
 	auth.RevokeSession(w, r)
 
-	cookies.AddFlashCookie(w, "Usuario eliminado. ¡Lamentamos que te vayas!")
+	translator := languages.GetTranslatorFromRequest(r)
+
+	cookies.AddFlashCookie(w, translator("messages.user-deleted"))
 
 	emailBody := strings.Join([]string{
-		"¡Nos entristece ver que te vayas! \n",
-		"Para tu seguridad y tranquilidad, hemos eliminado todos tus datos. \n",
-		"¡Esperamos volver a verte pronto!",
+		translator("messages.user-deletion-email-body-part-1") + "\n\n",
+		translator("messages.user-deletion-email-body-part-2") + "\n\n",
+		translator("messages.user-deletion-email-body-part-3") + "\n\n",
 	}, "")
 
 	emailService.Send(
 		*userEmail,
-		"¡Lamentamos que te vayas!",
+		translator("messages.user-deletion-email-subject"),
 		emailBody,
 	)
 

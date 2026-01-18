@@ -75,7 +75,7 @@ func createNewLoader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	message := languages.GetTranslatorFromRequest(r)("new-loader-created")
+	message := languages.GetTranslatorFromRequest(r)("messages.new-loader-created")
 	cookies.AddFlashCookie(w, message)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
