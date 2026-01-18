@@ -45,7 +45,7 @@ func HistoryPage(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout(translator("history"), translator,
+		templ_7745c5c3_Err = Layout(translator("core.history"), translator,
 			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return historyContent(searches, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -85,9 +85,9 @@ func historyContent(searches []structures.HistoricSearchView, translator languag
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("history"))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.history"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/history.templ`, Line: 33, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/history.templ`, Line: 33, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

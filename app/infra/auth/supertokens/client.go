@@ -13,7 +13,6 @@ import (
 	"os"
 	"scifi-search/app/email"
 
-	"github.com/supertokens/supertokens-golang/ingredients/emaildelivery"
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword"
 	"github.com/supertokens/supertokens-golang/recipe/emailpassword/epmodels"
 	"github.com/supertokens/supertokens-golang/recipe/emailverification"
@@ -94,15 +93,15 @@ func Initialize(emailService *email.Service) {
 				// despict not having its email verified.
 				// If a mode restrictive mode is required, use `evmodels.ModeRequired`.
 				Mode: evmodels.ModeOptional,
-
-				EmailDelivery: &emaildelivery.TypeInput{
-					Service: EmailDelivery(emailService),
-				},
 			}),
 
 			// Session configuration.
 			session.Init(&sessmodels.TypeInput{
-				GetTokenTransferMethod: func(req *http.Request, forCreateNewSession bool, userContext supertokens.UserContext) sessmodels.TokenTransferMethod {
+				GetTokenTransferMethod: func(
+					req *http.Request,
+					forCreateNewSession bool,
+					userContext supertokens.UserContext,
+				) sessmodels.TokenTransferMethod {
 					return sessmodels.CookieTransferMethod
 				},
 			}),

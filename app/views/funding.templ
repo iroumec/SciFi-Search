@@ -24,7 +24,7 @@ templ ManageFundingPage(
 	documentCurrencies *list.List,
 	translator languages.Translator,
 ) {
-	@Layout(translator("manage-fundings"), translator,
+	@Layout(translator("core.manage-fundings"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component {
 			return manageFundingContent(
@@ -64,7 +64,7 @@ templ FundingList(
 						hx-delete={ "/funding/" + converters.ToString(fundings[i]["id"]) }
 						hx-target="closest .result"
 						hx-swap="outerHTML"
-						hx-confirm={ translator("funding.deletion.confirmation") }
+						hx-confirm={ translator("messages.funding-deletion-confirmation") }
 						type="button"
 					></button>
 				</div>
@@ -85,7 +85,7 @@ templ FundingModal(
 	documentCurrencies *list.List,
 	translator languages.Translator,
 ) {
-	@Modal(translator("funding."+mode),
+	@Modal(translator("core."+mode+"-funding"),
 		func() templ.Component {
 			return fundingForm(
 				document,
@@ -103,7 +103,7 @@ templ FundingModal(
 
 // ------------------------------------------------------------------------------------------------
 templ ExportModal(translator languages.Translator) {
-	@Modal(translator("export.title"), func() templ.Component {
+	@Modal(translator("core.export-documents"), func() templ.Component {
 		return exportModalBody(translator)
 	})
 }
@@ -134,14 +134,14 @@ templ fundingForm(
 		x-ref="fundingForm"
 	>
 		<div class="form-inputs">
-			@labeledInput("name", translator("name"), "text", "", "", document["Name"], true)
-			@labeledInput("type", translator("type"), "text", "types", "", document["Type"], true)
+			@labeledInput("name", translator("core.name"), "text", "", "", document["Name"], true)
+			@labeledInput("type", translator("core.type"), "text", "types", "", document["Type"], true)
 			<div class="labeled-input">
-				<label for="main-area">{ translator("areas") }</label>
+				<label for="main-area">{ translator("core.areas") }</label>
 				<input
 					type="text"
 					id="main-area"
-					placeholder={ translator("main-area") }
+					placeholder={ translator("core.main-area") }
 					name="main-area"
 					list="areas"
 					required
@@ -152,7 +152,7 @@ templ fundingForm(
 				<input
 					type="text"
 					id="secondary-area"
-					placeholder={ translator("secondary-area") }
+					placeholder={ translator("core.secondary-area") }
 					name="secondary-area"
 					list="areas"
 					if document["Secondary area"] != nil && document["Secondary area"].(string) != "" {
@@ -160,19 +160,19 @@ templ fundingForm(
 					}
 				/>
 			</div>
-			@labeledInput("link", translator("link"), "url", "", "", document["Link"], false)
-			@labeledInput("description", translator("description"), "text", "", "", document["Description"], false)
+			@labeledInput("link", translator("core.link"), "url", "", "", document["Link"], false)
+			@labeledInput("description", translator("core.description"), "text", "", "", document["Description"], false)
 			<div class="double-input">
-				@labeledInput("based-on", translator("based_on"), "text", "based-on", "", document["Based on"], false)
-				@labeledInput("grantor", translator("grantor"), "text", "grantors", "", document["Grantor"], false)
+				@labeledInput("based-on", translator("core.based-on"), "text", "based-on", "", document["Based on"], false)
+				@labeledInput("grantor", translator("core.grantor"), "text", "grantors", "", document["Grantor"], false)
 			</div>
 			<div class="double-input">
-				@labeledInput("currency", translator("currency"), "text", "currencies", "",
+				@labeledInput("currency", translator("core.currency"), "text", "currencies", "",
 					document["Currency"], true)
-				@labeledInput("amount", translator("amount"), "text", "", "min - max",
+				@labeledInput("amount", translator("core.amount"), "text", "", "min - max",
 					document["Amount"], true)
 			</div>
-			@labeledInput("deadline", translator("deadline"), "date", "", "", document["Deadline"], true)
+			@labeledInput("deadline", translator("core.deadline"), "date", "", "", document["Deadline"], true)
 			@datalist("types", documentTypes)
 			@datalist("areas", documentAreas)
 			@datalist("based-on", documentBasedOn)
@@ -186,10 +186,10 @@ templ fundingForm(
 				class="scifi-button secondary"
 				@click="open = false"
 			>
-				{ translator("cancel") }
+				{ translator("core.cancel") }
 			</button>
 			<button type="submit" class="scifi-button">
-				{ translator("done") }
+				{ translator("core.done") }
 			</button>
 		</div>
 	</form>
@@ -198,7 +198,7 @@ templ fundingForm(
 // ------------------------------------------------------------------------------------------------
 templ exportModalBody(translator languages.Translator) {
 	<div class="export-modal-body">
-		<p>{ translator("export.choose_format") + ": " }</p>
+		<p>{ translator("core.choose-a-format") + ": " }</p>
 		<div class="export-options">
 			<a
 				href="/documents/export?format=csv"
@@ -269,7 +269,7 @@ templ manageFundingContent(
 	<div class="centered-box-content">
 		<div id="left"></div>
 		<div id="manage-funding-content">
-			<div id="funding-title">{ translator("manage-fundings") }</div>
+			<div id="funding-title">{ translator("core.manage-fundings") }</div>
 			<div id="funding-content">
 				<div id="funding-list">
 					@FundingList(fundings, 1, totalFundings, translator)
@@ -294,7 +294,7 @@ templ fundingActions(translator languages.Translator) {
 			hx-target="#modal-root"
 			hx-swap="innerHTML"
 		>
-			{ translator("add") }
+			{ translator("core.add") }
 		</button>
 		<button
 			class="scifi-button"
@@ -303,7 +303,7 @@ templ fundingActions(translator languages.Translator) {
 			hx-target="#modal-root"
 			hx-swap="innerHTML"
 		>
-			{ translator("export") }
+			{ translator("core.export") }
 		</button>
 	</div>
 }

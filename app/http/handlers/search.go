@@ -153,7 +153,7 @@ func indexData() {
 		log.Fatal(err)
 	}
 
-	log.Printf("index.successfully")
+	log.Printf("Successful indexation!")
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ func updateResults(w http.ResponseWriter, r *http.Request) {
 	var filters []string
 
 	for _, t := range filterBasedOn {
-		filters = append(filters, fmt.Sprintf("Based on = '%s'", t))
+		filters = append(filters, fmt.Sprintf("\"Based on\" = '%s'", t))
 	}
 
 	for _, t := range filterType {
@@ -597,3 +597,5 @@ func getFilterValues(hitsMaps []map[string]any) (*list.List, *list.List, *list.L
 
 	return documentTypes, documentAreas, documentCountriesBasedOn
 }
+
+// ------------------------------------------------------------------------------------------------

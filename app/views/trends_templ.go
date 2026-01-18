@@ -41,7 +41,7 @@ func TrendsPage(htmlChart template.HTML, authorizationLevel int, translator lang
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = Layout(translator("trends"), translator,
+		templ_7745c5c3_Err = Layout(translator("core.trends"), translator,
 			func() templ.Component { return Header(true, authorizationLevel, translator) },
 			func() templ.Component { return trendsContent(htmlChart, translator) },
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -81,9 +81,9 @@ func trendsContent(htmlChart template.HTML, translator languages.Translator) tem
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("search-trends"))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.search-trends"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/trends.templ`, Line: 31, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/trends.templ`, Line: 31, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {

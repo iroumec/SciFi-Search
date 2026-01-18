@@ -33,5 +33,6 @@
     "typo-tolerance-configuration": "Error at configuring typo tolerance",
     "searchable-attributes-configuration": "Error at configuring searchable attributes",
     "missing-required-fields": "Missing required fields",
-    "unsupported-export-format": "Unsupported export format"
+    "unsupported-export-format": "Unsupported export format",
+    "chart-generation-failed": "Chart generation failed"
 }

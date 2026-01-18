@@ -19,14 +19,17 @@ import (
 
 // Contract for any type of chart.
 type ChartRenderer interface {
-	Render(xValues []string, yValues []int) (bytes.Buffer, error)
+	Render(xValues []string, yValues []int, seriesName, yAxisName string) (bytes.Buffer, error)
 }
 
 // ------------------------------------------------------------------------------------------------
 // Functions
 // ------------------------------------------------------------------------------------------------
 
-func generateGraph(renderer ChartRenderer, values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+func generateGraph(
+	renderer ChartRenderer, values []database.GetTrendingSearchesRow,
+	seriesName, yAxisName string,
+) (bytes.Buffer, error) {
 
 	xValues := make([]string, len(values))
 	yValues := make([]int, len(values))
@@ -35,13 +38,13 @@ func generateGraph(renderer ChartRenderer, values []database.GetTrendingSearches
 		yValues[i] = int(row.Count)
 	}
 
-	return renderer.Render(xValues, yValues)
+	return renderer.Render(xValues, yValues, seriesName, yAxisName)
 }
 
 // ------------------------------------------------------------------------------------------------
 
 // Global options, shared by all charts.
-func getGlobalOptions() []charts.GlobalOpts {
+func getGlobalOptions(yAxisName string) []charts.GlobalOpts {
 	return []charts.GlobalOpts{
 		charts.WithInitializationOpts(opts.Initialization{
 			Width:  "100%",
@@ -60,7 +63,7 @@ func getGlobalOptions() []charts.GlobalOpts {
 			},
 		}),
 		charts.WithYAxisOpts(opts.YAxis{
-			Name:         "Cantidad de búsquedas",
+			Name:         yAxisName,
 			NameLocation: "middle",
 			NameGap:      50,
 			MinInterval:  1,

@@ -6,7 +6,7 @@ import "scifi-search/app/languages"
 // Services
 // ------------------------------------------------------------------------------------------------
 templ LoaderPage(authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("new-loader"), translator,
+	@Layout(translator("core.add-a-loader"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return loaderContent(translator) },
 	)
@@ -26,7 +26,7 @@ templ loaderContent(translator languages.Translator) {
 			>
 				@signUpFields(translator)
 				<button class="scifi-button" type="submit">
-					{ translator("loader.create") }
+					{ translator("core.add-loader") }
 				</button>
 			</form>
 		</div>

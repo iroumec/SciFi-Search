@@ -63,18 +63,6 @@ func RegisterAuthenticationHandlers() {
 	http.HandleFunc("/auth/session/refresh", func(w http.ResponseWriter, r *http.Request) {
 		session.RefreshSession(r, w)
 	})
-
-	http.HandleFunc("/auth/sessioninfo", func(w http.ResponseWriter, r *http.Request) {
-
-		payload, err := auth.GetSessionInfo(w, r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusMethodNotAllowed)
-			return
-		}
-
-		component := views.SessionInfo(payload)
-		templ.Handler(component).ServeHTTP(w, r)
-	})
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -125,7 +113,7 @@ func signOutHandler(w http.ResponseWriter, r *http.Request) {
 
 	auth.RevokeSession(w, r)
 
-	cookies.AddFlashCookie(w, "messages.sign-out")
+	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("messages.sign-out"))
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
@@ -185,7 +173,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("verification-email-sent"))
+	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("messages.verification-email-sent"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -302,7 +290,7 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookies.AddFlashCookie(w, "messages.welcome-back")
+	cookies.AddFlashCookie(w, translator("messages.welcome-back"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

@@ -6,7 +6,7 @@ import "scifi-search/app/languages"
 // Services
 // ------------------------------------------------------------------------------------------------
 templ IndexPage(authorizationLevel int, translator languages.Translator) {
-	@Layout("SciFi Search", translator,
+	@Layout("Sci-Fi Search", translator,
 		func() templ.Component { return IndexHeader(authorizationLevel, translator) },
 		func() templ.Component { return indexContent(translator) },
 	)
@@ -27,7 +27,7 @@ templ indexContent(translator languages.Translator) {
 						type="text"
 						id="first-query"
 						name="query"
-						placeholder={ translator("search") }
+						placeholder={ translator("core.search") }
 						hx-get="/search"
 						hx-trigger="keyup[key=='Enter' && this.value.trim()!='']"
 						hx-target="body"

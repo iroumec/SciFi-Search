@@ -21,10 +21,12 @@ type LineChartRenderer struct{}
 
 // ------------------------------------------------------------------------------------------------
 
-func (l *LineChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
+func (l *LineChartRenderer) Render(
+	xValues []string, yValues []int, seriesName, yAxisName string,
+) (bytes.Buffer, error) {
 	line := charts.NewLine()
-	line.SetGlobalOptions(getGlobalOptions()...)
-	line.SetXAxis(xValues).AddSeries("Búsquedas", l.generateItems(yValues))
+	line.SetGlobalOptions(getGlobalOptions(yAxisName)...)
+	line.SetXAxis(xValues).AddSeries(seriesName, l.generateItems(yValues))
 
 	var buffer bytes.Buffer
 	err := line.Render(&buffer)
@@ -45,9 +47,11 @@ func (l *LineChartRenderer) generateItems(values []int) []opts.LineData {
 // Services
 // ------------------------------------------------------------------------------------------------
 
-func GenerateLineChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+func GenerateLineChart(
+	values []database.GetTrendingSearchesRow, seriesName, yAxisName string,
+) (bytes.Buffer, error) {
 
-	return generateGraph(&LineChartRenderer{}, values)
+	return generateGraph(&LineChartRenderer{}, values, seriesName, yAxisName)
 }
 
 // ------------------------------------------------------------------------------------------------

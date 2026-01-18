@@ -32,7 +32,7 @@ templ SearchResultsPage(
 	documentAreas *list.List, documentCountriesBasedOn *list.List, authorizationLevel int,
 	translator languages.Translator,
 ) {
-	@Layout(query+" - SciFi Search", translator,
+	@Layout(query+" - Sci-Fi Search", translator,
 		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
 		func() templ.Component {
 			return searchResultsContent(
@@ -62,11 +62,11 @@ templ searchResultsContent(
 			<div class="search-content">
 				if len(hits) == 0 {
 					<div class="message">
-						<p>{ translator("no-results-for") + " \"" + query + "\"." }</p>
+						<p>{ translator("core.no-results-found-for") + " \"" + query + "\"." }</p>
 					</div>
 				} else {
 					<div class="message">
-						<p>{ translator("results-for") + " \"" + query + "\"." }</p>
+						<p>{ translator("core.results-for") + " \"" + query + "\"." }</p>
 					</div>
 					<div class="filters">
 						@searchFilters(query, documentTypes, documentAreas,
@@ -80,168 +80,6 @@ templ searchResultsContent(
 			<div class="right"></div>
 		</div>
 	</main>
-}
-
-// ------------------------------------------------------------------------------------------------
-templ searchFilters(
-	query string, documentTypes *list.List, documentAreas *list.List,
-	documentCountriesBasedOn *list.List, translator languages.Translator,
-) {
-	<div id="all-filters">
-		<div class="dropdown">
-			<button class="dropbtn" name="sortby" onclick="toggleDropdown(event)">
-				{ translator("sort-by") }
-			</button>
-			<div id="sortby-menu" class="dropdown-content onlyone hidden">
-				@sortingCheckboxes(translator)
-			</div>
-		</div>
-		<div class="dropdown">
-			<button class="dropbtn" name="area" onclick="toggleDropdown(event)">
-				{ translator("filter.area") }
-			</button>
-			<div id="document-area-menu" class="dropdown-content hidden">
-				@valuesCheckboxes("area", false, documentAreas)
-			</div>
-		</div>
-		<div class="dropdown">
-			<button class="dropbtn" name="type" onclick="toggleDropdown(event)">
-				{ translator("filter.type") }
-			</button>
-			<div id="document-type-menu" class="dropdown-content onlyone hidden">
-				@valuesCheckboxes("type", true, documentTypes)
-			</div>
-		</div>
-		<div class="dropdown">
-			<button class="dropbtn" name="based-on" onclick="toggleDropdown(event)">
-				{ translator("filter.based-on") }
-			</button>
-			<div id="document-based-on-menu" class="dropdown-content onlyone hidden">
-				if documentCountriesBasedOn.Len() > 0 {
-					@valuesCheckboxes("based-on", true, documentCountriesBasedOn)
-				} else {
-					<p class="no-filters-message">{ translator("no-options-available") }</p>
-				}
-			</div>
-		</div>
-		<input type="hidden" name="query" value={ query }/>
-	</div>
-	<script>
-
-		document.addEventListener("click", () => { // Para cerrar el dropdown menu al cliquear afuera
-			document.getElementById("document-based-on-menu").classList.add("hidden");
-			document.getElementById("document-type-menu").classList.add("hidden");
-			document.getElementById("document-area-menu").classList.add("hidden");
-			document.getElementById("sortby-menu").classList.add("hidden");
-		});
-
-		function toggleDropdown(e) {// Para abrir el dropdown menú que está oculto y ocultar otro si está abierto.
-			e.stopPropagation();
-
-			const basedOnMenu = document.getElementById("document-based-on-menu");
-			const typeMenu = document.getElementById("document-type-menu");
-			const areaMenu = document.getElementById("document-area-menu");
-			const sortbyMenu = document.getElementById("sortby-menu");
-
-			let menu;
-
-			if (e.currentTarget.name === "based-on") {
-				menu = basedOnMenu;
-				typeMenu.classList.add("hidden");
-				areaMenu.classList.add("hidden");
-				sortbyMenu.classList.add("hidden");
-			} else if (e.currentTarget.name === "type") {
-				menu = typeMenu;
-				basedOnMenu.classList.add("hidden");
-				areaMenu.classList.add("hidden");
-				sortbyMenu.classList.add("hidden");  
-			} else if (e.currentTarget.name === "area") {
-				menu = areaMenu;
-				basedOnMenu.classList.add("hidden");
-				typeMenu.classList.add("hidden");
-				sortbyMenu.classList.add("hidden");
-			} else {
-				menu = sortbyMenu;
-				basedOnMenu.classList.add("hidden");
-				areaMenu.classList.add("hidden");
-				typeMenu.classList.add("hidden");
-			}
-
-			menu.classList.toggle("hidden");
-		}
-
-		document.querySelectorAll(".dropdown-content").forEach(menu => { //Para evitar que se cierre luego de seleccionar una checkbox
-			menu.addEventListener("click", (e) => {
-				if (e.target.tagName === "INPUT") {
-					e.stopPropagation();
-				}
-			});
-		});
-
-		document.querySelectorAll(".dropdown-content.onlyone").forEach(menu => { // Para permitir una sola box marcada.
-			menu.addEventListener("change", (e) => {
-				if (e.target.type !== "checkbox")
-					return;
-				
-				const checkboxes = menu.querySelectorAll("input[type=checkbox]");
-				checkboxes.forEach(cb => {
-					if (cb !== e.target)
-						cb.checked = false;
-				});
-
-				htmx.trigger(e.target, "mychange");
-			});
-		});
-
-	</script>
-}
-
-// ------------------------------------------------------------------------------------------------
-templ valuesCheckboxes(name string, onlyone bool, values *list.List) {
-	for e := values.Front(); e != nil; e = e.Next() {
-		<label class="checkbox-item">
-			<input
-				type="checkbox"
-				name={ name }
-				value={ e.Value.(string) }
-				hx-get="/search/update-filter"
-				if onlyone {
-					hx-trigger="mychange"
-				}
-				hx-target="#results"
-				hx-swap="innerHTML"
-				hx-include="#all-filters"
-			/>
-			{ e.Value.(string) }
-		</label>
-	}
-}
-
-// ------------------------------------------------------------------------------------------------
-templ sortingCheckboxes(translator languages.Translator) {
-	@sortingCheckboxesItem("Name", "asc", translator)
-	@sortingCheckboxesItem("Name", "desc", translator)
-	@sortingCheckboxesItem("Type", "asc", translator)
-	@sortingCheckboxesItem("Type", "desc", translator)
-	@sortingCheckboxesItem("Deadline", "asc", translator)
-	@sortingCheckboxesItem("Deadline", "desc", translator)
-}
-
-// ------------------------------------------------------------------------------------------------
-templ sortingCheckboxesItem(value string, order string, translator languages.Translator) {
-	<label class="checkbox-item">
-		<input
-			type="checkbox"
-			name="sortby"
-			value={ value + ":" + order }
-			hx-get="/search/update-filter"
-			hx-trigger="mychange"
-			hx-target="#results"
-			hx-swap="innerHTML"
-			hx-include="#all-filters"
-		/>
-		{ translator("sort-by." + value + "-" + order) }
-	</label>
 }
 
 // ------------------------------------------------------------------------------------------------

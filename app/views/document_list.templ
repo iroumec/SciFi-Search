@@ -87,7 +87,7 @@ templ documentItem(m map[string]any, name string, translator languages.Translato
 		if converters.ToString(m["Description"]) != "" {
 			<p id="description">{ converters.ToString(m["Description"]) }</p>
 		} else {
-			<p>{ translator("no-description") }.</p>
+			<p>{ translator("core.no-description") }.</p>
 		}
 	</div>
 }

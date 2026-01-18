@@ -1,30 +1,30 @@
-package notifications
+package converters
 
 // ------------------------------------------------------------------------------------------------
 // Imports
 // ------------------------------------------------------------------------------------------------
 
 import (
-	"net/http"
-	"scifi-search/app/http/notifications/cookies"
-	"scifi-search/app/http/notifications/triggers"
+	"unicode"
 )
 
 // ------------------------------------------------------------------------------------------------
 // Services
 // ------------------------------------------------------------------------------------------------
 
-// Returns the type of notification added.
-func ShowFlash(w http.ResponseWriter, r *http.Request, message string) Notifications {
-
-	// HTMX -> Popup activated via trigger.
-	if triggerAdded := triggers.AddHXTrigger(w, r, message); triggerAdded {
-		return HXTriggerNotification
+// Converts the first letter of a string to uppercase.
+func UppercaseFirstLetter(s string) string {
+	if s == "" {
+		return ""
 	}
+	// Convert string to a slice of runes to handle Unicode characters correctly.
+	runes := []rune(s)
 
-	// No HTMX -> Cookie.
-	cookies.AddFlashCookie(w, message)
-	return CookieNotification
+	// Convert the first rune to uppercase.
+	runes[0] = unicode.ToUpper(runes[0])
+
+	// Convert the slice of runes back to a string.
+	return string(runes)
 }
 
 // ------------------------------------------------------------------------------------------------

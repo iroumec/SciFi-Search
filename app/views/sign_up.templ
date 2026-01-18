@@ -6,7 +6,7 @@ import "scifi-search/app/languages"
 // Services
 // ------------------------------------------------------------------------------------------------
 templ SignUpPage(errorMessage string, authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("sign-up"), translator,
+	@Layout(translator("core.sign-up"), translator,
 		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
 		func() templ.Component { return signUpContent(errorMessage, translator) },
 	)
@@ -21,28 +21,28 @@ templ signUpFields(translator languages.Translator) {
 			id="name"
 			type="text"
 			name="name"
-			placeholder={ translator("name") }
+			placeholder={ translator("core.name") }
 			required
 		/>
 		<input
 			id="surname"
 			type="text"
 			name="surname"
-			placeholder={ translator("surname") }
+			placeholder={ translator("core.surname") }
 			required
 		/>
 		<input
 			id="email"
 			type="email"
 			name="email"
-			placeholder={ translator("email") }
+			placeholder={ translator("core.email") }
 			required
 		/>
 		<input
 			id="password"
 			type="password"
 			name="password"
-			placeholder={ translator("password") }
+			placeholder={ translator("core.password") }
 			required
 		/>
 	</div>
@@ -60,7 +60,7 @@ templ signUpContent(errorMessage string, translator languages.Translator) {
 			>
 				@signUpFields(translator)
 				<button class="scifi-button" type="submit">
-					{ translator("sign-up") }
+					{ translator("core.sign-up") }
 				</button>
 			</form>
 		</div>

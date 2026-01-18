@@ -20,7 +20,7 @@ import (
 
 // Errors.
 var (
-	ChartGenerationFailerError = errors.New("error.chart-generation-failed")
+	ChartGenerationFailerError = errors.New("errors.chart-generation-failed")
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -67,8 +67,12 @@ func showTrendingsGraph(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	translator := languages.GetTranslatorFromRequest(r)
+
 	// Generation of the HTML graph and storage in a buffer.
-	buffer, err := charts.GenerateBarChart(trendingSearches)
+	buffer, err := charts.GenerateBarChart(
+		trendingSearches, translator("core.searches"), translator("core.number-of-searches"),
+	)
 	if err != nil {
 		http.Error(w, ChartGenerationFailerError.Error(), http.StatusInternalServerError)
 		return

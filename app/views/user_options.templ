@@ -20,7 +20,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 			hx-target="body"
 			hx-push-url="true"
 		>
-			{ translator("sign-up.tag") }
+			{ translator("core.sign-up") }
 		</button>
 		<button
 			class="scifi-button"
@@ -28,7 +28,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 			hx-target="body"
 			hx-push-url="true"
 		>
-			{ translator("log-in.tag") }
+			{ translator("core.log-in") }
 		</button>
 	} else {
 		<div
@@ -45,14 +45,14 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 				/>
 			</button>
 			<div id="menu" class="menu-content" x-show="open" style="display: none;">
-				<div id="close-menu">{ translator("menu") } </div>
+				<div id="close-menu">{ translator("core.menu") } </div>
 				<button
 					class="menu-button"
 					hx-get="/settings"
 					hx-target="body"
 					hx-push-url="true"
 				>
-					{ translator("settings") }
+					{ translator("core.settings") }
 				</button>
 				<button
 					class="menu-button"
@@ -60,7 +60,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 					hx-target="body"
 					hx-push-url="true"
 				>
-					{ translator("history") }
+					{ translator("core.history") }
 				</button>
 				<button
 					class="menu-button"
@@ -68,7 +68,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 					hx-target="body"
 					hx-push-url="true"
 				>
-					{ translator("trends") }
+					{ translator("core.trends") }
 				</button>
 				if authorizationLevel >= auth.AdminRole.Level {
 					<button
@@ -77,7 +77,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 						hx-target="body"
 						hx-push-url="true"
 					>
-						{ translator("new-loader") }
+						{ translator("core.add-a-loader") }
 					</button>
 				}
 				if authorizationLevel >= auth.LoaderRole.Level {
@@ -87,7 +87,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 						hx-target="body"
 						hx-push-url="true"
 					>
-						{ translator("manage-fundings") }
+						{ translator("core.manage-fundings") }
 					</button>
 				}
 				<button
@@ -96,7 +96,7 @@ templ userOptions(authorizationLevel int, translator languages.Translator) {
 					hx-target="body"
 					hx-push-url="true"
 				>
-					{ translator("log-out") }
+					{ translator("core.log-out") }
 				</button>
 			</div>
 		</div>

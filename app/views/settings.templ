@@ -38,7 +38,7 @@ templ SettingsForm(
 			@avatarSettings(user, translator)
 		</div>
 		<div class="preferences-settings">
-			<p class="subtitle" id="preference">{ translator("preferences") }</p>
+			<p class="subtitle" id="preference">{ translator("core.preferences") }</p>
 			<div id="preferences-list">
 				for _, p := range preferences {
 					@PreferenceItem(p)
@@ -55,7 +55,7 @@ templ SettingsForm(
 					hx-swap="beforeend"
 					hx-on="htmx:afterRequest: document.getElementById('preference-field').value=''"
 				>
-					{ translator("add") }
+					{ translator("core.add") }
 				</button>
 			</div>
 		</div>
@@ -67,10 +67,10 @@ templ SettingsForm(
 						class="scifi-button"
 						id="delete-account-btn"
 						hx-delete="/delete-account"
-						hx-confirm={ translator("account-deletion-confirmation") }
+						hx-confirm={ translator("messages.account-deletion-confirmation") }
 						hx-target="body"
 					>
-						{ translator("delete-account") }
+						{ translator("core.delete-account") }
 					</button>
 				</div>
 			}
@@ -79,11 +79,11 @@ templ SettingsForm(
 					type="button"
 					class="scifi-button"
 					hx-get="/settings/cancel"
-					hx-confirm={ translator("account-edition-cancelation-confirmation") }
+					hx-confirm={ translator("messages.account-edition-cancelation-confirmation") }
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
-					{ translator("cancel") }
+					{ translator("core.cancel") }
 				</button>
 				<button
 					type="button"
@@ -93,7 +93,7 @@ templ SettingsForm(
 					hx-target="#settings-section"
 					hx-swap="outerHTML"
 				>
-					{ translator("save-changes") }
+					{ translator("core.save-changes") }
 				</button>
 			</div>
 		</div>
@@ -116,7 +116,7 @@ templ InfoField(name string, typeStr string, value string, translator languages.
 			hx-target={ "#field-" + name }
 			hx-swap="outerHTML"
 		>
-			{ translator("edit") }
+			{ translator("core.edit") }
 		</button>
 	</div>
 }
@@ -140,19 +140,19 @@ templ EditPasswordSection(translator languages.Translator) {
 			<input
 				type="password"
 				name="current-password"
-				placeholder={ translator("current-password") }
+				placeholder={ translator("core.current-password") }
 				style="width: 100%;"
 			/>
 			<input
 				type="password"
 				name="new-password"
-				placeholder={ translator("new-password") }
+				placeholder={ translator("core.new-password") }
 				style="width: 100%;"
 			/>
 			<input
 				type="password"
 				name="repeat-password"
-				placeholder={ translator("repeat-new-password") }
+				placeholder={ translator("core.repeat-new-password") }
 				style="width: 100%;"
 			/>
 		</div>
@@ -164,7 +164,7 @@ templ EditPasswordSection(translator languages.Translator) {
 				hx-target="#edit-password-section"
 				hx-swap="outerHTML"
 			>
-				{ translator("cancel") }
+				{ translator("core.cancel") }
 			</button>
 		</div>
 	</div>
@@ -190,7 +190,7 @@ templ AvatarOptions(translator languages.Translator) {
 		id="upload-avatar"
 		style="user-select: none;"
 	>
-		{ translator("upload-new-avatar") }
+		{ translator("core.upload-a-new-avatar") }
 	</label>
 	<input
 		type="hidden"
@@ -205,7 +205,7 @@ templ AvatarOptions(translator languages.Translator) {
 			document.getElementById('delete-avatar-flag').value='true';
 			document.getElementById('avatar-preview').src='static/img/avatars/default.jpg';"
 	>
-		{ translator("delete-avatar") }
+		{ translator("core.delete-avatar") }
 	</button>
 }
 
@@ -283,7 +283,7 @@ templ avatarSettings(user structures.User, translator languages.Translator) {
 			hx-target="#edit-avatar"
 			hx-swap="innerHTML"
 		>
-			{ translator("modify") }
+			{ translator("core.modify") }
 		</button>
 	</div>
 }

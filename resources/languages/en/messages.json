@@ -1,6 +1,6 @@
 {
     "email-not-verified": "Email not verified. Please, verify it in order to access this functionality.",
-    "email-verified": "Email veridied successfuly!",
+    "email-verified": "Email verified successfuly!",
     "sign-out": "Signed out successfuly!",
     "user-deleted": "User deleted successfuly! We hope to see you back here soon!",
     "welcome-back": "Welcome back!",
@@ -9,7 +9,9 @@
     "verify-your-new-email": "Please, verify your new email.",
     "new-loader-created": "New loader created successfuly!",
     "funding-deleted": "Funding deleted successfuly",
-    "funding-deletion-confirmation": "Are you sure to delete the funding? This decision cannot be undone!",
+    "funding-deletion-confirmation": "Are you sure to delete this funding? This decision cannot be undone!",
+    "account-deletion-confirmation": "Are you sure to delete your account? This decision cannot be undone!",
+    "account-edition-cancelation-confirmation": "Are you sure to discard the changes done?",
     "funding-added": "A new funding has been added!",
     "funding-edited": "Funding edited successfuly!",
     "verification-email-sent": "Email verification sent! Check your inbox.",
@@ -22,5 +24,7 @@
     "user-deletion-email-subject": "Your Sci-Fi Search account has been deleted",
     "user-deletion-email-body-part-1": "We're sorry to see you go!",
     "user-deletion-email-body-part-2": "For your security and peace of mind, we have removed all your data.",
-    "user-deletion-email-body-part-3": "We hope to see you again soon!"
+    "user-deletion-email-body-part-3": "We hope to see you again soon!",
+    "changes-saved": "Changes saved successfuly!"
+
 }

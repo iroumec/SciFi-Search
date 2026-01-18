@@ -254,8 +254,8 @@ func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bo
 		}
 		emailUpdated = true
 		translator := languages.GetTranslatorFromRequest(r)
-		emailSubject := translator("verification-email.subject")
-		emailBody := translator("verification-email.body")
+		emailSubject := translator("messages.verification-email-subject")
+		emailBody := translator("messages.verification-email-body")
 		auth.SendVerificationEmail(emailService, user.AuthID, newEmail, emailSubject, emailBody)
 	}
 
@@ -283,9 +283,9 @@ func renderUpdatedSettings(w http.ResponseWriter, r *http.Request, emailUpdated 
 	}
 
 	translator := languages.GetTranslatorFromRequest(r)
-	message := translator("changes-saved")
+	message := translator("messages.changes-saved")
 	if emailUpdated {
-		message += " " + translator("verify-your-new-email")
+		message += " " + translator("messages.verify-your-new-email")
 	}
 
 	triggers.AddHXTrigger(w, r, message)

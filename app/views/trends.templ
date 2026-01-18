@@ -13,7 +13,7 @@ import (
 // Services
 // ------------------------------------------------------------------------------------------------
 templ TrendsPage(htmlChart template.HTML, authorizationLevel int, translator languages.Translator) {
-	@Layout(translator("trends"), translator,
+	@Layout(translator("core.trends"), translator,
 		func() templ.Component { return Header(true, authorizationLevel, translator) },
 		func() templ.Component { return trendsContent(htmlChart, translator) },
 	)
@@ -28,12 +28,12 @@ templ trendsContent(htmlChart template.HTML, translator languages.Translator) {
 		<div id="trends-content">
 			<div id="trends-container">
 				<div id="trends-header">
-					<p>{ translator("search-trends") }</p>
+					<p>{ translator("core.search-trends") }</p>
 				</div>
 				<div class="chart-wrapper">
 					<div class="chart">
 						@templ.Raw(string(htmlChart))
-					</div> // TODO: ver la traduccion de htmlChart
+					</div>
 				</div>
 			</div>
 		</div>

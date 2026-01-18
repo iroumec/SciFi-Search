@@ -17,8 +17,8 @@ import (
 
 // Errors
 var (
-	EmailNotVerifiedSuggestion     = "suggestions.email-not-verified"
-	NotEnoughPermissionsSuggestion = "suggestions.not-enough-permissions"
+	EmailNotVerifiedSuggestion     = "messages.email-not-verified"
+	NotEnoughPermissionsSuggestion = "messages.not-enough-permissions"
 )
 
 // ------------------------------------------------------------------------------------------------

@@ -21,10 +21,12 @@ type BarChartRenderer struct{}
 
 // ------------------------------------------------------------------------------------------------
 
-func (b *BarChartRenderer) Render(xValues []string, yValues []int) (bytes.Buffer, error) {
+func (b *BarChartRenderer) Render(
+	xValues []string, yValues []int, seriesName, yAxisName string,
+) (bytes.Buffer, error) {
 	bar := charts.NewBar()
-	bar.SetGlobalOptions(getGlobalOptions()...)
-	bar.SetXAxis(xValues).AddSeries("Búsquedas", b.generateItems(yValues))
+	bar.SetGlobalOptions(getGlobalOptions(yAxisName)...)
+	bar.SetXAxis(xValues).AddSeries(seriesName, b.generateItems(yValues))
 
 	var buffer bytes.Buffer
 	err := bar.Render(&buffer)
@@ -45,9 +47,11 @@ func (b *BarChartRenderer) generateItems(values []int) []opts.BarData {
 // Services
 // ------------------------------------------------------------------------------------------------
 
-func GenerateBarChart(values []database.GetTrendingSearchesRow) (bytes.Buffer, error) {
+func GenerateBarChart(
+	values []database.GetTrendingSearchesRow, seriesName, yAxisName string,
+) (bytes.Buffer, error) {
 
-	return generateGraph(&BarChartRenderer{}, values)
+	return generateGraph(&BarChartRenderer{}, values, seriesName, yAxisName)
 }
 
 // ------------------------------------------------------------------------------------------------
