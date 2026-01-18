@@ -26,7 +26,9 @@ templ showPopUp() {
 				// --------------------------------------------------
 				const flash = this.getCookie('flash')
 				if (flash) {
-					this.message = this.b64DecodeUnicode(flash)
+					this.message = this.b64DecodeUnicode(
+						decodeURIComponent(flash)
+					)
 					this.deleteCookie('flash')
 					this.open()
 				}

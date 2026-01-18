@@ -29,18 +29,18 @@ templ Layout(
 ) {
 	<!DOCTYPE html>
 	<html lang="es">
-		<!-- HTMX Script -->
-		<script src={ htmxScript }></script>
-		<!-- ECharts Script -->
-		<script src={ echartsScript }></script>
-		<!-- Alpine.js -->
-		<script defer src={ alpineScript }></script>
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ title }</title>
 			<link rel="stylesheet" href="/static/css/styles.css"/>
 			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;400;700&display=swap"/>
 			<link rel="icon" type="image/png" href="/static/img/logos/scifi-blue.png"/>
+			<!-- HTMX Script -->
+			<script src={ htmxScript }></script>
+			<!-- ECharts Script -->
+			<script src={ echartsScript }></script>
+			<!-- Alpine.js -->
+			<script defer src={ alpineScript }></script>
 		</head>
 		<body>
 			@showPopUp()

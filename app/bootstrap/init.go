@@ -34,13 +34,13 @@ func Boot() (*App, error) {
 
 	initializeAuthorizationMechanisms()
 
+	languages.LoadAllMessagesFromFolders()
+
 	registerEndpoints(HTTPDependencies{
 		Queries:       queries,
 		AvatarService: avatarService,
 		EmailService:  emailService,
 	})
-
-	languages.LoadAllMessagesFromFolders()
 
 	return &App{
 		Resources: &Resources{
