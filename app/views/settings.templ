@@ -35,7 +35,7 @@ templ SettingsForm(
 			</div>
 		</div>
 		<div id="avatar-settings">
-			@AvatarSettings(user, translator)
+			@avatarSettings(user, translator)
 		</div>
 		<div class="preferences-settings">
 			<p class="subtitle" id="preference">{ translator("preferences") }</p>
@@ -171,38 +171,6 @@ templ EditPasswordSection(translator languages.Translator) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ AvatarSettings(user structures.User, translator languages.Translator) {
-	<div id="avatar-section">
-		if user.AvatarURLValid {
-			<img
-				id="avatar-preview"
-				class="avatar-img"
-				src={ user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()) }
-				alt="User avatar"
-			/>
-		} else {
-			<img
-				id="avatar-preview"
-				class="avatar-img"
-				src="static/img/avatars/default.jpg"
-				alt="User avatar"
-			/>
-		}
-	</div>
-	<div id="edit-avatar">
-		<button
-			type="button"
-			class="scifi-button"
-			hx-get="/settings/modify-avatar"
-			hx-target="#edit-avatar"
-			hx-swap="innerHTML"
-		>
-			{ translator("modify") }
-		</button>
-	</div>
-}
-
-// ------------------------------------------------------------------------------------------------
 templ AvatarOptions(translator languages.Translator) {
 	<input
 		type="file"
@@ -285,6 +253,38 @@ templ settingsContent(
 		<div id="left"></div>
 		@SettingsForm(user, preferences, authorizationLevel, translator)
 		<div id="right"></div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ avatarSettings(user structures.User, translator languages.Translator) {
+	<div id="avatar-section">
+		if user.AvatarURLValid {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src={ user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()) }
+				alt="User avatar"
+			/>
+		} else {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src="static/img/avatars/default.jpg"
+				alt="User avatar"
+			/>
+		}
+	</div>
+	<div id="edit-avatar">
+		<button
+			type="button"
+			class="scifi-button"
+			hx-get="/settings/modify-avatar"
+			hx-target="#edit-avatar"
+			hx-swap="innerHTML"
+		>
+			{ translator("modify") }
+		</button>
 	</div>
 }
 

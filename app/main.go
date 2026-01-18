@@ -44,10 +44,10 @@ func main() {
 
 	go func() {
 		<-ctx.Done()
-		log.Println("Apagando aplicación...")
+		log.Println("Shutting down...")
 
 		if app.Resources.DB != nil {
-			log.Println("Cerrando base de datos...")
+			log.Println("Closing database...")
 			app.Resources.DB.Close()
 		}
 
@@ -67,7 +67,7 @@ func main() {
 
 	// The following lines are only executed when the server is no longer awaiting for requests.
 	if err != nil {
-		log.Println("Servidor detenido:", err)
+		log.Println("Server stopped:", err)
 	}
 }
 
