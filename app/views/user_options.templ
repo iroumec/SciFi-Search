@@ -14,93 +14,59 @@ import (
 // ------------------------------------------------------------------------------------------------
 templ userOptions(authorizationLevel int, translator languages.Translator) {
 	if authorizationLevel <= auth.NoRole.Level {
-		<button
-			class="scifi-button"
-			hx-get="/signup"
-			hx-target="body"
-			hx-push-url="true"
-		>
-			{ translator("core.sign-up") }
-		</button>
-		<button
-			class="scifi-button"
-			hx-get="/login"
-			hx-target="body"
-			hx-push-url="true"
-		>
-			{ translator("core.log-in") }
-		</button>
+		@guestOptions(translator)
 	} else {
-		<div
-			class="index-menu"
-			x-data="{ open: false }"
-			@click.outside="open = false"
-		>
-			<button id="header-menu" @click.stop="open = !open">
-				<img
-					src="static/img/icons/menu-blue.svg"
-					alt="header-menu-img"
-					id="header-menu-img"
-					x-show="!open"
-				/>
-			</button>
-			<div id="menu" class="menu-content" x-show="open" style="display: none;">
-				<div id="close-menu">{ translator("core.menu") } </div>
-				<button
-					class="menu-button"
-					hx-get="/settings"
-					hx-target="body"
-					hx-push-url="true"
-				>
-					{ translator("core.settings") }
-				</button>
-				<button
-					class="menu-button"
-					hx-get="/history"
-					hx-target="body"
-					hx-push-url="true"
-				>
-					{ translator("core.history") }
-				</button>
-				<button
-					class="menu-button"
-					hx-get="/trends"
-					hx-target="body"
-					hx-push-url="true"
-				>
-					{ translator("core.trends") }
-				</button>
-				if authorizationLevel >= auth.AdminRole.Level {
-					<button
-						class="menu-button"
-						hx-get="/loader"
-						hx-target="body"
-						hx-push-url="true"
-					>
-						{ translator("core.add-a-loader") }
-					</button>
-				}
-				if authorizationLevel >= auth.LoaderRole.Level {
-					<button
-						class="menu-button"
-						hx-get="/funding"
-						hx-target="body"
-						hx-push-url="true"
-					>
-						{ translator("core.manage-fundings") }
-					</button>
-				}
-				<button
-					class="menu-button"
-					hx-get="/signout"
-					hx-target="body"
-					hx-push-url="true"
-				>
-					{ translator("core.log-out") }
-				</button>
-			</div>
-		</div>
+		@userMenu(authorizationLevel, translator)
 	}
+}
+
+// ------------------------------------------------------------------------------------------------
+templ navButton(url string, label string, class string) {
+	<button
+		class={ class }
+		hx-get={ url }
+		hx-target="body"
+		hx-push-url="true"
+	>
+		{ label }
+	</button>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ guestOptions(translator languages.Translator) {
+	@navButton("/signup", translator("core.sign-up"), "scifi-button")
+	@navButton("/login", translator("core.log-in"), "scifi-button")
+}
+
+// ------------------------------------------------------------------------------------------------
+templ userMenu(authorizationLevel int, translator languages.Translator) {
+	<div
+		class="index-menu"
+		x-data="{ open: false }"
+		@click.outside="open = false"
+	>
+		<button id="header-menu" @click.stop="open = !open">
+			<img
+				src="static/img/icons/menu-blue.svg"
+				alt="header-menu-img"
+				id="header-menu-img"
+				x-show="!open"
+			/>
+		</button>
+		<div id="menu" class="menu-content" x-show="open" style="display: none;">
+			<div id="close-menu">{ translator("core.menu") }</div>
+			@navButton("/settings", translator("core.settings"), "menu-button")
+			@navButton("/history", translator("core.history"), "menu-button")
+			@navButton("/trends", translator("core.trends"), "menu-button")
+			if authorizationLevel >= auth.AdminRole.Level {
+				@navButton("/loader", translator("core.add-a-loader"), "menu-button")
+			}
+			if authorizationLevel >= auth.LoaderRole.Level {
+				@navButton("/funding", translator("core.manage-fundings"), "menu-button")
+			}
+			@navButton("/signout", translator("core.log-out"), "menu-button")
+		</div>
+	</div>
 }
 
 // ------------------------------------------------------------------------------------------------
