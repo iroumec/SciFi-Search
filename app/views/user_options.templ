@@ -27,6 +27,9 @@ templ navButton(url string, label string, class string) {
 		hx-get={ url }
 		hx-target="body"
 		hx-push-url="true"
+		_="on click 
+		   set #menu's *display to 'none'
+		   set #header-menu-img's *display to 'block'"
 	>
 		{ label }
 	</button>
@@ -42,18 +45,30 @@ templ guestOptions(translator languages.Translator) {
 templ userMenu(authorizationLevel int, translator languages.Translator) {
 	<div
 		class="index-menu"
-		x-data="{ open: false }"
-		@click.outside="open = false"
+		_="on click from elsewhere
+			if the target of the event is not in me
+		   		set #menu's *display to 'none'
+		    	set #header-menu-img's *display to 'block'
+			end"
 	>
-		<button id="header-menu" @click.stop="open = !open">
+		<button
+			id="header-menu"
+			_="on click halt the event
+			   	if #menu's *display is 'none'
+					set #menu's *display to 'block'
+					set #header-menu-img's *display to 'none'
+				else
+					set #menu's *display to 'none'
+					set #header-menu-img's *display to 'block'
+				end"
+		>
 			<img
 				src="static/img/icons/menu-blue.svg"
 				alt="header-menu-img"
 				id="header-menu-img"
-				x-show="!open"
 			/>
 		</button>
-		<div id="menu" class="menu-content" x-show="open" style="display: none;">
+		<div id="menu" class="menu-content" style="display: none;">
 			<div id="close-menu">{ translator("core.menu") }</div>
 			@navButton("/settings", translator("core.settings"), "menu-button")
 			@navButton("/history", translator("core.history"), "menu-button")

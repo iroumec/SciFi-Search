@@ -11,9 +11,10 @@ templ ModalRoot() {
 templ Modal(modalTitle string, modalBody func() templ.Component) {
 	<div
 		class="modal-overlay"
-		x-data="{ open: true }"
-		x-show="open"
-		@click.self="open = false"
+		_="on click
+            if the target is me
+                remove me
+            end"
 	>
 		<div class="modal-content">
 			<div class="modal-header">
@@ -23,7 +24,7 @@ templ Modal(modalTitle string, modalBody func() templ.Component) {
 				<button
 					class="close-button"
 					type="button"
-					@click="open = false"
+					_="on click remove closest .modal-overlay"
 				>
 					&times;
 				</button>

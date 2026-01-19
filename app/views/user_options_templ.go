@@ -109,14 +109,14 @@ func navButton(url string, label string, class string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"body\" hx-push-url=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"body\" hx-push-url=\"true\" _=\"on click \n\t\t   set #menu's *display to 'none'\n\t\t   set #header-menu-img's *display to 'block'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/user_options.templ`, Line: 31, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/user_options.templ`, Line: 34, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -186,14 +186,14 @@ func userMenu(authorizationLevel int, translator languages.Translator) templ.Com
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"index-menu\" x-data=\"{ open: false }\" @click.outside=\"open = false\"><button id=\"header-menu\" @click.stop=\"open = !open\"><img src=\"static/img/icons/menu-blue.svg\" alt=\"header-menu-img\" id=\"header-menu-img\" x-show=\"!open\"></button><div id=\"menu\" class=\"menu-content\" x-show=\"open\" style=\"display: none;\"><div id=\"close-menu\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"index-menu\" _=\"on click from elsewhere\n\t\t\tif the target of the event is not in me\n\t\t   \t\tset #menu's *display to 'none'\n\t\t    \tset #header-menu-img's *display to 'block'\n\t\t\tend\"><button id=\"header-menu\" _=\"on click halt the event\n\t\t\t   \tif #menu's *display is 'none'\n\t\t\t\t\tset #menu's *display to 'block'\n\t\t\t\t\tset #header-menu-img's *display to 'none'\n\t\t\t\telse\n\t\t\t\t\tset #menu's *display to 'none'\n\t\t\t\t\tset #header-menu-img's *display to 'block'\n\t\t\t\tend\"><img src=\"static/img/icons/menu-blue.svg\" alt=\"header-menu-img\" id=\"header-menu-img\"></button><div id=\"menu\" class=\"menu-content\" style=\"display: none;\"><div id=\"close-menu\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.menu"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/user_options.templ`, Line: 57, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/user_options.templ`, Line: 72, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {

@@ -130,8 +130,10 @@ templ fundingForm(
 		}
 		hx-target="#funding-list"
 		hx-swap="innerHTML"
-		@htmx:after-request="if($event.detail.successful) { open = false; $refs.fundingForm.reset(); }"
-		x-ref="fundingForm"
+		_="on htmx:afterRequest
+			if event.detail.successful
+				remove closest .modal-overlay
+			end"
 	>
 		<div class="form-inputs">
 			@labeledInput("name", translator("core.name"), "text", "", "", document["Name"], true)
@@ -184,7 +186,7 @@ templ fundingForm(
 				id="cancel-button"
 				type="button"
 				class="scifi-button secondary"
-				@click="open = false"
+				_="on click halt the event remove closest .modal-overlay"
 			>
 				{ translator("core.cancel") }
 			</button>

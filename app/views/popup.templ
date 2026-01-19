@@ -5,77 +5,67 @@ package views
 // ------------------------------------------------------------------------------------------------
 templ showPopUp() {
 	<div
-		x-data="{
-			show: false,
-			message: '',
-
-			init() {
-
-				// --------------------------------------------------
-				// HTMX
-				// --------------------------------------------------
-				document.body.addEventListener('showFlash', (e) => {
-					if (!e.detail || !e.detail.message) return
-
-					this.message = e.detail.message
-					this.open()
-				})
-
-				// --------------------------------------------------
-				// HTTP (redirect y cookie)
-				// --------------------------------------------------
-				const flash = this.getCookie('flash')
-				if (flash) {
-					this.message = this.b64DecodeUnicode(
-						decodeURIComponent(flash)
-					)
-					this.deleteCookie('flash')
-					this.open()
-				}
-			},
-
-			open() {
-				this.show = true
-				setTimeout(() => this.show = false, 5000)
-			},
-
-			close() {
-				this.show = false
-			},
-
-			// --------------------------------------------------
-			// Utils
-			// --------------------------------------------------
-			getCookie(name) {
-				const value = '; ' + document.cookie
-				const parts = value.split('; ' + name + '=')
-				if (parts.length === 2) return parts.pop().split(';').shift()
-				return ''
-			},
-
-			deleteCookie(name) {
-				document.cookie = name + '=; Max-Age=0; path=/;'
-			},
-
-			b64DecodeUnicode(str) {
-				const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0))
-				return new TextDecoder('utf-8').decode(bytes)
-			}
-		}"
-		x-show="show"
-		x-cloak
-		@click.outside="close()"
+		id="flash-popup"
+		class="hidden"
 		style="position:fixed; top:20px; left:50%; transform:translateX(-50%);
                 padding:15px 20px; background:#3f4646; color:white;
                 border-radius:5px; box-shadow:0 2px 10px rgba(0,0,0,0.2);
                 z-index:9999;"
+		_="
+        -- --------------------------------------------------
+        -- HTMX
+        -- --------------------------------------------------
+        on showFlash(message) from body
+            put message into #flash-message
+            remove .hidden
+            wait 5s
+            add .hidden
+        end
+
+        -- --------------------------------------------------
+        -- HTTP (redirect y cookie)
+        -- --------------------------------------------------
+        init
+            js
+                const name = 'flash';
+                // Regex para encontrar la cookie ya sea al principio o en medio
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                
+                if (match) {
+                    // Borrar la cookie
+                    document.cookie = name + '=; Max-Age=0; path=/;';
+                    
+                    // Decodificar
+                    try {
+                        const val = match[2];
+                        const str = decodeURIComponent(val);
+                        const bytes = Uint8Array.from(atob(str), c => c.charCodeAt(0));
+                        return new TextDecoder('utf-8').decode(bytes);
+                    } catch (e) {
+                        return null;
+                    }
+                }
+                return null;
+            end
+            
+            -- 'it' contiene el resultado del bloque js anterior
+            if it is not null
+                trigger showFlash(message: it) on body
+            end
+        end
+
+        -- --------------------------------------------------
+        -- Utils
+        -- --------------------------------------------------
+        on click from elsewhere
+            add .hidden"
 	>
-		<span x-text="message"></span>
+		<span id="flash-message"></span>
 		<button
-			@click.stop="close()"
 			type="button"
 			style="margin-left:15px; background:transparent; border:none;
                     color:white; font-size:20px; cursor:pointer;"
+			_="on click add .hidden to #flash-popup"
 		>×</button>
 	</div>
 }

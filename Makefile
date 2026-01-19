@@ -55,9 +55,9 @@ development: create-env ## Construye y levanta los contenedores en modo desarrol
 # =================================================================================================
 
 down: ## Detiene contenedores sin eliminar datos.
-	@echo "Deteniendo y eliminando contenedores..."
+	@echo "Deteniendo contenedores..."
 	@docker compose down
-	@echo "Contenedores detenidos. Los datos persisten en los volúmenes."
+	@echo "Contenedores detenidos."
 
 # =================================================================================================
 

@@ -8,9 +8,9 @@ import "scifi-search/app/languages"
 
 // Scripts
 const (
-	htmxScript    = "https://unpkg.com/htmx.org@1.9.12"
-	echartsScript = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"
-	alpineScript  = "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+	htmxScript        = "https://unpkg.com/htmx.org@1.9.12"
+	echartsScript     = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"
+	hyperscriptScript = "https://unpkg.com/hyperscript.org@0.9.12"
 )
 
 // Repositories
@@ -39,8 +39,8 @@ templ Layout(
 			<script src={ htmxScript }></script>
 			<!-- ECharts Script -->
 			<script src={ echartsScript }></script>
-			<!-- Alpine.js -->
-			<script defer src={ alpineScript }></script>
+			<!-- Hyperscript -->
+			<script src={ hyperscriptScript }></script>
 		</head>
 		<body>
 			@showPopUp()

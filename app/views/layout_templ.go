@@ -16,9 +16,9 @@ import "scifi-search/app/languages"
 
 // Scripts
 const (
-	htmxScript    = "https://unpkg.com/htmx.org@1.9.12"
-	echartsScript = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"
-	alpineScript  = "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+	htmxScript        = "https://unpkg.com/htmx.org@1.9.12"
+	echartsScript     = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"
+	hyperscriptScript = "https://unpkg.com/hyperscript.org@0.9.12"
 )
 
 // Repositories
@@ -94,14 +94,14 @@ func Layout(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script><!-- Alpine.js --><script defer src=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></script><!-- Hyperscript --><script src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(alpineScript)
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(hyperscriptScript)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 43, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/layout.templ`, Line: 43, Col: 34}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
