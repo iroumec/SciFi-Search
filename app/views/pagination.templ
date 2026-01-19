@@ -1,13 +1,6 @@
 package views
 
-// ------------------------------------------------------------------------------------------------
-// Imports
-// ------------------------------------------------------------------------------------------------
-
-import (
-	"scifi-search/app/languages"
-	"scifi-search/app/utils/converters"
-)
+import "scifi-search/app/utils/converters"
 
 // ------------------------------------------------------------------------------------------------
 // Functions
@@ -62,41 +55,6 @@ templ navigationButton(page int, button string, get string, include string, targ
 	>
 		{ button }
 	</a>
-}
-
-// ------------------------------------------------------------------------------------------------
-templ documentItem(m map[string]any, name string, translator languages.Translator) {
-	<div id={ name + "-" + converters.ToString(m["id"]) }>
-		<a
-			id="title"
-			href={ converters.ToString(m["Link"]) }
-			target="_blank"
-		>
-			{ converters.ToString(m["Name"]) }
-		</a>
-		<div class="extra-info">
-			@extraInfoItem(converters.ToString(m["Type"]), "gray")
-			@extraInfoItem(converters.ToString(m["Main area"]), "scifi")
-			@extraInfoItem(converters.ToString(m["Secondary area"]), "scifi")
-			@extraInfoItem(converters.ToString(m["Deadline"]), "orange")
-			@extraInfoItem(converters.ToString(m["Based on"]), "yellow")
-			@extraInfoItem(converters.ToString(m["Grantor"]), "cyan")
-			@extraInfoItem("("+converters.ToString(m["Currency"])+") "+
-				translator(converters.ToString(m["Amount"])), "green")
-		</div>
-		if converters.ToString(m["Description"]) != "" {
-			<p id="description">{ converters.ToString(m["Description"]) }</p>
-		} else {
-			<p>{ translator("core.no-description") }.</p>
-		}
-	</div>
-}
-
-// ------------------------------------------------------------------------------------------------
-templ extraInfoItem(item string, color string) {
-	if item != "" {
-		<span class={ color }>{ item } </span>
-	}
 }
 
 // ------------------------------------------------------------------------------------------------

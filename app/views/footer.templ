@@ -37,7 +37,11 @@ templ Footer(translator languages.Translator) {
 		</div>
 		<div id="unicen-logo">
 			<a href="https://www.unicen.edu.ar/" target="_blank">
-				<img src="static/img/logotypes/unicen.png" alt="UNICEN Logo" id="unicen-logo"/>
+				<img
+					src="static/img/logotypes/unicen.png"
+					alt="UNICEN Logo"
+					id="unicen-logo"
+				/>
 			</a>
 		</div>
 		<div id="options-section">
@@ -57,7 +61,8 @@ templ Footer(translator languages.Translator) {
 					hx-vals='{"language":"es"}'
 				}
 			>
-				{ translator("core.language") + ": " + translator("metadata.current-language") }
+				{ translator("core.language") +
+					": " + translator("metadata.current-language") }
 			</button>
 			<a
 				id="github-btn"
