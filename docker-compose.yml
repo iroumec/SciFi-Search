@@ -13,7 +13,7 @@ services:
     ports:
       - "${DB_PORT}:${DB_PORT}"
     volumes:
-      - tpe-db-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
     restart: always
     logging:
@@ -199,7 +199,7 @@ services:
 # ------------------------------------------------------------------------------------------------
 
 volumes:
-  tpe-db-data:
+  postgres-data:
   meili-data:
   minio-data:
   loki-data:

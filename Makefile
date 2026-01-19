@@ -2,6 +2,12 @@
 # Makefile para levantar un entorno Docker, ejecutar pruebas Hurl y limpiar.
 # =================================================================================================
 
+# Importación de variables de ambiente.
+-include .env
+export
+
+# =================================================================================================
+
 # Target por defecto que se ejecuta al correr `make`.
 all: help
 
@@ -26,24 +32,19 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	@# -f: Falla en silencio (no muestra HTML) si hay un error HTTP (como 404 o 500).
 	@# -s: Modo silencioso (no muestra la barra de progreso).
 	
-	@echo "Esperando a que la base de datos esté lista..."
-	@until docker exec scifi-search-db pg_isready -U postgres > /dev/null 2>&1; do \
+	@echo "Esperando a que la base de datos esté healthy..."
+	@until [ "$$(docker inspect -f '{{.State.Health.Status}}' database)" = "healthy" ]; do \
 		sleep 1; \
 	done
-	@echo
-
-	@echo "Aplicando migraciones..."
-	@docker exec -i scifi-search-db psql -U postgres -d postgres  < database/schema/schema.sql \
-		> /dev/null 2>&1
 	@echo
 
 	@echo "Base de datos lista. Esperando a que el servidor esté listo..."
-	@until curl -f -s http://localhost:8080/health > /dev/null 2>&1; do \
+	@until curl -f -s http://localhost:$(APP_PORT)/health > /dev/null 2>&1; do \
 		sleep 1; \
 	done
 	@echo
 
-	@echo "Servidor corriendo en http://localhost:8080."
+	@echo "Servidor corriendo en http://localhost:$(APP_PORT)."
 	@echo
 
 # =================================================================================================
@@ -53,21 +54,23 @@ development: create-env ## Construye y levanta los contenedores en modo desarrol
 
 # =================================================================================================
 
-down: ## Detiene los contenedores y redes, sin eliminar volúmenes.
-	@echo "Deteniendo el servidor..."
-	@ #Se detiene la versión de producción. La versión no sobrescritra.
-	@docker compose -f docker-compose.yml down
+down: ## Detiene contenedores sin eliminar datos.
+	@echo "Deteniendo y eliminando contenedores..."
+	@docker compose down
+	@echo "Contenedores detenidos. Los datos persisten en los volúmenes."
 
 # =================================================================================================
 
-clean: down ## Elimina la imagen y los volúmenes.
+clean: down ## Detiene contenedores y elimina volúmenes.
+	@echo "Deteniendo servicios y eliminando volúmenes..."
 	@docker compose -f docker-compose.yml down -v --rmi all
 	@docker volume prune -f
+	@echo "Limpieza completa realizada. Todos los datos fueron eliminados."
 
 # =================================================================================================
 
 is-running: ## Verifica que el servidor esté corriendo.
-	@curl -f -s http://localhost:8080/health > /dev/null \
+	@curl -f -s http://localhost:$(APP_PORT)/health > /dev/null \
 		|| (echo "\033[31mERROR: El servidor no está corriendo. Usa 'make up' primero.\033[0m" \
 			&& exit 1)
 

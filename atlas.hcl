@@ -31,7 +31,7 @@ env "docker" {
   src = "file://database/schema/schema.sql"
 }
 
-# Local environment(outside contenedor).
+# Local environment (outside contenedor).
 env "local" {
 
   url = "${var.db_url}"
