@@ -49,7 +49,7 @@ templ headerBuilder(
 				/>
 			}
 			if query {
-				<form hx-get="/search" hx-target="body" hx-push-url="true">
+				<form id="query-container" hx-get="/search" hx-target="body" hx-push-url="true">
 					<input
 						type="text"
 						name="query"

@@ -200,7 +200,7 @@ func headerBuilder(
 			}
 		}
 		if query {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<form hx-get=\"/search\" hx-target=\"body\" hx-push-url=\"true\"><input type=\"text\" name=\"query\" id=\"query\" placeholder=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<form id=\"query-container\" hx-get=\"/search\" hx-target=\"body\" hx-push-url=\"true\"><input type=\"text\" name=\"query\" id=\"query\" placeholder=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

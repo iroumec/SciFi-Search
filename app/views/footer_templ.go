@@ -34,27 +34,27 @@ func Footer(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"footer\"><div class=\"clear-top\"></div><div class=\"clear-left\"></div><div id=\"powered-section\"><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<footer class=\"footer\"><div class=\"clear-left\"></div><div id=\"powered-section\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.powered-by"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 13, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 12, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logotypes/meilisearch.png\" alt=\"Meilisearch Logo\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logotypes/supertokens.png\" alt=\"Supertokens Logo\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logotypes/minio.svg\" alt=\"MinIO Logo\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logotypes/unicen.png\" alt=\"UNICEN Logo\" id=\"unicen-logo\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><div id=\"images\"><a href=\"https://www.meilisearch.com/\" target=\"_blank\"><img src=\"static/img/logotypes/meilisearch.png\" alt=\"Meilisearch Logo\" class=\"logo\"></a> <a href=\"https://supertokens.com/\" target=\"_blank\"><img src=\"static/img/logotypes/supertokens.png\" alt=\"Supertokens Logo\" class=\"logo\"></a> <a href=\"https://github.com/minio/minio\" target=\"_blank\"><img src=\"static/img/logotypes/minio.svg\" alt=\"MinIO Logo\" class=\"logo\"></a></div></div><div id=\"unicen-logo\"><a href=\"https://www.unicen.edu.ar/\" target=\"_blank\"><img src=\"static/img/logotypes/unicen.png\" alt=\"UNICEN Logo\" id=\"unicen-logo-img\"></a></div><div id=\"options-section\"><button class=\"footer-button\" onclick=\"window.location.href='/trends'\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.trends"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 52, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 51, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -83,7 +83,7 @@ func Footer(translator languages.Translator) templ.Component {
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.language") +
 			": " + translator("metadata.current-language"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 65, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 64, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -96,7 +96,7 @@ func Footer(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(sciFiSearchRepository)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 70, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 69, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -109,7 +109,7 @@ func Footer(translator languages.Translator) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.github-repository"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 73, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/footer.templ`, Line: 72, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
