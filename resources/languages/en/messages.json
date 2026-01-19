@@ -25,5 +25,6 @@
     "verification-email-sent": "Email verification sent! Check your inbox.",
     "verification-email-subject": "Verify your email",
     "verify-your-new-email": "Please, verify your new email.",
-    "welcome-back": "Welcome back!"
+    "welcome-back": "Welcome back!",
+    "email-already-in-use": "Email already in use. Try logging in or using another email."
 }

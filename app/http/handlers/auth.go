@@ -16,6 +16,7 @@ import (
 	"scifi-search/app/database"
 	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/middlewares"
+	"scifi-search/app/http/notifications"
 	"scifi-search/app/http/notifications/cookies"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils"
@@ -154,6 +155,8 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	translator := languages.GetTranslatorFromRequest(r)
+
 	newUser, err := createUser(
 		name,
 		surname,
@@ -163,7 +166,14 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		languages.GetTranslatorFromRequest(r),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		if !errors.Is(err, auth.EmailAlreadyInUseError) {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		notifications.ShowFlash(w, r, translator("messages.email-already-in-use"))
+		w.WriteHeader(http.StatusPreconditionFailed)
 		return
 	}
 
@@ -173,7 +183,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookies.AddFlashCookie(w, languages.GetTranslatorFromRequest(r)("messages.verification-email-sent"))
+	cookies.AddFlashCookie(w, translator("messages.verification-email-sent"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -210,6 +220,7 @@ func createUser(
 
 	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
+		log.Printf("An error ocurred during user creation: %s", translator(err.Error()))
 		return nil, err
 	}
 

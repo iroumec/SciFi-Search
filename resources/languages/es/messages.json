@@ -25,5 +25,6 @@
     "verification-email-sent": "¡Correo de verificación enviado! Revisa tu bandeja.",
     "verification-email-subject": "Verifica tu email",
     "verify-your-new-email": "Por favor, verifica tu nuevo email.",
-    "welcome-back": "¡Bienvenido de vuelta!"
+    "welcome-back": "¡Bienvenido de vuelta!",
+    "email-already-in-use": "Email ya en uso. Intente iniciar sesión o usar otro email."
 }
