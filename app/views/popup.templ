@@ -16,25 +16,31 @@ templ showPopUp() {
         -- HTMX
         -- --------------------------------------------------
         on showFlash(message) from body
+            -- Se incrementa la versión del popup.
+            set @popupVersion to (@popupVersion or 0) + 1
+            set localVersion to @popupVersion
+
             put message into #flash-message
             remove .hidden
-            wait 5s
-            add .hidden
-        end
 
+            wait 5s
+
+            -- Se oculta si nadie lo reemplazó.
+            if @popupVersion is localVersion
+                add .hidden
+            end
+        end
         -- --------------------------------------------------
         -- HTTP (redirect y cookie)
         -- --------------------------------------------------
         init
             js
                 const name = 'flash';
-                // Regex para encontrar la cookie ya sea al principio o en medio
+                // Regex para encontrar la cookie ya sea al principio o en medio.
                 const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                
                 if (match) {
-                    // Borrar la cookie
+                    // Se borra la cookie.
                     document.cookie = name + '=; Max-Age=0; path=/;';
-                    
                     // Decodificar
                     try {
                         const val = match[2];
@@ -47,25 +53,26 @@ templ showPopUp() {
                 }
                 return null;
             end
-            
-            -- 'it' contiene el resultado del bloque js anterior
+            -- 'it' contiene el resultado del bloque js anterior.
             if it is not null
                 trigger showFlash(message: it) on body
             end
         end
-
         -- --------------------------------------------------
         -- Utils
         -- --------------------------------------------------
-        on click from elsewhere
-            add .hidden"
+        on click
+            add .hidden
+        end"
 	>
 		<span id="flash-message"></span>
 		<button
 			type="button"
 			style="margin-left:15px; background:transparent; border:none;
                     color:white; font-size:20px; cursor:pointer;"
-			_="on click add .hidden to #flash-popup"
+			_="on click 
+                add .hidden to #flash-popup
+                set @data-hiding of #flash-popup to 'false'"
 		>×</button>
 	</div>
 }

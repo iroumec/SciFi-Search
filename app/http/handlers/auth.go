@@ -290,7 +290,8 @@ func logIn(w http.ResponseWriter, r *http.Request) {
 	// Credentials validation.
 	userID, err := auth.VerifyCredentials(email, password)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		notifications.ShowFlash(w, r, translator("messages.wrong-credentials"))
+		w.WriteHeader(http.StatusPreconditionFailed)
 		return
 	}
 

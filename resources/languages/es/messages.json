@@ -2,6 +2,7 @@
     "account-deletion-confirmation": "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no puede deshacerse.",
     "account-edition-cancelation-confirmation": "¿Estás seguro de descartar los cambios realizados?",
     "changes-saved": "¡Cambios guardados exitosamente!",
+    "email-already-in-use": "Email ya en uso. Intente iniciar sesión o usar otro email.",
     "email-not-verified": "Email no verificado. Por favor, verifíquelo para acceder a esta funcionalidad.",
     "email-verified": "¡Email verificado con éxito!",
     "funding-added": "¡Se añadió un nuevo financiamiento!",
@@ -26,5 +27,5 @@
     "verification-email-subject": "Verifica tu email",
     "verify-your-new-email": "Por favor, verifica tu nuevo email.",
     "welcome-back": "¡Bienvenido de vuelta!",
-    "email-already-in-use": "Email ya en uso. Intente iniciar sesión o usar otro email."
+    "wrong-credentials": "La contraseña o el email son incorrectos."
 }

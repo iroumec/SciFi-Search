@@ -2,6 +2,7 @@
     "account-deletion-confirmation": "Are you sure to delete your account? This decision cannot be undone!",
     "account-edition-cancelation-confirmation": "Are you sure to discard the changes done?",
     "changes-saved": "Changes saved successfuly!",
+    "email-already-in-use": "Email already in use. Try logging in or using another email.",
     "email-not-verified": "Email not verified. Please, verify it in order to access this functionality.",
     "email-verified": "Email verified successfuly!",
     "funding-added": "A new funding has been added!",
@@ -26,5 +27,5 @@
     "verification-email-subject": "Verify your email",
     "verify-your-new-email": "Please, verify your new email.",
     "welcome-back": "Welcome back!",
-    "email-already-in-use": "Email already in use. Try logging in or using another email."
+    "wrong-credentials": "Password or email are incorrect."
 }
