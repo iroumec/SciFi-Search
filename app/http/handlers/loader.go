@@ -5,8 +5,10 @@ package handlers
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"net/http"
 	"scifi-search/app/auth"
+	"scifi-search/app/http/notifications"
 	"scifi-search/app/http/notifications/cookies"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/checkers"
@@ -62,6 +64,8 @@ func createNewLoader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	translator := languages.GetTranslatorFromRequest(r)
+
 	_, err := createUser(
 		name,
 		surname,
@@ -71,11 +75,17 @@ func createNewLoader(w http.ResponseWriter, r *http.Request) {
 		languages.GetTranslatorFromRequest(r),
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		if !errors.Is(err, auth.EmailAlreadyInUseError) {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		notifications.ShowFlash(w, r, translator(err.Error())+".")
+		w.WriteHeader(http.StatusPreconditionFailed)
 		return
 	}
 
-	message := languages.GetTranslatorFromRequest(r)("messages.new-loader-created")
+	message := translator("messages.new-loader-created")
 	cookies.AddFlashCookie(w, message)
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
