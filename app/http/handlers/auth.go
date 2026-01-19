@@ -220,7 +220,6 @@ func createUser(
 
 	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
-		log.Printf("An error ocurred during user creation: %s", translator(err.Error()))
 		return nil, err
 	}
 
