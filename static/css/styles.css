@@ -377,8 +377,10 @@ header {
 }
 
     .only-form-content .centered-container {
-        height: 60%;
-        width: 40%;
+        width: 100%;
+        max-width: 650px;
+        padding: 6rem 2.5rem;
+    
         display: flex;
         justify-content: center;
         align-items: center;
@@ -388,11 +390,13 @@ header {
         border-radius: 15px;
     }
         .only-form-content form {
+            width: 100%;
+            max-width: 480px;
+
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 100%;
         }
 
             #form-inputs {
@@ -407,7 +411,7 @@ header {
 
                 .only-form-content input {
                     height: 2.1rem;
-                    width: 75%;
+                    width: 100%;
 
                     color: black;
 
@@ -438,17 +442,18 @@ header {
 
     display: grid;
     grid-template-columns: 11.6% 56.8% 31.6%;
-    grid-template-rows: 6% 89.5%;
+    grid-template-rows: auto 1fr;
     grid-template-areas: 
         "top top top"
         "left search-content right";
-    height: 100%;
+    min-height: 0;
 
     z-index: 1000;
 }
 
     .top {
         grid-area: top;
+        height: 6vh;
     }
     .left {
         grid-area: left;
@@ -462,14 +467,11 @@ header {
 
         display: grid;
         grid-template-columns: 100%;
-        grid-template-rows: 4.25% 4.25% 91.5%;
+        grid-template-rows: auto auto 1fr;
         grid-template-areas: 
             "message"
             "filters"
             "results";
-
-        /*background-color: #5dd859;
-        border: 1px solid rgb(255, 0, 0);*/
     }
 
         .message {
@@ -481,6 +483,11 @@ header {
 
             color: var(--scifi);
         }
+
+            .message p {
+                margin: 0;
+                margin-bottom: 0.5rem;
+            }
 
         .filters {
             grid-area: filters;
@@ -545,20 +552,15 @@ header {
 
         #results {
             grid-area: results;
-            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
         }
-
-            .documents-section {
-                overflow-y: auto;       
-                max-height: 100%;       
-            }
 
                 .result {
                     background-color: var(--white80);
                     padding: 1rem;
                     border-radius: 1rem;
                     margin-top: 0.5rem;
-                    margin-right: 1rem;
                 }
 
                     .result .extra-info span {
