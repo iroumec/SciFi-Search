@@ -69,20 +69,20 @@ func indexContent(translator languages.Translator) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\"><div class=\"index-top\"><div class=\"centered-container\"><div class=\"inicio-image-container\"><img src=\"static/img/logotypes/scifi-blue.png\" alt=\"Scifi Logo\" id=\"scifi_logo\"></div><div class=\"inicio-query-container\"><input type=\"text\" id=\"first-query\" name=\"query\" placeholder=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"index-content\"><div class=\"index-container\"><div class=\"img-container\"><img src=\"static/img/logotypes/scifi-blue.png\" alt=\"Scifi Logo\" id=\"scifi_logo\"></div><div class=\"query-container\"><input type=\"text\" id=\"first-query\" name=\"query\" placeholder=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(translator("core.search"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/index.templ`, Line: 30, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `app/views/index.templ`, Line: 29, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-get=\"/search\" hx-trigger=\"keyup[key=='Enter' && this.value.trim()!='']\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></div></div></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-get=\"/search\" hx-trigger=\"keyup[key=='Enter' && this.value.trim()!='']\" hx-target=\"body\" hx-push-url=\"true\" hx-include=\"this\"></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -17,24 +17,22 @@ templ IndexPage(authorizationLevel int, translator languages.Translator) {
 // ------------------------------------------------------------------------------------------------
 templ indexContent(translator languages.Translator) {
 	<main class="index-content">
-		<div class="index-top">
-			<div class="centered-container">
-				<div class="inicio-image-container">
-					<img src="static/img/logotypes/scifi-blue.png" alt="Scifi Logo" id="scifi_logo"/>
-				</div>
-				<div class="inicio-query-container">
-					<input
-						type="text"
-						id="first-query"
-						name="query"
-						placeholder={ translator("core.search") }
-						hx-get="/search"
-						hx-trigger="keyup[key=='Enter' && this.value.trim()!='']"
-						hx-target="body"
-						hx-push-url="true"
-						hx-include="this"
-					/>
-				</div>
+		<div class="index-container">
+			<div class="img-container">
+				<img src="static/img/logotypes/scifi-blue.png" alt="Scifi Logo" id="scifi_logo"/>
+			</div>
+			<div class="query-container">
+				<input
+					type="text"
+					id="first-query"
+					name="query"
+					placeholder={ translator("core.search") }
+					hx-get="/search"
+					hx-trigger="keyup[key=='Enter' && this.value.trim()!='']"
+					hx-target="body"
+					hx-push-url="true"
+					hx-include="this"
+				/>
 			</div>
 		</div>
 	</main>

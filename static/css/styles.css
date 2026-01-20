@@ -200,7 +200,9 @@ header {
     width: 100%;
 
     grid-template-columns: 1fr auto auto auto 1fr;
-    grid-template-areas: 
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "clear-top clear-top clear-top clear-top clear-top"
         "clear-left powered-by unicen-logo options clear-right";
 
     background: linear-gradient(180deg,
@@ -212,6 +214,10 @@ header {
         rgba(58, 63, 74, 0.8) 93%
     );
 }
+
+    .clear-top {
+        height: 4vh;
+    }
 
     .clear-left {
         grid-area: clear-left;
@@ -305,79 +311,57 @@ header {
 .index-content {
     grid-area: content; 
     
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 45% 55%;
-    grid-template-areas: "top" "bottom";
-
-    /*background-color: #c2c058;
-    border: 1px solid rgb(255, 0, 0);*/
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 18.5vh;
 }
 
-    .index-top {
-        grid-area: top; 
-        
-        display: flex;
-        justify-content: center;
-        align-items: flex-end;
+    .index-container {
+        width: 100%;
+        max-width: 800px;
 
-        /*background-color: #c2c058;
-        border: 1px solid rgb(255, 0, 0);*/
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
     }
 
-        .index-top .centered-container {
-            height: 55%;
-            width: 50%;
-            display: grid;
-            grid-template-columns: 100%;
-            grid-template-rows: 70% 30%;
-            grid-template-areas: 
-                "centered-container-up70"
-                "centered-container-down30";
-        }
-
-            .inicio-image-container {
-                grid-area: centered-container-up70;
+            .img-container {
                 display: flex;
                 justify-content: center;
-                align-items: center;
-
-                /*background-color: #33aada;
-                border: 1px solid rgb(255, 0, 0);*/
             }
 
                 #scifi_logo {
-                    height: 100%;
+                    max-height: 150px;
+                    width: auto;
                 }
 
-            .inicio-query-container {
-                grid-area: centered-container-down30;
+            .query-container {
+                width: 100%;
                 display: flex;
                 justify-content: center;
-                align-items: center;
-
-                /*background-color: #e96ea8;
-                border: 1px solid rgb(255, 0, 0);*/
             }
 
                 #first-query {
-                    height: 70%;
-                    width: 75%;
+                    height: 44px;
+                    width: 100%;
+                    max-width: 700px;
 
                     color: black;
 
-                    border-radius: 32px; /* Redondeo del input de texto */
+                    border-radius: 32px; 
                     border: 0px;
 
                     background-color: var(--scifi30);
 
                     background-image: url('../img/icons/search-white.svg');
-                    background-repeat: no-repeat; /*Sin esto, repite la imagen en todo el input*/
-                    background-position: 10px 10px; /*Ubica la imagen centrada*/
-                    padding-left: 40px; /*Ubica dónde se comenzara a escribir, evitando el texto sobre la lupa*/
+                    background-repeat: no-repeat; 
+                    background-position: 10px 10px; 
+                    padding-left: 40px;
                 }
-                #first-query:focus { /* Efecto de borde al entrar al input */
-                    border: 0.5px black;
+                #first-query:focus { 
+                    border: 0.5px solid var(--scifi);
                 }
 
 /* ------------------------------------------------------------------------------------------------ */
@@ -390,9 +374,6 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /*background-color: #51b418;
-    border: 1px solid rgb(255, 0, 0);*/
 }
 
     .only-form-content .centered-container {
