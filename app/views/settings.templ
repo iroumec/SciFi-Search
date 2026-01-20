@@ -23,7 +23,7 @@ templ SettingsForm(
 		enctype="multipart/form-data"
 	>
 		<div class="profile-settings">
-			<p class="subtitle" id="profile">{ translator("profile") }</p>
+			<p class="subtitle" id="profile">{ translator("core.profile") }</p>
 			<p id="fullname">{ user.Name } { user.Surname } </p>
 			<div class="info-section">
 				<div class="centered-container">
@@ -228,11 +228,11 @@ templ PreferenceItem(preference string) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SettingsPage(
+templ SettingsPage( 
 	user structures.User, preferences []string,
 	authorizationLevel int, translator languages.Translator,
 ) {
-	@Layout(translator("settings"), translator,
+	@Layout(translator("core.settings"), translator,
 		func() templ.Component {
 			return Header(true, authorizationLevel, translator)
 		},
