@@ -76,7 +76,7 @@ func trendsContent(htmlChart template.HTML, translator languages.Translator) tem
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"centered-box-content trends\"><div id=\"left\"></div><div id=\"trends-content\"><div id=\"trends-container\"><div id=\"trends-header\"><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"centered-box-content\"><div id=\"left\"></div><div id=\"trends-content\"><div id=\"trends-container\"><div id=\"trends-header\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
