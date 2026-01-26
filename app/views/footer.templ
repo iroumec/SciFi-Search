@@ -1,11 +1,25 @@
 package views
 
-import "scifi-search/app/languages"
+import (
+	"scifi-search/app/languages"
+	"strings"
+)
 
 // ------------------------------------------------------------------------------------------------
 // Services
 // ------------------------------------------------------------------------------------------------
 templ Footer(translator languages.Translator) {
+	{{ 
+		var nextLang string 
+		curr := translator("metadata.current-language") 
+		for i, lang := range languages.LanguagesArray { 
+			if curr == lang { 
+				nextLang = languages.LanguagesArray[(i+1)%len(languages.LanguagesArray)] 
+				break 
+			}
+		} 
+		nextLanguage := strings.ToLower(nextLang) 
+	}}
 	<footer class="footer">
 	 	<div class="clear-top"></div>
 		<div class="clear-left"></div>
@@ -55,11 +69,7 @@ templ Footer(translator languages.Translator) {
 				class="footer-button"
 				hx-get="/language"
 				hx-swap="none"
-				if translator("metadata.current-language") == "ES" {
-					hx-vals='{"language":"en"}'
-				} else {
-					hx-vals='{"language":"es"}'
-				}
+				hx-vals={ `{"language":"` + nextLanguage + `"}` }
 			>
 				{ translator("core.language") +
 					": " + translator("metadata.current-language") }
