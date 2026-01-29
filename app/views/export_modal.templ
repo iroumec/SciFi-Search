@@ -19,13 +19,17 @@ templ exportModalBody(translator languages.Translator) {
 		<p>{ translator("core.choose-a-format") + ": " }</p>
 		<div class="export-options">
 			<a
-				href="/documents/export?format=csv"
+				hx-get="/documents/export?format=csv"
+				hx-target="body"
+				hx-swap="beforeend"
 				class="scifi-button"
 			>
 				CSV
 			</a>
 			<a
-				href="/documents/export?format=xlsx"
+				hx-get="/documents/export?format=xlsx"
+				hx-target="body"
+				hx-swap="beforeend"
 				class="scifi-button"
 			>
 				Excel

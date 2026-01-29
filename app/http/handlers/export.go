@@ -5,11 +5,14 @@ package handlers
 // ------------------------------------------------------------------------------------------------
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+	"scifi-search/app/auth"
 	"scifi-search/app/database"
 	"scifi-search/app/export"
+	"scifi-search/app/http/notifications"
 	"scifi-search/app/languages"
 	"scifi-search/app/views"
 )
@@ -47,9 +50,15 @@ func exportDocuments(w http.ResponseWriter, r *http.Request) {
 
 	format := r.URL.Query().Get("format")
 
-	documents, err := queries.GetDocuments(r.Context())
+	documents, err := getUserDocuments(w, r)
 	if err != nil {
-		http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// If the export model was opened, there must be documents.
+	if len(documents) <= 0 {
+		addEmptyDocumentsNotification(w, r)
 		return
 	}
 
@@ -82,7 +91,50 @@ func exportDocuments(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func openExportModal(w http.ResponseWriter, r *http.Request) {
+
+	documents, err := getUserDocuments(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(documents) <= 0 {
+		addEmptyDocumentsNotification(w, r)
+		return
+	}
+
 	views.ExportModal(languages.GetTranslatorFromRequest(r)).Render(r.Context(), w)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func getUserDocuments(w http.ResponseWriter, r *http.Request) ([]database.Document, error) {
+
+	currentUser, err := getCurrentUser(w, r)
+	if err != nil {
+		return nil, err
+	}
+
+	var documents []database.Document
+	if auth.GetAuthenticationLevel(currentUser.AuthID) >= auth.AdminRole.Level {
+		documents, err = queries.ListAllDocuments(r.Context())
+	} else {
+		documents, err = queries.ListDocumentsByUser(r.Context(),
+			sql.NullInt32{Int32: currentUser.UserID, Valid: true})
+	}
+
+	if err != nil {
+		return nil, InternalServerError
+	}
+
+	return documents, nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func addEmptyDocumentsNotification(w http.ResponseWriter, r *http.Request) {
+	translator := languages.GetTranslatorFromRequest(r)
+	notifications.ShowFlash(w, r, translator("messages.no-documents-to-export"))
 }
 
 // ------------------------------------------------------------------------------------------------

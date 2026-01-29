@@ -3,31 +3,6 @@
 # ------------------------------------------------------------------------------------------------
 
 services:
-  db:
-    image: postgres:15
-    container_name: database
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT}:${DB_PORT}"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d
-    restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -p ${DB_PORT}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  # ------------------------------------------------------------------------------------------------
   app:
     build:
       context: .
@@ -41,6 +16,8 @@ services:
       meilisearch:
         condition: service_started
       supertokens:
+        condition: service_started
+      mailhog:
         condition: service_started
       minio:
         condition: service_started
@@ -66,6 +43,32 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # ------------------------------------------------------------------------------------------------
+
+  db:
+    image: postgres:15
+    container_name: database
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -p ${DB_PORT}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # ------------------------------------------------------------------------------------------------
   meilisearch:

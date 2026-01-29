@@ -27,5 +27,6 @@
     "verification-email-subject": "Verifica tu email",
     "verify-your-new-email": "Por favor, verifica tu nuevo email.",
     "welcome-back": "¡Bienvenido de vuelta!",
-    "wrong-credentials": "La contraseña o el email son incorrectos."
+    "wrong-credentials": "La contraseña o el email son incorrectos.",
+    "no-documents-to-export": "Sin documentos para exportar."
 }

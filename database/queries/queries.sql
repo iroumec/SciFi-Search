@@ -66,9 +66,15 @@ UPDATE documents SET name = $2, type = $3, main_area = $4, secondary_area = $5, 
 SELECT * from documents WHERE id = $1;
 
 -- name: ListAllDocuments :many
+SELECT * FROM documents ORDER BY name;
+
+-- name: ListAllDocumentsWithLimitAndOffset :many
 SELECT * FROM documents ORDER BY name LIMIT $1 OFFSET $2;
 
 -- name: ListDocumentsByUser :many
+SELECT * FROM documents WHERE user_id = $1 ORDER BY name;
+
+-- name: ListDocumentsByUserWithLimitAndOffset :many
 SELECT * FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3;
 
 -- name: CountAllDocuments :one
@@ -91,6 +97,3 @@ WHERE
     OR up.preference % d.based_on
     OR up.preference % d.grantor)
 ;
-
--- name: GetDocuments :many
-SELECT * FROM documents ORDER BY id;

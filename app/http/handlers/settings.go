@@ -131,7 +131,6 @@ func handleSettingsCancel(w http.ResponseWriter, r *http.Request) {
 // Functions
 // ------------------------------------------------------------------------------------------------
 
-// Muestra la página de configuración.
 func showSettings(w http.ResponseWriter, r *http.Request) {
 
 	currentUser, err := getCurrentUser(w, r)
@@ -258,10 +257,9 @@ func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bo
 		}
 	}
 
-	// Actualización de preferencias.
 	updatePreferences(user, r)
 
-	// Actualización de email.
+	// Email update.
 	emailUpdated := false
 	if newEmail := r.Form.Get("email"); newEmail != "" {
 		if err := auth.UpdateEmail(user.AuthID, newEmail); err != nil {
@@ -274,7 +272,7 @@ func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bo
 		auth.SendVerificationEmail(emailService, user.AuthID, newEmail, emailSubject, emailBody)
 	}
 
-	// Actualización de contraseña.
+	// Password update.
 	currentPwd := r.Form.Get("current-password")
 	newPwd := r.Form.Get("new-password")
 	if currentPwd != "" && newPwd != "" {
@@ -364,7 +362,6 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Actualiza las preferencias.
 func updatePreferences(user *sqlc.User, r *http.Request) []string {
 
 	if debug {
@@ -389,7 +386,6 @@ func updatePreferences(user *sqlc.User, r *http.Request) []string {
 
 // ------------------------------------------------------------------------------------------------
 
-// Cancela la edición del campo de la contraseña.
 func cancelPasswordEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:

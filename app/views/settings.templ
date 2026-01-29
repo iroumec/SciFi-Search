@@ -45,7 +45,17 @@ templ SettingsForm(
 				}
 			</div>
 			<div id="add-preference">
-				<input id="preference-field" type="text" name="preferences[]"/>
+				<input
+					id="preference-field"
+					type="text"
+					name="preferences[]"
+					hx-get="/settings/add-preference"
+					hx-trigger="keyup[key=='Enter']"
+					hx-include="#preference-field"
+					hx-target="#preferences-list"
+					hx-swap="beforeend"
+					hx-on="htmx:afterRequest: this.value=''"
+				/>
 				<button
 					type="button"
 					class="scifi-button"
@@ -228,7 +238,7 @@ templ PreferenceItem(preference string) {
 }
 
 // ------------------------------------------------------------------------------------------------
-templ SettingsPage( 
+templ SettingsPage(
 	user structures.User, preferences []string,
 	authorizationLevel int, translator languages.Translator,
 ) {

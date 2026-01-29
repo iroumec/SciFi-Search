@@ -154,10 +154,11 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 	if auth.GetAuthenticationLevel(user.AuthID) == auth.AdminRole.Level {
 
 		// De ser admin, se listan todos los documentos.
-		fundingsDocs, err = queries.ListAllDocuments(r.Context(), sqlc.ListAllDocumentsParams{
-			Limit:  10,
-			Offset: int32((offset - 1) * 10),
-		})
+		fundingsDocs, err = queries.ListAllDocumentsWithLimitAndOffset(r.Context(),
+			sqlc.ListAllDocumentsWithLimitAndOffsetParams{
+				Limit:  10,
+				Offset: int32((offset - 1) * 10),
+			})
 
 		totalFundings, err = queries.CountAllDocuments(r.Context())
 		if err != nil {
@@ -170,11 +171,12 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 	} else {
 
 		// De ser loader, se listan solo sus documentos.
-		fundingsDocs, err = queries.ListDocumentsByUser(r.Context(), sqlc.ListDocumentsByUserParams{
-			UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
-			Limit:  10,
-			Offset: int32((offset - 1) * 10),
-		})
+		fundingsDocs, err = queries.ListDocumentsByUserWithLimitAndOffset(r.Context(),
+			sqlc.ListDocumentsByUserWithLimitAndOffsetParams{
+				UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
+				Limit:  10,
+				Offset: int32((offset - 1) * 10),
+			})
 
 		totalFundings, err = queries.CountDocumentsByUser(r.Context(), sql.NullInt32{Int32: user.UserID, Valid: true})
 		if err != nil {

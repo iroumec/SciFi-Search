@@ -198,47 +198,6 @@ func (q *Queries) GetDocumentByID(ctx context.Context, id int32) (Document, erro
 	return i, err
 }
 
-const getDocuments = `-- name: GetDocuments :many
-SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY id
-`
-
-func (q *Queries) GetDocuments(ctx context.Context) ([]Document, error) {
-	rows, err := q.db.QueryContext(ctx, getDocuments)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Document
-	for rows.Next() {
-		var i Document
-		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.Name,
-			&i.Type,
-			&i.MainArea,
-			&i.SecondaryArea,
-			&i.Link,
-			&i.Description,
-			&i.BasedOn,
-			&i.Grantor,
-			&i.Currency,
-			&i.Amount,
-			&i.Deadline,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const getTrendingSearches = `-- name: GetTrendingSearches :many
 SELECT search_string, COUNT(*) AS count
 FROM historic_searches
@@ -313,16 +272,57 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 }
 
 const listAllDocuments = `-- name: ListAllDocuments :many
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY name
+`
+
+func (q *Queries) ListAllDocuments(ctx context.Context) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listAllDocuments)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Type,
+			&i.MainArea,
+			&i.SecondaryArea,
+			&i.Link,
+			&i.Description,
+			&i.BasedOn,
+			&i.Grantor,
+			&i.Currency,
+			&i.Amount,
+			&i.Deadline,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAllDocumentsWithLimitAndOffset = `-- name: ListAllDocumentsWithLimitAndOffset :many
 SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents ORDER BY name LIMIT $1 OFFSET $2
 `
 
-type ListAllDocumentsParams struct {
+type ListAllDocumentsWithLimitAndOffsetParams struct {
 	Limit  int32 `json:"limit"`
 	Offset int32 `json:"offset"`
 }
 
-func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsParams) ([]Document, error) {
-	rows, err := q.db.QueryContext(ctx, listAllDocuments, arg.Limit, arg.Offset)
+func (q *Queries) ListAllDocumentsWithLimitAndOffset(ctx context.Context, arg ListAllDocumentsWithLimitAndOffsetParams) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listAllDocumentsWithLimitAndOffset, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -359,17 +359,58 @@ func (q *Queries) ListAllDocuments(ctx context.Context, arg ListAllDocumentsPara
 }
 
 const listDocumentsByUser = `-- name: ListDocumentsByUser :many
+SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 ORDER BY name
+`
+
+func (q *Queries) ListDocumentsByUser(ctx context.Context, userID sql.NullInt32) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listDocumentsByUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Document
+	for rows.Next() {
+		var i Document
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Type,
+			&i.MainArea,
+			&i.SecondaryArea,
+			&i.Link,
+			&i.Description,
+			&i.BasedOn,
+			&i.Grantor,
+			&i.Currency,
+			&i.Amount,
+			&i.Deadline,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listDocumentsByUserWithLimitAndOffset = `-- name: ListDocumentsByUserWithLimitAndOffset :many
 SELECT id, user_id, name, type, main_area, secondary_area, link, description, based_on, grantor, currency, amount, deadline FROM documents WHERE user_id = $1 ORDER BY name LIMIT $2 OFFSET $3
 `
 
-type ListDocumentsByUserParams struct {
+type ListDocumentsByUserWithLimitAndOffsetParams struct {
 	UserID sql.NullInt32 `json:"user_id"`
 	Limit  int32         `json:"limit"`
 	Offset int32         `json:"offset"`
 }
 
-func (q *Queries) ListDocumentsByUser(ctx context.Context, arg ListDocumentsByUserParams) ([]Document, error) {
-	rows, err := q.db.QueryContext(ctx, listDocumentsByUser, arg.UserID, arg.Limit, arg.Offset)
+func (q *Queries) ListDocumentsByUserWithLimitAndOffset(ctx context.Context, arg ListDocumentsByUserWithLimitAndOffsetParams) ([]Document, error) {
+	rows, err := q.db.QueryContext(ctx, listDocumentsByUserWithLimitAndOffset, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
