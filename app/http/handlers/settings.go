@@ -316,6 +316,13 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err == http.ErrMissingFile {
+		_ = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
+			UserID: user.UserID,
+			AvatarUrl: sql.NullString{
+				String: "",
+				Valid:  false,
+			},
+		})
 		return
 	}
 

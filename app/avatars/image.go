@@ -16,15 +16,16 @@ import (
 // ------------------------------------------------------------------------------------------------
 
 func ResizeImageToAvatar(file io.Reader) ([]byte, error) {
-	img, err := imaging.Decode(file)
+	img, err := imaging.Decode(file, imaging.AutoOrientation(true))
 	if err != nil {
 		return nil, err
 	}
 
-	resized := imaging.Resize(img, 256, 256, imaging.Lanczos)
+	resized := imaging.Fill(img, 256, 256, imaging.Center, imaging.Lanczos)
 
 	buf := new(bytes.Buffer)
-	if err := imaging.Encode(buf, resized, imaging.JPEG); err != nil {
+	err = imaging.Encode(buf, resized, imaging.JPEG, imaging.JPEGQuality(85))
+	if err != nil {
 		return nil, err
 	}
 
