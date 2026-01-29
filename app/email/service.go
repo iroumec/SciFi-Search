@@ -16,7 +16,7 @@ func (s *Service) Send(to, subject, body string) error {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 // Given a provider, the function returns the service it depends on.
