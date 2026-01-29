@@ -224,7 +224,8 @@ func saveSettings(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------
 
 func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bool, error) {
-	// Actualizar nombre y apellido
+
+	// Name and surname update.
 	name := getters.GetOrDefault(r.Form.Get("name"), user.Name)
 	surname := getters.GetOrDefault(r.Form.Get("surname"), user.Surname)
 
@@ -234,10 +235,24 @@ func updateUserData(w http.ResponseWriter, r *http.Request, user *sqlc.User) (bo
 		Surname: surname,
 	})
 
-	// Actualización de avatar.
+	// Avatar update.
 	saveAvatar(user, w, r)
 	if r.Form.Get("delete-avatar") == "true" {
+
+		// Avatar is deleted from the objects server.
 		if err := avatarService.Delete(r.Context(), user.UserID); err != nil {
+			http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
+			return false, err
+		}
+
+		// Avatar URL is deleted from the database.
+		if err := queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
+			UserID: user.UserID,
+			AvatarUrl: sql.NullString{
+				String: "",
+				Valid:  false,
+			},
+		}); err != nil {
 			http.Error(w, InternalServerError.Error(), http.StatusInternalServerError)
 			return false, err
 		}
@@ -316,13 +331,6 @@ func saveAvatar(user *sqlc.User, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err == http.ErrMissingFile {
-		_ = queries.UploadAvatar(r.Context(), sqlc.UploadAvatarParams{
-			UserID: user.UserID,
-			AvatarUrl: sql.NullString{
-				String: "",
-				Valid:  false,
-			},
-		})
 		return
 	}
 
