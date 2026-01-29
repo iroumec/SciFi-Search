@@ -28,3 +28,23 @@ func UppercaseFirstLetter(s string) string {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+// Converts all letters in a string to uppercase.
+func UppercaseString(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	// Convert string to a slice of runes to handle Unicode characters correctly.
+	runes := []rune(s)
+
+	// Convert each rune to uppercase.
+	for i, r := range runes {
+		runes[i] = unicode.ToUpper(r)
+	}
+
+	// Convert the slice of runes back to a string.
+	return string(runes)
+}
+
+// ------------------------------------------------------------------------------------------------

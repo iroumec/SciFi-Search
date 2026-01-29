@@ -2,26 +2,27 @@ package views
 
 import (
 	"scifi-search/app/languages"
-	"strings"
+	"scifi-search/app/utils/converters"
 )
 
 // ------------------------------------------------------------------------------------------------
 // Services
 // ------------------------------------------------------------------------------------------------
 templ Footer(translator languages.Translator) {
-	{{ 
-		var nextLang string 
-		curr := translator("metadata.current-language") 
-		for i, lang := range languages.LanguagesArray { 
-			if curr == lang { 
-				nextLang = languages.LanguagesArray[(i+1)%len(languages.LanguagesArray)] 
-				break 
+	{{
+		var nextLanguage string
+		curr := translator("metadata.current-language")
+		langs := languages.GetSupportedLanguageCodes()
+
+		for i, lang := range langs {
+			if curr == lang {
+				nextLanguage = langs[(i+1)%len(langs)]
+				break
 			}
-		} 
-		nextLanguage := strings.ToLower(nextLang) 
+		}
 	}}
 	<footer class="footer">
-	 	<div class="clear-top"></div>
+		<div class="clear-top"></div>
 		<div class="clear-left"></div>
 		<div id="powered-section">
 			<p>{ translator("core.powered-by") } </p>
@@ -72,7 +73,7 @@ templ Footer(translator languages.Translator) {
 				hx-vals={ `{"language":"` + nextLanguage + `"}` }
 			>
 				{ translator("core.language") +
-					": " + translator("metadata.current-language") }
+					": " + converters.UppercaseString(translator("metadata.current-language")) }
 			</button>
 			<a
 				id="github-btn"

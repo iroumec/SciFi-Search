@@ -28,7 +28,7 @@ templ Layout(
 	content func() templ.Component,
 ) {
 	<!DOCTYPE html>
-	<html lang="es">
+	<html lang={ translator("metadata.current-language") }>
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ title }</title>

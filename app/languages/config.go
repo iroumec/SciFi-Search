@@ -17,9 +17,4 @@ var SupportedLanguages = map[string]language.Tag{
 	// in the array below and create a json file for it.
 }
 
-var LanguagesArray = []string{
-	"ES",
-	"EN",
-}
-
 // ------------------------------------------------------------------------------------------------

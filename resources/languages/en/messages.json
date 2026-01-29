@@ -14,6 +14,7 @@
     "new-funding-email-body-part-3": "If the document is not interesting for you, change your preferences in your configuration.",
     "new-funding-email-subject": "New funding added",
     "new-loader-created": "New loader created successfuly!",
+    "no-documents-to-export": "No documents to export.",
     "no-session": "The session doesn't exists or it's expired. Please sign up or log in again.",
     "not-enough-permissions": "Not enough permissions to access this functionality.",
     "sign-out": "Signed out successfuly!",
@@ -27,6 +28,5 @@
     "verification-email-subject": "Verify your email",
     "verify-your-new-email": "Please, verify your new email.",
     "welcome-back": "Welcome back!",
-    "wrong-credentials": "Password or email are incorrect.",
-    "no-documents-to-export": "No documents to export."
+    "wrong-credentials": "Password or email are incorrect."
 }

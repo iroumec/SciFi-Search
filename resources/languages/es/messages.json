@@ -14,6 +14,7 @@
     "new-funding-email-body-part-3": "Si el documento no es de tu interés, puedes cambiar tus preferencias en tu perfil.",
     "new-funding-email-subject": "Se añadió un nuevo financiamiento",
     "new-loader-created": "¡Cargador creado con éxito!",
+    "no-documents-to-export": "Sin documentos para exportar.",
     "no-session": "La sesión no existe o expiró. Por favor, regístrese o inicie sesión.",
     "not-enough-permissions": "No cuenta con los permisos requeridos para acceder a esta funcionalidad.",
     "sign-out": "¡Sesión cerrada con éxito!",
@@ -27,6 +28,5 @@
     "verification-email-subject": "Verifica tu email",
     "verify-your-new-email": "Por favor, verifica tu nuevo email.",
     "welcome-back": "¡Bienvenido de vuelta!",
-    "wrong-credentials": "La contraseña o el email son incorrectos.",
-    "no-documents-to-export": "Sin documentos para exportar."
+    "wrong-credentials": "La contraseña o el email son incorrectos."
 }

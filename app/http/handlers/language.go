@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"scifi-search/app/languages"
 	"scifi-search/app/utils/structures"
-	"strings"
 )
 
 // ------------------------------------------------------------------------------------------------
@@ -57,7 +56,7 @@ func setLanguage(w http.ResponseWriter, r *http.Request) error {
 	language := r.URL.Query().Get("language")
 
 	// Language validation.
-	if structures.Exists(languages.LanguagesArray, strings.ToUpper(language)) == false {
+	if structures.Exists(languages.GetSupportedLanguageCodes(), language) == false {
 		return InvalidLanguageError
 	}
 

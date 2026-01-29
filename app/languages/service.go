@@ -1,5 +1,9 @@
 package languages
 
+import (
+	"sort"
+)
+
 // ------------------------------------------------------------------------------------------------
 // Service
 // ------------------------------------------------------------------------------------------------
@@ -28,6 +32,17 @@ func LoadAllMessagesFromFolders() error {
 		registerMessages(tag, messages)
 	}
 	return nil
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func GetSupportedLanguageCodes() []string {
+	langs := make([]string, 0, len(SupportedLanguages))
+	for k := range SupportedLanguages {
+		langs = append(langs, k)
+	}
+	sort.Strings(langs) // Stable ordering.
+	return langs
 }
 
 // ------------------------------------------------------------------------------------------------
