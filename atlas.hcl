@@ -19,6 +19,7 @@ env "docker" {
 
   # Atlas database.
   # It is required so Atlas can calculate temporal differences in the scheme.
+  # An extension used for trigrams is specified.
   dev = "${var.atlas_db_url}"
   
   # Migrations directory.

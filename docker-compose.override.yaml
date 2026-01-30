@@ -1,3 +1,7 @@
+# ------------------------------------------------------------------------------------------------
+# Services
+# ------------------------------------------------------------------------------------------------
+
 services: # Development.
   app:
     build:
@@ -5,11 +9,11 @@ services: # Development.
     volumes:
       - .:/app
     environment:
-      GIN_MODE: debug
+      GIN_MODE: "debug"
+
+  # ------------------------------------------------------------------------------------------------
 
   db:
-    volumes: # Override.
-      - postgres-data:/var/lib/postgresql/data
-      - ./database/init/production:/docker-entrypoint-initdb.d/production:ro
-      - ./database/init/development:/docker-entrypoint-initdb.d/development:ro
-      # Schema not needed because Atlas will apply the migrations.
+    environment:
+      APP_ENV: "development"
+# -------------------------------------------------------------------------------------------------

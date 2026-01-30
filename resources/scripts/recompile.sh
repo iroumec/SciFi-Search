@@ -21,10 +21,6 @@ atlas migrate diff --env docker
 # Aplicación de migraciones.
 atlas migrate apply --env docker
 
-# 2. Acciones post-migración.
-echo "Ejecutando acciones post-migración..."
-
-
 # 3. Generación de sqlc.
 echo "Generando sqlc..."
 sqlc generate -f database/sqlc.yaml
