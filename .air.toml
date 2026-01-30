@@ -1,49 +1,127 @@
-# Config file for Air
+# ============================================================================
+# Configuración de Air - Hot Reload para Go
+# ============================================================================
+# Air es una herramienta de recarga en vivo para aplicaciones Go.
+# Monitorea cambios en archivos y recompila automáticamente el proyecto.
+
+# ============================================================================
+# CONFIGURACIÓN GENERAL
+# ============================================================================
+
 root = "."
 tmp_dir = "tmp"
 
+# ============================================================================
+# CONFIGURACIÓN DE BUILD
+# ============================================================================
+
 [build]
-# Este comando se ejecuta ante cualquier cambio.
-# Requsitos:
-# chmod +x resources/scripts/recompile.sh
-# chmod +x resources/scripts/sqlc/runSQLC.sh
-# chmod +x resources/scripts/templ/runTEMPL.sh
+
+# ----------------------------------------------------------------------------
+# Comando de compilación
+# ----------------------------------------------------------------------------
+# Este comando se ejecuta ante cualquier cambio detectado.
+# 
+# Requisitos previos:
+#   - chmod +x resources/scripts/recompile.sh
+#   - chmod +x resources/scripts/sqlc/runSQLC.sh
+#   - chmod +x resources/scripts/templ/runTEMPL.sh
 cmd = "./resources/scripts/recompile.sh"
 
+# Ubicación del binario compilado
 bin = "tmp/main"
+
+# ----------------------------------------------------------------------------
+# Archivos y directorios a monitorear
+# ----------------------------------------------------------------------------
+
+# Extensiones de archivo que disparan la recompilación
 include_ext = ["go", "templ", "temp", "html", "css", "png", "svg", "sql", "js"]
+
+# Directorios a incluir en el monitoreo
 include_dir = ["static", "database", "app"]
 
-# Si no se excluye app/database, se entra en un ciclo infinito al ejecutar SQLC.
+# Archivos específicos a incluir (vacío por defecto)
+include_file = []
+
+# ----------------------------------------------------------------------------
+# Archivos y directorios a excluir
+# ----------------------------------------------------------------------------
+
+# Directorios excluidos del monitoreo
+# IMPORTANTE: 'app/database' debe estar excluido para evitar ciclos infinitos
+# al ejecutar SQLC, ya que genera archivos .go en ese directorio.
 exclude_dir = ["assets", "tmp", "vendor", "resources", "app/database"]
 
-include_file = []
+# Archivos específicos a excluir (vacío por defecto)
 exclude_file = []
 
-# Se añade una regla para excluir TODOS los archivos .go dentro de app/views.
-# Si no se coloca esto, se entra en un bucle infinito cuando se ejecuta 'templ generate'.
+# Patrones regex para excluir archivos
+# - "_test.go": Excluye archivos de prueba
+# - "app/views/.*\\.go$": Excluye TODOS los archivos .go dentro de app/views
+#   IMPORTANTE: Sin esta regla se entra en un bucle infinito cuando se 
+#   ejecuta 'templ generate', ya que Templ genera archivos .go en ese directorio.
 exclude_regex = ["_test.go", "app/views/.*\\.go$"]
+
+# ----------------------------------------------------------------------------
+# Opciones de monitoreo
+# ----------------------------------------------------------------------------
+
+# Si es true, solo recompila cuando el contenido del archivo cambia
 exclude_unchanged = false
+
+# Seguir enlaces simbólicos
 follow_symlink = false
+
+# Archivo de log para Air
 log = "air.log"
+
+# Usar polling en lugar de eventos del sistema de archivos
 poll = false
-poll_interval = 500 # ms
+
+# Intervalo de polling en milisegundos (solo si poll = true)
+poll_interval = 500
+
+# ----------------------------------------------------------------------------
+# Manejo de errores y procesos
+# ----------------------------------------------------------------------------
+
+# Detener la ejecución si hay errores de compilación
 stop_on_error = false
+
+# Enviar señal de interrupción (SIGINT) al proceso antes de matarlo
 send_interrupt = false
-kill_delay = 500 # ms
+
+# Retraso en milisegundos antes de matar el proceso anterior
+kill_delay = 500
+
+# ============================================================================
+# CONFIGURACIÓN DE LOGS
+# ============================================================================
 
 [log]
-# Show log time
+
+# Mostrar timestamp en los logs
 time = true
 
+# ============================================================================
+# CONFIGURACIÓN DE COLORES
+# ============================================================================
+
 [color]
-# Customize each part's color. If no value is provided, use the default color.
-main = "magenta"
-watcher = "cyan"
-build = "yellow"
-runner = "green"
+
+# Personalización de colores para cada componente de Air.
+# Si no se proporciona un valor, se usa el color por defecto.
+main = "magenta"     # Color para mensajes principales
+watcher = "cyan"     # Color para el observador de archivos
+build = "yellow"     # Color para el proceso de compilación
+runner = "green"     # Color para la ejecución del binario
+
+# ============================================================================
+# CONFIGURACIÓN MISCELÁNEA
+# ============================================================================
 
 [misc]
-# Delete tmp directory on exit
-clean_on_exit = true
 
+# Eliminar directorio temporal al salir de Air
+clean_on_exit = true
