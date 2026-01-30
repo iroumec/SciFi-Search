@@ -194,9 +194,9 @@ clean["amount"] = (
     clean["amount"]
     .replace(
         ["nan", "None", "Not specified", "Not Specified"],
-        "not-specified"
+        "core.not-specified"
     )
-    .fillna("not-specified")
+    .fillna("core.not-specified")
 )
 
 # Se establece el dólar como la "currency" por defecto.

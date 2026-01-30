@@ -12,6 +12,8 @@
     "image-processing": "Error at processing image",
     "internal-server": "Internal server error",
     "invalid-ID": "Invalid ID",
+    "invalid-amount-format": "Invalid amount format. It must be a real number.",
+    "invalid-currency-format": "Invalid currency format. Valid examples: USD, EUR, ARG...",
     "invalid-field": "Invalid field",
     "invalid-form": "Invalid form",
     "invalid-or-expired-token": "Invalid or expired token",

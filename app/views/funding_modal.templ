@@ -6,6 +6,7 @@ package views
 
 import (
 	"container/list"
+	"fmt"
 	"scifi-search/app/languages"
 )
 
@@ -67,9 +68,9 @@ templ fundingForm(
 	>
 		<div class="form-inputs">
 			@labeledInput("name", translator("core.name"),
-				"text", "", "", document["Name"], true)
+				"text", "", "", document["Name"], true, "", "")
 			@labeledInput("type", translator("core.type"),
-				"text", "types", "", document["Type"], true)
+				"text", "types", "", document["Type"], true, "", "")
 			<div class="labeled-input">
 				<label for="main-area">{ translator("core.areas") }</label>
 				<input
@@ -97,23 +98,25 @@ templ fundingForm(
 				/>
 			</div>
 			@labeledInput("link", translator("core.link"), "url", "", "",
-				document["Link"], false)
+				document["Link"], false, "", "")
 			@labeledInput("description", translator("core.description"), "text", "", "",
-				document["Description"], false)
+				document["Description"], false, "", "")
 			<div class="double-input">
 				@labeledInput("based-on", translator("core.based-on"), "text", "based-on", "",
-					document["Based on"], false)
+					document["Based on"], false, "", "")
 				@labeledInput("grantor", translator("core.grantor"), "text", "grantors", "",
-					document["Grantor"], false)
+					document["Grantor"], false, "", "")
 			</div>
 			<div class="double-input">
-				@labeledInput("currency", translator("core.currency"), "text", "currencies", "",
-					document["Currency"], true)
-				@labeledInput("amount", translator("core.amount"), "text", "", "min - max",
-					document["Amount"], true)
+				@labeledInput("currency", translator("core.currency"), "text",
+					"currencies", "USD, EUR, ARG...", document["Currency"], true,
+					"^[A-Z]{3}$", translator("errors.invalid-currency-format"))
+				@labeledInput("amount", translator("core.amount"), "text", "",
+					"min - max", document["Amount"], true,
+					"^[0-9]+([.,][0-9]+)?$", translator("errors.invalid-amount-format"))
 			</div>
 			@labeledInput("deadline", translator("core.deadline"), "date", "", "",
-				document["Deadline"], true)
+				document["Deadline"], true, "", "")
 			@datalist("types", documentTypes)
 			@datalist("areas", documentAreas)
 			@datalist("based-on", documentBasedOn)
@@ -138,8 +141,15 @@ templ fundingForm(
 
 // ------------------------------------------------------------------------------------------------
 templ labeledInput(
-	input string, label string, inputType string, list string,
-	placeholder string, inputValue any, required bool,
+	input string,
+	label string,
+	inputType string,
+	list string,
+	placeholder string,
+	inputValue any,
+	required bool,
+	pattern string,
+	errorMessage string,
 ) {
 	{{
 		if inputValue == nil {
@@ -159,8 +169,22 @@ templ labeledInput(
 			if placeholder != "" {
 				placeholder={ placeholder }
 			}
+			if pattern != "" {
+				pattern={ pattern }
+			}
 			if inputValue != "" {
 				value={ inputString }
+			}
+			if errorMessage != "" {
+				oninvalid={ templ.ComponentScript{
+                        Call: fmt.Sprintf(
+                            "this.setCustomValidity('%s')",
+                            errorMessage,
+                        ),
+                    } }
+				onchange={ templ.ComponentScript{
+                        Call: "this.setCustomValidity('')",
+                    } }
 			}
 			if required {
 				required

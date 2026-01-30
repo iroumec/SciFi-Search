@@ -10,6 +10,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"regexp"
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
 	"scifi-search/app/http/middlewares"
@@ -153,7 +154,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	if auth.GetAuthenticationLevel(user.AuthID) == auth.AdminRole.Level {
 
-		// De ser admin, se listan todos los documentos.
+		// All documents are listed.
 		fundingsDocs, err = queries.ListAllDocumentsWithLimitAndOffset(r.Context(),
 			sqlc.ListAllDocumentsWithLimitAndOffsetParams{
 				Limit:  10,
@@ -170,7 +171,7 @@ func getFundingDocs(w http.ResponseWriter, r *http.Request, offset int) ([]map[s
 
 	} else {
 
-		// De ser loader, se listan solo sus documentos.
+		// Only the user's documents are listed.
 		fundingsDocs, err = queries.ListDocumentsByUserWithLimitAndOffset(r.Context(),
 			sqlc.ListDocumentsByUserWithLimitAndOffsetParams{
 				UserID: sql.NullInt32{Int32: user.UserID, Valid: true},
@@ -267,6 +268,14 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	amount := r.Form.Get("amount")
 	deadline := r.Form.Get("deadline")
 
+	translator := languages.GetTranslatorFromRequest(r)
+
+	if err := validateFundingData(currency, amount); err != nil {
+		notifications.ShowFlash(w, r, translator(err.Error()))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, UnknownError.Error())
@@ -308,8 +317,6 @@ func addFunding(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	translator := languages.GetTranslatorFromRequest(r)
 
 	notifyFundingAddition(r.Context(), document, translator)
 
@@ -484,6 +491,14 @@ func editFunding(w http.ResponseWriter, r *http.Request) {
 	amount := r.Form.Get("amount")
 	deadline := r.Form.Get("deadline")
 
+	translator := languages.GetTranslatorFromRequest(r)
+
+	if err := validateFundingData(currency, amount); err != nil {
+		notifications.ShowFlash(w, r, translator(err.Error()))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	user, err := getCurrentUser(w, r)
 	if err != nil {
 		cookies.AddFlashCookie(w, UnknownError.Error())
@@ -531,9 +546,27 @@ func editFunding(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	notifications.ShowFlash(w, r, languages.GetTranslatorFromRequest(r)("messages.funding-edited"))
+	notifications.ShowFlash(w, r, translator("messages.funding-edited"))
 
 	updateFundingList(w, r)
+}
+
+// ------------------------------------------------------------------------------------------------
+
+func validateFundingData(currency, amount string) error {
+	// Currency format validation.
+	currencyPattern := regexp.MustCompile(`^[A-Z]{3}$`)
+	if !currencyPattern.MatchString(currency) {
+		return errors.New("errors.invalid-currency-format")
+	}
+
+	// Amount format validation.
+	amountPattern := regexp.MustCompile(`^[0-9]+([.,][0-9]+)?$`)
+	if !amountPattern.MatchString(amount) {
+		return errors.New("errors.invalid-amount-format")
+	}
+
+	return nil
 }
 
 // ------------------------------------------------------------------------------------------------

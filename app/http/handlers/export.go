@@ -52,6 +52,7 @@ func exportDocuments(w http.ResponseWriter, r *http.Request) {
 
 	documents, err := getUserDocuments(w, r)
 	if err != nil {
+		log.Printf("An error ocurred while obtaining the documents to export.")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
