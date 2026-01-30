@@ -1,2 +1,2 @@
--- Habilita trigramas y similitud.
+-- Allows trigrams and similarity.
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
