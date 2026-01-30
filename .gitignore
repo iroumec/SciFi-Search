@@ -46,3 +46,6 @@ logs/
 
 # Archivos de MinIO.
 minio_data
+
+# Archivos de GitHub.
+.github

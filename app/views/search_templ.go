@@ -48,12 +48,12 @@ func SearchResults(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i := 0; i < len(hits); i++ {
+		for _, hit := range hits {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"result\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = documentItem(hits[i], "item", translator).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = documentItem(hit, "item", translator).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

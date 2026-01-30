@@ -17,9 +17,9 @@ templ SearchResults(
 	page int, translator languages.Translator,
 ) {
 	<div class="documents-section">
-		for i := 0; i < len(hits); i++ {
+		for _, hit := range hits {
 			<div class="result">
-				@documentItem(hits[i], "item", translator)
+				@documentItem(hit, "item", translator)
 			</div>
 		}
 	</div>
