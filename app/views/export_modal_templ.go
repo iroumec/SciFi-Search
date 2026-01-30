@@ -81,7 +81,7 @@ func exportModalBody(translator languages.Translator) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><div class=\"export-options\"><a hx-get=\"/documents/export?format=csv\" hx-target=\"body\" hx-swap=\"beforeend\" class=\"scifi-button\">CSV</a> <a hx-get=\"/documents/export?format=xlsx\" hx-target=\"body\" hx-swap=\"beforeend\" class=\"scifi-button\">Excel</a></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><div class=\"export-options\"><a href=\"/documents/export?format=csv\" class=\"scifi-button\">CSV</a> <a href=\"/documents/export?format=xlsx\" class=\"scifi-button\">Excel</a></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
