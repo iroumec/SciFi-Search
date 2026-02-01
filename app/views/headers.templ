@@ -65,6 +65,7 @@ templ headerBuilder(
 			}
 		</div>
 		<div class="header-right">
+			{ authorizationLevel }
 			if showOptions {
 				@userOptions(authorizationLevel, translator)
 			}
