@@ -24,25 +24,17 @@ up: create-env ## Construye y levanta los contenedores, esperando a que el servi
 	
 	@docker compose -f docker-compose.yml up -d --build
 	
-	@echo "Contenedores iniciados."
+	@echo
+	@echo "Contenedores iniciados. Esperando a que el servidor esté listo..."
+	@until curl -f -s http://localhost:$(APP_PORT)/health > /dev/null 2>&1; do \
+		sleep 1; \
+	done
 	@echo
 
 	@# Bucle de espera: Intenta conectarse a /health cada segundo.
 	@# 'until' sigue intentando HASTA QUE el comando curl tenga éxito (salga con 0).
 	@# -f: Falla en silencio (no muestra HTML) si hay un error HTTP (como 404 o 500).
 	@# -s: Modo silencioso (no muestra la barra de progreso).
-	
-	@echo "Esperando a que la base de datos esté healthy..."
-	@until [ "$$(docker inspect -f '{{.State.Health.Status}}' database)" = "healthy" ]; do \
-		sleep 1; \
-	done
-	@echo
-
-	@echo "Base de datos lista. Esperando a que el servidor esté listo..."
-	@until curl -f -s http://localhost:$(APP_PORT)/health > /dev/null 2>&1; do \
-		sleep 1; \
-	done
-	@echo
 
 	@echo "Servidor corriendo en http://localhost:$(APP_PORT)."
 	@echo

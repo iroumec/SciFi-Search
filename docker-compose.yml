@@ -13,14 +13,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      meilisearch:
-        condition: service_started
       supertokens:
-        condition: service_started
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
       mailhog:
-        condition: service_started
+        condition: service_healthy
       minio:
-        condition: service_started
+        condition: service_healthy
     environment:
       DATABASE_URL: "${DB_URL}"
       MEILI_URL: "${MEILI_URL}"
@@ -82,6 +82,15 @@ services:
     environment:
       MEILI_MASTER_KEY: "${MEILI_KEY}"
       MEILI_LOG_LEVEL: "WARN" # Logs reductions: OFF, ERROR, WARN, INFO, DEBUG, TRACE
+    healthcheck:
+      test:
+        - "CMD"
+        - "curl"
+        - "-sf"
+        - "http://localhost:${MEILI_PORT}/health"
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
     logging:
       driver: "json-file"
@@ -90,6 +99,7 @@ services:
         max-file: "3"
 
   # ------------------------------------------------------------------------------------------------
+
   supertokens:
     image: supertokens/supertokens-core:dev-branch-11.0
     container_name: supertokens
@@ -99,9 +109,21 @@ services:
         condition: service_healthy
     environment:
       POSTGRESQL_CONNECTION_URI: "${DB_URL}"
-      SUPERTOKENS_LOG_LEVEL: "error" # Or "warn"
+      SUPERTOKENS_LOG_LEVEL: "error"
     ports:
       - "${SUPERTOKENS_PORT}:${SUPERTOKENS_PORT}"
+    volumes:
+      - ./resources/scripts/healthchecks/supertokens.sh:/healthcheck.sh:ro
+    healthcheck:
+      test:
+        - "CMD"
+        - "bash"
+        - "/healthcheck.sh"
+        - "${SUPERTOKENS_PORT}"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 3s # So the database has time to be initialized.
     logging:
       driver: "json-file"
       options:
@@ -121,6 +143,15 @@ services:
       - "9001:9001"
     volumes:
       - minio-data:/data
+    healthcheck:
+      test:
+        - "CMD"
+        - "mc"
+        - "ready"
+        - "local"
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: always
     logging:
       driver: "json-file"
@@ -129,12 +160,22 @@ services:
         max-file: "3"
 
   # ------------------------------------------------------------------------------------------------
+
   mailhog:
     image: mailhog/mailhog:v1.0.1
     container_name: mailhog
     ports:
       - "1025:1025"
       - "8025:8025"
+    healthcheck:
+      test:
+        - "CMD"
+        - "wget"
+        - "-qO-"
+        - "http://127.0.0.1:8025"
+      interval: 5s
+      timeout: 5s
+      retries: 5
     logging:
       driver: "json-file"
       options:
@@ -186,8 +227,8 @@ services:
       - grafana-data:/var/lib/grafana
       - ./observability/grafana/datasources:/etc/grafana/provisioning/datasources
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: "${GF_SECURITY_ADMIN_USER}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GF_SECURITY_ADMIN_PASSWORD}"
       GF_LOG_LEVEL: error # debug, info, warn, error, critical...
     depends_on:
       - loki
