@@ -1,0 +1,156 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 87, 133, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    border: 2px solid var(--scifi);
+    border-radius: 15px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0, 87, 133, 0.5);
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--scifi);
+    background-color: var(--scifi30);
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--scifi);
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: var(--scifi);
+    cursor: pointer;
+    padding: 0;
+    width: 35px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.close-button:hover {
+    color: darkred;
+}
+
+.modal-content form {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+}
+
+.modal-content .form-inputs {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content .double-input {
+    display: flex;
+    gap: 1rem;
+}
+
+.modal-content .labeled-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content .double-input .labeled-input {
+    width: 50%;
+}
+
+.modal-content .form-inputs label {
+    padding-left: 0.1rem;
+    font-size: 0.8rem;
+    color: var(--scifi);
+    padding-bottom: 0.1rem;
+}
+
+.modal-content .form-inputs input {
+    padding: 0.5rem;
+    padding-left: 0.5rem;
+    border: 1px solid var(--scifi);
+    background: var(--scifi30);
+    color: black;
+    border-radius: 0.5rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    margin-bottom: 1rem;
+}
+
+.modal-content .form-inputs input:focus {
+    outline: none;
+    border: 2px solid var(--scifi);
+    background: white;
+}
+
+.modal-content .form-inputs input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.export-modal-body {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+.export-options {
+    gap: 0.5rem;
+    display: flex;
+}
+
+.form-footer {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--scifi30);
+}
+
+.scifi-button.secondary {
+    background: transparent;
+    border: 2px solid var(--scifi);
+    color: var(--scifi);
+}
+
+.scifi-button.secondary:hover {
+    background: var(--scifi);
+    color: white;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.funding-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+}
