@@ -1,0 +1,51 @@
+package views 
+
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
+import (
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/structures"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ HistoryPage(
+	searches []structures.HistoricSearchView,
+	authorizationLevel int,
+	translator languages.Translator,
+) {
+	@Layout(translator("core.history"), translator,
+		func() templ.Component { return Header(true, authorizationLevel, translator) },
+		func() templ.Component { return historyContent(searches, translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ historyContent(searches []structures.HistoricSearchView, translator languages.Translator) {
+	<div class="centered-box-content">
+		<div id="left"></div>
+		<div id="history-content">
+			<div id="history-title">{ translator("core.history") }</div>
+			<div id="history-list">
+				for _, search := range searches {
+					<div class="historic-query">
+						<a href={ "/search?query=" + search.Query } style="display: inherit;">
+							<img src="static/img/icons/history-white.svg" alt="Search history"/>
+						</a>
+						<p class="query-date">{ search.Date.Format("2006-01-02") } </p>
+						<p class="query-time">{ search.Date.Format("15:04:05") } </p>
+						<p>{ search.Query } </p>
+					</div>
+				}
+			</div>
+		</div>
+		<div id="right"></div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------

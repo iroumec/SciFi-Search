@@ -1,0 +1,51 @@
+package views
+
+import "scifi-search/app/languages"
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ LoginPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("core.log-in"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return loginContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Funcions
+// ------------------------------------------------------------------------------------------------
+templ loginContent(translator languages.Translator) {
+	<div class="only-form-content">
+		<div class="centered-container">
+			<form
+				id="login-form"
+				hx-post="/login"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				<div id="form-inputs">
+					<input
+						id="email"
+						type="email"
+						name="email"
+						placeholder={ translator("core.email") }
+						required
+					/>
+					<input
+						id="password"
+						type="password"
+						name="password"
+						placeholder={ translator("core.password") }
+						required
+					/>
+				</div>
+				<button class="scifi-button" type="submit">
+					{ translator("core.log-in") }
+				</button>
+			</form>
+		</div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
