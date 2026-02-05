@@ -71,7 +71,7 @@ func getGlobalOptions(yAxisName string) []charts.GlobalOpts {
 				Show:     opts.Bool(true),
 				FontSize: 12,
 			},
-			// Manejo de la cuadrícula.
+			// Grid handling.
 			SplitLine: &opts.SplitLine{
 				Show: opts.Bool(true),
 				LineStyle: &opts.LineStyle{

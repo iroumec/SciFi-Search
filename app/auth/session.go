@@ -62,7 +62,7 @@ func IsUserAuthenticated(w http.ResponseWriter, r *http.Request) bool {
 func RevokeSession(w http.ResponseWriter, r *http.Request) error {
 
 	sessionContainer, err := session.GetSession(r, w, &sessmodels.VerifySessionOptions{
-		SessionRequired: converters.ToBoolPointer(false), // False -> No error si no hay sessión. Posiblemente deba cambiarse luego.
+		SessionRequired: converters.ToBoolPointer(false), // False -> No error if no session.
 	})
 	if err != nil {
 		return Unauthorized
@@ -125,7 +125,7 @@ func GetSessionInfo(w http.ResponseWriter, r *http.Request) (map[string]string, 
 }
 
 // ------------------------------------------------------------------------------------------------
-// Funciones
+// Functions
 // ------------------------------------------------------------------------------------------------
 
 func getCurrentSession(w http.ResponseWriter, r *http.Request) (sessmodels.SessionContainer, error) {

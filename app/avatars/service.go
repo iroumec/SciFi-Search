@@ -48,7 +48,7 @@ func (s *Service) Delete(ctx context.Context, userID int32) error {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Servicios
+// Services
 // ------------------------------------------------------------------------------------------------
 
 func New(store Storage, bucket, publicURL string) *Service {

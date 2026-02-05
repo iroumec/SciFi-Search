@@ -89,7 +89,6 @@ func RegisterSearchHandlers() {
 	// Data indexation.
 	indexData()
 
-	// Se registra el handler.
 	http.HandleFunc("/search", searchHandler)
 	http.HandleFunc("/search/update-filter", filtersHandler)
 	http.HandleFunc("/search/update-results", filtersHandler)
@@ -294,10 +293,12 @@ func configureSearchSettings(index meilisearch.IndexManager) {
 
 func showSearchResults(w http.ResponseWriter, r *http.Request) {
 
+	translator := languages.GetTranslatorFromRequest(r)
+
 	// Query obtention.
 	query := r.URL.Query().Get("query")
 	if query == "" {
-		http.Error(w, MissingQueryParameterError.Error(), http.StatusBadRequest)
+		http.Error(w, translator(MissingQueryParameterError.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -515,7 +516,7 @@ func configureSortableAttributes(index meilisearch.IndexManager) {
 
 // ------------------------------------------------------------------------------------------------
 
-// Configuración de las ranking rules para mantener relevancia.
+// Ranking rules configuration to maintain relevance.
 func configureRankingRules(index meilisearch.IndexManager) {
 
 	_, err := index.UpdateRankingRules(&[]string{
@@ -523,7 +524,7 @@ func configureRankingRules(index meilisearch.IndexManager) {
 		"typo",
 		"proximity",
 		"attribute",
-		"sort", // El sort se aplica después de la relevancia.
+		"sort", // Sort  applied affter relevance.
 		"exactness",
 	})
 	if err != nil {
