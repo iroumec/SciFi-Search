@@ -561,8 +561,8 @@ func validateFundingData(currency, amount string) error {
 	}
 
 	// Amount format validation.
-	amountPattern := regexp.MustCompile(`^[0-9]+([.,][0-9]+)?$`)
-	if !amountPattern.MatchString(amount) {
+	amountPattern := regexp.MustCompile(`^[0-9]+([.,][0-9]+)?( - [0-9]+([.,][0-9]+)?)?$`)
+	if !amountPattern.MatchString(amount) || !validateAmountRange(amount) {
 		return errors.New("errors.invalid-amount-format")
 	}
 
@@ -570,3 +570,24 @@ func validateFundingData(currency, amount string) error {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+func validateAmountRange(amount string) bool {
+	if strings.Contains(amount, " - ") {
+		normalized := strings.ReplaceAll(amount, ",", ".")
+
+		parts := strings.Split(normalized, " - ")
+		if len(parts) != 2 {
+			return false //should never happen due to regex validation, but added as an extra precaution
+		}
+		minStr := strings.TrimSpace(parts[0])
+		maxStr := strings.TrimSpace(parts[1])
+
+		min, errMin := strconv.ParseFloat(minStr, 64)
+		max, errMax := strconv.ParseFloat(maxStr, 64)
+		if errMin != nil || errMax != nil {
+			return false
+		}
+		return min < max
+	}
+	return true
+}

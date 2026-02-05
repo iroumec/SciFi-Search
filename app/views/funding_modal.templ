@@ -113,7 +113,7 @@ templ fundingForm(
 					"^[A-Z]{3}$", translator("errors.invalid-currency-format"))
 				@labeledInput("amount", translator("core.amount"), "text", "",
 					"min - max", document["Amount"], true,
-					"^[0-9]+([.,][0-9]+)?$", translator("errors.invalid-amount-format"))
+					"^[0-9]+([.,][0-9]+)?( - [0-9]+([.,][0-9]+)?)?$", translator("errors.invalid-amount-format"))
 			</div>
 			@labeledInput("deadline", translator("core.deadline"), "date", "", "",
 				document["Deadline"], true, "", "")

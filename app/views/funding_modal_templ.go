@@ -274,7 +274,7 @@ func fundingForm(
 		}
 		templ_7745c5c3_Err = labeledInput("amount", translator("core.amount"), "text", "",
 			"min - max", document["Amount"], true,
-			"^[0-9]+([.,][0-9]+)?$", translator("errors.invalid-amount-format")).Render(ctx, templ_7745c5c3_Buffer)
+			"^[0-9]+([.,][0-9]+)?( - [0-9]+([.,][0-9]+)?)?$", translator("errors.invalid-amount-format")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
