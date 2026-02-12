@@ -61,6 +61,14 @@ clean: down ## Detiene contenedores y elimina volúmenes.
 
 # =================================================================================================
 
+clear-dependencies: ## Limpia las dependencias no utilizadas de la aplicación.
+	@echo "Actualizando dependencias..."
+	@go mod tidy
+	@echo
+	@echo "Dependencias actualizadas."
+
+# =================================================================================================
+
 is-running: ## Verifica que el servidor esté corriendo.
 	@curl -f -s http://localhost:$(APP_PORT)/health > /dev/null \
 		|| (echo "\033[31mERROR: El servidor no está corriendo. Usa 'make up' primero.\033[0m" \
