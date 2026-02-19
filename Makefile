@@ -81,6 +81,23 @@ create-env: ## Crea un archivo `.env` con valores por defecto si no existe.
 
 # =================================================================================================
 
+absolute-clean: ## Deja Docker como recién instalado.
+	@echo "Stopping containers..."
+	@docker ps -aq | xargs -r docker stop 2>/dev/null || true
+	@echo "Deleting containers..."
+	@docker ps -aq | xargs -r docker rm 2>/dev/null || true
+	@echo "Deleting images..."
+	@docker images -q | xargs -r docker rmi -f 2>/dev/null || true
+	@echo "Deleting volumes..."
+	@docker volume ls -q | xargs -r docker volume rm 2>/dev/null || true
+	@echo "Cleaning networks..."
+	@docker network prune -f
+	@echo "Final cleaning of the system..."
+	@docker system prune -a --volumes -f
+	@echo "Docker completely cleaned."
+
+# =================================================================================================
+
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
