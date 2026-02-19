@@ -1,0 +1,66 @@
+:root {
+    --scifi: rgba(0, 87, 133);
+    --scifi30: rgba(0, 87, 133, 0.3);
+    --scifi50: rgba(0, 87, 133, 0.5);
+    --white80: rgba(255, 255, 255, 0.8);
+    --white50: rgba(255, 255, 255, 0.5);
+    --background: white;
+
+    --radius-sm: 0.3rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+
+    --container-max: 1200px;
+    --content-gap: 1rem;
+
+    --input-height: 2.5rem;
+    --search-max-width: 44rem;
+    --header-gap: 1rem;
+    --header-height: 80px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.scifi-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--scifi);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+
+    line-height: 1;
+}
+
+.scifi-button:hover {
+    background-color: white;
+    color: var(--scifi);
+}
+
+.centered-box-content {
+    grid-area: content;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr minmax(0, var(--container-max)) 1fr;
+    grid-template-rows: 100%;
+    grid-template-areas:
+        "display-left display-center display-right";
+    gap: var(--content-gap);
+}
+
+.centered-box-content #left {
+    grid-area: display-left;
+}
+
+.centered-box-content #right {
+    grid-area: display-right;
+}
