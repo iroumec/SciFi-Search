@@ -7,7 +7,7 @@ package handlers
 import (
 	"errors"
 	"scifi-search/app/avatars"
-	sqlc "scifi-search/app/database"
+	"scifi-search/app/database"
 	"scifi-search/app/email"
 )
 
@@ -25,7 +25,7 @@ const (
 
 // Dependencias.
 var (
-	queries       *sqlc.Queries
+	queries       *database.Queries
 	avatarService *avatars.Service
 	emailService  *email.Service
 )
@@ -48,7 +48,7 @@ var (
 // Setters
 // ------------------------------------------------------------------------------------------------
 
-func SetQueries(q *sqlc.Queries) {
+func SetQueries(q *database.Queries) {
 	queries = q
 }
 

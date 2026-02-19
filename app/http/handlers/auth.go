@@ -14,7 +14,6 @@ import (
 
 	"scifi-search/app/auth"
 	"scifi-search/app/database"
-	sqlc "scifi-search/app/database"
 	"scifi-search/app/http/middlewares"
 	"scifi-search/app/http/notifications"
 	"scifi-search/app/http/notifications/cookies"
@@ -216,7 +215,7 @@ func createAdministratorAccount() {
 
 func createUser(
 	name, surname, email, password string, role auth.Role, translator languages.Translator,
-) (*sqlc.User, error) {
+) (*database.User, error) {
 
 	userID, err := auth.RegisterUser(email, password)
 	if err != nil {
@@ -224,7 +223,7 @@ func createUser(
 	}
 
 	// User is created in the database.
-	user, err := queries.CreateUser(context.TODO(), sqlc.CreateUserParams{
+	user, err := queries.CreateUser(context.TODO(), database.CreateUserParams{
 		Name:    name,
 		Surname: surname,
 		AuthID:  *userID,

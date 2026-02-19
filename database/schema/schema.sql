@@ -69,3 +69,13 @@ REFERENCES users(user_id)
 ;
 
 -- ------------------------------------------------------------------------------------------------
+
+ALTER TABLE documents
+ADD CONSTRAINT fk_documents_users
+FOREIGN KEY (user_id)
+REFERENCES users(user_id)
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+;
+
+-- ------------------------------------------------------------------------------------------------
