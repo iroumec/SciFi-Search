@@ -3,6 +3,13 @@
 # Detiene el script si algo falla
 set -e
 
+# Creación de directorio y binario placeholder para el primer arranque.
+mkdir -p tmp
+if [ ! -f tmp/main ]; then
+    touch tmp/main
+    chmod +x tmp/main
+fi
+
 echo
 echo "=================================================================================="
 echo "Compilando todo... ¡Espere, por favor! Esto puede tomar un tiempo la primera vez."

@@ -86,8 +86,10 @@ poll_interval = 500
 # Manejo de errores y procesos
 # ----------------------------------------------------------------------------
 
+delay = 0
+
 # Detener la ejecución si hay errores de compilación
-stop_on_error = false
+stop_on_error = true
 
 # Enviar señal de interrupción (SIGINT) al proceso antes de matarlo
 send_interrupt = false
