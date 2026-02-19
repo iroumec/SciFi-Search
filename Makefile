@@ -1,5 +1,5 @@
 # =================================================================================================
-# Makefile para levantar un entorno Docker, ejecutar pruebas Hurl y limpiar.
+# Makefile
 # =================================================================================================
 
 # Importación de variables de ambiente.
@@ -13,7 +13,7 @@ all: help
 
 # =================================================================================================
 
-run: up ## Construye y levanta los contenedores, esperando a que el servidor avise.
+run: up ## Equivale a `make up`.
 
 # =================================================================================================
 
@@ -105,7 +105,7 @@ git-uncache: ## "Descachea" los archivos.
 
 help: ## Muestra los comandos disponibles.
 	@echo "Comandos disponibles:"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
-		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # =================================================================================================
