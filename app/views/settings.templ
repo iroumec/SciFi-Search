@@ -1,0 +1,301 @@
+package views 
+
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+import (
+	"fmt"
+	"scifi-search/app/auth"
+	"scifi-search/app/languages"
+	"scifi-search/app/utils/structures"
+	"time"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ SettingsForm(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
+	<form
+		id="settings-section"
+		enctype="multipart/form-data"
+	>
+		<div class="profile-settings">
+			<p class="subtitle" id="profile">{ translator("core.profile") }</p>
+			<p id="fullname">{ user.Name } { user.Surname } </p>
+			<div class="info-section">
+				<div class="centered-container">
+					@InfoField("name", "text", user.Name, translator)
+					@InfoField("surname", "text", user.Surname, translator)
+					@InfoField("email", "email", user.Email, translator)
+					@InfoField("password", "password", "********", translator)
+				</div>
+			</div>
+		</div>
+		<div id="avatar-settings">
+			@avatarSettings(user, translator)
+		</div>
+		<div class="preferences-settings">
+			<p class="subtitle" id="preference">{ translator("core.preferences") }</p>
+			<div id="preferences-list">
+				for _, p := range preferences {
+					@PreferenceItem(p)
+				}
+			</div>
+			<div id="add-preference">
+				<input
+					id="preference-field"
+					type="text"
+					name="preferences[]"
+					hx-get="/settings/add-preference"
+					hx-trigger="keyup[key=='Enter']"
+					hx-include="#preference-field"
+					hx-target="#preferences-list"
+					hx-swap="beforeend"
+					hx-on="htmx:afterRequest: this.value=''"
+				/>
+				<button
+					type="button"
+					class="scifi-button"
+					hx-get="/settings/add-preference"
+					hx-include="#preference-field"
+					hx-target="#preferences-list"
+					hx-swap="beforeend"
+					hx-on="htmx:afterRequest: document.getElementById('preference-field').value=''"
+				>
+					{ translator("core.add") }
+				</button>
+			</div>
+		</div>
+		<div class="nav-section">
+			if authorizationLevel != auth.AdminRole.Level {
+				<div id="set-left">
+					<button
+						type="button"
+						class="scifi-button"
+						id="delete-account-btn"
+						hx-delete="/delete-account"
+						hx-confirm={ translator("messages.account-deletion-confirmation") }
+						hx-target="body"
+					>
+						{ translator("core.delete-account") }
+					</button>
+				</div>
+			}
+			<div id="set-right">
+				<button
+					type="button"
+					class="scifi-button"
+					hx-get="/settings/cancel"
+					hx-confirm={ translator("messages.account-edition-cancelation-confirmation") }
+					hx-target="#settings-section"
+					hx-swap="outerHTML"
+				>
+					{ translator("core.cancel") }
+				</button>
+				<button
+					type="button"
+					class="scifi-button"
+					hx-post="/settings/save"
+					hx-encoding="multipart/form-data"
+					hx-target="#settings-section"
+					hx-swap="outerHTML"
+				>
+					{ translator("core.save-changes") }
+				</button>
+			</div>
+		</div>
+	</form>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ InfoField(name string, typeStr string, value string, translator languages.Translator) {
+	<div id={ "field-" + name }>
+		<input
+			type={ typeStr }
+			name={ name }
+			value={ value }
+			disabled="true"
+		/>
+		<button
+			type="button"
+			class="scifi-button"
+			hx-get={ "/settings/edit/" + name }
+			hx-target={ "#field-" + name }
+			hx-swap="outerHTML"
+		>
+			{ translator("core.edit") }
+		</button>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ EditableInfoField(name string, typeStr string, value string) {
+	<div id={ "field-" + name }>
+		<input
+			type={ typeStr }
+			name={ name }
+			value={ value }
+			style="background-color: var(--white80);"
+		/>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ EditPasswordSection(translator languages.Translator) {
+	<div id="edit-password-section">
+		<div id="password-inputs">
+			<input
+				type="password"
+				name="current-password"
+				placeholder={ translator("core.current-password") }
+				style="width: 100%;"
+			/>
+			<input
+				type="password"
+				name="new-password"
+				placeholder={ translator("core.new-password") }
+				style="width: 100%;"
+			/>
+			<input
+				type="password"
+				name="repeat-password"
+				placeholder={ translator("core.repeat-new-password") }
+				style="width: 100%;"
+			/>
+		</div>
+		<div id="password-button">
+			<button
+				type="button"
+				class="scifi-button"
+				hx-get="/settings/edit/password/cancel"
+				hx-target="#edit-password-section"
+				hx-swap="outerHTML"
+			>
+				{ translator("core.cancel") }
+			</button>
+		</div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ AvatarOptions(translator languages.Translator) {
+	<input
+		type="file"
+		id="avatar"
+		name="avatar"
+		accept="image/*"
+		hidden
+		hx-on="change:
+			const file = this.files[0];
+			if (file) {
+				document.getElementById('avatar-preview').src = URL.createObjectURL(file);
+			}"
+	/>
+	<label
+		for="avatar"
+		class="scifi-button"
+		id="upload-avatar"
+		style="user-select: none;"
+	>
+		{ translator("core.upload-a-new-avatar") }
+	</label>
+	<input
+		type="hidden"
+		id="delete-avatar-flag"
+		name="delete-avatar"
+		value="false"
+	/>
+	<button
+		type="button"
+		class="scifi-button"
+		hx-on="click:
+			document.getElementById('delete-avatar-flag').value='true';
+			document.getElementById('avatar-preview').src='static/img/avatars/default.jpg';"
+	>
+		{ translator("core.delete-avatar") }
+	</button>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ PreferenceItem(preference string) {
+	<div class="preference">
+		<button
+			type="button"
+			class="remove-preference"
+			onclick="this.parentElement.remove()"
+		></button>
+		<input
+			type="text"
+			name="preferences[]"
+			value={ preference }
+			readonly
+			tabindex="-1"
+		/>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ SettingsPage(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
+	@Layout(translator("core.settings"), translator,
+		func() templ.Component {
+			return Header(true, authorizationLevel, translator)
+		},
+		func() templ.Component {
+			return settingsContent(user, preferences, authorizationLevel, translator)
+		},
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ settingsContent(
+	user structures.User, preferences []string,
+	authorizationLevel int, translator languages.Translator,
+) {
+	<div class="centered-box-content">
+		<div id="left"></div>
+		@SettingsForm(user, preferences, authorizationLevel, translator)
+		<div id="right"></div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
+templ avatarSettings(user structures.User, translator languages.Translator) {
+	<div id="avatar-section">
+		if user.AvatarURLValid {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src={ user.AvatarURLString + "?v=" + fmt.Sprint(time.Now().Unix()) }
+				alt="User avatar"
+			/>
+		} else {
+			<img
+				id="avatar-preview"
+				class="avatar-img"
+				src="static/img/avatars/default.jpg"
+				alt="User avatar"
+			/>
+		}
+	</div>
+	<div id="edit-avatar">
+		<button
+			type="button"
+			class="scifi-button"
+			hx-get="/settings/modify-avatar"
+			hx-target="#edit-avatar"
+			hx-swap="innerHTML"
+		>
+			{ translator("core.modify") }
+		</button>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
