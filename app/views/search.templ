@@ -1,0 +1,85 @@
+package views
+
+// ------------------------------------------------------------------------------------------------
+// Imports
+// ------------------------------------------------------------------------------------------------
+
+import (
+	"container/list"
+	"scifi-search/app/languages"
+)
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ SearchResults(
+	hits []map[string]any, totalHits int,
+	page int, translator languages.Translator,
+) {
+	<div class="documents-section">
+		for _, hit := range hits {
+			<div class="result">
+				@documentItem(hit, "item", translator)
+			</div>
+		}
+	</div>
+	@pagination(totalHits, page, "/search/update-results", "#all-filters", "#results")
+}
+
+// ------------------------------------------------------------------------------------------------
+templ SearchResultsPage(
+	query string, hits []map[string]any, totalHits int, documentTypes *list.List,
+	documentAreas *list.List, documentCountriesBasedOn *list.List, authorizationLevel int,
+	translator languages.Translator,
+) {
+	@Layout(query+" - Sci-Fi Search", translator,
+		func() templ.Component { return SearchHeader(authorizationLevel, translator) },
+		func() templ.Component {
+			return searchResultsContent(
+				query,
+				hits,
+				totalHits,
+				documentTypes,
+				documentAreas,
+				documentCountriesBasedOn,
+				translator,
+			)
+		},
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ searchResultsContent(
+	query string, hits []map[string]any, totalHits int, documentTypes *list.List,
+	documentAreas *list.List, documentCountriesBasedOn *list.List, translator languages.Translator,
+) {
+	<main>
+		<div class="search-container-grid">
+			<div class="top"></div>
+			<div class="left"></div>
+			<div class="search-content">
+				if len(hits) == 0 {
+					<div class="message">
+						<p>{ translator("core.no-results-found-for") + " \"" + query + "\"." }</p>
+					</div>
+				} else {
+					<div class="message">
+						<p>{ translator("core.results-for") + " \"" + query + "\"." }</p>
+					</div>
+					<div class="filters">
+						@searchFilters(query, documentTypes, documentAreas,
+							documentCountriesBasedOn, translator)
+					</div>
+					<div id="results">
+						@SearchResults(hits, totalHits, 1, translator)
+					</div>
+				}
+			</div>
+			<div class="right"></div>
+		</div>
+	</main>
+}
+
+// ------------------------------------------------------------------------------------------------

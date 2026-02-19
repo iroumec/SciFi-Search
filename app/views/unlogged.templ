@@ -1,0 +1,42 @@
+package views
+
+import "scifi-search/app/languages"
+
+// ------------------------------------------------------------------------------------------------
+// Services
+// ------------------------------------------------------------------------------------------------
+templ UnloggedPage(authorizationLevel int, translator languages.Translator) {
+	@Layout(translator("core.no-session"), translator,
+		func() templ.Component { return AuthHeader(authorizationLevel, translator) },
+		func() templ.Component { return unloggedContent(translator) },
+	)
+}
+
+// ------------------------------------------------------------------------------------------------
+// Functions
+// ------------------------------------------------------------------------------------------------
+templ unloggedContent(translator languages.Translator) {
+	<div id="no-session">
+		<p>{ translator("messages.no-session") }</p>
+		<div id="buttons">
+			<button
+				class="scifi-button"
+				hx-get="/signup"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				{ translator("core.sign-up") }
+			</button>
+			<button
+				class="scifi-button"
+				hx-get="/login"
+				hx-target="body"
+				hx-push-url="true"
+			>
+				{ translator("core.log-in") }
+			</button>
+		</div>
+	</div>
+}
+
+// ------------------------------------------------------------------------------------------------
